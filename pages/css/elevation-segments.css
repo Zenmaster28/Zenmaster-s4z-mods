@@ -14,6 +14,19 @@ div .myField {
   width: fit-content;
   background-color : hsl(var(--theme-bg-hue) var(--theme-bg-sat) var(--theme-bg-light)/0.82);
   font-variant-numeric: tabular-nums;
+  visibility: hidden;
+}
+div .routeList {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  padding: 0.3em 1em;
+  width: fit-content;
+  background-color : hsl(var(--theme-bg-hue) var(--theme-bg-sat) var(--theme-bg-light)/0.82);
+  font-variant-numeric: tabular-nums;  
 }
 div .segmentInfo {
   display: flex;
