@@ -301,8 +301,7 @@ export class SauceElevationProfile {
                     }
                 });
             }
-        }
-        console.log(routeSegments);
+        }        
         for (let segment of routeSegments)
         {
         
@@ -765,12 +764,18 @@ export class SauceElevationProfile {
                         }
                         // Note sg.routeId is sometimes out of sync with state.routeId; avoid thrash
                         console.log(sg) 
-                        this.deltas.length = 0;  // reset the delta averages                       
-                        if (sg && sg.routeId === watching.routeId && sg.distanceInMeters) {
+                        this.deltas.length = 0;  // reset the delta averages 
+                        this.routeOffset = 0;  
+                        //debugger                    
+                        if (sg && sg.routeId === watching.routeId && sg.distanceInMeters) {                            
                             await this.setRoute(sg.routeId, {laps: sg.laps, eventSubgroupId: sg.id, distance: sg.distanceInMeters});
-                        } else if (sg && sg.routeId === watching.routeId) {
+                        } else if (sg && sg.routeId === watching.routeId) {                            
                             await this.setRoute(sg.routeId, {laps: sg.laps, eventSubgroupId: sg.id});
-                        } else {
+                        } else if (!sg && watching.eventSubgroupId) {
+                            // Sauce doesn't know about the event, either too old or could be something like a private meetup                            
+                            await this.setRoute(watching.routeId, {laps: 1, eventSubgroupId: watching.eventSubgroupId})
+                        }
+                        else {                            
                             await this.setRoute(watching.routeId);
                         }
                     }
