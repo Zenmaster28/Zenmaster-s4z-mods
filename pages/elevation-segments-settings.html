@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html class="settings-page" tabindex="0" data-settings-key="elevation-segments-settings-v1">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+        <!--
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';"/>
+        -->
+        <title>Elevation - Settings</title>
+        <!--
+        <script src="/pages/src/preloads.js"></script>
+        -->
+        <link id="favicon" rel="shortcut icon" href="/pages/images/favicon.png"/>
+        <link rel="stylesheet" href="/pages/css/common.css"/>
+        <link rel="stylesheet" href="./css/elevation-segments.css"/>
+
+        <script type="module">
+            import {settingsMain} from './src/elevation.mjs';
+            settingsMain();
+        </script>
+    </head>
+    <body>
+        <div id="titlebar">
+            <header>
+                <div class="logo"><img src="/pages/images/icon128.png"/></div>
+                <div class="title">Elevation with Segments - Settings</div>
+                <div class="filler"></div>
+                <div class="buttons">
+                    <div title="Close this window" class="button close electron-only"><ms>close</ms></div>
+                </div>
+            </header>
+        </div>
+        <div id="settings">
+            <form class="section">
+                <label>
+                    <key>Data fields:</key>
+                    <input type="number" name="fields"/>
+                </label>                
+
+                <hr/>   
+                <!--
+                <label>
+                    <key data-added="2023-05-30">Profile height:</key>
+                    <input type="range" name="profileHeight" min="5" max="100" step="1" value="20"/>
+                    <input type="number" name="profileHeight" min="5" max="100" step="1" style="--size: 5" value="20"/>%
+                </label>                
+                <label title="Show the profile for the current route (instead of road) when available">
+                    <key data-added="2023-11-01">Route mode:</key>
+                    <input type="checkbox" name="routeProfile" checked/>
+                </label>
+                -->
+                <label title="Indicate what the max elevation is with a horizontal line on the chart">
+                    <key data-added="2023-11-01">Show max elevation:</key>
+                    <input type="checkbox" name="showElevationMaxLine" checked/>
+                </label>
+                <label title="Show segment start lines">
+                    <key data-added="2023-12-02">Show segments:</key>
+                    <input type="checkbox" name="showSegmentStart" checked/>
+                </label>
+                <label title="Show segment finish lines">
+                    <key data-added="2023-12-04">Show segment finish:</key>
+                    <input type="checkbox" name="showSegmentFinish" data-depends-on="showSegmentStart"/>
+                </label>
+                <label title="The minimum length a segment must be to show the finish.  If too short then there is too much overlap.">
+                    <key data-added="2023-12-04">Min segment length</key>
+                    <input type="range" name="minSegmentLength" min="100" max="5000" step="100" data-depends-on="showSegmentFinish"/>
+                    <input type="number" name="minSegmentLength" min="100" max="5000" step="100" style="--size: 7"/>
+                </label>
+                <label title="Show the next segment on the route and the distance remaining to get there">
+                    <key data-added="2023-12-05">Next segment data:</key>
+                    <input type="checkbox" name="showNextSegment" data-depends-on="showSegmentStart"/>
+                </label>
+                <label title="Include looped/circuit segments (Jungle Loop, Hilly Loop etc.)">
+                    <key data-added="2023-12-02">Include loops:</key>
+                    <input type="checkbox" name="showLoopSegments" data-depends-on="showSegmentStart"/>
+                </label>
+                <label title="Show lap markers">
+                    <key data-added="2023-12-02">Show lap markers:</key>
+                    <input type="checkbox" name="showLapMarker" checked/>
+                </label>
+
+                <hr/>
+                <label>
+                    <key>Font scaling:</key>
+                    <input type="range" name="fontScale" min="0.5" max="2" step="0.1"/>
+                    <input type="number" name="fontScale" min="0.5" max="2" step="0.1" style="--size: 5"/>
+                </label>
+                <label title="The size of the rider pins">
+                    <key data-added="2023-12-03">Pin size:</key>
+                    <input type="range" name="pinSize" min="0.1" max="2" step="0.1"/>
+                    <input type="number" name="pinSize" min="0.1" max="2" step="0.1" style="--size: 5"/>
+                </label>
+                <label title="Pin color for watching">
+                    <key data-added="2023-12-03">Pin color:</key>                    
+                    <input type="color" name="pinColor">
+                </label>
+                <label title="Only show my/watching pin">
+                    <key data-added="2023-12-06">Only show my pin:</key>
+                    <input type="checkbox" name="showOnlyMyPin"/>
+                </label>
+                <label title="The type of line used for segments and laps">
+                    <key data-added="2023-12-03">Segment Line type:</key>
+                    Start:&nbsp;
+                    <select name="lineType">
+                        <option value="solid">Solid</option>
+                        <option value="dashed">Dashed</option>
+                        <option value="dotted">Dotted</option>
+                    </select>
+                    Finish:&nbsp;
+                    <select name="lineTypeFinish">
+                        <option value="solid">Solid</option>
+                        <option value="[5, 10]">Double Dashed</option>
+                        <option value="dashed">Dashed</option>
+                        <option value="dotted">Dotted</option>
+                    </select>
+                </label>
+                <label title="The thickness of lines used for segments and laps">
+                    <key data-added="2023-12-03">Line size:</key>
+                    <input type="range" name="lineSize" min="0.25" max="10" step="0.25"/>
+                    <input type="number" name="lineSize" min="0.25" max="10" step="0.25" style="--size: 6"/>
+                </label>
+                <label>
+                    <key>Theme override:</key>
+                    <select is="sauce-theme" override></select>
+                </label>                
+                <label title="Mostly useful for streamers using OBS window and browser sources">
+                    <key>Solid background:</key>
+                    <input type="checkbox" name="solidBackground"/>
+                </label>
+                <label>
+                    <key>Background color:</key>
+                    <input type="color" name="backgroundColor" data-depends-on="solidBackground"/>
+                    <input type="text" name="backgroundColor" data-depends-on="solidBackground" size="7"/>
+                </label>
+                <hr/>
+                <label>
+                    <key>Export segment data<br>for other mods:</key>
+                    <input type="checkbox" name="setAthleteSegmentData" data-depends-on="showSegmentStart">
+                </label>
+
+                
+            </form>
+        </div>
+    </body>
+</html>

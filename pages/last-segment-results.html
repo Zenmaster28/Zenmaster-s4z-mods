@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html tabindex="0" data-settings-key="last-segment-settings-v1">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval';"/>
+
+        <title>Segment Results</title>
+
+        <script src="/pages/src/preloads.js"></script>
+
+        <link rel="manifest" href="geo-manifest.json"/>
+        <link id="favicon" rel="shortcut icon" href="/images/favicon.png"/>
+        <link rel="stylesheet" href="/pages/css/common.css"/>
+        <link rel="stylesheet" href="/pages/css/geo.css"/> 
+        <link rel="stylesheet" href="./css/elevation-segments.css"/>       
+
+        <script type="module">
+            import {main} from './src/last-segment.mjs';
+            main();
+        </script>
+    </head>
+    <body class="transparent-bg">
+        <div id="titlebar">
+            <header>
+                <div class="logo"><img src="/pages/images/icon128.png"/></div>
+                <div class="title">Last Segment</div>
+                <div class="filler"></div>
+                <div class="buttons">
+                    <a class="button" onClick="window.location.reload()" title="Reload">Reload</a>
+                    <!--
+                        <a class="button open-settings" href="last-segment-settings.html?width=550&height=700&child-window"
+                       title="Open settings window" target="route-preview-settings"><ms>settings</ms></a>
+                    -->
+                    <div title="Minimize" class="button minimize electron-only"><ms>minimize</ms></div>
+                    <div title="Close this window" class="button close electron-only"><ms>close</ms></div>
+                </div>
+            </header>
+        </div>
+        <div id="content">            
+            <div title="Click a field to change it.  Left/Right keys also work when focused." class="fields"></div>
+            <div>
+                <div id="segmentInfo" class="segmentInfo"></div>
+                <div class="grid-container">
+                    <div>FTS</div>
+                    <div>FAL</div>
+                </div>
+                <div class="grid-container">
+                    <div id="ftsResults" class=segmentData>
+                                    
+                    </div>
+                    <div id="falResults" class="segmentData">
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="elevation-profile" id="segment-profile"></div>            
+        </div>
+        <div id="hintbar">
+            <div class="hint"></div>
+        </div>
+    </body>
+</html>

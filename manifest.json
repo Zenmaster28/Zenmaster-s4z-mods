@@ -1,0 +1,93 @@
+{
+    "manifest_version": 1,
+    "name": "Zenmaster MODs for S4Z",
+    "description": "Arend's Mod Collection for S4Z",
+    "author": "Arend teRaa",
+    "website_url": "https://saucellc.io",
+    "version": "1.0.7",
+    "content_js": [
+        
+    ],
+    "content_css": [
+        
+    ],
+    "web_root": "pages",
+    "windows": [
+        {
+            "file": "pages/Active-Powerups-v2.html",
+            "id": "Active Powerups",
+            "name": "Active Powerups",
+            "description": "Show active Powerups in current group",
+            "always_visible": true,
+            "overlay": true,
+            "frame": false,
+            "default_bounds": {
+                "width": 100,
+                "height": 450,
+                "x": -300,
+                "y": 100
+            }
+        },        
+        {
+            "file": "pages/next-segment.html",
+            "id": "Next Segment profile",
+            "name": "Next segment profile",
+            "description": "Route Profile of the next segment",
+            "always_visible": true,
+            "overlay": true,
+            "frame": false,
+            "default_bounds": {
+                "width": 300,
+                "height": 225,
+                "x": -300,
+                "y": 100
+            }
+        },        
+        {
+            "file": "pages/elevation-segments.html",
+            "id": "Route-Profile with segments",
+            "name": "Route Profile with segments",
+            "description": "Route Profile with segments",
+            "always_visible": true,
+            "overlay": true,
+            "frame": false,
+            "default_bounds": {
+                "width": 300,
+                "height": 225,
+                "x": -300,
+                "y": 100
+            }
+        },
+        {
+            "file": "pages/Route-Preview.html",
+            "id": "Route-Profile preview",
+            "name": "Preview any Route Profile",
+            "description": "Preview any Route Profile",
+            "always_visible": true,
+            "overlay": true,
+            "frame": false,
+            "default_bounds": {
+                "width": 300,
+                "height": 225,
+                "x": -300,
+                "y": 100
+            }
+        },        
+        {
+            "file": "pages/segment-results.html",
+            "id": "Segment results",
+            "name": "Segment results",
+            "description": "Show FTS or FAL results for the segments on a route.",
+            "always_visible": true,
+            "overlay": true,
+            "frame": false,
+            "default_bounds": {
+                "width": 300,
+                "height": 500,
+                "x": -300,
+                "y": 100
+            }
+        }
+        
+    ]
+}

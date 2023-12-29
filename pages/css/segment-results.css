@@ -1,0 +1,70 @@
+#content {
+  scroll-behavior: smooth;
+  padding: 0;
+  overflow: auto;
+  position: relative;  
+}
+div .segmentInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  justify-content: left;
+  white-space: nowrap;  
+  width: 100%;  
+  font-variant-numeric: tabular-nums;
+  font-size: calc(var(--font-scale) * 0.9em);
+}
+table td.info {
+  text-align: left;
+  width: 50%;
+}
+
+div .segmentData {
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  justify-content: left;
+  white-space: nowrap;
+  overflow-x: hidden;  
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+  font-size: calc(var(--font-scale) * 0.8em);
+}
+div .segmentData .data {
+  width: 100%
+}
+
+.container {
+  width: 100%;  
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: calc(var(--font-scale) * 0.8em);
+}
+
+th, td {  
+  text-align: left;
+  white-space: nowrap; 
+
+}
+
+th:first-child, td:first-child,
+th:last-child, td:last-child {
+  width: 1%; 
+  padding-right: 10px;
+  text-align: right;
+}
+
+th:nth-child(2), td:nth-child(2) {
+  width: auto; 
+  max-width: 0;
+  overflow: hidden;  
+}
+table tr.watching {
+  background-image: linear-gradient(135deg, hsl(var(--theme-primary-hue) var(--theme-primary-sat) var(--theme-primary-light)/85%), hsl(var(--theme-primary-hue) var(--theme-primary-sat) calc(var(--theme-primary-light) + -10% * var(--theme-primary-shade-dir))/80%));
+  color: hsl(var(--theme-primary-hue) var(--theme-primary-sat) calc(var(--theme-primary-light) + 100% * var(--theme-primary-shade-dir))/100%);
+}
+
+

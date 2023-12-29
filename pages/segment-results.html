@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html class="passive-overlay-scrollbars autoscroll" tabindex="0" data-settings-key="segment-settings-v2">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval';"/>
+
+        <title>Segment Results</title>
+
+        <script src="/pages/src/preloads.js"></script>
+
+        <link rel="manifest" href="geo-manifest.json"/>
+        <link id="favicon" rel="shortcut icon" href="/images/favicon.png"/>
+        <link rel="stylesheet" href="/pages/css/common.css"/>        
+        <link rel="stylesheet" href="./css/segment-results.css"/>       
+
+        <script type="module">
+            import {main} from './src/segment-results.mjs';
+            main();
+        </script>
+    </head>
+    <body>
+        <div id="titlebar">
+            <header>
+                <div class="logo"><img src="/pages/images/icon128.png"/></div>
+                <div class="title">Segment Results</div>
+                <div class="filler"></div>
+                <div class="buttons">
+                    <a class="button" onClick="window.location.reload()" title="Reload">&#x21bb;</a>
+                    <a class="button open-settings" href="segment-results-settings.html?width=550&height=700&child-window"
+                       title="Open settings window" target="route-preview-settings"><ms>settings</ms></a>
+                    <div title="Minimize" class="button minimize electron-only"><ms>minimize</ms></div>
+                    <div title="Close this window" class="button close electron-only"><ms>close</ms></div>
+                </div>
+            </header>
+        </div>
+        <div id="content">            
+            <div id="segmentInfo" class="segmentInfo">
+                <table>
+                    <tr>
+                        <td id="segName" colspan="2" class="info"></td>
+                    </tr>
+                    <tr>
+                        <td id="infoLeft" class="info"></td>
+                        <td id="infoRight" class="info"></td>
+                    </tr>
+                </table>
+            </div>
+            <div id="segmentResults" class="segmentData">
+            </div>
+        </div>
+        <div id="hintbar">
+            <div class="hint"></div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,52 @@
+form label key {
+  display: inline-block;
+  margin-right: 0.4em;
+  min-width: 20ch;
+}
+div .myField {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  padding: 0.3em 1em;
+  width: fit-content;
+  background-color : hsl(var(--theme-bg-hue) var(--theme-bg-sat) var(--theme-bg-light)/0.82);
+  font-variant-numeric: tabular-nums;
+}
+div .segmentInfo {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  padding: 0em 1em;
+  width: auto;
+  background-color : hsl(var(--theme-bg-hue) var(--theme-bg-sat) var(--theme-bg-light)/0.4);
+  font-variant-numeric: tabular-nums;
+}
+div .segmentData {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: left;
+  white-space: nowrap;
+  overflow: hidden;
+  padding: 0em 1em;
+  width: 100%;
+  background-color : hsl(var(--theme-bg-hue) var(--theme-bg-sat) var(--theme-bg-light)/0.4);
+  font-variant-numeric: tabular-nums;
+}
+div .segmentData .data {
+  width: 100%
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 20px;
+  text-align: left;
+}
+
+
