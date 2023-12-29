@@ -675,6 +675,7 @@ export class SauceElevationProfile {
                     foundSegmentEnd = thisRoad.includesRoadPercent(segment.roadFinish);
                     //foundSegmentStart ? console.log("roadSegment " +  roadIndex + " goes through the start of " + segment.name) : "";
                     //foundSegmentEnd ? console.log("roadSegment " +  roadIndex + " goes through the end of " + segment.name) : "";
+                    //debugger
                     if (zwiftSegmentsRequireStartEnd.includes(segment.id))
                     {
                         if (foundSegmentStart && foundSegmentEnd)
