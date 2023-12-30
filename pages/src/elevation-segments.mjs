@@ -19,7 +19,7 @@ export class SauceElevationProfile {
         this.showMaxLine = showMaxLine;
         this.showLapMarker = showLapMarker;
         this.showCompletedLaps = showCompletedLaps;
-        this.lapCounter = 1;
+        this.lapCounter = 0;
         this.showSegmentStart = showSegmentStart;  
         this.showSegmentFinish = showSegmentFinish;
         this.minSegmentLength = minSegmentLength;
@@ -250,7 +250,7 @@ export class SauceElevationProfile {
         this.reverse = null;
         this.routeId = id;
         this.lastRouteId = id;
-        this.lapCounter = 1;
+        this.lapCounter = 0;
         if (this.showSegmentStart)
         {
             await this.getSegmentsOnRoute(id);
@@ -270,14 +270,15 @@ export class SauceElevationProfile {
         const markAreas = [];
         const notLeadin = this.route.manifest.findIndex(x => !x.leadin);
         const lapStartIdx = notLeadin === -1 ? 0 : this.curvePath.nodes.findIndex(x => x.index === notLeadin);        
-        if (lapStartIdx && this.showLapMarker) {
+        if ((lapStartIdx || this.showCompletedLaps) && this.showLapMarker) {
+        //if (this.showLapMarker) {
             markLines.push({
                 xAxis: distances[lapStartIdx],
                 lineStyle: {width: this.lineSize, type: this.lineType},
                 label: {
                     distance: 7,
                     position: 'insideMiddleBottom',
-                    formatter: `LAP 1`
+                    formatter: `LAP`
                 }
             });
             this._routeLeadinDistance = distances[lapStartIdx];
@@ -772,7 +773,8 @@ export class SauceElevationProfile {
                         // Note sg.routeId is sometimes out of sync with state.routeId; avoid thrash
                         console.log(sg) 
                         this.deltas.length = 0;  // reset the delta averages 
-                        this.routeOffset = 0;  
+                        this.routeOffset = 0;
+                        this.lapCounter = 0;  
                         //debugger                    
                         if (sg && sg.routeId === watching.routeId && sg.distanceInMeters) {                            
                             await this.setRoute(sg.routeId, {laps: sg.laps, eventSubgroupId: sg.id, distance: sg.distanceInMeters});
@@ -788,7 +790,7 @@ export class SauceElevationProfile {
                         
                     }
                     if (watching.laps != this.lapCounter && this.showLapMarker && watching.eventSubgroupId == 0 && this.showCompletedLaps) {                        
-                        if (this.routeId != null) {                            
+                        //if (this.routeId != null) {                            
                             let chartMarkLines = this.chart.getOption().series[0].markLine.data
                             if (chartMarkLines.length > 0) {
                                 console.log("Updating lap marker");                                
@@ -806,7 +808,7 @@ export class SauceElevationProfile {
                                     });
                                 }
                             }
-                        }
+                        //}
                     }
                 } else {
                     this.route = null;
