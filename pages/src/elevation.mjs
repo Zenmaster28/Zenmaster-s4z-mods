@@ -46,7 +46,8 @@ common.settingsStore.setDefault({
     minSegmentLength: 500,
     showNextSegment: true,
     showOnlyMyPin: false,
-    setAthleteSegmentData: true
+    setAthleteSegmentData: true,
+    showCompletedLaps: true
 });
 
 const settings = common.settingsStore.get();
@@ -109,7 +110,8 @@ function createElevationProfile({worldList}) {
     const showNextSegment = settings.showNextSegment !== false;
     const showOnlyMyPin = settings.showOnlyMyPin !== false;
     const setAthleteSegmentData = settings.setAthleteSegmentData !== false;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData});
+    const showCompletedLaps = typeof(settings.showCompletedLaps) != "undefined" ? settings.showCompletedLaps : false;    
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps});
 }
 
 
@@ -265,12 +267,11 @@ export async function main() {
                         changed.has('showElevationMaxLine') || 
                         changed.has('showSegmentStart') || 
                         changed.has('showLapMarker') ||
-                        changed.has('showLoopSegments') ||
-                        //changed.has('pinSize') ||
+                        changed.has('showCompletedLaps') ||
+                        changed.has('showLoopSegments') ||                        
                         changed.has('lineType') ||
                         changed.has('lineTypeFinish') ||
-                        changed.has('lineSize') || 
-                        //changed.has('pinColor') ||
+                        changed.has('lineSize') ||                         
                         changed.has('showSegmentFinish') ||
                         changed.has('minSegmentLength') ||
                         changed.has('fontScale')

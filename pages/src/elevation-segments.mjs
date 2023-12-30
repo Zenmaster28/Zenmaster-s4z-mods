@@ -12,12 +12,14 @@ let routeSegments = [];
 let allMarkLines = [];
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, refresh=1000}) {
         this.el = el;
         this.worldList = worldList;
         this.preferRoute = preferRoute;
         this.showMaxLine = showMaxLine;
         this.showLapMarker = showLapMarker;
+        this.showCompletedLaps = showCompletedLaps;
+        this.lapCounter = 1;
         this.showSegmentStart = showSegmentStart;  
         this.showSegmentFinish = showSegmentFinish;
         this.minSegmentLength = minSegmentLength;
@@ -207,6 +209,7 @@ export class SauceElevationProfile {
     setRoad(id, reverse=false) {
         routeSegments.length = 0;
         allMarkLines.length = 0;
+        this.lapCounter = 1;
         let nextSegmentDiv = document.getElementById('nextSegmentDiv');
         nextSegmentDiv.innerHTML = "";
         nextSegmentDiv.style.visibility = "hidden";
@@ -247,6 +250,7 @@ export class SauceElevationProfile {
         this.reverse = null;
         this.routeId = id;
         this.lastRouteId = id;
+        this.lapCounter = 1;
         if (this.showSegmentStart)
         {
             await this.getSegmentsOnRoute(id);
@@ -301,7 +305,8 @@ export class SauceElevationProfile {
                     }
                 });
             }
-        }        
+        }
+        
         for (let segment of routeSegments)
         {
         
@@ -491,6 +496,7 @@ export class SauceElevationProfile {
             });
         }
         if (options.markLines) {
+            console.log(options.markLines)
             markLineData.push(...options.markLines);
         }
         const markAreaData = [];
@@ -761,7 +767,8 @@ export class SauceElevationProfile {
                         let sg;
                         if (watching.eventSubgroupId) {
                             sg = await common.rpc.getEventSubgroup(watching.eventSubgroupId);
-                        }
+                        } 
+                        
                         // Note sg.routeId is sometimes out of sync with state.routeId; avoid thrash
                         console.log(sg) 
                         this.deltas.length = 0;  // reset the delta averages 
@@ -777,6 +784,28 @@ export class SauceElevationProfile {
                         }
                         else {                            
                             await this.setRoute(watching.routeId);
+                        }
+                        
+                    }
+                    if (watching.laps != this.lapCounter && this.showLapMarker && watching.eventSubgroupId == 0 && this.showCompletedLaps) {                        
+                        if (this.routeId != null) {                            
+                            let chartMarkLines = this.chart.getOption().series[0].markLine.data
+                            if (chartMarkLines.length > 0) {
+                                console.log("Updating lap marker");                                
+                                let lapLabel = chartMarkLines.filter(x => x.label.formatter.indexOf("LAP") > -1)
+                                //debugger
+                                if (lapLabel.length == 1) {
+                                    let lapDisplay;
+                                    watching.laps > 0 ? lapDisplay = watching.laps : lapDisplay = "";
+                                    this.lapCounter = watching.laps;
+                                    lapLabel[0].label.formatter = "LAP " + lapDisplay;
+                                    this.chart.setOption({                            
+                                        series: [{                                
+                                            markLine: {data: chartMarkLines},                                                
+                                        }]
+                                    });
+                                }
+                            }
                         }
                     }
                 } else {
