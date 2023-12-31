@@ -1,0 +1,24 @@
+#content {
+  scroll-behavior: smooth;
+  padding: 0;
+  overflow: auto;
+  position: relative;  
+  display: block;
+}
+#content > .pp-location {
+  --profile-height: 0.25;
+  font-size: clamp(16px, var(--profile-height) * 42vh, 65px);
+  left: 0;
+  bottom: 0;
+  z-index: 10000;
+  pointer-events: none;
+  transform: translateZ(0);
+  height: calc(var(--profile-height) * 100%);
+  width: 100%;
+  overflow: hidden;
+}
+#content > .pp-location svg > g {
+  pointer-events: all;
+}
+
+/*# sourceMappingURL=geo.css.map */

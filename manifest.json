@@ -59,6 +59,36 @@
             }
         },
         {
+            "file": "pages/pp-location-makuri.html",
+            "id": "Makuri-pp-locations",
+            "name": "Makuri Islands Pace Partners",
+            "description": "Show the route location of the Makuri Islands Pace Partners",
+            "always_visible": true,
+            "overlay": true,
+            "frame": false,
+            "default_bounds": {
+                "width": 300,
+                "height": 225,
+                "x": -300,
+                "y": 100
+            }
+        },
+        {
+            "file": "pages/pp-location-watopia.html",
+            "id": "Watopia-pp-locations",
+            "name": "Watopia Pace Partners",
+            "description": "Show the route location of the Watopia Pace Partners",
+            "always_visible": true,
+            "overlay": true,
+            "frame": false,
+            "default_bounds": {
+                "width": 300,
+                "height": 225,
+                "x": -300,
+                "y": 100
+            }
+        },
+        {
             "file": "pages/Route-Preview.html",
             "id": "Route-Profile preview",
             "name": "Preview any Route Profile",
