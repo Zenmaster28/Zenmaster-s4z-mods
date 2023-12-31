@@ -516,7 +516,7 @@ export class SauceElevationProfile {
                 text: this.ppName + " on " + this.route.name,                
                 textStyle: {
                     color: "rgba(255, 3, 3, 1)",
-                    fontSize: this.em(0.4 * this.fontScale),
+                    fontSize: this.em(0.3 * this.fontScale),
                 },
             },
             series: [{
