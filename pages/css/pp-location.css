@@ -20,5 +20,11 @@
 #content > .pp-location svg > g {
   pointer-events: all;
 }
+div .routeList {
+  visibility: hidden;
+}
+div .fields {
+  visibility: hidden;
+}
 
 /*# sourceMappingURL=geo.css.map */
