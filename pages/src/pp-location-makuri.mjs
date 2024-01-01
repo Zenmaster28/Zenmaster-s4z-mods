@@ -172,11 +172,9 @@ export async function main() {
     });
     const worldList = await common.getWorldList(); 
     for (let pp of ppIds) {
-        if (settings[pp.name]) {
-            //debugger            
+        if (settings[pp.name]) {            
             let el = settings.profileOverlay && createElevationProfile({worldList}, pp.name);
-            el.ppName = pp.name;
-            //pp.el = el;
+            el.ppName = pp.name;            
             let ppData = {
                 id: pp.id,
                 name: pp.name,
@@ -198,8 +196,7 @@ export async function main() {
         } else {
             ppIndex = 0;
         }  
-    }, 4000);
-    //debugger
+    }, 4000);    
 
     common.settingsStore.addEventListener('changed', ev => {
         const changed = ev.data.changed; 
@@ -223,14 +220,14 @@ export async function main() {
                     )
                 {
                     //console.log(changed);
-                    //location.reload();
+                    //location.reload(); // automatic settings reload disabled to avoid hitting rate limits
         } else if(changed.has('pinSize'))
         {   
             for (let pp of ppList) {
                 pp.el.pinSize = changed.get('pinSize');            
             }
         }  else {
-            //location.reload();
+            //location.reload(); // automatic settings reload disabled to avoid hitting rate limits
         }
     });
 }
