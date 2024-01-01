@@ -223,14 +223,14 @@ export async function main() {
                     )
                 {
                     //console.log(changed);
-                    location.reload();
+                    //location.reload();
         } else if(changed.has('pinSize'))
         {   
             for (let pp of ppList) {
                 pp.el.pinSize = changed.get('pinSize');            
             }
         }  else {
-            location.reload();
+            //location.reload();
         }
     });
 }
