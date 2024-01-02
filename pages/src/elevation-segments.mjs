@@ -36,6 +36,8 @@ export class SauceElevationProfile {
         this.fontScale = fontScale;
         this.deltas = [];
         this.routeOffset = false;
+        this.routeOverride = false;
+        this.routeOverrideTS = Date.now() - 30000;
         this.customDistance = 0;
         this.customFinishLine;
         this.refresh = refresh;
@@ -634,6 +636,25 @@ export class SauceElevationProfile {
         return -1;
     }
       
+    async getPpRoute() {
+        const groups = await common.rpc.getGroupsData();
+        let watchingIndex;
+        let groupAthletes;
+        //debugger
+        for (let  i = 0; i < groups.length; i++) {
+            if (groups[i].watching === true) {
+                watchingIndex = i;
+                groupAthletes = groups[watchingIndex].athletes;
+                break;
+            }
+        }
+        let ppInGroup = groupAthletes.find(x => x.athlete.type == "PACER_BOT");
+        if (ppInGroup) {
+            console.log("Found a PP! " + ppInGroup.athlete.lastName);            
+            return ppInGroup.state.routeId;
+        } 
+        return false;
+    }
 
     async getSegmentsOnRoute() {        
         routeSegments.length = 0;
@@ -762,36 +783,55 @@ export class SauceElevationProfile {
                 await this.setCourse(watching.courseId);
             }
             if (this.preferRoute) {
-                if (watching.routeId) {
-                    if (this.routeId !== watching.routeId ||
+                if ((!watching.routeId && !this.routeOverride && (Date.now() - this.routeOverrideTS > 5000)) || (!watching.routeId && (Date.now() - this.routeOverrideTS > 5000))) {
+                    console.log("No route on watching, looking for a PP in group")
+                    this.routeOverrideTS = Date.now();
+                    this.routeOverride = await this.getPpRoute();
+                }
+                //debugger
+                if (watching.routeId || this.routeOverride) {
+                    //debugger
+                    if (watching.routeId) {
+                        this.routeOverride = false;
+                    } 
+                    if (this.routeOverride && (this.routeOverride != this.routeId)) {                        
+                        console.log("Overriding routeId to: " + this.routeOverride)                        
+                        await this.setRoute(this.routeOverride);
+                    } else if (this.routeId !== watching.routeId ||
                         (this._eventSubgroupId || null) !== (watching.eventSubgroupId || null)) {
-                        let sg;
-                        if (watching.eventSubgroupId) {
-                            sg = await common.rpc.getEventSubgroup(watching.eventSubgroupId);
-                        } 
-                        
-                        // Note sg.routeId is sometimes out of sync with state.routeId; avoid thrash
-                        console.log(sg) 
-                        this.deltas.length = 0;  // reset the delta averages 
-                        this.routeOffset = 0;
-                        this.lapCounter = 0;  
-                        //debugger                    
-                        if (sg && sg.routeId === watching.routeId && sg.distanceInMeters) {                            
-                            await this.setRoute(sg.routeId, {laps: sg.laps, eventSubgroupId: sg.id, distance: sg.distanceInMeters});
-                        } else if (sg && sg.routeId === watching.routeId) {                            
-                            await this.setRoute(sg.routeId, {laps: sg.laps, eventSubgroupId: sg.id});
-                        } else if (!sg && watching.eventSubgroupId) {
-                            // Sauce doesn't know about the event, either too old or could be something like a private meetup                            
-                            await this.setRoute(watching.routeId, {laps: 1, eventSubgroupId: watching.eventSubgroupId})
+                            //debugger
+                        if (!this.routeOverride) {
+                            let sg;
+                            if (watching.eventSubgroupId) {
+                                sg = await common.rpc.getEventSubgroup(watching.eventSubgroupId);
+                            } 
+                            
+                            // Note sg.routeId is sometimes out of sync with state.routeId; avoid thrash
+                            console.log(sg) 
+                            this.deltas.length = 0;  // reset the delta averages 
+                            this.routeOffset = 0;
+                            this.lapCounter = 0;  
+                            //debugger                    
+                            if (sg && sg.routeId === watching.routeId && sg.distanceInMeters) {                            
+                                await this.setRoute(sg.routeId, {laps: sg.laps, eventSubgroupId: sg.id, distance: sg.distanceInMeters});
+                            } else if (sg && sg.routeId === watching.routeId) {                            
+                                await this.setRoute(sg.routeId, {laps: sg.laps, eventSubgroupId: sg.id});
+                            } else if (!sg && watching.eventSubgroupId) {
+                                // Sauce doesn't know about the event, either too old or could be something like a private meetup                            
+                                await this.setRoute(watching.routeId, {laps: 1, eventSubgroupId: watching.eventSubgroupId})
+                            }
+                            else {                            
+                                await this.setRoute(watching.routeId);
+                            }
                         }
-                        else {                            
-                            await this.setRoute(watching.routeId);
-                        }
-                        
                     }
                     if (watching.laps != this.lapCounter && this.showLapMarker && watching.eventSubgroupId == 0 && this.showCompletedLaps) {                        
-                        //if (this.routeId != null) {                            
-                            let chartMarkLines = this.chart.getOption().series[0].markLine.data
+                        //if (this.routeId != null) { 
+                            let chartMarkLines = [];
+                            if (this.chart.getOption().series[0].markLine.data) {
+                                chartMarkLines = this.chart.getOption().series[0].markLine.data
+                            }
+                            //debugger
                             if (chartMarkLines.length > 0) {
                                 console.log("Updating lap marker");                                
                                 let lapLabel = chartMarkLines.filter(x => x.label.formatter.indexOf("LAP") > -1)
