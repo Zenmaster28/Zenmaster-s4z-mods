@@ -271,7 +271,8 @@ export class SauceElevationProfile {
         const markLines = [];
         const markAreas = [];
         const notLeadin = this.route.manifest.findIndex(x => !x.leadin);
-        const lapStartIdx = notLeadin === -1 ? 0 : this.curvePath.nodes.findIndex(x => x.index === notLeadin);        
+        const lapStartIdx = notLeadin === -1 ? 0 : this.curvePath.nodes.findIndex(x => x.index === notLeadin);  
+           
         if ((lapStartIdx || this.showCompletedLaps) && this.showLapMarker) {
         //if (this.showLapMarker) {
             markLines.push({
@@ -513,9 +514,9 @@ export class SauceElevationProfile {
             },
             title: {
                 show: true,
+                top: '10%',
                 text: this.ppName + " on " + this.route.name,                
-                textStyle: {
-                    color: "rgba(255, 3, 3, 1)",
+                textStyle: {                    
                     fontSize: this.em(0.3 * this.fontScale),
                 },
             },

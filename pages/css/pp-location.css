@@ -15,7 +15,10 @@
   transform: translateZ(0);
   height: calc(var(--profile-height) * 100%);
   width: 100%;
-  overflow: hidden;
+  overflow: hidden;  
+  border-bottom: 0.01em;
+  border-bottom-color: rgb(136, 84, 84);
+  border-bottom-style: solid;
 }
 #content > .pp-location svg > g {
   pointer-events: all;
@@ -26,5 +29,3 @@ div .routeList {
 div .fields {
   visibility: hidden;
 }
-
-/*# sourceMappingURL=geo.css.map */

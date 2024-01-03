@@ -185,6 +185,7 @@ export async function main() {
         } else {
             let div = document.getElementById(pp.name);
             div.style.height = 0;
+            div.style.visibility = "hidden";
         }
 
     }
