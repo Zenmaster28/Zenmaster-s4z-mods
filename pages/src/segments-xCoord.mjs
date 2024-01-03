@@ -1,4 +1,5 @@
 import * as common from '/pages/src/common.mjs';
+import * as curves from '/shared/curves.mjs';
 
 let routeSegments = [];
 let allMarkLines = [];
@@ -8,6 +9,7 @@ let routeFullData = false;
 let worldSegments;
 let curvePathIndex = 0;
 let zwiftSegmentsRequireStartEnd;
+let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
 
 export async function processRoute(courseId, routeId, laps, distance) { 
     curvePathIndex = 0;      
@@ -523,3 +525,85 @@ export function getxCoord(watching, routeInfo) {
     }
 }
 
+
+function supplimentPath(worldMeta, curvePath, {physicsSlopeScale}={}) {
+    const balancedT = 1 / 125; // tests to within 0.27 meters (worst case)
+    const distEpsilon = 1e-6;
+    const elevations = [];
+    const grades = [];
+    const distances = [];
+    let prevIndex;
+    let distance = 0;
+    let prevDist = 0;
+    let prevEl = 0;
+    let prevNode;
+    curvePath.trace(x => {
+        distance += prevNode ? curves.vecDist(prevNode, x.stepNode) / 100 : 0;
+        if (x.index !== prevIndex) {
+            const elevation = worldMeta ?
+                zToAltitude(worldMeta, x.stepNode[2], {physicsSlopeScale}) :
+                x.stepNode[2] / 100 * (physicsSlopeScale || 1);
+            if (elevations.length) {
+                if (distance - prevDist > distEpsilon) {
+                    const grade = (elevation - prevEl) / (distance - prevDist);
+                    grades.push(grade);
+                } else {
+                    grades.push(grades.at(-1) || 0);
+                }
+            }
+            distances.push(distance);
+            elevations.push(elevation);
+            prevDist = distance;
+            prevEl = elevation;
+            prevIndex = x.index;
+        }
+        prevNode = x.stepNode;
+    }, balancedT);
+    grades.unshift(grades[0]);
+    return {
+        elevations,
+        grades,
+        distances,
+    };
+}
+
+function zToAltitude(worldMeta, z, {physicsSlopeScale}={}) {
+    return worldMeta ? (z + worldMeta.waterPlaneLevel) / 100 *
+        (physicsSlopeScale || worldMeta.physicsSlopeScale) + worldMeta.altitudeOffsetHack : null;
+}
+
+
+export async function getModifiedRoute(id) {    
+        //await common.rpc.getRoute(id).then(async route => {
+        let route = await common.rpc.getRoute(id);
+        let missing = missingLeadinRoutes.filter(x => x.id == id)
+        let replacementLeadin = await common.rpc.getRoute(missing[0].replacement)
+        //debugger
+        const leadin = replacementLeadin.manifest.filter(x => x.leadin)
+        for (let i = leadin.length; i > 0; i--) {
+            route.manifest.unshift(leadin[i - 1]);
+        }
+            if (route) {
+                route.curvePath = new curves.CurvePath();
+                route.roadSegments = [];                
+                const worldList = await common.getWorldList();
+                const worldMeta = worldList.find(x => x.courseId === route.courseId);
+                for (const [i, x] of route.manifest.entries()) {
+                    const road = await common.getRoad(route.courseId, x.roadId);
+                    const seg = road.curvePath.subpathAtRoadPercents(x.start, x.end);
+                    seg.reverse = x.reverse;
+                    seg.leadin = x.leadin;
+                    seg.roadId = x.roadId;
+                    for (const xx of seg.nodes) {
+                        xx.index = i;
+                    }
+                    route.roadSegments.push(seg);
+                    route.curvePath.extend(x.reverse ? seg.toReversed() : seg);
+                }
+                // NOTE: No support for physicsSlopeScaleOverride of portal roads.
+                // But I've not seen portal roads used in a route either.
+                Object.assign(route, supplimentPath(worldMeta, route.curvePath));
+            }            
+            return route;
+        
+}

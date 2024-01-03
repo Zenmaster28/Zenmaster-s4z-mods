@@ -3,6 +3,7 @@ import * as common from '/pages/src/common.mjs';
 import {Color} from '/pages/src/color.mjs';
 import * as ec from '/pages/deps/src/echarts.mjs';
 import * as theme from '/pages/src/echarts-sauce-theme.mjs';
+import * as coords from './segments-xCoord.mjs';
 
 
 locale.setImperial(!!common.storage.get('/imperialUnits'));
@@ -10,6 +11,7 @@ ec.registerTheme('sauce', theme.getTheme('dynamic'));
 const H = locale.human;
 let routeSegments = [];
 let allMarkLines = [];
+let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
 
 export class SauceElevationProfile {
     constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, refresh=1000}) {
@@ -260,7 +262,12 @@ export class SauceElevationProfile {
         this._eventSubgroupId = eventSubgroupId;
         this._roadSigs = new Set();
         this.curvePath = null;
-        this.route = await common.getRoute(id);
+        let missingLeadinCheck = missingLeadinRoutes.filter(x => x.id == id)        
+        if (missingLeadinCheck.length > 0) {
+            this.route = await coords.getModifiedRoute(id);
+        } else {
+            this.route = await common.getRoute(id);
+        }
         for (const {roadId, reverse} of this.route.checkpoints) {
             this._roadSigs.add(`${roadId}-${!!reverse}`);
         }
@@ -665,8 +672,14 @@ export class SauceElevationProfile {
         let ignoreSegment = false;        
         let curvePathIndex = 0;
         let worldSegments = await common.rpc.getSegments(this.courseId)
-        
-        let routeFullData = await common.getRoute(this.routeId); 
+        let missingLeadinCheck = missingLeadinRoutes.filter(x => x.id == this.routeId)
+        let routeFullData;
+        //debugger
+        if (missingLeadinCheck.length > 0) {
+            routeFullData = await coords.getModifiedRoute(this.routeId);
+        } else {
+            routeFullData = await common.getRoute(this.routeId); 
+        }
         console.log(routeFullData)               ;
         let zwiftSegmentsRequireStartEnd = await fetch("data/segRequireStartEnd.json").then((response) => response.json());        
         //let allRoutes = await common.rpc.getRoutes();
