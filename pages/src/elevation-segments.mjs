@@ -3,7 +3,7 @@ import * as common from '/pages/src/common.mjs';
 import {Color} from '/pages/src/color.mjs';
 import * as ec from '/pages/deps/src/echarts.mjs';
 import * as theme from '/pages/src/echarts-sauce-theme.mjs';
-import * as coords from './segments-xCoord.mjs';
+import * as zen from './segments-xCoord.mjs';
 
 
 locale.setImperial(!!common.storage.get('/imperialUnits'));
@@ -262,7 +262,7 @@ export class SauceElevationProfile {
         this._roadSigs = new Set();
         this.curvePath = null;
         let missingLeadinCheck = missingLeadinRoutes.filter(x => x.id == id)                
-        this.route = await coords.getModifiedRoute(id);
+        this.route = await zen.getModifiedRoute(id);
         for (const {roadId, reverse} of this.route.manifest) {
             this._roadSigs.add(`${roadId}-${!!reverse}`);
         }        
@@ -671,7 +671,7 @@ export class SauceElevationProfile {
         let routeFullData;
         //debugger
         //if (missingLeadinCheck.length > 0) {
-            routeFullData = await coords.getModifiedRoute(this.routeId);
+            routeFullData = await zen.getModifiedRoute(this.routeId);
         //} else {
         //    routeFullData = await common.getRoute(this.routeId); 
         //}
