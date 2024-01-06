@@ -1,5 +1,5 @@
 import * as common from '/pages/src/common.mjs';
-import * as zen from './segments-xCoord.mjs';
+import * as coords from './segments-xCoord.mjs';
 //import * as zwift from '../../../../src/zwift.mjs';
 
 let routeInfo = false;
@@ -30,22 +30,22 @@ async function processWatching(watching) {
         {
             let sg = await common.rpc.getEventSubgroup(watching.state.eventSubgroupId)
             if (sg.distanceInMeters) {
-                routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId, 0, sg.distanceInMeters) 
+                routeInfo = await coords.processRoute(watching.state.courseId, watching.state.routeId, 0, sg.distanceInMeters) 
             } else if (sg.laps > 1) {
-                routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId, sg.laps ) 
+                routeInfo = await coords.processRoute(watching.state.courseId, watching.state.routeId, sg.laps ) 
             } else {
-                routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId) 
+                routeInfo = await coords.processRoute(watching.state.courseId, watching.state.routeId) 
             }         
             
         } else {
-            routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId) 
+            routeInfo = await coords.processRoute(watching.state.courseId, watching.state.routeId) 
         }
         console.log(routeInfo)   
         
         inProgress = false;
     }
     else {
-        let xCoord = zen.getxCoord(watching, routeInfo);
+        let xCoord = coords.getxCoord(watching, routeInfo);
         let distDelta = watching.state.eventDistance - xCoord;
         deltas.push(distDelta);
         if (deltas.length > 20)
