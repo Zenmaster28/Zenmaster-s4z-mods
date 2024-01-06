@@ -238,7 +238,7 @@ export class SauceElevationProfile {
         this._roadSigs = new Set();
         this.curvePath = null;
         this.route = await common.getRoute(id);
-        for (const {roadId, reverse} of this.route.checkpoints) {
+        for (const {roadId, reverse} of this.route.manifest) {
             this._roadSigs.add(`${roadId}-${!!reverse}`);
         }
         this.curvePath = this.route.curvePath.slice();

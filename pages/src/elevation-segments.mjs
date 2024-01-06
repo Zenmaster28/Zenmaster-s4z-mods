@@ -243,8 +243,7 @@ export class SauceElevationProfile {
         }
     }
 
-    setRoute = common.asyncSerialize(async function(id, {laps=1, eventSubgroupId, distance}={}) { 
-        //distance = 13000;
+    setRoute = common.asyncSerialize(async function(id, {laps=1, eventSubgroupId, distance}={}) {         
         if (distance) {
             this.customDistance = distance
         } else {
@@ -262,15 +261,11 @@ export class SauceElevationProfile {
         this._eventSubgroupId = eventSubgroupId;
         this._roadSigs = new Set();
         this.curvePath = null;
-        let missingLeadinCheck = missingLeadinRoutes.filter(x => x.id == id)        
-        if (missingLeadinCheck.length > 0) {
-            this.route = await coords.getModifiedRoute(id);
-        } else {
-            this.route = await common.getRoute(id);
-        }
-        for (const {roadId, reverse} of this.route.checkpoints) {
+        let missingLeadinCheck = missingLeadinRoutes.filter(x => x.id == id)                
+        this.route = await coords.getModifiedRoute(id);
+        for (const {roadId, reverse} of this.route.manifest) {
             this._roadSigs.add(`${roadId}-${!!reverse}`);
-        }
+        }        
         this.curvePath = this.route.curvePath.slice();
         const distances = Array.from(this.route.distances);
         const elevations = Array.from(this.route.elevations);
@@ -657,7 +652,7 @@ export class SauceElevationProfile {
         }
         let ppInGroup = groupAthletes.find(x => x.athlete.type == "PACER_BOT");
         if (ppInGroup) {
-            console.log("Found a PP! " + ppInGroup.athlete.lastName);            
+            //console.log("Found a PP! " + ppInGroup.athlete.lastName);            
             return ppInGroup.state.routeId;
         } 
         return false;
@@ -675,11 +670,11 @@ export class SauceElevationProfile {
         let missingLeadinCheck = missingLeadinRoutes.filter(x => x.id == this.routeId)
         let routeFullData;
         //debugger
-        if (missingLeadinCheck.length > 0) {
+        //if (missingLeadinCheck.length > 0) {
             routeFullData = await coords.getModifiedRoute(this.routeId);
-        } else {
-            routeFullData = await common.getRoute(this.routeId); 
-        }
+        //} else {
+        //    routeFullData = await common.getRoute(this.routeId); 
+        //}
         console.log(routeFullData)               ;
         let zwiftSegmentsRequireStartEnd = await fetch("data/segRequireStartEnd.json").then((response) => response.json());        
         //let allRoutes = await common.rpc.getRoutes();
@@ -797,7 +792,7 @@ export class SauceElevationProfile {
             }
             if (this.preferRoute) {
                 if ((!watching.routeId && !this.routeOverride && (Date.now() - this.routeOverrideTS > 5000)) || (!watching.routeId && (Date.now() - this.routeOverrideTS > 5000))) {
-                    console.log("No route on watching, looking for a PP in group")
+                    //console.log("No route on watching, looking for a PP in group")
                     this.routeOverrideTS = Date.now();
                     this.routeOverride = await this.getPpRoute();
                 }

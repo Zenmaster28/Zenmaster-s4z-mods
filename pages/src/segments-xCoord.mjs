@@ -13,7 +13,8 @@ let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((res
 
 export async function processRoute(courseId, routeId, laps, distance) { 
     curvePathIndex = 0;      
-    routeFullData = await common.getRoute(routeId); 
+    //routeFullData = await common.getRoute(routeId); 
+    routeFullData = await getModifiedRoute(routeId); 
     worldSegments = await common.rpc.getSegments(courseId);
     zwiftSegmentsRequireStartEnd = await fetch("data/segRequireStartEnd.json").then((response) => response.json());
     const distances = Array.from(routeFullData.distances);
@@ -205,7 +206,8 @@ export async function getSegmentsOnRoute(courseId, routeId, eventSubgroupId) {
     let leadinIncluded = false;
     let worldSegments = await common.rpc.getSegments(courseId)
     //debugger
-    routeFullData = await common.getRoute(routeId); 
+    //routeFullData = await common.getRoute(routeId); 
+    routeFullData = await getModifiedRoute(routeId); 
     //console.log(routeFullData) 
     if (eventSubgroupId != 0)
     {
@@ -573,13 +575,19 @@ function zToAltitude(worldMeta, z, {physicsSlopeScale}={}) {
 }
 
 
-export async function getModifiedRoute(id) {    
-        //await common.rpc.getRoute(id).then(async route => {
+export async function getModifiedRoute(id) {            
         let route = await common.rpc.getRoute(id);
-        let missing = missingLeadinRoutes.filter(x => x.id == id)
-        let replacementLeadin = await common.rpc.getRoute(missing[0].replacement)
-        //debugger
-        const leadin = replacementLeadin.manifest.filter(x => x.leadin)
+        let missing = missingLeadinRoutes.filter(x => x.id == id)        
+        let replacementLeadin;
+        let leadin;
+        if (missing.length > 0) {
+            replacementLeadin = await common.rpc.getRoute(missing[0].replacement)
+            leadin = replacementLeadin.manifest.filter(x => x.leadin);
+        } else {
+            replacementLeadin = [];
+            leadin = [];
+        }        
+        
         for (let i = leadin.length; i > 0; i--) {
             route.manifest.unshift(leadin[i - 1]);
         }

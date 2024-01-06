@@ -19,7 +19,7 @@ let infoLeftDiv = document.getElementById('infoLeft');
 let infoRightDiv = document.getElementById('infoRight');
 let segmentDiv = document.getElementById("segmentResults");
 let eventData = [];
-let eventStartTime;
+let eventStartTime = Date.now();
 
 
 function setBackground() {
@@ -279,7 +279,11 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching) {
             {
                 //console.log("getting event data")
                 eventData = await common.rpc.getEventSubgroup(watching.state.eventSubgroupId);
-                eventStartTime = eventData.eventSubgroupStartWT;
+                if (eventData) {
+                    eventStartTime = eventData.eventSubgroupStartWT;
+                } else {
+                    eventData = [];
+                }
             }
             inEvent = true;
         }        
@@ -338,7 +342,11 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching) {
             {
                 //console.log("getting event data")
                 eventData = await common.rpc.getEventSubgroup(watching.state.eventSubgroupId);
-                eventStartTime = eventData.eventSubgroupStartWT;
+                if (eventData) {
+                    eventStartTime = eventData.eventSubgroupStartWT;
+                } else {
+                    eventData = [];
+                }
             }
             inEvent = true;
         }        
@@ -387,7 +395,11 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching) {
             if (eventData.length == 0)
             {
                 eventData = await common.rpc.getEventSubgroup(watching.state.eventSubgroupId);
-                eventStartTime = eventData.eventSubgroupStartWT;
+                if (eventData) {
+                    eventStartTime = eventData.eventSubgroupStartWT;
+                } else {
+                    eventData = [];
+                }
             }
             inEvent = true;
         }        
