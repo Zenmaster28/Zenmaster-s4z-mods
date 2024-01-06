@@ -946,7 +946,7 @@ export class SauceElevationProfile {
                                 distance = state.progress * (totDist - floor) + floor;
                             }
                             const nearIdx = common.binarySearchClosest(this._distances, distance);
-                            debugger
+                            //debugger
                             const nearRoadSegIdx = nodes[nearIdx].index;
                             // NOTE: This technique does not work for bots or people who joined a bot.
                             // I don't know why but progress and eventDistance are completely wrong.

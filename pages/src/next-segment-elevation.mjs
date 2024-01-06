@@ -573,7 +573,7 @@ export class SauceElevationProfile {
             if (this.preferSegment) {
                 //if (!this.road || this.road.id !== watching.roadId || this.reverse !== watching.reverse) {
                     //this.setRoad(watching.roadId, watching.reverse);
-                    debugger
+                    //debugger
                     this.setSegment(this.segmentIdPreview, this.segmentReverse)
                 //}
             }
