@@ -126,6 +126,7 @@ function setWatching(id) {
 
 async function initialize() {
     const ad = await common.rpc.getAthleteData('self');
+    //console.log("Initializing...", ad)
     inGame = !!ad;
     if (!inGame) {
         console.info("User not active, starting demo mode...");
@@ -226,7 +227,7 @@ export async function main() {
         //elProfile.getSegmentsOnRoute();
         
         common.subscribe('watching-athlete-change', async athleteId => {
-            if (!inGame) {
+            if (!inGame) {                
                 await initialize();
             } else {
                 setWatching(athleteId);
@@ -235,18 +236,22 @@ export async function main() {
         });
         common.subscribe('athlete/watching', ad => {
             fieldRenderer.setData(ad);
-            fieldRenderer.render();
+            fieldRenderer.render();                       
         });
         setInterval(() => {
             inGame = performance.now() - watchdog < 10000;
         }, 3333);
         common.subscribe('states', async states => {
-            if (!inGame) {
+            if (!inGame) {                
+                await initialize();
+            }
+            if (!elProfile.watchingId) {
+                console.log("watching not set.")
                 await initialize();
             }
             watchdog = performance.now();
             //elProfile.renderAthleteStates(states);
-            if (elProfile) {            
+            if (elProfile) {                        
                 elProfile.renderAthleteStates(states);
             }
         });
