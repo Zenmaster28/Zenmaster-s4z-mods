@@ -64,16 +64,24 @@ export async function processRoute(courseId, routeId, laps, distance) {
     let rsIdx = 0;   
     for (let roadSegment of routeFullData.roadSegments)
     {
-        let segment = findSegmentsOnRoadSection(roadSegment, curvePathIndex, rsIdx);
-        if (segment && routeSegments.length > 0) {
+        let segments = findSegmentsOnRoadSection(roadSegment, curvePathIndex, rsIdx);
+        //console.log(rsIdx, roadSegment.reverse, roadSegment.roadId, segments)
+        if (segments.length > 0 && routeSegments.length > 0) {
             //debugger
-
-            if (segment.id != routeSegments[routeSegments.length - 1].id && (rsIdx - 1 != routeSegments[routeSegments.length - 1].roadSegmentIndex)) {
-                // make sure we didn't match this same segment on the last roadSegment as it would be a duplicate (probably Fuego Flats)
-                routeSegments.push(segment);
-            }            
-        } else if (segment) {
-            routeSegments.push(segment)
+            for (let segment of segments) {
+                if (segment.id != routeSegments[routeSegments.length - 1].id || (rsIdx - 1 != routeSegments[routeSegments.length - 1].roadSegmentIndex)) {
+                    // make sure we didn't match this same segment on the last roadSegment as it would be a duplicate (probably Fuego Flats)
+                    
+                    routeSegments.push(segment);
+                } else {                    
+                    console.log("Skipping duplicate segment match " + segment.name + " on roadSegmentIndex " + rsIdx)
+                    //debugger
+                } 
+            }          
+        } else if (segments.length > 0) {
+            for (let segment of segments) {
+                routeSegments.push(segment)
+            }
         }
         curvePathIndex += roadSegment.nodes.length;
         rsIdx++;
@@ -102,9 +110,11 @@ export async function processRoute(courseId, routeId, laps, distance) {
 function findSegmentsOnRoadSection(thisRoad, cpIndex, rsIdx) {
     typeof thisRoad.reverse === 'undefined' ? thisRoad.reverse = false : "";
     typeof thisRoad.lap === 'undefined' ? thisRoad.lap = 1 : "";
-    const segmentsOnRoad = worldSegments.filter(x => (x.roadId == thisRoad.roadId));    
+    const segmentsOnRoad = worldSegments.filter(x => (x.roadId == thisRoad.roadId));
+    let roadSegments = [];    
     if (segmentsOnRoad.length > 0) {
         // there are segments on this road, check if they match this roadSection
+        //console.log("Found " + segmentsOnRoad.length + " possible segments on this road")
         for (let segment of segmentsOnRoad) {
             if (segment.roadStart == null || segment.reverse != thisRoad.reverse) {
                 // skip segments with no roadStart value and the segment and road direction must match
@@ -148,22 +158,25 @@ function findSegmentsOnRoadSection(thisRoad, cpIndex, rsIdx) {
                     ))
                 {                            
                     //routeSegments.push(newSegment);
-                    return newSegment;
+                    roadSegments.push(newSegment);
+                    //return newSegment;
                 }
                 else if (originIndex = -1 && foundSegmentEnd && (routeSegments.length == 0 || newSegment.bounds.roadSegment - 1 != routeSegments[routeSegments.length - 1].bounds.roadSegment)) // didn't match the start of the segment but found the end AND it's not on the list of segments requiring the start and end.  We must be in Scotland....
                 {
                     //debugger
                     //routeSegments.push(newSegment);
-                    return newSegment;
+                    roadSegments.push(newSegment);
+                    //return newSegment;
+                } else {
+                    console.log("Segment ignored for some reason...")
+                    debugger
                 }
 
             }
         }
     }
-    else {
-        return false;
-    }
-    return false;
+    
+    return roadSegments;
 }
 
 function getSegmentMarkline(segment) {
@@ -205,14 +218,17 @@ export async function getSegmentsOnRoute(courseId, routeId, eventSubgroupId) {
     let sgInfo;
     let leadinIncluded = false;
     let worldSegments = await common.rpc.getSegments(courseId)
-    //debugger
+    
     //routeFullData = await common.getRoute(routeId); 
     routeFullData = await getModifiedRoute(routeId); 
+    //debugger
     //console.log(routeFullData) 
-    if (eventSubgroupId != 0)
+    if (eventSubgroupId != 0 && typeof(eventSubgroupId) != "undefined")
     {
         sgInfo = await common.rpc.getEventSubgroup(eventSubgroupId);
-        sgInfo.distanceInMeters ? customDistance = sgInfo.distanceInMeters : "";
+        if (sgInfo) {
+            sgInfo.distanceInMeters ? customDistance = sgInfo.distanceInMeters : "";
+        }
         if (customDistance > 0)
         {
             //let leadinDistance = routeFullData.leadinDistanceInMeters;
@@ -232,7 +248,9 @@ export async function getSegmentsOnRoute(courseId, routeId, eventSubgroupId) {
             routeFullData.curvePath.nodes = routeFullData.curvePath.nodes.slice(0,cdIdx)
             //debugger
         }
-        laps = sgInfo.laps;        
+        if (sgInfo) {
+            laps = sgInfo.laps;        
+        }
     }
     console.log("Lap count: " + laps)
     const notLeadin = routeFullData.manifest.findIndex(x => !x.leadin); 
@@ -614,4 +632,20 @@ export async function getModifiedRoute(id) {
             }            
             return route;
         
+}
+
+export function getNextSegment(arr, number) {
+    // Sort the array based on the roadindex property
+    if (arr.length == 0) {
+        return -1;
+    }
+    arr.sort((a, b) => a.markLine - b.markLine);
+
+    // Find the first object with a roadindex greater than the given number
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i].markLine > number) {
+            return arr[i];
+        }
+    }    
+    return -1;
 }

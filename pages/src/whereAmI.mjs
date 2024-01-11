@@ -1,19 +1,11 @@
 import * as common from '/pages/src/common.mjs';
 import * as coords from './segments-xCoord.mjs';
-//import * as zwift from '../../../../src/zwift.mjs';
+
 
 let routeInfo = false;
 let inProgress = false;
 let deltas = [0];
-/*
-async function getCoco() {
-    let dropIn = await common.rpc.getDropInWorldList();
-    let w = dropIn.find(x => x.courseId == 6)
-    let coco = w.pacerBots.find(x => x.athleteId == 5147285)
-    return coco;
-}
-*/
-//debugger 
+ 
 export async function main() {
     common.initInteractionListeners(); 
 
@@ -21,7 +13,7 @@ export async function main() {
 }
 
 async function processWatching(watching) {
-    //debugger
+    
     if ((!routeInfo || watching.state.routeId != routeInfo.routeFullData.id) && !inProgress)
     {
         console.log("Getting segments on route")
@@ -52,7 +44,7 @@ async function processWatching(watching) {
         {            
             deltas.shift();            
         }        
-        console.log(xCoord, watching.state.eventDistance, deltas.reduce((a, b) => a + b, 0) / deltas.length);
+        //console.log(xCoord, watching.state.eventDistance, deltas.reduce((a, b) => a + b, 0) / deltas.length);
     }
 }
 

@@ -251,17 +251,25 @@ export class SauceElevationProfile {
         };        
         this.road = null;
         this.reverse = null;
+        routeSegments.length = 0;
+        allMarkLines.length = 0;
         this.routeId = id;
         this.lastRouteId = id;
         this.lapCounter = 0;
         if (this.showSegmentStart)
         {
-            await this.getSegmentsOnRoute(id);
+            //await this.getSegmentsOnRoute(id);
+            console.log("Getting segments")            
+            let segmentsOnRoute = await zen.getSegmentsOnRoute(this.courseId, this.routeId, eventSubgroupId)
+            for (let segment of segmentsOnRoute.segments) {
+                routeSegments.push(segment)
+            }
+            //debugger
         }
         this._eventSubgroupId = eventSubgroupId;
         this._roadSigs = new Set();
         this.curvePath = null;
-        let missingLeadinCheck = missingLeadinRoutes.filter(x => x.id == id)                
+        //let missingLeadinCheck = missingLeadinRoutes.filter(x => x.id == id)                
         this.route = await zen.getModifiedRoute(id);
         for (const {roadId, reverse} of this.route.manifest) {
             this._roadSigs.add(`${roadId}-${!!reverse}`);
@@ -621,7 +629,7 @@ export class SauceElevationProfile {
         return Object.keys(obj1).every((key) => obj2.hasOwnProperty(key) && obj1[key] === obj2[key]);
     }
 
-    getNextSegment(arr, number) {
+    XgetNextSegment(arr, number) {
         // Sort the array based on the roadindex property
         if (arr.length == 0) {
             return -1;
@@ -658,7 +666,7 @@ export class SauceElevationProfile {
         return false;
     }
 
-    async getSegmentsOnRoute() {        
+    async XgetSegmentsOnRoute() {        
         routeSegments.length = 0;
         allMarkLines.length = 0;
         let foundSegmentStart = false;
@@ -669,12 +677,11 @@ export class SauceElevationProfile {
         let worldSegments = await common.rpc.getSegments(this.courseId)
         let missingLeadinCheck = missingLeadinRoutes.filter(x => x.id == this.routeId)
         let routeFullData;
+        //debugger  
+        let routeInfo = await zen.processRoute(this.courseId, this.routeId);      
         //debugger
-        //if (missingLeadinCheck.length > 0) {
-            routeFullData = await zen.getModifiedRoute(this.routeId);
-        //} else {
-        //    routeFullData = await common.getRoute(this.routeId); 
-        //}
+        //routeFullData = await zen.getModifiedRoute(this.routeId);        
+        routeFullData = routeInfo.routeFullData;
         console.log(routeFullData)               ;
         let zwiftSegmentsRequireStartEnd = await fetch("data/segRequireStartEnd.json").then((response) => response.json());        
         //let allRoutes = await common.rpc.getRoutes();
@@ -1035,7 +1042,8 @@ export class SauceElevationProfile {
                     //console.log(allOtherPins)
                     if (isWatching)
                     {
-                        let nextSegment = this.getNextSegment(allMarkLines, xCoord)
+                        //let nextSegment = this.getNextSegment(allMarkLines, xCoord)
+                        let nextSegment = zen.getNextSegment(allMarkLines, xCoord)
                         let distanceToGo;
                         let distanceToGoUnits;
                         if (this.showNextSegment && this.showSegmentStart)
