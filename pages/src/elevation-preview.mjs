@@ -2,7 +2,7 @@ import * as sauce from '/shared/sauce/index.mjs';
 import * as common from '/pages/src/common.mjs';
 import * as elevation from './elevation-segments.mjs';
 import * as fields from '/pages/src/fields.mjs';
-import * as curves from '/shared/curves.mjs';
+import * as zen from './segments-xCoord.mjs';
 
 //common.enableSentry();
 
@@ -221,7 +221,7 @@ export async function main() {
         //debugger
         //await zwiftMap.setCourse(+course || 6);
         if (elProfile) {
-            let routeInfo = await common.getRoute(routeId);
+            let routeInfo = await zen.getModifiedRoute(parseInt(routeId));            
             let routeCourse = routeInfo.courseId;
             await elProfile.setCourse(+routeCourse || 13);
             let routeListOptions = document.getElementById('routeListSelect');
