@@ -11,9 +11,14 @@ let curvePathIndex = 0;
 let zwiftSegmentsRequireStartEnd;
 let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
 
-export async function processRoute(courseId, routeId, laps, distance) { 
+export async function processRoute(courseId, routeId, laps, distance, includeLoops) { 
     curvePathIndex = 0;      
-    //routeFullData = await common.getRoute(routeId); 
+    //routeFullData = await common.getRoute(routeId);
+    if (includeLoops) {
+
+    } else {
+        includeLoops = false;
+    }
     routeFullData = await getModifiedRoute(routeId); 
     worldSegments = await common.rpc.getSegments(courseId);
     zwiftSegmentsRequireStartEnd = await fetch("data/segRequireStartEnd.json").then((response) => response.json());
@@ -68,11 +73,18 @@ export async function processRoute(courseId, routeId, laps, distance) {
         //console.log(rsIdx, roadSegment.reverse, roadSegment.roadId, segments)
         if (segments.length > 0 && routeSegments.length > 0) {
             //debugger
+            segments.sort((a,b) => {
+                return a.roadStart - b.roadStart;
+            })
             for (let segment of segments) {
+                //if (segment.roadId == 9) {debugger}
                 if (segment.id != routeSegments[routeSegments.length - 1].id || (rsIdx - 1 != routeSegments[routeSegments.length - 1].roadSegmentIndex)) {
                     // make sure we didn't match this same segment on the last roadSegment as it would be a duplicate (probably Fuego Flats)
-                    
-                    routeSegments.push(segment);
+                    if (segment.name.toLowerCase().includes("loop")) {
+                        //don't include loops
+                    } else {
+                        routeSegments.push(segment);
+                    }
                 } else {                    
                     console.log("Skipping duplicate segment match " + segment.name + " on roadSegmentIndex " + rsIdx)
                     //debugger
@@ -80,7 +92,11 @@ export async function processRoute(courseId, routeId, laps, distance) {
             }          
         } else if (segments.length > 0) {
             for (let segment of segments) {
-                routeSegments.push(segment)
+                if (segment.name.toLowerCase().includes("loop")) {
+                    //don't include loops
+                } else {
+                    routeSegments.push(segment)
+                }
             }
         }
         curvePathIndex += roadSegment.nodes.length;
@@ -98,10 +114,14 @@ export async function processRoute(courseId, routeId, laps, distance) {
         }
         //debugger
     }
+    let segmentRepeatCheck = routeSegments.filter(x => x.repeat > 1);
+    let segmentRepeats;
+    segmentRepeatCheck.length > 0 ? segmentRepeats = true : segmentRepeats = false;
     const routeInfo = {
         routeFullData: routeFullData,
         segments: routeSegments,
-        markLines: allMarkLines
+        markLines: allMarkLines,
+        segmentRepeats
     }
     //debugger
     return routeInfo;
@@ -149,6 +169,14 @@ function findSegmentsOnRoadSection(thisRoad, cpIndex, rsIdx) {
                 newSegment.bounds.markLines = [];
                 newSegment.boundsFinish.markLines = [];
                 newSegment.lap = thisRoad.lap;
+                let segmentRepeats = routeSegments.filter(x => x.id == newSegment.id)
+                if (segmentRepeats.length > 0) {
+                    // found a repeated segment
+                    //debugger 
+                    newSegment.repeat = segmentRepeats.length + 1;
+                } else {
+                    newSegment.repeat = 1;
+                }
                 newSegment.roadSegmentIndex = rsIdx;
                 if (originIndex != -1 && (
                         routeSegments.length == 0 || 
@@ -187,7 +215,7 @@ function getSegmentMarkline(segment) {
     let indexOffset = (distances[boundsLineIndex + 1] - distances[boundsLineIndex]) * percentOffset;
     let markLineIndex = distances[boundsLineIndex] + indexOffset                
     //allMarkLines.push({name: segment.name, markLine: markLineIndex, id: segment.id})  // segment start lines
-    const markLineStart = {name: segment.name, markLine: markLineIndex, id: segment.id};
+    const markLineStart = {name: segment.name, markLine: markLineIndex, id: segment.id, repeat: segment.repeat};
 
     boundsLineIndex = segment.boundsFinish.curvePathIndex + segment.boundsFinish.originIndex;
     segment.reverse ? percentOffset = (1 - segment.boundsFinish.percent) : percentOffset = segment.boundsFinish.percent;
@@ -201,7 +229,7 @@ function getSegmentMarkline(segment) {
     }
     let markLineIndexFinish = distances[boundsLineIndex] + indexOffset        
     //allMarkLines.push({name: segment.name + " Finish", markLine: markLineIndex, id: segment.id})  // segment finish line  
-    const markLineFinish = {name: segment.name + " Finish", markLine: markLineIndexFinish, id: segment.id};
+    const markLineFinish = {name: segment.name + " Finish", markLine: markLineIndexFinish, id: segment.id, repeat: segment.repeat};
     return [markLineStart,markLineFinish];
 }
 
@@ -270,6 +298,9 @@ export async function getSegmentsOnRoute(courseId, routeId, eventSubgroupId) {
         let segmentsOnRoad = worldSegments.filter(x => (x.roadId == thisRoad.roadId));
         if (segmentsOnRoad.length > 0)
         {
+            segmentsOnRoad.sort((a,b) => {
+                return a.roadStart - b.roadStart;
+            })
             for (let segment of segmentsOnRoad)
             {             
                 ignoreSegment = false;
@@ -349,7 +380,7 @@ export async function getSegmentsOnRoute(courseId, routeId, eventSubgroupId) {
         segment.reverse ? percentOffset = (1 - segment.bounds.percent) : percentOffset = segment.bounds.percent;
         let indexOffset = (distances[boundsLineIndex + 1] - distances[boundsLineIndex]) * percentOffset;
         let markLineIndex = distances[boundsLineIndex] + indexOffset                
-        allMarkLines.push({name: segment.name, markLine: markLineIndex, id: segment.id})  // segment start lines
+        allMarkLines.push({name: segment.name, markLine: markLineIndex, id: segment.id, repeat: segment.repeat})  // segment start lines
 
         boundsLineIndex = segment.boundsFinish.curvePathIndex + segment.boundsFinish.originIndex;
         segment.reverse ? percentOffset = (1 - segment.boundsFinish.percent) : percentOffset = segment.boundsFinish.percent;
@@ -362,7 +393,7 @@ export async function getSegmentsOnRoute(courseId, routeId, eventSubgroupId) {
             indexOffset = 0;
         }
         markLineIndex = distances[boundsLineIndex] + indexOffset        
-        allMarkLines.push({name: segment.name + " Finish", markLine: markLineIndex, id: segment.id})  // segment finish line  
+        allMarkLines.push({name: segment.name + " Finish", markLine: markLineIndex, id: segment.id, repeat: segment.repeat})  // segment finish line  
     }
 
     const lapDistance = distances.at(-1) - distances[lapStartIdx];
@@ -384,7 +415,7 @@ export async function getSegmentsOnRoute(courseId, routeId, eventSubgroupId) {
             segment.reverse ? percentOffset = (1 - segment.bounds.percent) : percentOffset = segment.bounds.percent;
             let indexOffset = (distances[boundsLineIndex + 1] - distances[boundsLineIndex]) * percentOffset;
             let markLineIndex = (lapDistance * lap) + distances[boundsLineIndex] + indexOffset;                    
-            allMarkLines.push({name: segment.name, markLine: markLineIndex, id: segment.id})  // segment start lines
+            allMarkLines.push({name: segment.name, markLine: markLineIndex, id: segment.id, repeat: segment.repeat})  // segment start lines
             boundsLineIndex = segment.boundsFinish.curvePathIndex + segment.boundsFinish.originIndex;
             segment.reverse ? percentOffset = (1 - segment.boundsFinish.percent) : percentOffset = segment.boundsFinish.percent;
             if (boundsLineIndex < routeFullData.distances.length - 1)
@@ -396,7 +427,7 @@ export async function getSegmentsOnRoute(courseId, routeId, eventSubgroupId) {
                 indexOffset = 0;
             }
             markLineIndex = (lapDistance * lap) + distances[boundsLineIndex] + indexOffset
-            allMarkLines.push({name: segment.name + " Finish", markLine: markLineIndex, id: segment.id})  // segment finish line
+            allMarkLines.push({name: segment.name + " Finish", markLine: markLineIndex, id: segment.id, repeat: segment.repeat})  // segment finish line
         }
     }
     routeFullData.distances = distances;
@@ -597,7 +628,7 @@ export async function getModifiedRoute(id) {
         let route = await common.rpc.getRoute(id);
         let missing = missingLeadinRoutes.filter(x => x.id == id)        
         let replacementLeadin;
-        let leadin;
+        let leadin;        
         if (missing.length > 0) {
             replacementLeadin = await common.rpc.getRoute(missing[0].replacement)
             leadin = replacementLeadin.manifest.filter(x => x.leadin);
