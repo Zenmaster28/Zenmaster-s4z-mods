@@ -14,7 +14,7 @@ let allMarkLines = [];
 let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, refresh=1000}) {
         this.el = el;
         this.worldList = worldList;
         this.preferRoute = preferRoute;
@@ -40,6 +40,8 @@ export class SauceElevationProfile {
         this.routeOffset = false;
         this.routeOverride = false;
         this.routeOverrideTS = Date.now() - 30000;
+        this.overrideDistance = overrideDistance;
+        this.overrideLaps = overrideLaps;
         this.customDistance = 0;
         this.customFinishLine;
         this.refresh = refresh;
@@ -260,7 +262,9 @@ export class SauceElevationProfile {
         {
             //await this.getSegmentsOnRoute(id);
             console.log("Getting segments")            
-            let segmentsOnRoute = await zen.getSegmentsOnRoute(this.courseId, this.routeId, eventSubgroupId)
+            //let segmentsOnRoute = await zen.getSegmentsOnRoute(this.courseId, this.routeId, eventSubgroupId)
+            let segmentsOnRoute = await zen.processRoute(this.courseId, this.routeId, 1, distance, this.showLoopSegments)
+            //debugger
             for (let segment of segmentsOnRoute.segments) {
                 routeSegments.push(segment)
             }
@@ -307,7 +311,7 @@ export class SauceElevationProfile {
                 segment.reverse ? percentOffset = (1 - segment.bounds.percent) : percentOffset = segment.bounds.percent;
                 let indexOffset = (distances[boundsLineIndex + 1] - distances[boundsLineIndex]) * percentOffset;
                 let markLineIndex = distances[boundsLineIndex] + indexOffset                
-                allMarkLines.push({name: segment.name, markLine: markLineIndex, id: segment.id})
+                allMarkLines.push({name: segment.name, markLine: markLineIndex, id: segment.id, repeat: segment.repeat})
                 markLines.push({
                     xAxis: markLineIndex,
                     lineStyle: {width: this.lineSize, type: this.lineType},
@@ -337,7 +341,7 @@ export class SauceElevationProfile {
             }
             let markLineIndex = distances[boundsLineIndex] + indexOffset
             
-            allMarkLines.push({name: segment.name + " Finish", markLine: markLineIndex, id: segment.id}) 
+            allMarkLines.push({name: segment.name + " Finish", markLine: markLineIndex, id: segment.id, repeat: segment.repeat}) 
             
             if (this.lineTypeFinish.includes("["))
             {
@@ -398,7 +402,7 @@ export class SauceElevationProfile {
                     segment.reverse ? percentOffset = (1 - segment.bounds.percent) : percentOffset = segment.bounds.percent;
                     let indexOffset = (distances[boundsLineIndex + 1] - distances[boundsLineIndex]) * percentOffset;
                     let markLineIndex = (lapDistance * lap) + distances[boundsLineIndex] + indexOffset;                    
-                    allMarkLines.push({name: segment.name, markLine: markLineIndex, id: segment.id})                
+                    allMarkLines.push({name: segment.name, markLine: markLineIndex, id: segment.id, repeat: segment.repeat})                
                     markLines.push({
                         xAxis: markLineIndex,
                         lineStyle: {width: this.lineSize, type: this.lineType},
@@ -427,7 +431,7 @@ export class SauceElevationProfile {
                     }
                     let markLineIndex = (lapDistance * lap) + distances[boundsLineIndex] + indexOffset
                     //console.log("markLineIndex is: " + markLineIndex + " and indexOffset is: " + indexOffset + " for segment: " + segment.name)
-                    allMarkLines.push({name: segment.name + " Finish", markLine: markLineIndex, id: segment.id}) 
+                    allMarkLines.push({name: segment.name + " Finish", markLine: markLineIndex, id: segment.id, repeat: segment.repeat}) 
                     //segment.boundsFinish.markLines.push(lapDistance * lap + distances[lineIndex]); 
                     //allMarkLines.push({name: segment.name + " Finish", markLine: lapDistance * lap + distances[lineIndex]})  
                     if (this.showSegmentFinish && (segment.distance > this.minSegmentLength && !segment.name.toLowerCase().includes("loop")))
@@ -826,8 +830,11 @@ export class SauceElevationProfile {
                             this.deltas.length = 0;  // reset the delta averages 
                             this.routeOffset = 0;
                             this.lapCounter = 0;  
-                            //debugger                    
-                            if (sg && sg.routeId === watching.routeId && sg.distanceInMeters) {                            
+                            //debugger  
+                            if (this.overrideDistance > 0 || this.overrideLaps > 0) {
+                                console.log("overridedistance: " + this.overrideDistance + " overridelaps: " + this.overrideLaps)
+                                await this.setRoute(watching.routeId, {laps: this.overrideLaps, eventSubgroupId: watching.eventSubgroupId, distance: this.overrideDistance})
+                            } else if (sg && sg.routeId === watching.routeId && sg.distanceInMeters) {                            
                                 await this.setRoute(sg.routeId, {laps: sg.laps, eventSubgroupId: sg.id, distance: sg.distanceInMeters});
                             } else if (sg && sg.routeId === watching.routeId) {                            
                                 await this.setRoute(sg.routeId, {laps: sg.laps, eventSubgroupId: sg.id});
@@ -849,7 +856,10 @@ export class SauceElevationProfile {
                             //debugger
                             if (chartMarkLines.length > 0) {
                                 console.log("Updating lap marker");                                
-                                let lapLabel = chartMarkLines.filter(x => x.label.formatter.indexOf("LAP") > -1)
+                                //let lapLabel = chartMarkLines.filter(x => x.label.formatter.indexOf("LAP") > -1)
+                                let lapLabel = chartMarkLines.filter(function(line) {
+                                    return line.type != "max" && line.label.formatter.slice(0,3) == "LAP"                                        
+                                })
                                 //debugger
                                 if (lapLabel.length == 1) {
                                     let lapDisplay;

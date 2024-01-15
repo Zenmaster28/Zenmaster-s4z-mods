@@ -47,7 +47,9 @@ common.settingsStore.setDefault({
     showNextSegment: true,
     showOnlyMyPin: false,
     setAthleteSegmentData: true,
-    showCompletedLaps: true
+    showCompletedLaps: true,
+    overrideDistance: 0,
+    overrideLaps: 0
 });
 
 const settings = common.settingsStore.get();
@@ -110,8 +112,10 @@ function createElevationProfile({worldList}) {
     const showNextSegment = settings.showNextSegment !== false;
     const showOnlyMyPin = settings.showOnlyMyPin !== false;
     const setAthleteSegmentData = settings.setAthleteSegmentData !== false;
-    const showCompletedLaps = typeof(settings.showCompletedLaps) != "undefined" ? settings.showCompletedLaps : false;    
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps});
+    const showCompletedLaps = typeof(settings.showCompletedLaps) != "undefined" ? settings.showCompletedLaps : false;   
+    const overrideDistance = typeof(settings.overrideDistance) != "undefined" ? settings.overrideDistance : 0;
+    const overrideLaps = typeof(settings.overrideLaps) != "undefined" ? settings.overrideLaps : 0;    
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps});
 }
 
 
@@ -279,7 +283,9 @@ export async function main() {
                         changed.has('lineSize') ||                         
                         changed.has('showSegmentFinish') ||
                         changed.has('minSegmentLength') ||
-                        changed.has('fontScale')
+                        changed.has('fontScale') ||
+                        changed.has('overrideDistance') ||
+                        changed.has('overrideLaps')
                     )
                 {
                     //console.log(changed);
@@ -301,7 +307,7 @@ export async function main() {
         } else if (changed.has('setAthleteSegmentData'))
         {
             elProfile.setAthleteSegmentData = changed.get('setAthleteSegmentData')
-        }
+        } 
     });
 }
 
