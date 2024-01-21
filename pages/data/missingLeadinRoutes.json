@@ -1,10 +1,131 @@
 [
     {
-        "id": 1656629976,
-        "replacement": 1635842477
+        "id": 1656629976,        
+        "leadin": 
+            [
+                {
+                "end": 1,
+                "leadin": true,
+                "roadId": 81,
+                "start": 0.9420100174546633
+                },
+                {
+                "end": 0.025541692203443947,
+                "leadin": true,
+                "roadId": 81,
+                "start": 0
+                }
+            ]        
     },
     {
-        "id": 1115260805,
-        "replacement": 1635842477
+        "id": 1115260805,        
+        "leadin":
+            [
+                {
+                "end": 1,
+                "leadin": true,
+                "roadId": 81,
+                "start": 0.9420100174546633
+                },
+                {
+                "end": 0.025541692203443947,
+                "leadin": true,
+                "roadId": 81,
+                "start": 0
+                }
+            ]
+    },
+    {
+        "id": 1917017591,        
+        "leadin":
+            [
+                {
+                "end": 1,
+                "leadin": true,
+                "roadId": 81,
+                "start": 0.9420100174546633
+                },
+                {
+                "end": 0.025541692203443947,
+                "leadin": true,
+                "roadId": 81,
+                "start": 0
+                }
+            ]
+    },
+    {
+        "id": 3765339356,
+        "leadin":
+        [
+            {
+                "end": 0.982311,
+                "leadin": true,
+                "roadId": 11,
+                "start": 0.578211
+            },
+            {
+                "end": 0.9971064516067827,
+                "leadin": true,
+                "roadId": 9,
+                "start": 0.948541
+            }
+        ]
+    },
+    {
+        "id": 3662705581,
+        "leadin":
+        [
+            {
+                "end": 0.982311,
+                "leadin": true,
+                "roadId": 11,
+                "start": 0.578211
+            },
+            {
+                "end": 0.9971064516067827,
+                "leadin": true,
+                "roadId": 9,
+                "start": 0.948541
+            }
+        ]
+    },
+    {
+        "id": 928793662,
+        "leadin":
+        [
+            {
+                "end": 0.82981,
+                "leadin": true,
+                "reverse": true,
+                "roadId": 7,
+                "start": 0.8039758790276892
+            }
+        ]
+    },
+    {
+        "id": 2694166390,
+        "leadin":
+        [
+            {
+                "end": 0.82981,
+                "leadin": true,
+                "reverse": true,
+                "roadId": 7,
+                "start": 0.8039758790276892
+            }
+        ]
+    },
+    {
+        "id": 3599973269,
+        "leadin":
+        [
+            {
+                "end": 0.82981,
+                "leadin": true,
+                "reverse": true,
+                "roadId": 7,
+                "start": 0.8039758790276892
+            }
+        ]
     }
 ]
