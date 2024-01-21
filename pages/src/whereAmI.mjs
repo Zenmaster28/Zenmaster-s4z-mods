@@ -1,5 +1,5 @@
 import * as common from '/pages/src/common.mjs';
-import * as coords from './segments-xCoord.mjs';
+import * as zen from './segments-xCoord.mjs';
 
 
 let routeInfo = false;
@@ -17,27 +17,28 @@ async function processWatching(watching) {
     if ((!routeInfo || watching.state.routeId != routeInfo.routeFullData.id) && !inProgress)
     {
         console.log("Getting segments on route")
+        debugger
         inProgress = true;        
         if (watching.state.eventSubgroupId != 0) 
         {
             let sg = await common.rpc.getEventSubgroup(watching.state.eventSubgroupId)
             if (sg.distanceInMeters) {
-                routeInfo = await coords.processRoute(watching.state.courseId, watching.state.routeId, 0, sg.distanceInMeters) 
+                routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId, 0, sg.distanceInMeters) 
             } else if (sg.laps > 1) {
-                routeInfo = await coords.processRoute(watching.state.courseId, watching.state.routeId, sg.laps ) 
+                routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId, sg.laps ) 
             } else {
-                routeInfo = await coords.processRoute(watching.state.courseId, watching.state.routeId) 
+                routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId) 
             }         
             
         } else {
-            routeInfo = await coords.processRoute(watching.state.courseId, watching.state.routeId) 
+            routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId) 
         }
         console.log(routeInfo)   
-        
+        debugger
         inProgress = false;
     }
     else {
-        let xCoord = coords.getxCoord(watching, routeInfo);
+        let xCoord = zen.getxCoord(watching, routeInfo);
         let distDelta = watching.state.eventDistance - xCoord;
         deltas.push(distDelta);
         if (deltas.length > 20)
