@@ -162,7 +162,7 @@ function getSegmentStatus(arr, number, nextSegmentThreshold) {
     arr.sort((a, b) => a.markLine - b.markLine);
     //debugger
     //number = 32000
-    const segmentStatus = {};
+    const segmentStatus = {};    
     for (let i = 0; i < arr.length; i++)
     {
         if (arr[i].markLine > number) {
@@ -327,7 +327,8 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching) {
             console.log(eventResults)
         }
         let segmentName = activeSegmentName.replace(" Finish","")        
-        let inEvent = false;                
+        let inEvent = false;  
+        let segRepeat = "";              
         if (watching.state.eventSubgroupId != 0)
         {
             if (eventData.length == 0)
@@ -340,9 +341,10 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching) {
                     eventData = [];
                 }
             }
+            segRepeat = "[" + routeSegments[segIdx].repeat + "]"
             inEvent = true;
         }        
-        segNameDiv.innerHTML = segmentName + "[" + routeSegments[segIdx].repeat + "]" + ' \u21E2';
+        segNameDiv.innerHTML = segmentName + segRepeat + ' \u21E2';
         buildTable(eventResults,watching);
         
         approachingRefresh = Date.now();                            
@@ -425,7 +427,8 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching) {
             console.log(eventResults)
         }     
         let segmentName = activeSegmentName.replace(" Finish","")        
-        let inEvent = false;                
+        let inEvent = false;     
+        let segRepeat = "";           
         if (watching.state.eventSubgroupId != 0)
         {
             if (eventData.length == 0)
@@ -438,9 +441,10 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching) {
                     eventData = [];
                 }
             }
+            segRepeat = "[" + routeSegments[segIdx].repeat + "]"
             inEvent = true;
         }        
-        segNameDiv.innerHTML = segmentName + "[" + routeSegments[segIdx].repeat + "]" + ' \u21E2';
+        segNameDiv.innerHTML = segmentName + segRepeat + ' \u21E2';
         buildTable(eventResults,watching);
         
         inSegmentRefresh = Date.now();                            
@@ -514,7 +518,7 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching) {
         }        
         let segmentName = activeSegmentName.replace(" Finish","")        
         let inEvent = false;        
-        
+        let segRepeat = "";
         if (watching.state.eventSubgroupId != 0)
         {
             if (eventData.length == 0)
@@ -526,9 +530,10 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching) {
                     eventData = [];
                 }
             }
+            segRepeat = "[" + routeSegments[segIdx].repeat + "]"
             inEvent = true;
         }        
-        segNameDiv.innerHTML = '\u21e0 ' + segmentName + "[" + routeSegments[segIdx].repeat + "]"; 
+        segNameDiv.innerHTML = '\u21e0 ' + segmentName + segRepeat; 
         if (settings.departingInfo)
         {
             if (segmentBests.length == 0)
@@ -747,9 +752,8 @@ async function getSegmentResults(watching) {
         }
         if (routeSegments.length > 0)        {
             let currentLocation = zen.getxCoord(watching, routeInfo);            
-            //let segmentStatus = getSegmentStatus(routeSegments, currentLocation, settings.nextSegmentThreshold);
-            let segmentStatus = getSegmentStatus(routeSegments, currentLocation, 1000);
-            //console.log(currentLocation, segmentStatus)
+            //let segmentStatus = getSegmentStatus(routeSegments, currentLocation, settings.nextSegmentThreshold);            
+            let segmentStatus = getSegmentStatus(routeSegments, currentLocation, settings.nextSegmentThreshold);            
             if (segmentStatus.status != lastStatus) {
                 //console.log("Resetting after status change from: " + lastStatus + " to " + segmentStatus.status)
                 noPB = false;
