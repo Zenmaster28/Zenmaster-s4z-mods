@@ -10,8 +10,8 @@ div .segmentInfo {
   align-items: baseline;
   justify-content: left;
   white-space: nowrap;  
-  width: 100%;  
-  font-variant-numeric: tabular-nums;
+  width: 100%;    
+  font-variant: small-caps tabular-nums;
   font-size: calc(var(--font-scale) * 0.9em);
 }
 table td.info {
@@ -26,8 +26,8 @@ div .segmentData {
   justify-content: left;
   white-space: nowrap;
   overflow-x: hidden;  
-  width: 100%;
-  font-variant-numeric: tabular-nums;
+  width: 100%;  
+  font-variant: small-caps tabular-nums;
   font-size: calc(var(--font-scale) * 0.8em);
 }
 div .segmentData .data {
