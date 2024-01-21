@@ -45,7 +45,10 @@ common.settingsStore.setDefault({
     showSegmentFinish: false,
     minSegmentLength: 500,
     showNextSegment: true,
-    showOnlyMyPin: false
+    showOnlyMyPin: false,
+    overrideDistance: 0,
+    overrideLaps: 0,
+    yAxisMin: 200
 });
 
 const settings = common.settingsStore.get();
@@ -111,8 +114,11 @@ function createElevationProfile({worldList}) {
     const showSegmentFinish = settings.showSegmentFinish;
     const minSegmentLength = settings.minSegmentLength;
     const showNextSegment = settings.showNextSegment;
-    const showOnlyMyPin = settings.showOnlyMyPin;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin});
+    const showOnlyMyPin = settings.showOnlyMyPin;    
+    const overrideDistance = typeof(settings.overrideDistance) != "undefined" ? settings.overrideDistance : 0;
+    const overrideLaps = typeof(settings.overrideLaps) != "undefined" ? settings.overrideLaps : 0;    
+    const yAxisMin = typeof(settings.yAxisMin) != "undefined" ? settings.yAxisMin: 200;
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, overrideDistance, overrideLaps, yAxisMin});
 }
 
 
@@ -224,6 +230,7 @@ export async function main() {
             let routeInfo = await zen.getModifiedRoute(parseInt(routeId));            
             let routeCourse = routeInfo.courseId;
             await elProfile.setCourse(+routeCourse || 13);
+            //debugger
             let routeListOptions = document.getElementById('routeListSelect');
             for (let i = 0; i < routeListOptions.children.length - 1; i++)
             {
@@ -248,7 +255,14 @@ export async function main() {
         }
         if (elProfile) {
             if (routeId) {
-                await elProfile.setRoute(+routeId);
+                console.log("Setting route")
+                if (settings.overrideDistance > 0 || settings.overrideLaps > 0) {
+                    console.log("overridedistance: " + settings.overrideDistance + " overridelaps: " + settings.overrideLaps)
+                    await elProfile.setRoute(+routeId, {laps: settings.overrideLaps, eventSubgroupId: 0, distance: settings.overrideDistance})
+                } else {
+                    await elProfile.setRoute(+routeId);
+                }
+                //debugger                
             } else {
                 elProfile.setRoad(+road || 0);
             }
@@ -278,7 +292,10 @@ export async function main() {
                         //changed.has('pinColor') ||
                         changed.has('showSegmentFinish') ||
                         changed.has('minSegmentLength') ||
-                        changed.has('fontScale')
+                        changed.has('fontScale')||
+                        changed.has('overrideDistance') ||
+                        changed.has('overrideLaps') ||
+                        changed.has('yAxisMin')
                     )
                 {
                     //console.log(changed);
