@@ -145,12 +145,17 @@
                 <hr/>
                 <label>
                     <key>Override distance (meters):</key>
-                    <input type="number" name="overrideDistance" min="100" max="100000" step="100" style="--size: 8"/>
+                    <input type="number" name="overrideDistance" min="0" max="100000" step="100" style="--size: 8"/>
                 </label>
                 <label>
                     <key>Override laps:</key>
-                    <input type="number" name="overrideLaps" min="1" max="50" step="1" style="--size: 6"/>
+                    <input type="number" name="overrideLaps" min="0" max="50" step="1" style="--size: 6"/>
                 </label>
+                <label title="Y-Axis minimum - affects the scaling on low/medium elevation routes">
+                    <key data-added="2023-01-20">Y-Axis minimum</key>
+                    <input type="range" name="yAxisMin" min="10" max="200" step="10"/>
+                    <input type="number" name="yAxisMin" min="10" max="200" step="10" style="--size: 5"/>
+                </label> 
 
                 
             </form>
