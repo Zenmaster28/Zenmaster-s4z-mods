@@ -4,7 +4,7 @@
     "description": "Arend's Mod Collection for S4Z",
     "author": "Arend teRaa",
     "website_url": "https://saucellc.io",
-    "version": "1.0.9",
+    "version": "1.0.10",
     "content_js": [
         
     ],
@@ -107,6 +107,21 @@
             "file": "pages/segment-results.html",
             "id": "Segment results",
             "name": "Segment results",
+            "description": "Show FTS or FAL results for the segments on a route.",
+            "always_visible": true,
+            "overlay": true,
+            "frame": false,
+            "default_bounds": {
+                "width": 300,
+                "height": 500,
+                "x": -300,
+                "y": 100
+            }
+        },        
+        {
+            "file": "pages/segment-results-all.html",
+            "id": "Segment results multilap",
+            "name": "Segment results Multilap",
             "description": "Show FTS or FAL results for the segments on a route.",
             "always_visible": true,
             "overlay": true,
