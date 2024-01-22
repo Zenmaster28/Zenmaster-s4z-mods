@@ -17,7 +17,7 @@ async function processWatching(watching) {
     if ((!routeInfo || watching.state.routeId != routeInfo.routeFullData.id) && !inProgress)
     {
         console.log("Getting segments on route")
-        debugger
+        //debugger
         inProgress = true;        
         if (watching.state.eventSubgroupId != 0) 
         {
@@ -34,7 +34,7 @@ async function processWatching(watching) {
             routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId) 
         }
         console.log(routeInfo)   
-        debugger
+        //debugger
         inProgress = false;
     }
     else {
