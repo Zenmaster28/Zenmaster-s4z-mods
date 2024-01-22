@@ -269,12 +269,7 @@ export class SauceElevationProfile {
         routeElevations = segmentsOnRoute.routeFullData.elevations;
         routeGrades = segmentsOnRoute.routeFullData.grades;
         if (this.showSegmentStart)
-        {
-            //await this.getSegmentsOnRoute(id);
-            console.log("Getting segments")   
-            //debugger           
-            //let segmentsOnRoute = await zen.getSegmentsOnRoute(this.courseId, this.routeId, eventSubgroupId)
-            
+        {   
             for (let segment of segmentsOnRoute.segments) {
                 routeSegments.push(segment)
             }
@@ -310,12 +305,11 @@ export class SauceElevationProfile {
                     });
                 }
             }
-            //debugger
+            
         }
         this._eventSubgroupId = eventSubgroupId;
         this._roadSigs = new Set();
-        this.curvePath = null;
-        //let missingLeadinCheck = missingLeadinRoutes.filter(x => x.id == id)                
+        this.curvePath = null;        
         this.route = await zen.getModifiedRoute(id);
         for (const {roadId, reverse} of this.route.manifest) {
             this._roadSigs.add(`${roadId}-${!!reverse}`);
@@ -323,8 +317,7 @@ export class SauceElevationProfile {
         this.curvePath = this.route.curvePath.slice();
         const distances = Array.from(this.route.distances);
         const elevations = Array.from(this.route.elevations);
-        const grades = Array.from(this.route.grades);
-        //const markLines = [];
+        const grades = Array.from(this.route.grades);        
         const markAreas = [];
         const notLeadin = this.route.manifest.findIndex(x => !x.leadin);
         const lapStartIdx = notLeadin === -1 ? 0 : this.curvePath.nodes.findIndex(x => x.index === notLeadin);        
@@ -342,85 +335,12 @@ export class SauceElevationProfile {
         } else {
             this._routeLeadinDistance = 0;
         }
-        /*
-        if (this.showSegmentStart)
-        {
-            let lapSegments = routeSegments.filter(x => x.lap == 1) // ugh
-            
-            for (let segment of lapSegments)
-            {                
-                //let lineIndex = segment.bounds.curvePathIndex + segment.bounds.originIndex;
-                let percentOffset;
-                let boundsLineIndex = segment.bounds.curvePathIndex + segment.bounds.originIndex;
-                segment.reverse ? percentOffset = (1 - segment.bounds.percent) : percentOffset = segment.bounds.percent;
-                let indexOffset = (distances[boundsLineIndex + 1] - distances[boundsLineIndex]) * percentOffset;
-                let markLineIndex = distances[boundsLineIndex] + indexOffset
-                //if (!isNaN(markLineIndex)) {               
-                    //allMarkLines.push({name: segment.name, markLine: markLineIndex, id: segment.id, repeat: segment.repeat})
-                    //if (isNaN(markLineIndex)) { debugger}
-                    //comment out marklines
-                    
-                    markLines.push({
-                        xAxis: markLineIndex,
-                        lineStyle: {width: this.lineSize, type: this.lineType},
-                        label: {
-                            distance: 7,
-                            position: 'insideEndTop',                    
-                            formatter: segment.name
-                        }
-                    });
-                    
-                //}
-            }            
-        }
-        let lapSegments = routeSegments.filter(x => x.lap == 1) // ugh
-        for (let segment of lapSegments)
-        {
         
-            let percentOffset;
-            let boundsLineIndex = segment.boundsFinish.curvePathIndex + segment.boundsFinish.originIndex;
-            segment.reverse ? percentOffset = (1 - segment.boundsFinish.percent) : percentOffset = segment.boundsFinish.percent;
-            let indexOffset;
-            if (boundsLineIndex < this.route.distances.length - 1)
-            {
-                indexOffset = (distances[boundsLineIndex + 1] - distances[boundsLineIndex]) * percentOffset
-            }
-            else
-            {
-                indexOffset = 0;
-            }
-            let markLineIndex = distances[boundsLineIndex] + indexOffset
-            if (!isNaN(markLineIndex)) {   
-                //allMarkLines.push({name: segment.name + " Finish", markLine: markLineIndex, id: segment.id, repeat: segment.repeat}) 
-            }
-            if (this.lineTypeFinish.includes("["))
-            {
-            this.lineTypeFinish = JSON.parse("[" + this.lineTypeFinish + "]")[0];
-            }               
-            
-            if (this.showSegmentFinish && (segment.distance > this.minSegmentLength && !segment.name.toLowerCase().includes("loop")) && !isNaN(markLineIndex))
-            {        
-                markLines.push({
-                    xAxis: markLineIndex,
-                    lineStyle: {
-                        width: this.lineSize,
-                        type: this.lineTypeFinish
-                    }, 
-                    label: {
-                        show: true,                            
-                        formatter: '|||'
-                    }
-                });
-            }
-            
-        }
-        */
         const lapDistance = distances.at(-1) - distances[lapStartIdx];
         if (distance) {
             laps = this.route.supportedLaps ? Infinity : 1;            
         }
-        for (let lap = 1; lap < laps; lap++) {
-            //console.log("processing lap " + (lap + 1))
+        for (let lap = 1; lap < laps; lap++) {            
             this.curvePath.extend(this.route.curvePath.slice(lapStartIdx));
             for (let i = lapStartIdx; i < this.route.distances.length; i++) {
                 distances.push(distances.at(-1) +
@@ -440,82 +360,10 @@ export class SauceElevationProfile {
                     }
                 });
             }
-            /*
-            if (this.showSegmentStart)
-            {                
-                let lapSegments = routeSegments.filter(x => x.lap == lap + 1)
-                console.log(lapSegments)                
-                for (let segment of lapSegments)
-                {                    
-                    if (segment.leadin)
-                    {
-                        continue;
-                    }                                   
-                    let percentOffset;
-                    let boundsLineIndex = segment.bounds.curvePathIndex + segment.bounds.originIndex;
-                    segment.reverse ? percentOffset = (1 - segment.bounds.percent) : percentOffset = segment.bounds.percent;
-                    let indexOffset = (distances[boundsLineIndex + 1] - distances[boundsLineIndex]) * percentOffset;
-                    let markLineIndex = (lapDistance * lap) + distances[boundsLineIndex] + indexOffset; 
-                    //debugger 
-                     
-                    if (!isNaN(markLineIndex)) {                    
-                        //allMarkLines.push({name: segment.name, markLine: markLineIndex, id: segment.id, repeat: segment.repeat})                
-                        markLines.push({
-                            xAxis: markLineIndex,
-                            lineStyle: {width: this.lineSize, type: this.lineType},
-                            label: {
-                                distance: 7,
-                                position: 'insideEndTop',                    
-                                formatter: segment.name
-                            }
-                        });
-                    }
-                    
-                }
-            } 
-            */ 
-                /*
-                let lapSegments = routeSegments.filter(x => x.lap == lap + 1)
-                for (let segment of lapSegments)
-                {                     
-                    let percentOffset;
-                    let boundsLineIndex = segment.boundsFinish.curvePathIndex + segment.boundsFinish.originIndex;
-                    segment.reverse ? percentOffset = (1 - segment.boundsFinish.percent) : percentOffset = segment.boundsFinish.percent;
-                    let indexOffset;
-                    if (boundsLineIndex < this.route.distances.length - 1)
-                    {
-                        indexOffset = (distances[boundsLineIndex + 1] - distances[boundsLineIndex]) * percentOffset
-                    }
-                    else
-                    {
-                        indexOffset = 0;
-                    }
-                    let markLineIndex = (lapDistance * lap) + distances[boundsLineIndex] + indexOffset
-                    //console.log("markLineIndex is: " + markLineIndex + " and indexOffset is: " + indexOffset + " for segment: " + segment.name)
-                    if (!isNaN(markLineIndex)) {   
-                        //allMarkLines.push({name: segment.name + " Finish", markLine: markLineIndex, id: segment.id, repeat: segment.repeat}) 
-                    }
-                    //segment.boundsFinish.markLines.push(lapDistance * lap + distances[lineIndex]); 
-                    //allMarkLines.push({name: segment.name + " Finish", markLine: lapDistance * lap + distances[lineIndex]})  
-                    
-                    if (this.showSegmentFinish && (segment.distance > this.minSegmentLength && !segment.name.toLowerCase().includes("loop")) && !isNaN(markLineIndex))
-                    {  
-                        markLines.push({
-                            xAxis: markLineIndex,
-                            lineStyle: {width: this.lineSize, type: this.lineTypeFinish},
-                            label: {
-                                show: true,                            
-                                formatter: '|||'
-                            }
-                        });
-                    }
-                    
-                
-                }
-                */
-                if (distance && distances[distances.length - 1] >= distance + 200) {
-                    break;
-                }
+            
+            if (distance && distances[distances.length - 1] >= distance + 200) {
+                break;
+            }
             }          
             if (distance) {
                 while (distances[distances.length - 1] > distance + 200) {
@@ -525,15 +373,14 @@ export class SauceElevationProfile {
                 }
             }
             
-        //debugger
+        
         if (this.routeOffset)
             {
-                let offsetIdx = distances.findIndex(x => x > this.customDistance - this.routeOffset)
-                //cdIdx = cdIdx + 2; // show a little more than the expected distance
+                let offsetIdx = distances.findIndex(x => x > this.customDistance - this.routeOffset)                
                 console.log("offset index: " + offsetIdx + " offset distance: " + (this.customDistance - this.routeOffset))
                 let xDist = (this.customDistance - this.routeOffset).toFixed(0);
                 this.customFinishLine = xDist;
-                //debugger
+                
                 markLines.push({
                     xAxis: xDist,
                     lineStyle: {width: this.lineSize, type: this.lineTypeFinish},
@@ -551,15 +398,15 @@ export class SauceElevationProfile {
                 
                 allMarkLines = allMarkLines.filter(x => x.markLine < distances.at(-1))
             }
-            //console.log(customMarklines)
+            
         allMarkLines.sort((a, b) => {
             return a.markLine - b.markLine;
         });
-        //debugger
-        console.log(allMarkLines)
-        console.log(routeSegments)
-        console.log(distances)
-        console.log(routeDistances)
+        
+        //console.log(allMarkLines)
+        //console.log(routeSegments)
+        //console.log(distances)
+        //console.log(routeDistances)
         //this.setData(distances, elevations, grades, {markLines, markAreas});
         this.setData(routeDistances, routeElevations, routeGrades, {markLines, markAreas});
         return this.route;
@@ -626,7 +473,7 @@ export class SauceElevationProfile {
                 data: distances.map((x, i) => [x, elevations[i], grades[i] * (options.reverse ? -1 : 1)]),
             }]
         });
-        //debugger
+        
     }
 
     findNodesIndex(roadSegmentData, origin, next, reverse, startIndex) {
@@ -678,14 +525,14 @@ export class SauceElevationProfile {
         for (let i = 0; i < routeDataToSearch.length; i++) {            
             const currentNode = routeDataToSearch[i];
             const nextNode = routeDataToSearch[i + 1];
-            //debugger;
+            ;
             if (
                 this.compareProperties(currentNode.end, origin.end) &&            
                 this.compareProperties(currentNode.cp1, origin.cp1) &&
                 this.compareProperties(currentNode.cp2, origin.cp2)
             ) {
                 console.log("Matched origin")
-                //debugger;
+                ;
                 if (                    
                     this.compareProperties(nextNode.end, next.end) &&            
                     this.compareProperties(nextNode.cp1, next.cp1) &&
@@ -709,30 +556,13 @@ export class SauceElevationProfile {
         }
       
         return Object.keys(obj1).every((key) => obj2.hasOwnProperty(key) && obj1[key] === obj2[key]);
-    }
-
-    XgetNextSegment(arr, number) {
-        // Sort the array based on the roadindex property
-        if (arr.length == 0) {
-            return -1;
-        }
-        arr.sort((a, b) => a.markLine - b.markLine);
-    
-        // Find the first object with a roadindex greater than the given number
-        for (let i = 0; i < arr.length; i++) {
-            if (arr[i].markLine > number) {
-                return arr[i];
-            }
-        }
-        
-        return -1;
-    }
+    }    
       
     async getPpRoute() {
         const groups = await common.rpc.getGroupsData();
         let watchingIndex;
         let groupAthletes;
-        //debugger
+        
         for (let  i = 0; i < groups.length; i++) {
             if (groups[i].watching === true) {
                 watchingIndex = i;
@@ -747,117 +577,7 @@ export class SauceElevationProfile {
         } 
         return false;
     }
-
-    async XgetSegmentsOnRoute() {        
-        routeSegments.length = 0;
-        allMarkLines.length = 0;
-        let foundSegmentStart = false;
-        let foundSegmentEnd = false;
-        let includeSegment = false;
-        let ignoreSegment = false;        
-        let curvePathIndex = 0;
-        let worldSegments = await common.rpc.getSegments(this.courseId)
-        let missingLeadinCheck = missingLeadinRoutes.filter(x => x.id == this.routeId)
-        let routeFullData;
-        //debugger  
-        let routeInfo = await zen.processRoute(this.courseId, this.routeId);      
-        //debugger
-        //routeFullData = await zen.getModifiedRoute(this.routeId);        
-        routeFullData = routeInfo.routeFullData;
-        console.log(routeFullData)               ;
-        let zwiftSegmentsRequireStartEnd = await fetch("data/segRequireStartEnd.json").then((response) => response.json());        
-        //let allRoutes = await common.rpc.getRoutes();
-        for (let roadIndex in routeFullData.roadSegments)
-        {
-            let thisRoad = routeFullData.roadSegments[roadIndex];     
-            
-            if (typeof thisRoad.reverse === 'undefined')
-            {
-                thisRoad.reverse = false;            
-            }        
-            //console.log("Road segment: " + roadIndex + " roadId: " + thisRoad.roadId + " direction: " + thisRoad.reverse);       
-            let segmentsOnRoad = worldSegments.filter(x => (x.roadId == thisRoad.roadId));
-            if (segmentsOnRoad.length > 0)
-            {
-                for (let segment of segmentsOnRoad)
-                {             
-                    ignoreSegment = false;
-                    if (segment.roadStart == null || segment.reverse != thisRoad.reverse) //ignore segments with no start and segment direction and road must match
-                    {                        
-                        ignoreSegment = true;
-                    }   
-                    if (!this.showLoopSegments && (
-                                segment.roadStart == segment.roadFinish ||                        
-                                segment.name.toLowerCase().includes("loop")
-                            )
-                        )
-                    {
-                        ignoreSegment = true;
-                    }
-                    includeSegment = false;
-                    foundSegmentStart = thisRoad.includesRoadPercent(segment.roadStart);  
-                    foundSegmentEnd = thisRoad.includesRoadPercent(segment.roadFinish);
-                    //foundSegmentStart ? console.log("roadSegment " +  roadIndex + " goes through the start of " + segment.name) : "";
-                    //foundSegmentEnd ? console.log("roadSegment " +  roadIndex + " goes through the end of " + segment.name) : "";
-                    //debugger
-                    if (zwiftSegmentsRequireStartEnd.includes(segment.id))
-                    {
-                        if (foundSegmentStart && foundSegmentEnd)
-                        {
-                            
-                            includeSegment = true;                            
-                        } 
-                    }
-                    else if (foundSegmentStart || foundSegmentEnd)
-                    {
-                        includeSegment = true;
-                    }                    
-                    if (includeSegment && !ignoreSegment)
-                    {                        
-                        let newSegment = {...segment}
-                        newSegment.bounds = thisRoad.boundsAtRoadPercent(segment.roadStart);
-                        newSegment.bounds.curvePathIndex = curvePathIndex;
-                        newSegment.bounds.roadSegment = parseInt(roadIndex);
-                        newSegment.boundsFinish = thisRoad.boundsAtRoadPercent(segment.roadFinish);
-                        newSegment.boundsFinish.curvePathIndex = curvePathIndex;
-                        newSegment.boundsFinish.roadSegment = parseInt(roadIndex);
-                        newSegment.leadin = thisRoad.leadin ?? false;                        
-                        let originIndex = this.findNodesIndex(thisRoad, newSegment.bounds.origin, newSegment.bounds.next, thisRoad.reverse, curvePathIndex); 
-                        let originFinishIndex = this.findNodesIndex(thisRoad, newSegment.boundsFinish.origin, newSegment.boundsFinish.next, thisRoad.reverse, curvePathIndex); 
-                        newSegment.bounds.originIndex = originIndex; 
-                        newSegment.boundsFinish.originIndex = originFinishIndex;
-                        //console.log("Segment: " + newSegment.name + " has originIndex of: " + originIndex)                   
-                        //console.log("Segment: " + newSegment.name + " has originFinishIndex of: " + originFinishIndex)
-                        newSegment.bounds.markLines = [];
-                        newSegment.boundsFinish.markLines = [];                                               
-                        //only include segment if it matches on the roadSegment data (not -1) and also avoid double matches by checking if the last roadsegment matched the same segment
-                        // happens when roadsegments end and start at a banner on the leadin (like Fuego Flats)                        
-                        if (originIndex != -1 && (
-                                routeSegments.length == 0 || 
-                                (newSegment.bounds.roadSegment - 1 != routeSegments[routeSegments.length - 1].bounds.roadSegment ||
-                                    newSegment.name != routeSegments[routeSegments.length - 1].name
-                                )
-                            ))
-                        {                            
-                            routeSegments.push(newSegment);
-                        }
-                        else if (originIndex = -1 && foundSegmentEnd && (routeSegments.length == 0 || newSegment.bounds.roadSegment - 1 != routeSegments[routeSegments.length - 1].bounds.roadSegment)) // didn't match the start of the segment but found the end AND it's not on the list of segments requiring the start and end.  We must be in Scotland....
-                        {
-                            //debugger
-                            routeSegments.push(newSegment);
-                        }
-                    }
-                    else
-                    {
-                        //console.log("Not including segment: " + segment.name + " due to includeSegment: " + includeSegment + " and/or ignoreSegment: " + ignoreSegment)
-                    }
-                }
-            }
-            curvePathIndex += thisRoad.nodes.length;
-        }
-        //debugger
-        console.log(routeSegments)        
-    }
+    
 
     async renderAthleteStates(states, force) {
         if (this.watchingId == null || this._busy) {
@@ -885,9 +605,9 @@ export class SauceElevationProfile {
                     this.routeOverrideTS = Date.now();
                     this.routeOverride = await this.getPpRoute();
                 }
-                //debugger
+                
                 if (watching.routeId || this.routeOverride) {
-                    //debugger
+                    
                     if (watching.routeId) {
                         this.routeOverride = false;
                     } 
@@ -896,7 +616,7 @@ export class SauceElevationProfile {
                         await this.setRoute(this.routeOverride);
                     } else if (this.routeId !== watching.routeId ||
                         (this._eventSubgroupId || null) !== (watching.eventSubgroupId || null)) {
-                            //debugger
+                            
                         if (!this.routeOverride) {
                             let sg;
                             if (watching.eventSubgroupId) {
@@ -908,7 +628,7 @@ export class SauceElevationProfile {
                             this.deltas.length = 0;  // reset the delta averages 
                             this.routeOffset = 0;
                             this.lapCounter = 0;  
-                            //debugger  
+                              
                             if (this.overrideDistance > 0 || this.overrideLaps > 0) {
                                 console.log("overridedistance: " + this.overrideDistance + " overridelaps: " + this.overrideLaps)
                                 await this.setRoute(watching.routeId, {laps: this.overrideLaps, eventSubgroupId: watching.eventSubgroupId, distance: this.overrideDistance})
@@ -931,14 +651,14 @@ export class SauceElevationProfile {
                             if (this.chart.getOption().series[0].markLine.data) {
                                 chartMarkLines = this.chart.getOption().series[0].markLine.data
                             }
-                            //debugger
+                            
                             if (chartMarkLines.length > 0) {
                                 console.log("Updating lap marker");                                
                                 //let lapLabel = chartMarkLines.filter(x => x.label.formatter.indexOf("LAP") > -1)
                                 let lapLabel = chartMarkLines.filter(function(line) {
                                     return line.type != "max" && line.label.formatter.slice(0,3) == "LAP"                                        
                                 })
-                                //debugger
+                                
                                 if (lapLabel.length == 1) {
                                     let lapDisplay;
                                     watching.laps > 0 ? lapDisplay = watching.laps : lapDisplay = "";
@@ -1161,7 +881,7 @@ export class SauceElevationProfile {
                         }
                         if (this.setAthleteSegmentData)
                         {
-                            //debugger
+                            
                             nextSegment.markLine - xCoord > 1000 ? distanceToGo = ((nextSegment.markLine - xCoord) / 1000).toFixed(2) : distanceToGo = (nextSegment.markLine - xCoord).toFixed(0);
                             nextSegment.markLine - xCoord > 1000 ? distanceToGoUnits = "km" : distanceToGoUnits = "m";
                             nextSegment.markLine - xCoord > 1000 ? this.refresh = 1000 : this.refresh = 200;
@@ -1182,7 +902,7 @@ export class SauceElevationProfile {
                                     }
                                 }
                             }
-                            //debugger
+                            
                             //console.log("updating athlete, refresh rate: " + this.refresh)
                             common.rpc.updateAthleteData(this.watchingId, athleteSegmentData)
                         }  
