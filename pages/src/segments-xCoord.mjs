@@ -82,6 +82,7 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
                 return a.roadStart - b.roadStart;
             })
             for (let segment of segments) {
+                segment.id == "1065262910" ? segment.id = "18245132094" : ""; // workaround for weird Leg Snapper segmentId
                 //if (segment.roadId == 9) {debugger}
                 if (segment.id != routeSegments[routeSegments.length - 1].id || (rsIdx - 1 != routeSegments[routeSegments.length - 1].roadSegmentIndex)) {
                     // make sure we didn't match this same segment on the last roadSegment as it would be a duplicate (probably Fuego Flats)
@@ -97,6 +98,7 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
             }          
         } else if (segments.length > 0) {
             for (let segment of segments) {
+                segment.id == "1065262910" ? segment.id = "18245132094" : ""; // workaround for weird Leg Snapper segmentId
                 if (!includeLoops && (segment.name.toLowerCase().includes("loop") || (segment.archId == null))) {
                     //don't include loops if not specified
                 } else {
