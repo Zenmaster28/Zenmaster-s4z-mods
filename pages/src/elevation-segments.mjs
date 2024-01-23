@@ -887,14 +887,30 @@ export class SauceElevationProfile {
                             nextSegment.markLine - xCoord > 1000 ? this.refresh = 1000 : this.refresh = 200;
                             nextSegment == -1 ? this.refresh = 1000 : "";
                             const routeSegments = allMarkLines;
-                            
+                            let nextSegmentName;
+                            let nextSegmentDistanceToGo;
+                            if (nextSegment.name) {
+                                nextSegmentName = nextSegment.name;
+                                nextSegmentDistanceToGo = parseFloat(distanceToGo);
+                            } else {
+                                nextSegmentName = "Finish";
+                                if ((this.route.distances.at(-1) - xCoord) > 1000) {
+                                    nextSegmentDistanceToGo = ((this.route.distances.at(-1) - xCoord) / 1000).toFixed(2)
+                                    distanceToGoUnits = "km"
+                                } else {
+                                    nextSegmentDistanceToGo = (this.route.distances.at(-1) - xCoord).toFixed(2)
+                                    distanceToGoUnits = "m"
+                                }
+                                
+                            }
+                            //debugger
                             const athleteSegmentData = {
                                 segmentData: {
                                     currentPosition: xCoord,
                                     routeSegments: routeSegments,
                                     nextSegment: {
-                                        name: nextSegment.name,
-                                        distanceToGo: parseFloat(distanceToGo),
+                                        name: nextSegmentName,
+                                        distanceToGo: nextSegmentDistanceToGo,
                                         distanceToGoUnits: distanceToGoUnits,
                                         id: nextSegment.id,
                                         repeat: nextSegment.repeat,
