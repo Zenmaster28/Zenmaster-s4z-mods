@@ -84,7 +84,11 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
             for (let segment of segments) {
                 
                 //if (segment.roadId == 9) {debugger}
-                if (segment.id != routeSegments[routeSegments.length - 1].id || (rsIdx - 1 != routeSegments[routeSegments.length - 1].roadSegmentIndex)) {
+                if (segment.id != routeSegments[routeSegments.length - 1].id ||
+                    (rsIdx - 1 != routeSegments[routeSegments.length - 1].roadSegmentIndex) ||
+                    ((routeSegments[routeSegments.length - 1].matchedStart && routeSegments[routeSegments.length - 1].matchedEnd) &&
+                    (segment.matchedStart && segment.matchedEnd))
+                    ) {
                     // make sure we didn't match this same segment on the last roadSegment as it would be a duplicate (probably Fuego Flats)
                     if (!includeLoops && (segment.name.toLowerCase().includes("loop") || (segment.archId == null) || segment.roadStart == segment.roadFinish)) {
                         //don't include loops if not specified
@@ -178,6 +182,8 @@ function findSegmentsOnRoadSection(thisRoad, cpIndex, rsIdx) {
                 newSegment.bounds.markLines = [];
                 newSegment.boundsFinish.markLines = [];
                 newSegment.lap = thisRoad.lap;
+                newSegment.matchedStart = foundSegmentStart;
+                newSegment.matchedEnd = foundSegmentEnd;
                 let segmentRepeats = routeSegments.filter(x => x.id == newSegment.id)
                 if (segmentRepeats.length > 0) {
                     // found a repeated segment
