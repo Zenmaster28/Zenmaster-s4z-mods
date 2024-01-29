@@ -989,7 +989,7 @@ export class SauceElevationProfile {
                             
                             //debugger
                             if (this.deltas.length <= 10 ||
-                                ((this.deltas.length >= 10 && distDelta < (deltaAvg * 2) && isBetween((Math.abs(deltaAvg) - Math.abs(distDelta)), -10, 10)) ||
+                                ((this.deltas.length >= 10 && distDelta < (deltaAvg * 2) && isBetween((Math.abs(deltaAvg) - Math.abs(distDelta)), -50, 50)) ||
                                 isNaN(deltaAvg))
                                 ) // make sure the computed distDelta isn't way different than average due to a misplaced pin
                             {
@@ -1005,7 +1005,7 @@ export class SauceElevationProfile {
                                 }
                                 //console.log("deltas is " + this.deltas.reduce((a, b) => a + b, 0) / this.deltas.length);
                             } else {
-                                console.log("Ignoring distDelta " + distDelta + " that is more than double the avg " + deltaAvg)
+                                console.log("Ignoring distDelta " + distDelta + " that is more than double the avg " + deltaAvg + " or distDelta deviates from the avg by > 50")
                                 //console.log("deltaAvg is: " + deltaAvg + " distDelta is: " + distDelta )
                                 this.deltaIgnoreCount++
                                 if (this.deltaIgnoreCount > 10) {
