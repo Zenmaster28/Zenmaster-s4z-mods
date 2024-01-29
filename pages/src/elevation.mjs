@@ -161,7 +161,7 @@ async function initialize() {
         } finally {
             //elProfile.decPause();
         }
-        if (elProfile) {
+        if (elProfile) {                       
             await elProfile.renderAthleteStates([ad.state]);
         }
     }
@@ -241,6 +241,17 @@ export async function main() {
             }
         });
         common.subscribe('athlete/watching', ad => {
+            //fieldRenderer.fps = 5;
+            if (ad.segmentData.nextSegment.distanceToGo) {
+                
+                if (ad.segmentData.nextSegment.distanceToGoUnits == "m" && fieldRenderer.fps != 5) {
+                    console.log("fps set to 5")
+                    fieldRenderer.fps = 5;
+                } else if (ad.segmentData.nextSegment.distanceToGoUnits == "km" && fieldRenderer.fps != 1) {
+                    console.log("fps set to 1")
+                    fieldRenderer.fps = 1;
+                }
+            }
             fieldRenderer.setData(ad);
             fieldRenderer.render();                       
         });
@@ -257,7 +268,7 @@ export async function main() {
             }
             watchdog = performance.now();
             //elProfile.renderAthleteStates(states);
-            if (elProfile) {                        
+            if (elProfile) {                                      
                 elProfile.renderAthleteStates(states);
             }
         });
