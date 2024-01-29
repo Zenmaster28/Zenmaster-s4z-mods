@@ -4,9 +4,9 @@
     "description": "Arend's Mod Collection for S4Z",
     "author": "Arend teRaa",
     "website_url": "https://saucellc.io",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "content_js": [
-        
+        "pages/src/data-fields.js"
     ],
     "content_css": [
         
