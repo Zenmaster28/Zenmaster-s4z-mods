@@ -202,7 +202,7 @@ function getSegmentStatus(arr, number, nextSegmentThreshold) {
     {                
         segmentStatus.status = "Departing";
     } else {   
-        console.log("other other")               
+        //console.log("other other")               
         segmentStatus.status = "other";
     }    
     return segmentStatus;
@@ -270,12 +270,12 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching) {
          }         
         if (segmentBests.length == 0 && !noPB)
         {        
-            console.log("Getting PB")                
+            //console.log("Getting PB")                
             segmentBests = await getSegmentBests(activeSegment, watching.athleteId) ?? []; // only get segment bests once per Approach  
-            console.log(segmentBests)            
+            //console.log(segmentBests)            
             if (segmentBests.length == 0)
             {                
-                console.log("No PB found")
+                //console.log("No PB found")
                 noPB = true;
             }             
         }
@@ -300,8 +300,8 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching) {
             let startTime = Date.now() - (watching.state.time * 1000);
             let segmentResultsSinceStart = segmentResults.filter(x => x.ts > startTime);
             //debugger
-            console.log("There have been " + segmentResultsSinceStart.length + " results since " + tsToTime(startTime))
-            console.log(segmentResultsSinceStart);
+            //console.log("There have been " + segmentResultsSinceStart.length + " results since " + tsToTime(startTime))
+            //console.log(segmentResultsSinceStart);
             for (let racer of allKnownRacers) {
                 let racerResults = segmentResultsSinceStart.filter(x => x.athleteId == racer);
 
@@ -316,15 +316,15 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching) {
                         let resultCheck = eventResults.find(x => x.id == repeatResult.id)
                         if (!resultCheck) {
                             eventResults.push(repeatResult)
-                            console.log("Adding result to eventResults")
+                            //console.log("Adding result to eventResults")
                         } else {
-                            console.log("Skipping result already logged")
+                            //console.log("Skipping result already logged")
                         }
                     }
                 }
             }
             //debugger
-            console.log(eventResults)
+            //console.log(eventResults)
         }
         let segmentName = activeSegmentName.replace(" Finish","")        
         let inEvent = false;  
@@ -356,7 +356,7 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching) {
     if (segTimer == 0)
     {
         segTimer = setInterval(segmentTimer,1000);
-        console.log(segTimer)
+        //console.log(segTimer)
     }
     activeSegment = routeSegments[segIdx].id;
     activeSegmentName = routeSegments[segIdx].name;
@@ -401,8 +401,8 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching) {
             let startTime = Date.now() - (watching.state.time * 1000);
             let segmentResultsSinceStart = segmentResults.filter(x => x.ts > startTime);
             //debugger
-            console.log("There have been " + segmentResultsSinceStart.length + " results since " + tsToTime(startTime))
-            console.log(segmentResultsSinceStart);
+            //console.log("There have been " + segmentResultsSinceStart.length + " results since " + tsToTime(startTime))
+            //console.log(segmentResultsSinceStart);
             for (let racer of allKnownRacers) {
                 let racerResults = segmentResultsSinceStart.filter(x => x.athleteId == racer);
 
@@ -417,14 +417,14 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching) {
                         let resultCheck = eventResults.find(x => x.id == repeatResult.id)
                         if (!resultCheck) {
                             eventResults.push(repeatResult)
-                            console.log("Adding result to eventResults")
+                            //console.log("Adding result to eventResults")
                         } else {
-                            console.log("Skipping result already logged")
+                            //console.log("Skipping result already logged")
                         }
                     }
                 }
             }
-            console.log(eventResults)
+            //console.log(eventResults)
         }     
         let segmentName = activeSegmentName.replace(" Finish","")        
         let inEvent = false;     
@@ -491,8 +491,8 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching) {
             let startTime = Date.now() - (watching.state.time * 1000);
             let segmentResultsSinceStart = segmentResults.filter(x => x.ts > startTime);
             //debugger
-            console.log("There have been " + segmentResultsSinceStart.length + " results since " + tsToTime(startTime))
-            console.log(segmentResultsSinceStart);
+            //console.log("There have been " + segmentResultsSinceStart.length + " results since " + tsToTime(startTime))
+            //console.log(segmentResultsSinceStart);
             for (let racer of allKnownRacers) {
                 let racerResults = segmentResultsSinceStart.filter(x => x.athleteId == racer);
 
@@ -507,14 +507,14 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching) {
                         let resultCheck = eventResults.find(x => x.id == repeatResult.id)
                         if (!resultCheck) {
                             eventResults.push(repeatResult)
-                            console.log("Adding result to eventResults")
+                            //console.log("Adding result to eventResults")
                         } else {
-                            console.log("Skipping result already logged")
+                            //console.log("Skipping result already logged")
                         }
                     }
                 }
             }
-            console.log(eventResults)
+            //console.log(eventResults)
         }        
         let segmentName = activeSegmentName.replace(" Finish","")        
         let inEvent = false;        
@@ -538,7 +538,7 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching) {
         {
             if (segmentBests.length == 0)
             {        
-                console.log("Getting PB")                
+                //console.log("Getting PB")                
                 segmentBests = await getSegmentBests(activeSegment, watching.athleteId); 
                 if (segmentBests.length > 0 ) {
                     segmentBests.sort((a,b) => {
@@ -555,7 +555,7 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching) {
             segmentBests.length > 0 ? lasttime = formatTime(segmentBests[0].elapsed) : lasttime = "---";
             infoRightDiv.innerHTML = "Last: " + lasttime;
             let rank = "---";
-            console.log(settings.FTSorFAL)
+            //console.log(settings.FTSorFAL)
             if (settings.FTSorFAL == "FAL")
             {                
                 eventResults.sort((a, b) => {
@@ -707,7 +707,7 @@ async function getKnownRacers(eventId) {
             }        
         }
     }
-    console.log("Known racer count: " + allKnownRacers.length)
+   //("Known racer count: " + allKnownRacers.length)
 }
 
 async function getSegmentResults(watching) {
@@ -716,7 +716,7 @@ async function getSegmentResults(watching) {
     doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);
     if ((!routeInfo || watching.state.routeId != routeInfo.routeFullData.id) && !inProgress)
     {
-        console.log("Getting segments on route")
+        //console.log("Getting segments on route")
         inProgress = true;        
         if (watching.state.eventSubgroupId != 0) 
         {

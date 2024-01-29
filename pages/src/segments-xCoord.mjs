@@ -96,7 +96,7 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
                         routeSegments.push(segment);
                     }
                 } else {                    
-                    console.log("Skipping duplicate segment match " + segment.name + " on roadSegmentIndex " + rsIdx)
+                    //console.log("Skipping duplicate segment match " + segment.name + " on roadSegmentIndex " + rsIdx)
                     //debugger
                 } 
             }          
@@ -284,7 +284,7 @@ export async function getSegmentsOnRoute(courseId, routeId, eventSubgroupId) {
                 //customDistance = customDistance - routeFullData.leadinDistanceInMeters;
             }
             let cdIdx = routeFullData.distances.findIndex(x => x > customDistance)
-            console.log("Custom Distance: " + customDistance + " at index " + cdIdx)
+            //console.log("Custom Distance: " + customDistance + " at index " + cdIdx)
             routeFullData.distances = routeFullData.distances.slice(0,cdIdx)
             routeFullData.elevations = routeFullData.elevations.slice(0,cdIdx)
             routeFullData.grades = routeFullData.grades.slice(0,cdIdx)
@@ -295,7 +295,7 @@ export async function getSegmentsOnRoute(courseId, routeId, eventSubgroupId) {
             laps = sgInfo.laps;        
         }
     }
-    console.log("Lap count: " + laps)
+    //console.log("Lap count: " + laps)
     const notLeadin = routeFullData.manifest.findIndex(x => !x.leadin); 
     lapStartIdx = notLeadin === -1 ? 0 : routeFullData.curvePath.nodes.findIndex(x => x.index === notLeadin);  
 

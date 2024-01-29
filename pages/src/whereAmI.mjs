@@ -16,7 +16,7 @@ async function processWatching(watching) {
     
     if ((!routeInfo || watching.state.routeId != routeInfo.routeFullData.id) && !inProgress)
     {
-        console.log("Getting segments on route")
+        //console.log("Getting segments on route")
         //debugger
         inProgress = true;        
         if (watching.state.eventSubgroupId != 0) 

@@ -249,12 +249,12 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching) {
          }         
         if (segmentBests.length == 0 && !noPB)
         {        
-            console.log("Getting PB")                
+            //console.log("Getting PB")                
             segmentBests = await getSegmentBests(activeSegment, watching.athleteId) ?? []; // only get segment bests once per Approach  
-            console.log(segmentBests)            
+            //console.log(segmentBests)            
             if (segmentBests.length == 0)
             {                
-                console.log("No PB found")
+                //console.log("No PB found")
                 noPB = true;
             }             
         }
@@ -299,7 +299,7 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching) {
     if (segTimer == 0)
     {
         segTimer = setInterval(segmentTimer,1000);
-        console.log(segTimer)
+        //console.log(segTimer)
     }
     activeSegment = routeSegments[segIdx].id;
     activeSegmentName = routeSegments[segIdx].name;
@@ -408,7 +408,7 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching) {
         {
             if (segmentBests.length == 0)
             {        
-                console.log("Getting PB")                
+                //console.log("Getting PB")                
                 segmentBests = await getSegmentBests(activeSegment, watching.athleteId); 
                 if (segmentBests.length > 0 ) {
                     segmentBests.sort((a,b) => {
@@ -628,7 +628,7 @@ export async function main() {
     
     common.subscribe('athlete/watching', getSegmentResults);    
     common.subscribe('watching-athlete-change', async athleteId => {
-        console.log("Watching athlete changed")        
+        //console.log("Watching athlete changed")        
         if (segTimer != null)
         {
             clearInterval(segTimer);

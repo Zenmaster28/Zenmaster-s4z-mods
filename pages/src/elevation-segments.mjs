@@ -661,7 +661,7 @@ export class SauceElevationProfile {
                             }
                             
                             if (chartMarkLines.length > 0) {
-                                console.log("Updating lap marker");                                
+                                //console.log("Updating lap marker");                                
                                 //let lapLabel = chartMarkLines.filter(x => x.label.formatter.indexOf("LAP") > -1)
                                 let lapLabel = chartMarkLines.filter(function(line) {
                                     return line.type != "max" && line.label.formatter.slice(0,3) == "LAP"                                        
@@ -745,7 +745,7 @@ export class SauceElevationProfile {
             //debugger
             const stateWatching = x.state.athleteId === this.watchingId;                                        
             if (!this._roadSigs.has(sig) && stateWatching) {
-                console.log("We are on a road (" + sig + ") that isn't included in the route manifest")
+                //console.log("We are on a road (" + sig + ") that isn't included in the route manifest")
             }
             return true;
             //debugger
@@ -872,10 +872,10 @@ export class SauceElevationProfile {
                             let routeOffset;
                             if (this.deltas.length > 15) {
                                 routeOffset = this.deltas.reduce((a, b) => a + b, 0) / this.deltas.length;
-                                console.log("Calculated route offset to " + routeOffset)
+                                //console.log("Calculated route offset to " + routeOffset)
                             } else {
                                 routeOffset = 0;
-                                console.log("No route offset found")
+                                //console.log("No route offset found")
                             }
                             if (state.eventDistance > 0) {
                                 xCoord = state.eventDistance - routeOffset;
@@ -886,10 +886,10 @@ export class SauceElevationProfile {
                                 yCoord = this.routeElevations[idxGuess] + (eDelta * idxDelta);
                                 //yCoord = 287.27796358066405; // just a test
                                 xIdx = 0;
-                                console.log("xCoord is " + xCoord + " yCoord is " + yCoord)
+                                //console.log("xCoord is " + xCoord + " yCoord is " + yCoord)
                                 //debugger
                             } else {
-                                console.log("waiting for eventDistance > 0 before setting xCoord")
+                                //console.log("waiting for eventDistance > 0 before setting xCoord")
                                 xCoord = null;
                             }
                         }
@@ -1001,15 +1001,15 @@ export class SauceElevationProfile {
                                         this.deltas.shift();                    
                                     }   
                                 } else {
-                                    console.log("eventdistance " + state.eventDistance + " xCoord " + xCoord + " distdelta " + distDelta )
+                                    //console.log("eventdistance " + state.eventDistance + " xCoord " + xCoord + " distdelta " + distDelta )
                                 }
                                 //console.log("deltas is " + this.deltas.reduce((a, b) => a + b, 0) / this.deltas.length);
                             } else {
-                                console.log("Ignoring distDelta " + distDelta + " that is more than double the avg " + deltaAvg + " or distDelta deviates from the avg by > 50")
+                                //console.log("Ignoring distDelta " + distDelta + " that is more than double the avg " + deltaAvg + " or distDelta deviates from the avg by > 50")
                                 //console.log("deltaAvg is: " + deltaAvg + " distDelta is: " + distDelta )
                                 this.deltaIgnoreCount++
                                 if (this.deltaIgnoreCount > 10) {
-                                    console.log("Something is wrong, resetting deltas")
+                                    //console.log("Something is wrong, resetting deltas")
                                     this.deltaIgnoreCount = 0;
                                     this.deltas.length = 0;
                                 }
