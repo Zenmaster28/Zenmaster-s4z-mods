@@ -212,7 +212,7 @@ export async function main() {
     fieldRenderer.addRotatingFields({
         mapping,
         fields: fields.fields.filter(({id}) => {
-            const type = id.split('-')[0];
+            const type = id.split('-')[0];            
             return ['ev', 'game-laps', 'progress', 'rt', 'el', 'grade', 'altitude'].includes(type);
         })
     });
