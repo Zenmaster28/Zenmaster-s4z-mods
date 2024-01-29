@@ -37,9 +37,15 @@ export class SauceElevationProfile {
         const {fontScale} = common.settingsStore.get();        
         this.fontScale = fontScale;
         this.deltas = [];
+        this.deltaIgnoreCount = 0;
         this.routeOffset = false;
         this.routeOverride = false;
         this.routeOverrideTS = Date.now() - 30000;
+        this.routeDistances = [];
+        this.routeElevations = [];
+        this.routeInfo = [];
+        this.routeGrades = [];
+        this.foundRoute = false;
         this.overrideDistance = overrideDistance;
         this.overrideLaps = overrideLaps;
         this.customDistance = 0;
@@ -260,14 +266,15 @@ export class SauceElevationProfile {
         this.lastRouteId = id;
         this.lapCounter = 0;
         const markLines = [];
-        let routeDistances;
-        let routeElevations;
-        let routeGrades;
+        //let routeDistances;
+        //let routeElevations;
+        //let routeGrades;
         let segmentsOnRoute = await zen.processRoute(this.courseId, this.routeId, laps, distance, this.showLoopSegments)
         console.log(segmentsOnRoute)
-        routeDistances = segmentsOnRoute.routeFullData.distances;            
-        routeElevations = segmentsOnRoute.routeFullData.elevations;
-        routeGrades = segmentsOnRoute.routeFullData.grades;
+        this.routeInfo = segmentsOnRoute;
+        this.routeDistances = Array.from(segmentsOnRoute.routeFullData.distances);            
+        this.routeElevations = Array.from(segmentsOnRoute.routeFullData.elevations);
+        this.routeGrades = Array.from(segmentsOnRoute.routeFullData.grades);        
         if (this.showSegmentStart)
         {   
             for (let segment of segmentsOnRoute.segments) {
@@ -408,7 +415,7 @@ export class SauceElevationProfile {
         //console.log(distances)
         //console.log(routeDistances)
         //this.setData(distances, elevations, grades, {markLines, markAreas});
-        this.setData(routeDistances, routeElevations, routeGrades, {markLines, markAreas});
+        this.setData(this.routeDistances, this.routeElevations, this.routeGrades, {markLines, markAreas});
         return this.route;
     });
 
@@ -592,7 +599,8 @@ export class SauceElevationProfile {
     }
 
     async _renderAthleteStates(states, force) {
-        const watching = states.find(x => x.athleteId === this.watchingId);             
+        const watching = states.find(x => x.athleteId === this.watchingId); 
+               
         if (!watching && (this.courseId == null || (!this.road && !this.route))) {
             return;
         } else if (watching) {
@@ -734,228 +742,310 @@ export class SauceElevationProfile {
         this._lastRender = now;
         const marks = Array.from(this.marks.values()).filter(x => {
             const sig = `${x.state.roadId}-${!!x.state.reverse}`;
+            //debugger
+            const stateWatching = x.state.athleteId === this.watchingId;                                        
+            if (!this._roadSigs.has(sig) && stateWatching) {
+                console.log("We are on a road (" + sig + ") that isn't included in the route manifest")
+            }
+            return true;
+            //debugger
             return this._roadSigs.has(sig);
         });
         const markPointLabelSize = 0.4;
         const deltaY = this._yAxisMax - this._yAxisMin;
-        const nodes = this.curvePath.nodes;
+        const nodes = this.curvePath.nodes; 
+                
         this.chart.setOption({series: [{
             markPoint: {
                 itemStyle: {borderColor: '#222b'},
                 animation: false,
-                data: marks.map(({state}) => {
+                data: marks.map(({state}) => {                                        
                     let roadSeg;
                     let nodeRoadOfft;
                     let deemphasize;
-                    const isWatching = state.athleteId === this.watchingId;                    
-                    if (this.routeId != null) {
-                        if (state.routeId === this.routeId) {
-                            let distance;
-                            if (this._eventSubgroupId != null) {
-                                deemphasize = state.eventSubgroupId !== this._eventSubgroupId;
-                                distance = state.eventDistance;
-                            } else {
-                                // Outside of events state.progress represents the progress of single lap.
-                                // However, if the lap counter is > 0 then the progress % does not include
-                                // leadin.
-                                const floor = state.laps ? this._routeLeadinDistance : 0;
-                                const totDist = this._distances[this._distances.length - 1];
-                                distance = state.progress * (totDist - floor) + floor;
-                            }
-                            const nearIdx = common.binarySearchClosest(this._distances, distance);
-                            const nearRoadSegIdx = nodes[nearIdx].index;
-                            // NOTE: This technique does not work for bots or people who joined a bot.
-                            // I don't know why but progress and eventDistance are completely wrong.
-                            roadSearch:
-                            for (let offt = 0; offt < 12; offt++) {
-                                for (const dir of [1, -1]) {
-                                    const segIdx = nearRoadSegIdx + (offt * dir);
-                                    const s = this.route.roadSegments[segIdx];
-                                    if (s && s.roadId === state.roadId && !!s.reverse === !!state.reverse &&
-                                        s.includesRoadTime(state.roadTime)) {
-                                        roadSeg = s;
-                                        // We found the road segment but need to find the exact node offset
-                                        // to support multi-lap configurations...
-                                        for (let i = nearIdx; i >= 0 && i < nodes.length; i += dir) {
-                                            if (nodes[i].index === segIdx) {
-                                                // Rewind to first node of this segment.
-                                                while (i > 0 && nodes[i - 1].index === segIdx) {
-                                                    i--;
+                    const isWatching = state.athleteId === this.watchingId;
+                    if (isWatching || !this.showOnlyMyPin) {                                       
+                        if (this.routeId != null) {
+                            //console.log("route not null")
+                            if (state.routeId === this.routeId) {
+                                let distance;
+                                if (this._eventSubgroupId != null) {
+                                    deemphasize = state.eventSubgroupId !== this._eventSubgroupId;
+                                    distance = state.eventDistance;
+                                } else {
+                                    // Outside of events state.progress represents the progress of single lap.
+                                    // However, if the lap counter is > 0 then the progress % does not include
+                                    // leadin.
+                                    const floor = state.laps ? this._routeLeadinDistance : 0;
+                                    const totDist = this._distances[this._distances.length - 1];
+                                    distance = state.progress * (totDist - floor) + floor;
+                                }
+                                const nearIdx = common.binarySearchClosest(this._distances, distance);
+                                const nearRoadSegIdx = nodes[nearIdx].index;
+                                // NOTE: This technique does not work for bots or people who joined a bot.
+                                // I don't know why but progress and eventDistance are completely wrong.
+                                
+                                roadSearch:
+                                for (let offt = 0; offt < 12; offt++) {
+                                    for (const dir of [1, -1]) {
+                                        const segIdx = nearRoadSegIdx + (offt * dir);
+                                        const s = this.route.roadSegments[segIdx];
+                                        if (s && s.roadId === state.roadId && !!s.reverse === !!state.reverse &&
+                                            s.includesRoadTime(state.roadTime)) {
+                                            roadSeg = s;
+                                            // We found the road segment but need to find the exact node offset
+                                            // to support multi-lap configurations...
+                                            for (let i = nearIdx; i >= 0 && i < nodes.length; i += dir) {
+                                                if (nodes[i].index === segIdx) {
+                                                    // Rewind to first node of this segment.
+                                                    while (i > 0 && nodes[i - 1].index === segIdx) {
+                                                        i--;
+                                                    }
+                                                    nodeRoadOfft = i;
+                                                    break;
                                                 }
-                                                nodeRoadOfft = i;
-                                                break;
                                             }
+                                            break roadSearch;
                                         }
-                                        break roadSearch;
                                     }
                                 }
                             }
+                            if (!roadSeg) {
+                                // Not on our route but might be nearby..
+                                
+                                const i = this.route.roadSegments.findIndex(x =>
+                                    x.roadId === state.roadId &&
+                                    !!x.reverse === !!state.reverse &&
+                                    x.includesRoadTime(state.roadTime));
+                                if (i === -1) {
+                                    
+                                    //return null;
+                                }
+                                roadSeg = this.route.roadSegments[i];
+                                nodeRoadOfft = nodes.findIndex(x => x.index === i);
+                                deemphasize = true;
+                            }
+                        } else if (this.road && this.road.id === state.roadId) {
+                            roadSeg = this.road.curvePath;
+                            nodeRoadOfft = 0;
                         }
                         if (!roadSeg) {
-                            // Not on our route but might be nearby..
-                            const i = this.route.roadSegments.findIndex(x =>
-                                x.roadId === state.roadId &&
-                                !!x.reverse === !!state.reverse &&
-                                x.includesRoadTime(state.roadTime));
-                            if (i === -1) {
+                            //console.log("No roadseg found")
+                            //debugger
+                            //return null;
+                        }
+                        //debugger
+                        let xCoord;
+                        let yCoord;
+                        let xIdx;
+                        if (roadSeg) {
+                            this.foundRoute = true;
+                            const bounds = roadSeg.boundsAtRoadTime(state.roadTime);
+                            const nodeOfft = roadSeg.reverse ?
+                                roadSeg.nodes.length - 1 - (bounds.index + bounds.percent) :
+                                bounds.index + bounds.percent;
+                            xIdx = nodeRoadOfft + nodeOfft;
+                            if (xIdx < 0 || xIdx > this._distances.length - 1) {
+                                //console.log(this._distances)
+                                console.error("route index offset bad!", {xIdx});
                                 return null;
                             }
-                            roadSeg = this.route.roadSegments[i];
-                            nodeRoadOfft = nodes.findIndex(x => x.index === i);
-                            deemphasize = true;
-                        }
-                    } else if (this.road && this.road.id === state.roadId) {
-                        roadSeg = this.road.curvePath;
-                        nodeRoadOfft = 0;
-                    }
-                    if (!roadSeg) {
-                        return null;
-                    }
-                    const bounds = roadSeg.boundsAtRoadTime(state.roadTime);
-                    const nodeOfft = roadSeg.reverse ?
-                        roadSeg.nodes.length - 1 - (bounds.index + bounds.percent) :
-                        bounds.index + bounds.percent;
-                    const xIdx = nodeRoadOfft + nodeOfft;
-                    if (xIdx < 0 || xIdx > this._distances.length - 1) {
-                        //console.log(this._distances)
-                        console.error("route index offset bad!", {xIdx});
-                        return null;
-                    }
-                    let xCoord;
-                    let yCoord;
-                    if (xIdx % 1) {
-                        const i = xIdx | 0;
-                        const dDelta = this._distances[i + 1] - this._distances[i];
-                        const eDelta = this._elevations[i + 1] - this._elevations[i];
-                        xCoord = this._distances[i] + dDelta * (xIdx % 1);
-                        yCoord = this._elevations[i] + eDelta * (xIdx % 1);
-                    } else {
-                        xCoord = this._distances[xIdx];
-                        yCoord = this._elevations[xIdx];
-                    }
-                    if (isNaN(xCoord) || xCoord == null) {
-                        console.error('xCoord is NaN');
-                    }
-                    /*if (isWatching) {
-                        // XXX
-                        console.log("got it", xCoord, xIdx, state.roadId, state.reverse, state.roadTime,
-                                    {nodeRoadOfft, nodeOfft, reverse: state.reverse});
-                    }*/
-                    let allOtherPins = this.showOnlyMyPin;
-                    this.showOnlyMyPin ? allOtherPins = 0 : allOtherPins = 1;
-                    let watchingPinSize = 1.1 * this.pinSize;
-                    let deemphasizePinSize = 0.35 * this.pinSize * allOtherPins;
-                    let otherPinSize = 0.55 * this.pinSize * allOtherPins;
-                    let watchingPinColor = this.pinColor
-                    //console.log(allOtherPins)
-                    if (isWatching)
-                    {
-                        //let nextSegment = this.getNextSegment(allMarkLines, xCoord)
-                        let nextSegment = zen.getNextSegment(allMarkLines, xCoord)
-                        let distanceToGo;
-                        let distanceToGoUnits;
-                        if (this.showNextSegment && this.showSegmentStart)
-                        {
-                            let nextSegmentDiv = document.getElementById('nextSegmentDiv');
                             
-                            if (nextSegment != -1)
+                            //let xCoord;
+                            //let yCoord;
+                            if (xIdx % 1) {
+                                const i = xIdx | 0;
+                                const dDelta = this._distances[i + 1] - this._distances[i];
+                                const eDelta = this._elevations[i + 1] - this._elevations[i];
+                                xCoord = this._distances[i] + dDelta * (xIdx % 1);
+                                yCoord = this._elevations[i] + eDelta * (xIdx % 1);
+                                //debugger
+                            } else {
+                                xCoord = this._distances[xIdx];
+                                yCoord = this._elevations[xIdx];
+                            }
+                            if (isNaN(xCoord) || xCoord == null) {
+                                console.error('xCoord is NaN or null');
+                                debugger
+                            }
+                        } else if (isWatching && this.foundRoute) {
+                            let routeOffset;
+                            if (this.deltas.length > 15) {
+                                routeOffset = this.deltas.reduce((a, b) => a + b, 0) / this.deltas.length;
+                                console.log("Calculated route offset to " + routeOffset)
+                            } else {
+                                routeOffset = 0;
+                                console.log("No route offset found")
+                            }
+                            if (state.eventDistance > 0) {
+                                xCoord = state.eventDistance - routeOffset;
+                                let idxGuess = common.binarySearchClosest(this.routeDistances, (state.eventDistance - routeOffset));
+                                const dDelta = this.routeDistances[idxGuess + 1] - this.routeDistances[idxGuess];
+                                const idxDelta = 1 - ((this.routeDistances[idxGuess + 1] - xCoord) / dDelta);
+                                const eDelta = this.routeElevations[idxGuess + 1] - this.routeElevations[idxGuess];
+                                yCoord = this.routeElevations[idxGuess] + (eDelta * idxDelta);
+                                //yCoord = 287.27796358066405; // just a test
+                                xIdx = 0;
+                                console.log("xCoord is " + xCoord + " yCoord is " + yCoord)
+                                //debugger
+                            } else {
+                                console.log("waiting for eventDistance > 0 before setting xCoord")
+                                xCoord = null;
+                            }
+                        }
+                        /*if (isWatching) {
+                            // XXX
+                            console.log("got it", xCoord, xIdx, state.roadId, state.reverse, state.roadTime,
+                                        {nodeRoadOfft, nodeOfft, reverse: state.reverse});
+                        }*/
+                        let allOtherPins = this.showOnlyMyPin;
+                        this.showOnlyMyPin ? allOtherPins = 1 : allOtherPins = 1;
+                        let watchingPinSize = 1.1 * this.pinSize;
+                        let deemphasizePinSize = 0.35 * this.pinSize * allOtherPins;
+                        let otherPinSize = 0.55 * this.pinSize * allOtherPins;
+                        let watchingPinColor = this.pinColor
+                        //console.log(allOtherPins)
+                        
+                        if (isWatching)
+                        {                        
+                            //let nextSegment = this.getNextSegment(allMarkLines, xCoord)
+                            //console.log(xCoord)
+                            let nextSegment = zen.getNextSegment(allMarkLines, xCoord)
+                            let distanceToGo;
+                            let distanceToGoUnits;
+                            if (this.showNextSegment && this.showSegmentStart)
                             {
-                                nextSegment.markLine - xCoord > 1000 ? distanceToGo = ((nextSegment.markLine - xCoord) / 1000).toFixed(2) : distanceToGo = (nextSegment.markLine - xCoord).toFixed(0);
-                                nextSegment.markLine - xCoord > 1000 ? distanceToGoUnits = "km" : distanceToGoUnits = "m";
-                                nextSegment.markLine - xCoord > 1000 ? this.refresh = 1000 : this.refresh = 200;
-                                nextSegmentDiv.innerHTML = nextSegment.name + ": " + distanceToGo + distanceToGoUnits;
-                                nextSegmentDiv.style.visibility = "";
+                                let nextSegmentDiv = document.getElementById('nextSegmentDiv');
+                                
+                                if (nextSegment != -1)
+                                {
+                                    nextSegment.markLine - xCoord > 1000 ? distanceToGo = ((nextSegment.markLine - xCoord) / 1000).toFixed(2) : distanceToGo = (nextSegment.markLine - xCoord).toFixed(0);
+                                    nextSegment.markLine - xCoord > 1000 ? distanceToGoUnits = "km" : distanceToGoUnits = "m";
+                                    nextSegment.markLine - xCoord > 1000 ? this.refresh = 1000 : this.refresh = 200;
+                                    nextSegmentDiv.innerHTML = nextSegment.name + ": " + distanceToGo + distanceToGoUnits;
+                                    nextSegmentDiv.style.visibility = "";
+                                }
+                                else
+                                {                                
+                                    nextSegmentDiv.innerHTML = "";
+                                    nextSegmentDiv.style.visibility = "hidden";
+                                }
                             }
                             else
-                            {                                
+                            {
+                                this.refresh < 1000 ? this.refresh = 1000 : this.refresh = 1000;
+                                let nextSegmentDiv = document.getElementById('nextSegmentDiv');
                                 nextSegmentDiv.innerHTML = "";
-                                nextSegmentDiv.style.visibility = "hidden";
+                                nextSegmentDiv.style.visibility = "hidden";                     
                             }
-                        }
-                        else
-                        {
-                            this.refresh < 1000 ? this.refresh = 1000 : this.refresh = 1000;
-                            let nextSegmentDiv = document.getElementById('nextSegmentDiv');
-                            nextSegmentDiv.innerHTML = "";
-                            nextSegmentDiv.style.visibility = "hidden";                     
-                        }
-                        if (this.setAthleteSegmentData)
-                        {
-                            
-                            nextSegment.markLine - xCoord > 1000 ? distanceToGo = ((nextSegment.markLine - xCoord) / 1000).toFixed(2) : distanceToGo = (nextSegment.markLine - xCoord).toFixed(0);
-                            nextSegment.markLine - xCoord > 1000 ? distanceToGoUnits = "km" : distanceToGoUnits = "m";
-                            nextSegment.markLine - xCoord > 1000 ? this.refresh = 1000 : this.refresh = 200;
-                            nextSegment == -1 ? this.refresh = 1000 : "";
-                            const routeSegments = allMarkLines;
-                            let nextSegmentName;
-                            let nextSegmentDistanceToGo;
-                            if (nextSegment.name) {
-                                nextSegmentName = nextSegment.name;
-                                nextSegmentDistanceToGo = parseFloat(distanceToGo);
-                            } else {
-                                nextSegmentName = "Finish";
-                                if ((this.route.distances.at(-1) - xCoord) > 1000) {
-                                    nextSegmentDistanceToGo = ((this.route.distances.at(-1) - xCoord) / 1000).toFixed(2)
-                                    distanceToGoUnits = "km"
-                                } else {
-                                    nextSegmentDistanceToGo = (this.route.distances.at(-1) - xCoord).toFixed(2)
-                                    distanceToGoUnits = "m"
-                                }
+                            if (this.setAthleteSegmentData)
+                            {
                                 
-                            }
-                            //debugger
-                            const athleteSegmentData = {
-                                segmentData: {
-                                    currentPosition: xCoord,
-                                    routeSegments: routeSegments,
-                                    nextSegment: {
-                                        name: nextSegmentName,
-                                        distanceToGo: nextSegmentDistanceToGo,
-                                        distanceToGoUnits: distanceToGoUnits,
-                                        id: nextSegment.id,
-                                        repeat: nextSegment.repeat,
-                                        xCoord
+                                nextSegment.markLine - xCoord > 1000 ? distanceToGo = parseFloat((nextSegment.markLine - xCoord) / 1000).toFixed(2) : distanceToGo = parseFloat(nextSegment.markLine - xCoord).toFixed(0);
+                                nextSegment.markLine - xCoord > 1000 ? distanceToGoUnits = "km" : distanceToGoUnits = "m";
+                                nextSegment.markLine - xCoord > 1000 ? this.refresh = 1000 : this.refresh = 200;
+                                nextSegment == -1 ? this.refresh = 1000 : "";
+                                const routeSegments = allMarkLines;
+                                let nextSegmentName;
+                                let nextSegmentDistanceToGo;                            
+                                if (nextSegment.name) {
+                                    nextSegmentName = nextSegment.name;
+                                    nextSegmentDistanceToGo = distanceToGo;
+                                } else {
+                                    //debugger
+                                    nextSegmentName = "Finish";
+                                    if ((this.routeDistances.at(-1) - xCoord) > 1000) {
+                                        nextSegmentDistanceToGo = parseFloat(((this.routeDistances.at(-1) - xCoord) / 1000)).toFixed(2)
+                                        distanceToGoUnits = "km"
+                                    } else {
+                                        nextSegmentDistanceToGo = parseFloat((this.routeDistances.at(-1) - xCoord)).toFixed(0)
+                                        distanceToGoUnits = "m"
+                                    }
+                                    
+                                }
+                                //debugger
+                                const athleteSegmentData = {
+                                    segmentData: {
+                                        currentPosition: xCoord,
+                                        routeSegments: routeSegments,
+                                        nextSegment: {
+                                            name: nextSegmentName,
+                                            distanceToGo: nextSegmentDistanceToGo,
+                                            distanceToGoUnits: distanceToGoUnits,
+                                            id: nextSegment.id,
+                                            repeat: nextSegment.repeat,
+                                            xCoord
+                                        }
                                     }
                                 }
-                            }
+                                //debugger
+                                //console.log("updating athlete, refresh rate: " + this.refresh)
+                                common.rpc.updateAthleteData(this.watchingId, athleteSegmentData)
+                            }  
                             
-                            //console.log("updating athlete, refresh rate: " + this.refresh)
-                            common.rpc.updateAthleteData(this.watchingId, athleteSegmentData)
-                        }  
-                        let distDelta = state.eventDistance - xCoord;
-                        this.deltas.push(distDelta);
-                        if (this.deltas.length > 50)
-                        {            
-                            this.deltas.shift();                    
-                        }                         
-                    }
-                    return {
-                        name: state.athleteId,
-                        coord: [xCoord, yCoord],
-                        symbolSize: isWatching ? this.em(watchingPinSize) : deemphasize ? this.em(deemphasizePinSize) : this.em(otherPinSize),
-                        itemStyle: {
-                            color: isWatching ? watchingPinColor : deemphasize ? '#0002' : '#fff7',
-                            borderWidth: this.em(isWatching ? 0.04 : 0.02),
-                        },
-                        emphasis: {
-                            label: {
-                                fontSize: this.em(markPointLabelSize),
-                                fontWeight: 400,
-                                lineHeight: this.em(1.15 * markPointLabelSize),
-                                position: (state.altitude - this._yAxisMin) / deltaY > 0.4 ? 'bottom' : 'top',
-                                backgroundColor: '#222e',
-                                borderRadius: this.em(0.22 * markPointLabelSize),
-                                borderWidth: 1,
-                                borderColor: '#fff9',
-                                align: (xIdx > this._distances.length / 2) ^ this.reverse ? 'right' : 'left',
-                                padding: [
-                                    this.em(0.2 * markPointLabelSize),
-                                    this.em(0.3 * markPointLabelSize)
-                                ],
-                                formatter: this.onMarkEmphasisLabel.bind(this),
+                            
+                            let deltaAvg = this.deltas.reduce((a, b) => a + b, 0) / this.deltas.length                        
+                            let distDelta = state.eventDistance - xCoord;
+                            
+                            //debugger
+                            if (this.deltas.length <= 10 ||
+                                ((this.deltas.length >= 10 && distDelta < (deltaAvg * 2) && isBetween((Math.abs(deltaAvg) - Math.abs(distDelta)), -10, 10)) ||
+                                isNaN(deltaAvg))
+                                ) // make sure the computed distDelta isn't way different than average due to a misplaced pin
+                            {
+                                if (state.eventDistance > 0 && xCoord > 0 && distDelta != 0) {
+                                    this.deltas.push(distDelta);  
+                                    this.deltaIgnoreCount = 0;                              
+                                    if (this.deltas.length > 50)
+                                    {            
+                                        this.deltas.shift();                    
+                                    }   
+                                } else {
+                                    console.log("eventdistance " + state.eventDistance + " xCoord " + xCoord + " distdelta " + distDelta )
+                                }
+                                //console.log("deltas is " + this.deltas.reduce((a, b) => a + b, 0) / this.deltas.length);
+                            } else {
+                                console.log("Ignoring distDelta " + distDelta + " that is more than double the avg " + deltaAvg)
+                                //console.log("deltaAvg is: " + deltaAvg + " distDelta is: " + distDelta )
+                                this.deltaIgnoreCount++
+                                if (this.deltaIgnoreCount > 10) {
+                                    console.log("Something is wrong, resetting deltas")
+                                    this.deltaIgnoreCount = 0;
+                                    this.deltas.length = 0;
+                                }
+                                //debugger
                             }
-                        },
-                    };
+                        }
+                        //debugger
+                        //console.log({
+                        return {
+                            name: state.athleteId,
+                            coord: [xCoord, yCoord],
+                            symbolSize: isWatching ? this.em(watchingPinSize) : deemphasize ? this.em(deemphasizePinSize) : this.em(otherPinSize),
+                            itemStyle: {
+                                color: isWatching ? watchingPinColor : deemphasize ? '#0002' : '#fff7',
+                                borderWidth: this.em(isWatching ? 0.04 : 0.02),
+                            },
+                            emphasis: {
+                                label: {
+                                    fontSize: this.em(markPointLabelSize),
+                                    fontWeight: 400,
+                                    lineHeight: this.em(1.15 * markPointLabelSize),
+                                    position: (state.altitude - this._yAxisMin) / deltaY > 0.4 ? 'bottom' : 'top',
+                                    backgroundColor: '#222e',
+                                    borderRadius: this.em(0.22 * markPointLabelSize),
+                                    borderWidth: 1,
+                                    borderColor: '#fff9',
+                                    align: (xIdx > this._distances.length / 2) ^ this.reverse ? 'right' : 'left',
+                                    padding: [
+                                        this.em(0.2 * markPointLabelSize),
+                                        this.em(0.3 * markPointLabelSize)
+                                    ],
+                                    formatter: this.onMarkEmphasisLabel.bind(this),
+                                }
+                            },
+                        };
+                }
                 }).filter(x => x),
             },
         }]});
@@ -983,3 +1073,7 @@ export class SauceElevationProfile {
         await common.getAthletesDataCached(ids);
     }
 }
+
+function isBetween(n, a, b) {
+    return (n - a) * (n - b) <= 0
+ }
