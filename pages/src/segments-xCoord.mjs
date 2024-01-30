@@ -701,3 +701,27 @@ export function getNextSegment(arr, number) {
 export function roadTimeToroadPercent(rt) {
     return (rt - 5000) / 1e6;
 }
+
+export function checkVersion(a,b) {
+    let x=a.split('.').map(e=> parseInt(e));
+    let y=b.split('.').map(e=> parseInt(e));
+    let z = "";
+
+    for(let i=0;i<x.length;i++) {
+        if(x[i] === y[i]) {
+            z+="e";
+        } else
+        if(x[i] > y[i]) {
+            z+="m";
+        } else {
+            z+="l";
+        }
+    }
+    if (!z.match(/[l|m]/g)) {
+      return 0;
+    } else if (z.split('e').join('')[0] == "m") {
+      return 1;
+    } else {
+      return -1;
+    }
+}
