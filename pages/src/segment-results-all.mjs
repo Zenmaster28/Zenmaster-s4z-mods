@@ -1,7 +1,19 @@
 import * as sauce from '/shared/sauce/index.mjs';
 import * as common from '/pages/src/common.mjs';
 import * as zen from './segments-xCoord.mjs';
-
+/*
+let availableMods = await common.rpc.getAvailableMods();
+let o101Mod = availableMods.find(x => x.id == "o101_s4z_mods");
+let o101common;
+async function geto101() {
+    if (o101Mod.enabled && zen.checkVersion("1.1.4",o101Mod.manifest.version) <= 0) {
+        let modPath = o101Mod.modPath.split("\\").at(-1)
+        o101common = await import("/mods/" + modPath + "/pages/src/o101/common.mjs")
+        //debugger
+    }
+}
+await geto101();
+*/
 const doc = document.documentElement;
 const L = sauce.locale;
 let refresh = Date.now() - 15000;
@@ -26,6 +38,15 @@ let allKnownRacers = [];
 let routeInfo = false;
 let inProgress = false;
 let allRacerRefresh = Date.now() - 25000;
+let teamColors;
+async function getTeamColors() {
+    try {
+        teamColors = await fetch("/mods/o101_s4z_mods/pages/src/o101/teamcolors.json").then((response) => response.json());
+    } catch {
+        console.log("Didn't get the o101 teamcolors.json, will use default team badge")
+    }
+}
+//await getTeamColors();
 //let eventResults = [];
 
 
@@ -633,6 +654,7 @@ function buildTable(eventResults,watching) {
         if (nameTeam[1] && settings.showTeamBadge)
         {            
             teamBadge = common.teamBadge(nameTeam[1]);
+            //debugger
         }        
         td.innerHTML = eventResults[rank].firstName.charAt(0) + "." + lastName + " " + teamBadge;                        
         tr.appendChild(td);
@@ -710,7 +732,7 @@ async function getKnownRacers(eventId) {
    //("Known racer count: " + allKnownRacers.length)
 }
 
-async function getSegmentResults(watching) {
+async function getSegmentResults(watching) {    
     refreshRate = 5000;
     const doc = document.documentElement;
     doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);
