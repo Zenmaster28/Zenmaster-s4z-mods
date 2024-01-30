@@ -876,7 +876,7 @@ export class SauceElevationProfile {
                             }
                             if (isNaN(xCoord) || xCoord == null) {
                                 console.error('xCoord is NaN or null');
-                                debugger
+                                //debugger
                             }
                         } else if (isWatching && this.foundRoute) {
                             let routeOffset;
