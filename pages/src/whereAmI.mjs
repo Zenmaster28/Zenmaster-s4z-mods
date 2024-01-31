@@ -1,5 +1,17 @@
 import * as common from '/pages/src/common.mjs';
 import * as zen from './segments-xCoord.mjs';
+let availableMods = await common.rpc.getAvailableMods();
+let o101Mod = availableMods.find(x => x.id == "o101_s4z_mods");
+let o101common;
+let modPath;
+async function geto101() {
+    if (o101Mod.enabled && zen.checkVersion("1.1.4",o101Mod.manifest.version) <= 0) {
+        modPath = o101Mod.modPath.split("\\").at(-1)
+        o101common = await import("/mods/" + modPath + "/pages/src/o101/common.mjs")
+        //debugger
+    }
+}
+await geto101();
 
 
 let routeInfo = false;
@@ -34,10 +46,11 @@ async function processWatching(watching) {
             routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId) 
         }
         console.log(routeInfo)   
-        //debugger
+        debugger
         inProgress = false;
     }
     else {
+        debugger
         let xCoord = zen.getxCoord(watching, routeInfo);
         let distDelta = watching.state.eventDistance - xCoord;
         deltas.push(distDelta);

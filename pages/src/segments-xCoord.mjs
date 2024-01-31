@@ -725,3 +725,83 @@ export function checkVersion(a,b) {
       return -1;
     }
 }
+
+//stolen from o101
+let _teamColors;
+export async function initTeamColors(modPath) {
+    const r = await fetch("/mods/" + modPath + "/pages/src/o101/teamcolors.json")    
+    if (!r.ok) {
+        throw new Error('Failed to get teamcolor data: ' + r.status);
+    }
+    const data = await r.json();    
+    _teamColors = data.map(team => { return {
+        key: team.name,
+        textColor: team.textColor,
+        linearGradientColor1: team.linearGradientColor1,
+        linearGradientColor2: team.linearGradientColor2,
+        weight: team.weight
+    }});
+}
+
+export function preferredTeamColor(name) {
+    let color = '#FFF';
+    let lgColor1 = '#71797E';
+    let lgColor2 = '#36454F';
+    let weight = '600';
+    const team = (name != '')
+        ? _teamColors.find(t => name.toLowerCase().indexOf(t.key.toLowerCase())>=0)
+        : null;    
+    if (team != null) {
+        color = team.textColor;
+        lgColor1 = team.linearGradientColor1;
+        lgColor2 = team.linearGradientColor2;
+        if (team.weight != null && team.weight != '') weight = team.weight;
+    } else if (name != '') {
+        lgColor1 = name.toHex();
+        lgColor2 = name.toHex();
+    }
+
+    return {name, color, lgColor1, lgColor2, weight};
+}
+
+export async function geto101() {
+    let availableMods = await common.rpc.getAvailableMods();
+    let o101Mod = availableMods.find(x => x.id == "o101_s4z_mods");
+    if (o101Mod.enabled && checkVersion("1.1.4",o101Mod.manifest.version) <= 0) {
+        let modPath = o101Mod.modPath.split("\\").at(-1)
+        //o101common = await import("/mods/" + modPath + "/pages/src/o101/common.mjs")
+        return modPath;
+        //debugger
+    } else {
+        return null;
+    }
+}
+String.prototype.toHex = function() {
+    var hash = 0;
+    if (this.length === 0) return hash;
+    for (var i = 0; i < this.length; i++) {
+        hash = this.charCodeAt(i) + ((hash << 5) - hash);
+        hash = hash & hash;
+    }
+    var color = '#';
+    for (var i = 0; i < 3; i++) {
+        var value = (hash >> (i * 8)) & 255;
+        color += ('00' + value.toString(16)).substr(-2);
+    }
+    return color;
+}
+export function fmtTeamBadgeV2(team) {
+    if (team != null) {
+        const teamColor = preferredTeamColor(team);
+
+        return(fmtTeamBadgeV2Raw(teamColor));
+    }
+
+    return '';
+}
+
+export function fmtTeamBadgeV2Raw(teamColor) {
+    teamColor.name = teamColor.name.toUpperCase();
+
+    return '<div class="info-item-team" style="--o101c:'+teamColor.color+'; --o101lg1:'+teamColor.lgColor1+'; --o101lg2:'+teamColor.lgColor2+'; --weight:'+teamColor.weight+'"><span>'+teamColor.name+'</span></div>';
+}

@@ -1,19 +1,11 @@
 import * as sauce from '/shared/sauce/index.mjs';
 import * as common from '/pages/src/common.mjs';
 import * as zen from './segments-xCoord.mjs';
-/*
-let availableMods = await common.rpc.getAvailableMods();
-let o101Mod = availableMods.find(x => x.id == "o101_s4z_mods");
-let o101common;
-async function geto101() {
-    if (o101Mod.enabled && zen.checkVersion("1.1.4",o101Mod.manifest.version) <= 0) {
-        let modPath = o101Mod.modPath.split("\\").at(-1)
-        o101common = await import("/mods/" + modPath + "/pages/src/o101/common.mjs")
-        //debugger
-    }
-}
-await geto101();
-*/
+
+let o101path = await zen.geto101();
+await zen.initTeamColors(o101path);
+
+
 const doc = document.documentElement;
 const L = sauce.locale;
 let refresh = Date.now() - 15000;
@@ -653,7 +645,9 @@ function buildTable(eventResults,watching) {
         let teamBadge = "";
         if (nameTeam[1] && settings.showTeamBadge)
         {            
-            teamBadge = common.teamBadge(nameTeam[1]);
+            //teamBadge = common.teamBadge(nameTeam[1]);
+            //console.log("Getting team badge for " + nameTeam[1])
+            teamBadge = zen.fmtTeamBadgeV2(nameTeam[1]);
             //debugger
         }        
         td.innerHTML = eventResults[rank].firstName.charAt(0) + "." + lastName + " " + teamBadge;                        

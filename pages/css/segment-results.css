@@ -47,7 +47,7 @@ table {
 th, td {  
   text-align: left;
   white-space: nowrap; 
-
+  
 }
 
 th:first-child, td:first-child,
@@ -67,4 +67,16 @@ table tr.watching {
   color: hsl(var(--theme-primary-hue) var(--theme-primary-sat) calc(var(--theme-primary-light) + 100% * var(--theme-primary-shade-dir))/100%);
 }
 
+div .info-item-team {
+  margin-top: -0.03em;
+  display: inline-table;
+}
+div .info-item-team span {
+  background-image: linear-gradient(var(--o101lg1), var(--o101lg2));
+  border-radius: 4px;
+  font-weight: var(--weight);
+  padding: 0 0.4em 0 0.4em;
+  color: var(--o101c);
+  zoom: 0.6;
+}
 
