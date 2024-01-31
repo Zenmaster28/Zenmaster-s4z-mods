@@ -50,7 +50,8 @@ common.settingsStore.setDefault({
     showCompletedLaps: true,
     overrideDistance: 0,
     overrideLaps: 0,
-    yAxisMin: 200
+    yAxisMin: 200,
+    singleLapView: false
 });
 
 const settings = common.settingsStore.get();
@@ -117,7 +118,8 @@ function createElevationProfile({worldList}) {
     const overrideDistance = typeof(settings.overrideDistance) != "undefined" ? settings.overrideDistance : 0;
     const overrideLaps = typeof(settings.overrideLaps) != "undefined" ? settings.overrideLaps : 0;    
     const yAxisMin = typeof(settings.yAxisMin) != "undefined" ? settings.yAxisMin: 200;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin});
+    const singleLapView = settings.singleLapView !== false;
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView});
 }
 
 
@@ -299,7 +301,8 @@ export async function main() {
                         changed.has('fontScale') ||
                         changed.has('overrideDistance') ||
                         changed.has('overrideLaps') ||
-                        changed.has('yAxisMin')
+                        changed.has('yAxisMin') ||
+                        changed.has('singleLapView')
                     )
                 {
                     //console.log(changed);
