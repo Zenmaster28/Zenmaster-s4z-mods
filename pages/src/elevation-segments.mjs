@@ -14,7 +14,7 @@ let allMarkLines = [];
 let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, refresh=1000}) {
         this.el = el;
         this.worldList = worldList;
         this.preferRoute = preferRoute;
@@ -51,11 +51,6 @@ export class SauceElevationProfile {
         this.customDistance = 0;
         this.customFinishLine;
         this.yAxisMin = yAxisMin;
-        this.singleLapView = singleLapView;
-        this.currentLap = -1;
-        this.lapDistances = [];
-        this.lapElevations = [];
-        this.lapGrades = [];
         this.refresh = refresh;
         this._lastRender = 0;
         this._refreshTimeout = null;        
@@ -267,12 +262,12 @@ export class SauceElevationProfile {
         }
     }
 
-    setRoute = common.asyncSerialize(async function(id, {laps=1, eventSubgroupId, distance, currentLap}={}) {         
+    setRoute = common.asyncSerialize(async function(id, {laps=1, eventSubgroupId, distance}={}) {         
         if (distance) {
             this.customDistance = distance
         } else {
             this.customDistance = 0;
-        };             
+        };        
         this.road = null;
         this.reverse = null;
         routeSegments.length = 0;
@@ -342,8 +337,7 @@ export class SauceElevationProfile {
         const grades = Array.from(this.route.grades);        
         const markAreas = [];
         const notLeadin = this.route.manifest.findIndex(x => !x.leadin);
-        const lapStartIdx = notLeadin === -1 ? 0 : this.curvePath.nodes.findIndex(x => x.index === notLeadin);
-        this.lapStartIdx = lapStartIdx;        
+        const lapStartIdx = notLeadin === -1 ? 0 : this.curvePath.nodes.findIndex(x => x.index === notLeadin);        
         if ((lapStartIdx || this.showCompletedLaps) && this.showLapMarker) {
             markLines.push({
                 xAxis: distances[lapStartIdx],
@@ -431,41 +425,7 @@ export class SauceElevationProfile {
         //console.log(distances)
         //console.log(routeDistances)
         //this.setData(distances, elevations, grades, {markLines, markAreas});
-        if (this.singleLapView) {
-        //if (this.singleLapView && eventSubgroupId != 0) {
-            //currentLap = 2; // temp until full implentation
-            if (currentLap == 0) { currentLap = 1}
-            //debugger
-            console.log("Setting single lap view, now on lap: " + currentLap)
-            let leadinNodesCount = 0;
-            let leadin = this.routeInfo.routeFullData.roadSegments.filter(x => x.leadin)
-            if (leadin.length > 0) {                
-                for (let rs of leadin) {
-                    leadinNodesCount += rs.nodes.length;
-                }
-            }
-            let lapCurvePath = this.routeInfo.routeFullData.roadSegments.filter(x => (x.lap == 1 && !x.leadin))
-            let lapNodesCount = 0;
-            for (let rs of lapCurvePath) {
-                lapNodesCount += rs.nodes.length;
-            }
-            let lapStart;
-            let lapFinish;
-            if (currentLap == 1) {
-                lapStart = 0;
-                lapFinish = leadinNodesCount + lapNodesCount;
-            } else {
-                lapStart = leadinNodesCount + (lapNodesCount * (currentLap - 1));
-                lapFinish = lapStart + lapNodesCount;
-            }
-            this.lapDistances = Array.from(this.routeDistances).slice(lapStart, lapFinish)
-            this.lapElevations = Array.from(this.routeElevations).slice(lapStart, lapFinish)
-            this.lapGrades = Array.from(this.routeGrades).slice(lapStart, lapFinish)            
-            //debugger
-            this.setData(this.lapDistances, this.lapElevations, this.lapGrades, {markLines, markAreas})
-        } else {
-            this.setData(this.routeDistances, this.routeElevations, this.routeGrades, {markLines, markAreas});
-        }
+        this.setData(this.routeDistances, this.routeElevations, this.routeGrades, {markLines, markAreas});
         return this.route;
     });
 
@@ -673,9 +633,7 @@ export class SauceElevationProfile {
                         console.log("Overriding routeId to: " + this.routeOverride)                        
                         await this.setRoute(this.routeOverride);
                     } else if (this.routeId !== watching.routeId ||
-                        (this._eventSubgroupId || null) !== (watching.eventSubgroupId || null) ||
-                        this.currentLap != (watching.laps + 1)
-                        ) {
+                        (this._eventSubgroupId || null) !== (watching.eventSubgroupId || null)) {
                             
                         if (!this.routeOverride) {
                             let sg;
@@ -685,7 +643,6 @@ export class SauceElevationProfile {
                             
                             // Note sg.routeId is sometimes out of sync with state.routeId; avoid thrash
                             console.log(sg) 
-                            console.log(watching)
                             this.deltas.length = 0;  // reset the delta averages 
                             this.routeOffset = 0;
                             this.lapCounter = 0;  
@@ -693,15 +650,8 @@ export class SauceElevationProfile {
                             if (this.overrideDistance > 0 || this.overrideLaps > 0) {
                                 console.log("overridedistance: " + this.overrideDistance + " overridelaps: " + this.overrideLaps)
                                 await this.setRoute(watching.routeId, {laps: this.overrideLaps, eventSubgroupId: watching.eventSubgroupId, distance: this.overrideDistance})
-                            } else if (sg && sg.routeId === watching.routeId && sg.distanceInMeters) {
-                                console.log("Setting route distance to " + sg.distanceInMeters)                            
+                            } else if (sg && sg.routeId === watching.routeId && sg.distanceInMeters) {                            
                                 await this.setRoute(sg.routeId, {laps: sg.laps, eventSubgroupId: sg.id, distance: sg.distanceInMeters});
-                            } else if (this.singleLapView && sg && this.currentLap != (watching.laps + 1)) {
-                                console.log("Setting route to single lap view on lap: " + (watching.laps + 1))
-                                //debugger
-                                
-                                //debugger
-                                await this.setRoute(watching.routeId, {laps: sg.laps, eventSubgroupId: sg.id, currentLap: (watching.laps + 1)})
                             } else if (sg && sg.routeId === watching.routeId) {                            
                                 await this.setRoute(sg.routeId, {laps: sg.laps, eventSubgroupId: sg.id});
                             } else if (!sg && watching.eventSubgroupId) {
@@ -713,7 +663,6 @@ export class SauceElevationProfile {
                             }
                         }
                     }
-                    this.currentLap = (watching.laps + 1);
                     if (watching.laps != this.lapCounter && this.showLapMarker && watching.eventSubgroupId == 0 && this.showCompletedLaps) {                        
                         //if (this.routeId != null) { 
                             let chartMarkLines = [];
@@ -906,7 +855,7 @@ export class SauceElevationProfile {
                                 roadSeg.nodes.length - 1 - (bounds.index + bounds.percent) :
                                 bounds.index + bounds.percent;
                             xIdx = nodeRoadOfft + nodeOfft;
-                            if (xIdx < 0 || xIdx > this.routeDistances.length - 1) {
+                            if (xIdx < 0 || xIdx > this._distances.length - 1) {
                                 //console.log(this._distances)
                                 console.error("route index offset bad!", {xIdx});
                                 return null;
@@ -916,40 +865,14 @@ export class SauceElevationProfile {
                             //let yCoord;
                             if (xIdx % 1) {
                                 const i = xIdx | 0;
-                                let dDelta;
-                                let eDelta;
-                                if (this.singleLapView) {
-                                    
-                                    if (this.currentLap > 1) {
-                                        dDelta = this.lapDistances[i + 1 - this.lapStartIdx] - this.lapDistances[i - this.lapStartIdx];
-                                        eDelta = this.lapElevations[i + 1 - this.lapStartIdx] - this.lapElevations[i - this.lapStartIdx];
-                                        xCoord = this.lapDistances[i - this.lapStartIdx] + dDelta * (xIdx % 1);
-                                        yCoord = this.lapElevations[i - this.lapStartIdx] + eDelta * (xIdx % 1);
-                                        //debugger
-                                    } else {
-                                        dDelta = this.lapDistances[i + 1] - this.lapDistances[i];
-                                        eDelta = this.lapElevations[i + 1] - this.lapElevations[i];
-                                        xCoord = this.lapDistances[i] + dDelta * (xIdx % 1);
-                                        yCoord = this.lapElevations[i] + eDelta * (xIdx % 1);
-                                    }
-                                    
-                                } else {
-                                    dDelta = this.routeDistances[i + 1] - this.routeDistances[i];
-                                    eDelta = this.routeElevations[i + 1] - this.routeElevations[i];
-                                    xCoord = this.routeDistances[i] + dDelta * (xIdx % 1);
-                                    yCoord = this.routeElevations[i] + eDelta * (xIdx % 1);
-                                }
-                                //console.log("xCoord from xIdx % 1 is: " + xCoord )
+                                const dDelta = this._distances[i + 1] - this._distances[i];
+                                const eDelta = this._elevations[i + 1] - this._elevations[i];
+                                xCoord = this._distances[i] + dDelta * (xIdx % 1);
+                                yCoord = this._elevations[i] + eDelta * (xIdx % 1);
                                 //debugger
                             } else {
-                                if (this.singleLapView ) {
-                                    xCoord = this.lapDistances[xIdx];
-                                    yCoord = this.lapElevations[xIdx];
-                                } else {
-                                    xCoord = this.routeDistances[xIdx];
-                                    yCoord = this.routeElevations[xIdx];
-                                }
-                                //console.log("XCoord from else xIdx % 1")
+                                xCoord = this._distances[xIdx];
+                                yCoord = this._elevations[xIdx];
                             }
                             if (isNaN(xCoord) || xCoord == null) {
                                 console.error('xCoord is NaN or null');
@@ -970,7 +893,8 @@ export class SauceElevationProfile {
                                 const dDelta = this.routeDistances[idxGuess + 1] - this.routeDistances[idxGuess];
                                 const idxDelta = 1 - ((this.routeDistances[idxGuess + 1] - xCoord) / dDelta);
                                 const eDelta = this.routeElevations[idxGuess + 1] - this.routeElevations[idxGuess];
-                                yCoord = this.routeElevations[idxGuess] + (eDelta * idxDelta);                                
+                                yCoord = this.routeElevations[idxGuess] + (eDelta * idxDelta);
+                                //yCoord = 287.27796358066405; // just a test
                                 xIdx = 0;
                                 //console.log("xCoord is " + xCoord + " yCoord is " + yCoord)
                                 //debugger
@@ -985,7 +909,7 @@ export class SauceElevationProfile {
                                         {nodeRoadOfft, nodeOfft, reverse: state.reverse});
                         }*/
                         let allOtherPins = this.showOnlyMyPin;
-                        this.showOnlyMyPin ? allOtherPins = 1 : allOtherPins = 1; // not needed anymore
+                        this.showOnlyMyPin ? allOtherPins = 1 : allOtherPins = 1;
                         let watchingPinSize = 1.1 * this.pinSize;
                         let deemphasizePinSize = 0.35 * this.pinSize * allOtherPins;
                         let otherPinSize = 0.55 * this.pinSize * allOtherPins;
@@ -1102,7 +1026,6 @@ export class SauceElevationProfile {
                                 //debugger
                             }
                         }
-                        //console.log(xCoord)
                         //debugger
                         //console.log({
                         return {
