@@ -14,13 +14,14 @@ let allMarkLines = [];
 let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, refresh=1000}) {
         this.el = el;
         this.worldList = worldList;
         this.preferRoute = preferRoute;
         this.showMaxLine = showMaxLine;
         this.showLapMarker = showLapMarker;
         this.showCompletedLaps = showCompletedLaps;
+        this.currentLap = -1;
         this.lapCounter = 0;
         this.showSegmentStart = showSegmentStart;  
         this.showSegmentFinish = showSegmentFinish;
@@ -45,12 +46,14 @@ export class SauceElevationProfile {
         this.routeElevations = [];
         this.routeInfo = [];
         this.routeGrades = [];
+        this.routeColorStops = [];
         this.foundRoute = false;
         this.overrideDistance = overrideDistance;
         this.overrideLaps = overrideLaps;
         this.customDistance = 0;
         this.customFinishLine;
         this.yAxisMin = yAxisMin;
+        this.singleLapView = singleLapView;
         this.refresh = refresh;
         this._lastRender = 0;
         this._refreshTimeout = null;        
@@ -132,7 +135,7 @@ export class SauceElevationProfile {
         this.onResize();
         this._resizeObserver = new ResizeObserver(() => this.onResize());
         this._resizeObserver.observe(this.el);
-        this._resizeObserver.observe(document.documentElement);
+        this._resizeObserver.observe(document.documentElement);        
     }
 
     destroy() {
@@ -186,6 +189,7 @@ export class SauceElevationProfile {
         });
         this.renderAthleteStates([], /*force*/ true);
     }    
+    
 
     setCourse = common.asyncSerialize(async function(id) {
         if (id === this.courseId) {
@@ -460,6 +464,16 @@ export class SauceElevationProfile {
         }
         const markAreaData = [];
         
+        this.routeColorStops = distances.map((x, i) => {
+            const steepness = Math.abs(grades[i] / 0.12);
+            const color = Color.fromRGB(steepness, 0.4, 0.5 * steepness)
+                .lighten(-0.25)
+                .saturate(steepness - 0.33);
+            return {
+                offset: x / distance,
+                color: color.toString(),
+            };
+        });
         this.chart.setOption({
             xAxis: {inverse: options.reverse},
             yAxis: {
@@ -468,22 +482,14 @@ export class SauceElevationProfile {
             },
             series: [{
                 areaStyle: {
+                    origin: 'start',
                     color:  {
                         type: 'linear',
                         x: options.reverse ? 1 : 0,
                         y: 0,
                         x2: options.reverse ? 0 : 1,
                         y2: 0,
-                        colorStops: distances.map((x, i) => {
-                            const steepness = Math.abs(grades[i] / 0.12);
-                            const color = Color.fromRGB(steepness, 0.4, 0.5 * steepness)
-                                .lighten(-0.25)
-                                .saturate(steepness - 0.33);
-                            return {
-                                offset: x / distance,
-                                color: color.toString(),
-                            };
-                        }),
+                        colorStops: this.routeColorStops,
                     },
                 },
                 markLine: {data: markLineData},                
@@ -920,6 +926,68 @@ export class SauceElevationProfile {
                         {                        
                             //let nextSegment = this.getNextSegment(allMarkLines, xCoord)
                             //console.log(xCoord)
+                            //debugger
+                            if (this.currentLap != state.laps + 1 && state.eventSubgroupId != 0) {
+                                console.log("Setting current lap to: " + (state.laps + 1))
+                                this.currentLap = state.laps + 1;
+                                let leadinNodesCount = 0;
+                                let leadin = this.routeInfo.routeFullData.roadSegments.filter(x => x.leadin)
+                                if (leadin.length > 0) {                
+                                    for (let rs of leadin) {
+                                        leadinNodesCount += rs.nodes.length;
+                                    }
+                                }
+                                let lapCurvePath = this.routeInfo.routeFullData.roadSegments.filter(x => (x.lap == 1 && !x.leadin))
+                                let lapNodesCount = 0;
+                                for (let rs of lapCurvePath) {
+                                    lapNodesCount += rs.nodes.length;
+                                }
+                                let lapStart;
+                                let lapFinish;
+                                if (this.currentLap == 1) {
+                                    lapStart = 0;
+                                    lapFinish = leadinNodesCount + lapNodesCount;
+                                } else {
+                                    lapStart = leadinNodesCount + (lapNodesCount * (this.currentLap - 1));
+                                    lapFinish = lapStart + lapNodesCount;
+                                }
+                                
+                                if (this.singleLapView) {
+                                    //debugger
+                                    const distance = this.routeDistances[lapFinish - 1] - this.routeDistances[lapStart];                                    
+                                    const dataZoomData = [];
+                                    const dataZoomColorStops = Array.from(this.routeColorStops.slice(lapStart, lapFinish));
+                                    const zoomedRange = lapFinish - lapStart;
+                                    /*
+                                    const newColorStops = dataZoomColorStops.map((stop, i) => ({
+                                        offset: (this.routeDistances[lapStart + i] - (distance * (this.currentLap - 1))) / distance,
+                                        color: stop.color
+                                    }))
+                                    */
+                                    const newColorStops = dataZoomColorStops.map((stop, i) => ({
+                                        offset: (this.routeDistances[lapStart + i] - this.routeDistances[lapStart]) / distance,
+                                        color: stop.color
+                                    }))
+                                    //debugger
+                                    dataZoomData.push({
+                                        type: 'inside',
+                                        startValue: this.routeDistances[lapStart],
+                                        endValue: this.routeDistances[lapFinish]
+                                    })
+                                    this.chart.setOption({
+                                        dataZoom: dataZoomData[0],
+                                        series: [{
+                                            areaStyle: {
+                                                color: {
+                                                    colorStops: newColorStops
+                                                }
+                                            }
+                                        }]                                        
+                                    })
+                                    //debugger
+                                }
+                                //debugger
+                            }
                             let nextSegment = zen.getNextSegment(allMarkLines, xCoord)
                             let distanceToGo;
                             let distanceToGoUnits;
