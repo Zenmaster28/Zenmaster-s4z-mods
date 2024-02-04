@@ -68,6 +68,7 @@ export class SauceElevationProfile {
                         return '';
                     }
                     //debugger
+                    if (this.watchingId) {
                     let watchingPin =  this.chart.getOption().series[0].markPoint.data.find(x => x.name == this.watchingId)
                     const dist = (this.reverse && this._distances) ?
                         this._distances.at(-1) - value[0] : value[0];
@@ -82,6 +83,13 @@ export class SauceElevationProfile {
                             `<ms large>landscape</ms>${H.elevation(value[1], {suffix: true})} ` +
                             `<small>(${H.number(value[2] * 100, {suffix: '%'})})</small>`;
                         }
+                    } else {
+                        const dist = (this.reverse && this._distances) ?
+                            this._distances.at(-1) - value[0] : value[0];
+                        return `Dist: ${H.distance(dist, {suffix: true})}<br/>` +                            
+                        `<ms large>landscape</ms>${H.elevation(value[1], {suffix: true})} ` +
+                        `<small>(${H.number(value[2] * 100, {suffix: '%'})})</small>`;
+                    }
                 },
                 axisPointer: {z: -1},
             },
