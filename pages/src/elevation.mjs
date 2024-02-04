@@ -244,14 +244,16 @@ export async function main() {
         });
         common.subscribe('athlete/watching', ad => {
             //fieldRenderer.fps = 5;
-            if (ad.segmentData.nextSegment.distanceToGo) {
-                
-                if (ad.segmentData.nextSegment.distanceToGoUnits == "m" && fieldRenderer.fps != 5) {
-                    //console.log("fps set to 5")
-                    fieldRenderer.fps = 5;
-                } else if (ad.segmentData.nextSegment.distanceToGoUnits == "km" && fieldRenderer.fps != 1) {
-                    //console.log("fps set to 1")
-                    fieldRenderer.fps = 1;
+            if (ad.segmentData) { // ugh
+                if (ad.segmentData.nextSegment.distanceToGo) { // double ugh
+                    
+                    if (ad.segmentData.nextSegment.distanceToGoUnits == "m" && fieldRenderer.fps != 5) {
+                        //console.log("fps set to 5")
+                        fieldRenderer.fps = 5;
+                    } else if (ad.segmentData.nextSegment.distanceToGoUnits == "km" && fieldRenderer.fps != 1) {
+                        //console.log("fps set to 1")
+                        fieldRenderer.fps = 1;
+                    }
                 }
             }
             fieldRenderer.setData(ad);
