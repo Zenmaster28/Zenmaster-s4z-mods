@@ -411,9 +411,9 @@ export class SauceElevationProfile {
                         formatter: `Finish`
                     }
                 });
-                if (!isNaN(markLineIndex)) {   
+                //if (!isNaN(markLineIndex)) {   
                     //allMarkLines.push({name: "Finish", markLine: xDist, id: null})
-                }
+                //}
             }
             if (this.customDistance > 0) {
                 
