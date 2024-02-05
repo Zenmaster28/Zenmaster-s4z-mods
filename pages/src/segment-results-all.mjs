@@ -267,12 +267,22 @@ function getScoreFormat() {
     return -1;
 }
 
-async function doApproach(routeSegments,segIdx, currentLocation,watching) {    
+async function doApproach(routeSegments,segIdx, currentLocation,watching) {   
+    //debugger
+    if (routeSegments[segIdx].exclude) {
+        infoLeftDiv.innerHTML = "";
+        infoRightDiv.innerHTML = "";
+        segNameDiv.innerHTML = "";
+        segmentDiv.innerHTML = "";
+        if (settings.transparentNoData) {document.body.classList = "transparent-bg"};
+        return null;
+    }
     document.body.classList.remove("transparent-bg");
     activeSegment = routeSegments[segIdx].id;
     activeSegmentName = routeSegments[segIdx].name;
     activeSegmentMarkLine = routeSegments[segIdx].markLine;
     activeSegmentRepeat = routeSegments[segIdx].repeat;  
+    //debugger
     activeSegmentMarkLine - currentLocation < 200 ? refreshRate = 1000 : refreshRate = 10000;  // refresh at 1s intervals for 200 meters before segment, then 10s.    
     if (settings.approachingInfo)
     {
@@ -341,7 +351,8 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching) {
         }
         let segmentName = activeSegmentName.replace(" Finish","")        
         let inEvent = false;  
-        let segRepeat = "";              
+        let segRepeat = "";  
+        //debugger            
         if (watching.state.eventSubgroupId != 0)
         {
             if (eventData.length == 0)
@@ -354,7 +365,8 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching) {
                     eventData = [];
                 }
             }
-            segRepeat = "[" + routeSegments[segIdx].repeat + "]"
+            //debugger
+            segRepeat = "[" + routeSegments[segIdx].repeat + "] " + settings.FTSorFAL
             inEvent = true;
         }        
         segNameDiv.innerHTML = segmentName + segRepeat + ' \u21E2';
@@ -365,6 +377,14 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching) {
 }
 
 async function doInSegment(routeSegments,segIdx, currentLocation, watching) {
+    if (routeSegments[segIdx].exclude) {
+        infoLeftDiv.innerHTML = "";
+        infoRightDiv.innerHTML = "";
+        segNameDiv.innerHTML = "";
+        segmentDiv.innerHTML = "";
+        if (settings.transparentNoData) {document.body.classList = "transparent-bg"};
+        return null;
+    }
     document.body.classList.remove("transparent-bg");
     if (segTimer == 0)
     {
@@ -454,7 +474,7 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching) {
                     eventData = [];
                 }
             }
-            segRepeat = "[" + routeSegments[segIdx].repeat + "]"
+            segRepeat = "[" + routeSegments[segIdx].repeat + "] " + settings.FTSorFAL
             inEvent = true;
         }        
         segNameDiv.innerHTML = segmentName + segRepeat + ' \u21E2';
@@ -465,6 +485,14 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching) {
 }
 
 async function doDeparting(routeSegments,segIdx, currentLocation, watching) {
+    if (routeSegments[segIdx].exclude) {
+        infoLeftDiv.innerHTML = "";
+        infoRightDiv.innerHTML = "";
+        segNameDiv.innerHTML = "";
+        segmentDiv.innerHTML = "";
+        if (settings.transparentNoData) {document.body.classList = "transparent-bg"};
+        return null;
+    }
     if (segTimer > 0)
     {
         clearInterval(segTimer);
@@ -543,7 +571,7 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching) {
                     eventData = [];
                 }
             }
-            segRepeat = "[" + routeSegments[segIdx].repeat + "]"
+            segRepeat = "[" + routeSegments[segIdx].repeat + "] " + settings.FTSorFAL
             inEvent = true;
         }        
         segNameDiv.innerHTML = '\u21e0 ' + segmentName + segRepeat; 
@@ -733,22 +761,48 @@ async function getSegmentResults(watching) {
     if ((!routeInfo || watching.state.routeId != routeInfo.routeFullData.id) && !inProgress)
     {
         //console.log("Getting segments on route")
-        inProgress = true;        
+        inProgress = true;  
+        let eventSettings;      
         if (watching.state.eventSubgroupId != 0) 
         {
-            let sg = await common.rpc.getEventSubgroup(watching.state.eventSubgroupId)
+            let sg = await common.rpc.getEventSubgroup(watching.state.eventSubgroupId)                       
             if (sg.distanceInMeters) {
                 routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId, 0, sg.distanceInMeters) 
             } else if (sg.laps > 1) {
                 routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId, sg.laps ) 
             } else {
                 routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId) 
-            }         
-            
+            }                     
         } else {
-            routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId) 
+            routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId)             
         }
+        routeInfo.sg = watching.state.eventSubgroupId
         console.log(routeInfo)   
+        common.settingsStore.set("routeInfo", routeInfo)
+        const settings = common.settingsStore.get();
+        eventSettings = Object.keys(settings).reduce((result, key) => {
+            if (key.startsWith("eventSegData")) {                
+                
+                //result[key] = settings[key];
+                let keyData = key.split("|");
+                if (keyData[1] == routeInfo.sg) {
+                    let markLines = routeInfo.markLines;
+                    if (markLines.length > 0) {
+                        for (let markline of routeInfo.markLines) {
+                            if (keyData[2] == markline.id && keyData[3] == markline.repeat) {
+                                const settings = common.settingsStore.get();                                
+                                (settings[key]) ? markline.exclude = false : markline.exclude = true;
+                                //console.log("Setting repeat " + markline.repeat + " to " + markline.exclude)
+                                //debugger
+                            }
+                        }
+                    }
+                }
+            }
+            //return result;
+            }, {}); 
+        //debugger        
+        
         
         inProgress = false;
     }else if (watching.state.eventSubgroupId == 0 && settings.FTSorFAL == "FAL")
@@ -776,7 +830,7 @@ async function getSegmentResults(watching) {
                 segmentBests.length = 0;
             }
             lastStatus = segmentStatus.status;
-            //segmentStatus.status = "Departing"
+            //console.log(segmentStatus)
             switch(segmentStatus.status) {
                 case "Approaching" : 
                     await doApproach(routeSegments,segmentStatus.nextSegmentIndex, currentLocation,watching);
@@ -859,5 +913,26 @@ export async function main() {
         approachingRefresh = null;
         inSegmentRefresh = null;
     });
+    common.settingsStore.addEventListener('changed', ev => {
+        const changed = ev.data.changed; 
+        let eventSegmentChanged = [...changed.entries()].filter(([key, value]) => key.startsWith("eventSegData"));
+        if (eventSegmentChanged.length > 0) {
+            let seg = eventSegmentChanged[0][0].split("|")
+            console.log("segment status changed")
+            let matchingMarklines = routeInfo.markLines.filter(x => x.id == seg[2] && x.repeat == seg[3]);
+            for (let markline of matchingMarklines) {
+                (eventSegmentChanged[0][1]) ? markline.exclude = false : markline.exclude = true;
+            }
+            //debugger
+            console.log(routeInfo.markLines)
+        };
+    });
 }
+
+export async function settingsMain() {
+    common.initInteractionListeners();
+    (await common.initSettingsForm('form'))();
+
+}
+
 setBackground();

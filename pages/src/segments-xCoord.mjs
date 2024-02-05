@@ -230,7 +230,13 @@ function getSegmentMarkline(segment) {
     let indexOffset = (distances[boundsLineIndex + 1] - distances[boundsLineIndex]) * percentOffset;
     let markLineIndex = distances[boundsLineIndex] + indexOffset                
     //allMarkLines.push({name: segment.name, markLine: markLineIndex, id: segment.id})  // segment start lines
-    const markLineStart = {name: segment.name, markLine: markLineIndex, id: segment.id, repeat: segment.repeat, segLength: segment.distance};
+    const markLineStart = {
+        name: segment.name, 
+        markLine: markLineIndex, 
+        id: segment.id, 
+        repeat: segment.repeat, 
+        segLength: segment.distance
+    };
 
     boundsLineIndex = segment.boundsFinish.curvePathIndex + segment.boundsFinish.originIndex;
     segment.reverse ? percentOffset = (1 - segment.boundsFinish.percent) : percentOffset = segment.boundsFinish.percent;
@@ -244,7 +250,13 @@ function getSegmentMarkline(segment) {
     }
     let markLineIndexFinish = distances[boundsLineIndex] + indexOffset        
     //allMarkLines.push({name: segment.name + " Finish", markLine: markLineIndex, id: segment.id})  // segment finish line  
-    const markLineFinish = {name: segment.name + " Finish", markLine: markLineIndexFinish, id: segment.id, repeat: segment.repeat, segLength: segment.distance};
+    const markLineFinish = {
+        name: segment.name + " Finish", 
+        markLine: markLineIndexFinish, 
+        id: segment.id, 
+        repeat: segment.repeat, 
+        segLength: segment.distance,
+    };
     return [markLineStart,markLineFinish];
 }
 
@@ -804,4 +816,30 @@ export function fmtTeamBadgeV2Raw(teamColor) {
     teamColor.name = teamColor.name.toUpperCase();
 
     return '<div class="info-item-team" style="--o101c:'+teamColor.color+'; --o101lg1:'+teamColor.lgColor1+'; --o101lg2:'+teamColor.lgColor2+'; --weight:'+teamColor.weight+'"><span>'+teamColor.name+'</span></div>';
+}
+
+export function buildEventForm() {
+    const routeInfo = common.settingsStore.get("routeInfo")
+    const segmentsForm = document.getElementById("options") 
+    const formTitle = document.getElementById("formTitle") 
+    const settings = common.settingsStore.get();
+    formTitle.innerHTML = "Segments to include (" + settings.FTSorFAL + ")"  
+    let i = 1;
+    console.log(routeInfo)
+    for (let segment of routeInfo.markLines) {
+        if (segment.name.includes("Finish")) {
+            let label = document.createElement('label');
+            let key = document.createElement('key');
+            let input = document.createElement('input');
+            input.type = "checkbox";
+            input.checked = true;
+            input.name = "eventSegData" + "|" + routeInfo.sg + "|" + segment.id + "|" + segment.repeat;
+            key.innerHTML = segment.name.replace("Finish","[" + segment.repeat + "]") + ":";
+            label.appendChild(key);
+            label.appendChild(input);
+            segmentsForm.appendChild(label);
+            i++;
+        }
+    }
+    //debugger
 }
