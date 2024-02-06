@@ -989,25 +989,29 @@ export class SauceElevationProfile {
                                 //debugger
                             }
                             if (this.profileZoom && !this.singleLapView) {
-                                //debugger
+                                //console.log(xCoord)
                                 const distance = this.forwardDistance; 
                                 let zoomStart;
                                 let zoomFinish;
-                                if (xCoord - 500 > 0) {
+                                if (xCoord - 500 > 0 && typeof(xCoord) != "undefined") {
                                     let zoomIdx = common.binarySearchClosest(this.routeDistances, (xCoord - 500))
                                     //zoomStart = xCoord - 500;
                                     zoomStart = this.routeDistances[zoomIdx]
                                 } else {
                                     zoomStart = 0;
                                 }
-                                if (xCoord + distance < this.routeDistances.at(-1)) {
+                                if (xCoord + distance < this.routeDistances.at(-1) && typeof(xCoord) != "undefined") {
                                     let zoomIdx = common.binarySearchClosest(this.routeDistances, (xCoord + distance))
                                     //zoomFinish = xCoord + distance;                
                                     zoomFinish = this.routeDistances[zoomIdx]
+                                } else if (typeof(xCoord) == "undefined") {
+                                    //console.log("XCoord is undefined")
+                                    zoomFinish = distance;
+                                    zoomStart = 0;
                                 } else {
                                     zoomFinish = this.routeDistances.at(-1);
                                     zoomStart = zoomFinish - distance
-                                }     
+                                }
                                 let idxStart = common.binarySearchClosest(this.routeDistances, (zoomStart)); 
                                 let idxFinish = common.binarySearchClosest(this.routeDistances, (zoomFinish)); 
                                 //console.log(idxStart, idxFinish) 
