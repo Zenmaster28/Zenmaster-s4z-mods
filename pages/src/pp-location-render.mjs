@@ -506,6 +506,12 @@ export class SauceElevationProfile {
         }
         const markAreaData = [];
         //debugger
+        let ppDisplayInfo;        
+        if (this.pacerBotGroupSize) {
+            ppDisplayInfo = this.ppName + " (" + this.pacerBotGroupSize + ")" + " on " + this.route.name;
+        } else {
+            ppDisplayInfo = this.ppName + " on " + this.route.name;
+        }
         this.chart.setOption({
             xAxis: {inverse: options.reverse},
             yAxis: {
@@ -515,7 +521,7 @@ export class SauceElevationProfile {
             title: {
                 show: true,
                 top: '10%',
-                text: this.ppName + " on " + this.route.name,                
+                text: ppDisplayInfo,                
                 textStyle: {                    
                     fontSize: this.em(0.3 * this.fontScale),
                 },
@@ -773,6 +779,8 @@ export class SauceElevationProfile {
         if (!watching && (this.courseId == null || (!this.road && !this.route))) {
             return;
         } else if (watching) {
+            //console.log("Setting group size to " + watching.pacerBotGroupSize)
+            this.pacerBotGroupSize = watching.pacerBotGroupSize;
             if (watching.courseId !== this.courseId) {
                 await this.setCourse(watching.courseId);
             }
@@ -893,6 +901,18 @@ export class SauceElevationProfile {
         const markPointLabelSize = 0.4;
         const deltaY = this._yAxisMax - this._yAxisMin;
         const nodes = this.curvePath.nodes;
+        let ppDisplayInfo;
+        //console.log(this.pacerBotGroupSize)
+        if (this.pacerBotGroupSize) {
+            ppDisplayInfo = this.ppName + " (" + this.pacerBotGroupSize + ")" + " on " + this.route.name;
+        } else {
+            ppDisplayInfo = this.ppName + " on " + this.route.name;
+        }
+        this.chart.setOption({
+            title: {                
+                text: ppDisplayInfo,                
+            }
+        })
         this.chart.setOption({series: [{
             markPoint: {
                 itemStyle: {borderColor: '#222b'},
