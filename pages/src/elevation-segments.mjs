@@ -296,9 +296,9 @@ export class SauceElevationProfile {
         let segmentsOnRoute = await zen.processRoute(this.courseId, this.routeId, laps, distance, this.showLoopSegments)
         console.log(segmentsOnRoute)
         this.routeInfo = segmentsOnRoute;
-        this.routeDistances = Array.from(segmentsOnRoute.routeFullData.distances);            
-        this.routeElevations = Array.from(segmentsOnRoute.routeFullData.elevations);
-        this.routeGrades = Array.from(segmentsOnRoute.routeFullData.grades);        
+        this.routeDistances = Array.from(segmentsOnRoute.routeFullData.distances);                    
+        this.routeElevations = Array.from(segmentsOnRoute.routeFullData.elevations);        
+        this.routeGrades = Array.from(segmentsOnRoute.routeFullData.grades);                
         if (this.showSegmentStart)
         {   
             for (let segment of segmentsOnRoute.segments) {
