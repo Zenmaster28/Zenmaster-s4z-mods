@@ -129,6 +129,7 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
     let segmentRepeatCheck = routeSegments.filter(x => x.repeat > 1);
     let segmentRepeats;
     segmentRepeatCheck.length > 0 ? segmentRepeats = true : segmentRepeats = false;
+    
     const routeInfo = {
         routeFullData: routeFullData,
         segments: routeSegments,
@@ -842,4 +843,17 @@ export function buildEventForm() {
         }
     }
     //debugger
+}
+
+export function fillArrayWithInterpolatedValues(arr, inc) {
+    return arr.flatMap((value, index, array) => {
+        if (index === array.length - 1) return [value]; // If it's the last element, no need to interpolate
+        const nextValue = array[index + 1];
+        const difference = nextValue - value;
+        const interpolatedValues = [];
+        for (let i = 1; i <= inc; i++) {
+            interpolatedValues.push(value + difference * (i / (inc + 1)));
+        }
+        return [value, ...interpolatedValues];
+    });
 }
