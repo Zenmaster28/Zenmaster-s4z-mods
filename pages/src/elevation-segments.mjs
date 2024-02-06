@@ -14,7 +14,7 @@ let allMarkLines = [];
 let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, refresh=1000}) {
         this.el = el;
         this.worldList = worldList;
         this.preferRoute = preferRoute;
@@ -54,6 +54,8 @@ export class SauceElevationProfile {
         this.customFinishLine;
         this.yAxisMin = yAxisMin;
         this.singleLapView = singleLapView;
+        this.profileZoom = profileZoom;
+        this.forwardDistance = forwardDistance;
         this.refresh = refresh;
         this._lastRender = 0;
         this._refreshTimeout = null;        
@@ -960,23 +962,14 @@ export class SauceElevationProfile {
                                     lapFinish = lapStart + lapNodesCount;
                                 }
                                 
-                                if (this.singleLapView) {
-                                    //debugger
+                                if (this.singleLapView) {                                    
                                     const distance = this.routeDistances[lapFinish - 1] - this.routeDistances[lapStart];                                    
                                     const dataZoomData = [];
-                                    const dataZoomColorStops = Array.from(this.routeColorStops.slice(lapStart, lapFinish));
-                                    const zoomedRange = lapFinish - lapStart;
-                                    /*
-                                    const newColorStops = dataZoomColorStops.map((stop, i) => ({
-                                        offset: (this.routeDistances[lapStart + i] - (distance * (this.currentLap - 1))) / distance,
-                                        color: stop.color
-                                    }))
-                                    */
+                                    const dataZoomColorStops = Array.from(this.routeColorStops.slice(lapStart, lapFinish));                                    
                                     const newColorStops = dataZoomColorStops.map((stop, i) => ({
                                         offset: (this.routeDistances[lapStart + i] - this.routeDistances[lapStart]) / distance,
                                         color: stop.color
-                                    }))
-                                    //debugger
+                                    }))                                    
                                     dataZoomData.push({
                                         type: 'inside',
                                         startValue: this.routeDistances[lapStart],
@@ -992,9 +985,57 @@ export class SauceElevationProfile {
                                             }
                                         }]                                        
                                     })
-                                    //debugger
                                 }
                                 //debugger
+                            }
+                            if (this.profileZoom && !this.singleLapView) {
+                                //debugger
+                                const distance = this.forwardDistance; 
+                                let zoomStart;
+                                let zoomFinish;
+                                if (xCoord - 500 > 0) {
+                                    let zoomIdx = common.binarySearchClosest(this.routeDistances, (xCoord - 500))
+                                    //zoomStart = xCoord - 500;
+                                    zoomStart = this.routeDistances[zoomIdx]
+                                } else {
+                                    zoomStart = 0;
+                                }
+                                if (xCoord + distance < this.routeDistances.at(-1)) {
+                                    let zoomIdx = common.binarySearchClosest(this.routeDistances, (xCoord + distance))
+                                    //zoomFinish = xCoord + distance;                
+                                    zoomFinish = this.routeDistances[zoomIdx]
+                                } else {
+                                    zoomFinish = this.routeDistances.at(-1);
+                                    zoomStart = zoomFinish - distance
+                                }     
+                                let idxStart = common.binarySearchClosest(this.routeDistances, (zoomStart)); 
+                                let idxFinish = common.binarySearchClosest(this.routeDistances, (zoomFinish)); 
+                                //console.log(idxStart, idxFinish) 
+                                //const dDelta = this.routeDistances[idxStart + 1] - this.routeDistances[idxStart];
+                                //const offset = this.routeDistances[idxStart] + dDelta * (xIdx % 1)
+                                //console.log(offset)
+                                const dataZoomColorStops = Array.from(this.routeColorStops.slice(idxStart, idxFinish));                                    
+                                const newColorStops = dataZoomColorStops.map((stop, i) => ({
+                                    offset: (this.routeDistances[idxStart + i] - this.routeDistances[idxStart]) / (distance + 500),
+                                    color: stop.color
+                                })) 
+                                //console.log(newColorStops)
+                                const dataZoomData = [];                                                              
+                                dataZoomData.push({
+                                    type: 'inside',
+                                    startValue: zoomStart,
+                                    endValue: zoomFinish
+                                })
+                                this.chart.setOption({
+                                    dataZoom: dataZoomData[0], 
+                                    series: [{
+                                        areaStyle: {
+                                            color: {
+                                                colorStops: newColorStops
+                                            }
+                                        }
+                                    }]                                                                           
+                                })
                             }
                             let nextSegment = zen.getNextSegment(allMarkLines, xCoord)
                             let distanceToGo;

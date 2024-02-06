@@ -51,7 +51,9 @@ common.settingsStore.setDefault({
     overrideDistance: 0,
     overrideLaps: 0,
     yAxisMin: 200,
-    singleLapView: false
+    singleLapView: false,
+    profileZoom: false,
+    forwardDistance: 5000
 });
 
 const settings = common.settingsStore.get();
@@ -119,7 +121,9 @@ function createElevationProfile({worldList}) {
     const overrideLaps = typeof(settings.overrideLaps) != "undefined" ? settings.overrideLaps : 0;    
     const yAxisMin = typeof(settings.yAxisMin) != "undefined" ? settings.yAxisMin: 200;
     const singleLapView = settings.singleLapView !== false;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView});
+    const profileZoom = settings.profileZoom !== false;
+    const forwardDistance = settings.forwardDistance;
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance});
 }
 
 
@@ -326,7 +330,14 @@ export async function main() {
         } else if (changed.has('setAthleteSegmentData'))
         {
             elProfile.setAthleteSegmentData = changed.get('setAthleteSegmentData')
-        } 
+        }  else if (changed.has('profileZoom')) {
+            elProfile.profileZoom = changed.get('profileZoom')
+            if (!changed.get('profileZoom')) {
+                location.reload()
+            }
+        } else if (changed.has('forwardDistance')) {
+            elProfile.forwardDistance = changed.get('forwardDistance')
+        }
     });
 }
 

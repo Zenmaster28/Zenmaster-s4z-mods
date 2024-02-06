@@ -157,10 +157,18 @@
                     <input type="number" name="yAxisMin" min="10" max="200" step="10" style="--size: 5"/>
                 </label> 
                 <label title="In multi lap events, only show one lap at a time">
-                    <key>Single lap view</key>
+                    <key data-added="2024-02-05">Single lap view</key>
                     <input type="checkbox" name="singleLapView">
                 </label>
-                
+                <label title="Zoom into show the specified number of meters ahead.">
+                    <key data-added="2024-02-06">Profile zoom </key>
+                    <input type="checkbox" name="profileZoom">                    
+                </label>
+                <label>    
+                    <key data-added="2024-02-06">Show the next </key>                
+                    <input type="range" name="forwardDistance" min="1000" max="50000" step="500" data-depends-on="profileZoom"/>
+                    <input type="number" name="forwardDistance" min="1000" max="50000" step="500" style="--size: 7" data-depends-on="profileZoom"/> meters
+                </label>
             </form>
         </div>
     </body>
