@@ -1,3 +1,9 @@
+html.solid-background {
+  background: var(--background-color);
+}
+html.solid-background body {
+  background: transparent !important;
+}
 #content {
   scroll-behavior: smooth;
   padding: 0;

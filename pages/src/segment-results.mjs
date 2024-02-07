@@ -645,5 +645,11 @@ export async function main() {
         approachingRefresh = null;
         inSegmentRefresh = null;
     });
+    common.settingsStore.addEventListener('changed', ev => {
+        const changed = ev.data.changed; 
+        if (changed.has('solidBackground') || changed.has('backgroundColor')) {            
+            setBackground();
+        }
+    });
 }
 setBackground();

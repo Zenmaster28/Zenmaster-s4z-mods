@@ -47,6 +47,8 @@ function setBackground() {
     const {solidBackground, backgroundColor} = common.settingsStore.get();
     doc.classList.toggle('solid-background', !!solidBackground);
     if (solidBackground) {
+        //debugger
+        console.log("setting background color to " + backgroundColor)
         doc.style.setProperty('--background-color', backgroundColor);
     } else {
         doc.style.removeProperty('--background-color');
@@ -915,6 +917,9 @@ export async function main() {
     });
     common.settingsStore.addEventListener('changed', ev => {
         const changed = ev.data.changed; 
+        if (changed.has('solidBackground') || changed.has('backgroundColor')) {            
+            setBackground();
+        }
         let eventSegmentChanged = [...changed.entries()].filter(([key, value]) => key.startsWith("eventSegData"));
         if (eventSegmentChanged.length > 0) {
             let seg = eventSegmentChanged[0][0].split("|")
