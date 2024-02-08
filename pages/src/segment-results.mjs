@@ -26,6 +26,7 @@ let eventData = [];
 let eventStartTime = Date.now();
 
 
+
 function setBackground() {
     const {solidBackground, backgroundColor} = common.settingsStore.get();
     doc.classList.toggle('solid-background', !!solidBackground);
@@ -292,7 +293,11 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching) {
             }
             inEvent = true;
         }        
-        segNameDiv.innerHTML = segmentName + ' \u21E2';
+        if (settings.femaleOnly) {
+            segNameDiv.innerHTML = segmentName + '\u2640 \u21E2';
+        } else {
+            segNameDiv.innerHTML = segmentName + ' \u21E2';
+        }
         buildTable(eventResults,watching);
         
         approachingRefresh = Date.now();                            
@@ -355,7 +360,11 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching) {
             }
             inEvent = true;
         }        
-        segNameDiv.innerHTML = segmentName + ' \u21E2';
+        if (settings.femaleOnly) {
+            segNameDiv.innerHTML = '\u21e0 ' + segmentName + '\u2640 \u21E2';
+        } else {
+            segNameDiv.innerHTML = '\u21e0 ' + segmentName + ' \u21E2';
+        }
         buildTable(eventResults,watching);
         
         inSegmentRefresh = Date.now();                            
@@ -407,8 +416,13 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching) {
                 }
             }
             inEvent = true;
-        }        
-        segNameDiv.innerHTML = '\u21e0 ' + segmentName; 
+        }  
+        if (settings.femaleOnly) {
+            segNameDiv.innerHTML = '\u21e0 ' + segmentName + '\u2640';
+        } else {
+            segNameDiv.innerHTML = '\u21e0 ' + segmentName;
+        }      
+        
         if (settings.departingInfo)
         {
             if (segmentBests.length == 0)
@@ -503,7 +517,8 @@ function buildTable(eventResults,watching) {
         {            
             //teamBadge = common.teamBadge(nameTeam[1]);
             teamBadge = zen.fmtTeamBadgeV2(nameTeam[1]);
-        }        
+        }              
+        
         td.innerHTML = eventResults[rank].firstName + " " + lastName + " " + teamBadge;                        
         tr.appendChild(td);
         td = document.createElement('td');
@@ -543,7 +558,7 @@ function segmentTimer() {
 
 async function getSegmentResults(watching) {
     refreshRate = 5000;
-    const doc = document.documentElement;
+    const doc = document.documentElement;        
     doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);
     if (watching.state.eventSubgroupId == 0 && settings.FTSorFAL == "FAL")
     {

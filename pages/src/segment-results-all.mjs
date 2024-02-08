@@ -371,8 +371,12 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching) {
             //debugger
             segRepeat = "[" + routeSegments[segIdx].repeat + "] " + settings.FTSorFAL
             inEvent = true;
-        }        
-        segNameDiv.innerHTML = segmentName + segRepeat + ' \u21E2';
+        } 
+        if (settings.femaleOnly) {
+            segNameDiv.innerHTML = segmentName + segRepeat + '\u2640 \u21E2';
+        } else {
+            segNameDiv.innerHTML = segmentName + segRepeat + ' \u21E2';
+        }
         buildTable(eventResults,watching);
         
         approachingRefresh = Date.now();                            
@@ -480,7 +484,11 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching) {
             segRepeat = "[" + routeSegments[segIdx].repeat + "] " + settings.FTSorFAL
             inEvent = true;
         }        
-        segNameDiv.innerHTML = segmentName + segRepeat + ' \u21E2';
+        if (settings.femaleOnly) {
+            segNameDiv.innerHTML = '\u21e0 ' + segmentName + segRepeat + '\u2640 \u21E2';
+        } else {
+            segNameDiv.innerHTML = '\u21e0 ' + segmentName + segRepeat + ' \u21E2';
+        }
         buildTable(eventResults,watching);
         
         inSegmentRefresh = Date.now();                            
@@ -577,7 +585,11 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching) {
             segRepeat = "[" + routeSegments[segIdx].repeat + "] " + settings.FTSorFAL
             inEvent = true;
         }        
-        segNameDiv.innerHTML = '\u21e0 ' + segmentName + segRepeat; 
+        if (settings.femaleOnly) {
+            segNameDiv.innerHTML = '\u21e0 ' + segmentName + segRepeat + '\u2640';
+        } else {
+            segNameDiv.innerHTML = '\u21e0 ' + segmentName + segRepeat;
+        }
         if (settings.departingInfo)
         {
             if (segmentBests.length == 0)
@@ -763,7 +775,7 @@ async function getKnownRacers(eventId) {
 async function getSegmentResults(watching) {    
     refreshRate = 5000;
     const doc = document.documentElement;
-    doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);
+    doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);    
     if ((!routeInfo || watching.state.routeId != routeInfo.routeFullData.id) && !inProgress)
     {
         //console.log("Getting segments on route")
