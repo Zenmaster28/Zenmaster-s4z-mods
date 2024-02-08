@@ -132,7 +132,8 @@ common.settingsStore.setDefault({
     inSegmentInfo: true,
     transparentNoData: true,    
     FTSorFAL: "FTS",
-    includeTime: true
+    includeTime: true,
+    femaleOnly: false
 });
 
 common.settingsStore.addEventListener('changed', ev => {
@@ -454,7 +455,10 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching) {
     }
 }
 
-function buildTable(eventResults,watching) {    
+function buildTable(eventResults,watching) {   
+    if (settings.femaleOnly) {
+        eventResults = eventResults.filter(x => x.gender == "female")
+    } 
     let scoreFormat = getScoreFormat();
     let firstAL    
     if (settings.FTSorFAL == "FAL")
