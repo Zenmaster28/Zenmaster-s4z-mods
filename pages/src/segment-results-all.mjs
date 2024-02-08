@@ -46,9 +46,7 @@ async function getTeamColors() {
 function setBackground() {
     const {solidBackground, backgroundColor} = common.settingsStore.get();
     doc.classList.toggle('solid-background', !!solidBackground);
-    if (solidBackground) {
-        //debugger
-        console.log("setting background color to " + backgroundColor)
+    if (solidBackground) {        
         doc.style.setProperty('--background-color', backgroundColor);
     } else {
         doc.style.removeProperty('--background-color');
