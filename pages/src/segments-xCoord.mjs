@@ -779,8 +779,8 @@ export function preferredTeamColor(name) {
 
 export async function geto101() {
     let availableMods = await common.rpc.getAvailableMods();
-    let o101Mod = availableMods.find(x => x.id == "o101_s4z_mods");
-    if (o101Mod.enabled && checkVersion("1.1.4",o101Mod.manifest.version) <= 0) {
+    let o101Mod = availableMods.find(x => x.id == "o101_s4z_mods");    
+    if (o101Mod && (o101Mod.enabled && checkVersion("1.1.4",o101Mod.manifest.version) <= 0)) {
         let modPath = o101Mod.modPath.split("\\").at(-1)
         //o101common = await import("/mods/" + modPath + "/pages/src/o101/common.mjs")
         return modPath;
@@ -831,18 +831,36 @@ export function buildEventForm() {
         if (segment.name.includes("Finish")) {
             let label = document.createElement('label');
             let key = document.createElement('key');
-            let input = document.createElement('input');
+            key.innerHTML = segment.name.replace("Finish","[" + segment.repeat + "]") + ":";
+            let input = document.createElement('input');            
             input.type = "checkbox";
             input.checked = true;
             input.name = "eventSegData" + "|" + routeInfo.sg + "|" + segment.id + "|" + segment.repeat;
-            key.innerHTML = segment.name.replace("Finish","[" + segment.repeat + "]") + ":";
+            input.addEventListener("change", eventFormChanges)
+            //let inputScoreType = document.createElement('input');
+            let inputScoreType = document.createElement('select')
+            let selectOptions = ["FTS","FAL"]
+            for (let opt of selectOptions) {
+                let option = document.createElement("option")
+                option.value = opt;
+                option.text = opt;
+                inputScoreType.appendChild(option)
+            }
+            let inputScoreFormat = document.createElement('input');
+            inputScoreFormat.type = "textbox"
             label.appendChild(key);
             label.appendChild(input);
+            label.appendChild(inputScoreType)
+            label.appendChild(inputScoreFormat)
             segmentsForm.appendChild(label);
             i++;
         }
     }
     //debugger
+}
+
+export function eventFormChanges(e) {
+    debugger
 }
 
 export function fillArrayWithInterpolatedValues(arr, inc) {

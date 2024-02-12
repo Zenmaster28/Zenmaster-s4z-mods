@@ -2,8 +2,16 @@ import * as sauce from '/shared/sauce/index.mjs';
 import * as common from '/pages/src/common.mjs';
 import * as zen from './segments-xCoord.mjs';
 
+let o101enabled = false;
 let o101path = await zen.geto101();
-await zen.initTeamColors(o101path);
+if (o101path) {
+    try {
+        await zen.initTeamColors(o101path);
+        o101enabled = true;
+    } catch {
+        o101enabled = false;
+    }
+}
 
 
 const doc = document.documentElement;
@@ -691,7 +699,7 @@ function buildTable(eventResults,watching) {
         {            
             //teamBadge = common.teamBadge(nameTeam[1]);
             //console.log("Getting team badge for " + nameTeam[1])
-            teamBadge = zen.fmtTeamBadgeV2(nameTeam[1]);
+            o101enabled ? teamBadge = zen.fmtTeamBadgeV2(nameTeam[1]) : teamBadge = common.teamBadge(nameTeam[1]);
             //debugger
         }        
         td.innerHTML = eventResults[rank].firstName.charAt(0) + "." + lastName + " " + teamBadge;                        
