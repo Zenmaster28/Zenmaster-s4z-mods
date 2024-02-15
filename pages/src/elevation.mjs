@@ -42,6 +42,7 @@ common.settingsStore.setDefault({
     lineTypeFinish: "[5, 10]",
     lineSize: 1.0,
     pinColor: "#ff430e",
+    pinColorMarked: "#9cb7ec",
     showSegmentFinish: false,
     minSegmentLength: 500,
     showNextSegment: true,
@@ -53,7 +54,9 @@ common.settingsStore.setDefault({
     yAxisMin: 200,
     singleLapView: false,
     profileZoom: false,
-    forwardDistance: 5000
+    forwardDistance: 5000,
+    showTeamMembers: false,
+    showMarkedRiders: false
 });
 
 const settings = common.settingsStore.get();
@@ -123,7 +126,10 @@ function createElevationProfile({worldList}) {
     const singleLapView = settings.singleLapView !== false;
     const profileZoom = settings.profileZoom !== false;
     const forwardDistance = settings.forwardDistance;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance});
+    const showTeamMembers = typeof(settings.showTeamMembers) !== "undefined" ? settings.showTeamMembers : false;
+    const showMarkedRiders = typeof(settings.showMarkedRiders) !== "undefined" ? settings.showMarkedRiders : false;
+    const pinColorMarked = settings.pinColorMarked ? settings.pinColorMarked : "#9cb7ec";
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked});
 }
 
 
@@ -317,9 +323,11 @@ export async function main() {
         {   
             elProfile.pinSize = changed.get('pinSize');            
         } else if (changed.has('pinColor'))
-        {
-            //console.log(changed)
+        {         
             elProfile.pinColor = changed.get('pinColor');
+        } else if (changed.has('pinColorMarked'))
+        {         
+            elProfile.pinColorMarked = changed.get('pinColorMarked');
         } else if (changed.has('showNextSegment'))
         {
             elProfile.showNextSegment = changed.get('showNextSegment')
@@ -337,6 +345,10 @@ export async function main() {
             }
         } else if (changed.has('forwardDistance')) {
             elProfile.forwardDistance = changed.get('forwardDistance')
+        } else if (changed.has('showTeamMembers')) {
+            elProfile.showTeamMembers = changed.get('showTeamMembers');            
+        } else if (changed.has('showMarkedRiders')) {
+            elProfile.showMarkedRiders = changed.get('showMarkedRiders');            
         }
     });
 }

@@ -103,6 +103,18 @@
                     <key data-added="2023-12-06">Only show my pin:</key>
                     <input type="checkbox" name="showOnlyMyPin"/>
                 </label>
+                <label title="Show members of my team">
+                    <key data-added="2024-02-14">Show team members:</key>
+                    <input type="checkbox" name="showTeamMembers" data-depends-on="!showOnlyMyPin"/>
+                </label>
+                <label title="Show marked riders">
+                    <key data-added="2024-02-14">Show marked riders:</key>
+                    <input type="checkbox" name="showMarkedRiders" data-depends-on="!showOnlyMyPin"/>
+                </label>
+                <label title="Pin color for marked riders">
+                    <key data-added="2024-02-14">&nbsp;&nbsp;- Marked pin color:</key>                    
+                    <input type="color" name="pinColorMarked" data-depends-on="showMarkedRiders">
+                </label>
                 <label title="The type of line used for segments and laps">
                     <key data-added="2023-12-03">Segment Line type:</key>
                     Start:&nbsp;
@@ -162,7 +174,7 @@
                 </label>
                 <label title="Zoom into show the specified number of meters ahead.">
                     <key data-added="2024-02-06">Profile zoom </key>
-                    <input type="checkbox" name="profileZoom">                    
+                    <input type="checkbox" name="profileZoom" data-depends-on="overrideDistance==0">                    
                 </label>
                 <label>    
                     <key data-added="2024-02-06">&nbsp;&nbsp;- Show the next </key>                

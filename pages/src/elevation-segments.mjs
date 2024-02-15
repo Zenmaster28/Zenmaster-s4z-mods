@@ -14,15 +14,18 @@ let allMarkLines = [];
 let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, refresh=1000}) {
         this.el = el;
         this.worldList = worldList;
         this.preferRoute = preferRoute;
         this.showMaxLine = showMaxLine;
         this.showLapMarker = showLapMarker;
         this.showCompletedLaps = showCompletedLaps;
+        this.showTeamMembers = showTeamMembers;
+        this.showMarkedRiders = showMarkedRiders;
         this.currentLap = -1;
         this.lapCounter = 0;
+        this.watchingTeam = "";
         this.showSegmentStart = showSegmentStart;  
         this.showSegmentFinish = showSegmentFinish;
         this.minSegmentLength = minSegmentLength;
@@ -33,6 +36,7 @@ export class SauceElevationProfile {
         this.lineSize = lineSize;
         this.pinSize = pinSize;
         this.pinColor = pinColor;
+        this.pinColorMarked = pinColorMarked;
         this.showOnlyMyPin = showOnlyMyPin;
         this.setAthleteSegmentData = setAthleteSegmentData;
         const {fontScale} = common.settingsStore.get();        
@@ -626,7 +630,7 @@ export class SauceElevationProfile {
 
     async _renderAthleteStates(states, force) {
         const watching = states.find(x => x.athleteId === this.watchingId); 
-               
+         
         if (!watching && (this.courseId == null || (!this.road && !this.route))) {
             return;
         } else if (watching) {
@@ -780,7 +784,7 @@ export class SauceElevationProfile {
         const markPointLabelSize = 0.4;
         const deltaY = this._yAxisMax - this._yAxisMin;
         const nodes = this.curvePath.nodes; 
-                
+        //debugger   
         this.chart.setOption({series: [{
             markPoint: {
                 itemStyle: {borderColor: '#222b'},
@@ -927,16 +931,45 @@ export class SauceElevationProfile {
                         let allOtherPins = this.showOnlyMyPin;
                         this.showOnlyMyPin ? allOtherPins = 1 : allOtherPins = 1;
                         let watchingPinSize = 1.1 * this.pinSize;
+                        let teamPinSize = 0.75 * this.pinSize;
                         let deemphasizePinSize = 0.35 * this.pinSize * allOtherPins;
                         let otherPinSize = 0.55 * this.pinSize * allOtherPins;
-                        let watchingPinColor = this.pinColor
+                        let watchingPinColor = this.pinColor;
+                        let markedPinColor = this.pinColorMarked;
                         //console.log(allOtherPins)
-                        
+                        let teamMate = false;
+                        let marked = false;
+                        if (this.showTeamMembers || this.showMarkedRiders) {
+                            const ad = common.getAthleteDataCacheEntry(state.athleteId);                            
+                            if (ad && (ad.athlete && ad.athlete.team)) {                                
+                                if (this.showTeamMembers && ad.athlete.team == this.watchingTeam) {
+                                    teamMate = true;
+                                }
+                            } 
+                            if (ad && (ad.athlete && ad.athlete.marked)) {                                
+                                if (this.showMarkedRiders) {
+                                    marked = true;
+                                }
+                            } 
+                        }
                         if (isWatching)
                         {                        
                             //let nextSegment = this.getNextSegment(allMarkLines, xCoord)
                             //console.log(xCoord)
                             //debugger
+                            if (this.showTeamMembers) {
+                                const ad = common.getAthleteDataCacheEntry(state.athleteId);                            
+                                if (ad && (ad.athlete && ad.athlete.team)) {
+                                    if (this.watchingTeam != ad.athlete.team) {
+                                        console.log("Setting watching team to: " + ad.athlete.team)
+                                        //debugger
+                                        this.watchingTeam = ad.athlete.team;       
+                                    }                         
+                                } else if (this.watchingTeam) {
+                                    console.log("Clearing watching team")
+                                    this.watchingTeam = "";
+                                }
+                            }
                             if (this.currentLap != state.laps + 1 && state.eventSubgroupId != 0) {
                                 console.log("Setting current lap to: " + (state.laps + 1))
                                 this.currentLap = state.laps + 1;
@@ -1152,9 +1185,10 @@ export class SauceElevationProfile {
                         return {
                             name: state.athleteId,
                             coord: [xCoord, yCoord],
-                            symbolSize: isWatching ? this.em(watchingPinSize) : deemphasize ? this.em(deemphasizePinSize) : this.em(otherPinSize),
+                            symbol: "pin",
+                            symbolSize: isWatching ? this.em(watchingPinSize) : (teamMate || marked) ? this.em(teamPinSize) : deemphasize ? this.em(deemphasizePinSize) : this.em(otherPinSize),
                             itemStyle: {
-                                color: isWatching ? watchingPinColor : deemphasize ? '#0002' : '#fff7',
+                                color: isWatching ? watchingPinColor : teamMate ? watchingPinColor : marked ? markedPinColor : deemphasize ? '#0002' : '#fff7',
                                 borderWidth: this.em(isWatching ? 0.04 : 0.02),
                             },
                             emphasis: {
@@ -1196,8 +1230,14 @@ export class SauceElevationProfile {
             return;
         }
         const ad = common.getAthleteDataCacheEntry(mark.athleteId);
+        let team = "";
+        if (ad && (ad.athlete && ad.athlete.team)) {
+            team = "(" + ad.athlete.team + ")";
+            //console.log("team is: " + team)
+            //debugger
+        }
         const name = ad?.athlete?.fLast || `ID: ${mark.athleteId}`;
-        return `${name}, ${H.power(mark.state.power, {suffix: true})}`;
+        return `${name} ${team}, ${H.power(mark.state.power, {suffix: true})}`;
     }
 
     async _updateAthleteDetails(ids) {
