@@ -46,7 +46,7 @@ common.settingsStore.setDefault({
     showSegmentFinish: false,
     minSegmentLength: 500,
     showNextSegment: true,
-    showOnlyMyPin: false,
+    showMyPin: true,
     setAthleteSegmentData: true,
     showCompletedLaps: true,
     overrideDistance: 0,
@@ -56,7 +56,8 @@ common.settingsStore.setDefault({
     profileZoom: false,
     forwardDistance: 5000,
     showTeamMembers: false,
-    showMarkedRiders: false
+    showMarkedRiders: false,
+    showAllRiders: true
 });
 
 const settings = common.settingsStore.get();
@@ -116,20 +117,31 @@ function createElevationProfile({worldList}) {
     const pinColor = settings.pinColor ? settings.pinColor : "#ff430e";
     const showSegmentFinish = settings.showSegmentFinish !== false;
     const minSegmentLength = settings.minSegmentLength ? settings.minSegmentLength : 500;
-    const showNextSegment = settings.showNextSegment !== false;
-    const showOnlyMyPin = settings.showOnlyMyPin !== false;
+    const showNextSegment = settings.showNextSegment !== false;    
     const setAthleteSegmentData = settings.setAthleteSegmentData !== false;
-    const showCompletedLaps = typeof(settings.showCompletedLaps) != "undefined" ? settings.showCompletedLaps : false;   
-    const overrideDistance = typeof(settings.overrideDistance) != "undefined" ? settings.overrideDistance : 0;
-    const overrideLaps = typeof(settings.overrideLaps) != "undefined" ? settings.overrideLaps : 0;    
-    const yAxisMin = typeof(settings.yAxisMin) != "undefined" ? settings.yAxisMin: 200;
+    const showCompletedLaps = typeof(settings.showCompletedLaps) != "undefined" ? settings.showCompletedLaps : false;  
+    typeof(settings.overrideDistance) == "undefined" ? common.settingsStore.set("overrideDistance", 0) : null 
+    const overrideDistance = settings.overrideDistance;
+    typeof(settings.overrideLaps) == "undefined" ? common.settingsStore.set("overrideLaps", 0) : null;
+    const overrideLaps = settings.overrideLaps;    
+    typeof(settings.yAxisMin) == "undefined" ? common.settingsStore.set("yAxisMin", 200) : null;
+    const yAxisMin = settings.yAxisMin;
+    typeof(settings.singleLapView) == "undefined" ? common.settingsStore.set("singleLapView", false) : null;
     const singleLapView = settings.singleLapView !== false;
-    const profileZoom = settings.profileZoom !== false;
+    typeof(settings.profileZoom) == "undefined" ? common.settingsStore.set("profileZoom", false) : null;
+    const profileZoom = settings.profileZoom;
+    typeof(settings.forwardDistance) == "undefined" ? common.settingsStore.set("forwardDistance", 5000) : null;
     const forwardDistance = settings.forwardDistance;
-    const showTeamMembers = typeof(settings.showTeamMembers) !== "undefined" ? settings.showTeamMembers : false;
-    const showMarkedRiders = typeof(settings.showMarkedRiders) !== "undefined" ? settings.showMarkedRiders : false;
+    typeof(settings.showMyPin) == "undefined" ? common.settingsStore.set("showMyPin", true) : null;
+    const showMyPin = settings.showMyPin;
+    typeof(settings.showTeamMembers) == "undefined" ? common.settingsStore.set("showTeamMembers", false) : null;
+    const showTeamMembers =  settings.showTeamMembers;
+    typeof(settings.showMarkedRiders) == "undefined" ? common.settingsStore.set("showMarkedRiders", false) : null;
+    const showMarkedRiders = settings.showMarkedRiders;
+    typeof(settings.showAllRiders) == "undefined" ? common.settingsStore.set("showAllRiders", true) : null;
+    const showAllRiders = settings.showAllRiders;
     const pinColorMarked = settings.pinColorMarked ? settings.pinColorMarked : "#9cb7ec";
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked});
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders});
 }
 
 
@@ -331,10 +343,10 @@ export async function main() {
         } else if (changed.has('showNextSegment'))
         {
             elProfile.showNextSegment = changed.get('showNextSegment')
-        } else if (changed.has('showOnlyMyPin'))
+        } else if (changed.has('showMyPin'))
         {
             //console.log(changed);            
-            elProfile.showOnlyMyPin = changed.get('showOnlyMyPin')
+            elProfile.showMyPin = changed.get('showMyPin')
         } else if (changed.has('setAthleteSegmentData'))
         {
             elProfile.setAthleteSegmentData = changed.get('setAthleteSegmentData')
@@ -349,6 +361,8 @@ export async function main() {
             elProfile.showTeamMembers = changed.get('showTeamMembers');            
         } else if (changed.has('showMarkedRiders')) {
             elProfile.showMarkedRiders = changed.get('showMarkedRiders');            
+        } else if (changed.has('showAllRiders')) {
+            elProfile.showAllRiders = changed.get('showAllRiders');            
         }
     });
 }

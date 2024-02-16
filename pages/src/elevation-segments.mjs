@@ -14,7 +14,7 @@ let allMarkLines = [];
 let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, refresh=1000}) {
         this.el = el;
         this.worldList = worldList;
         this.preferRoute = preferRoute;
@@ -23,6 +23,7 @@ export class SauceElevationProfile {
         this.showCompletedLaps = showCompletedLaps;
         this.showTeamMembers = showTeamMembers;
         this.showMarkedRiders = showMarkedRiders;
+        this.showAllRiders = showAllRiders;
         this.currentLap = -1;
         this.lapCounter = 0;
         this.watchingTeam = "";
@@ -37,7 +38,7 @@ export class SauceElevationProfile {
         this.pinSize = pinSize;
         this.pinColor = pinColor;
         this.pinColorMarked = pinColorMarked;
-        this.showOnlyMyPin = showOnlyMyPin;
+        this.showMyPin = showMyPin;
         this.setAthleteSegmentData = setAthleteSegmentData;
         const {fontScale} = common.settingsStore.get();        
         this.fontScale = fontScale;
@@ -74,7 +75,7 @@ export class SauceElevationProfile {
                         return '';
                     }
                     //debugger
-                    if (this.watchingId) {
+                    if (this.watchingId && this.showMyPin) {
                     let watchingPin =  this.chart.getOption().series[0].markPoint.data.find(x => x.name == this.watchingId)
                     const dist = (this.reverse && this._distances) ?
                         this._distances.at(-1) - value[0] : value[0];
@@ -793,9 +794,28 @@ export class SauceElevationProfile {
                     let roadSeg;
                     let nodeRoadOfft;
                     let deemphasize;
-                    const isWatching = state.athleteId === this.watchingId;
-                    if (isWatching || !this.showOnlyMyPin) {                                       
+                    const isWatching = state.athleteId === this.watchingId;                    
+                    let isTeamMate = false;
+                    let isMarked = false;
+                    const ad = common.getAthleteDataCacheEntry(state.athleteId);
+                    if (ad && ad.athlete && ad.athlete.team) {
+                        isWatching ? this.watchingTeam = ad.athlete.team : 
+                        ad.athlete.team == this.watchingTeam ? isTeamMate = true : null;   
+                        //debugger                     
+                    } 
+                    if (ad && ad.athlete && ad.athlete.marked && !isWatching) {
+                        isMarked = true;
+                    }
+                    //to do - restructure to check options and state status                    
+                    //if (isWatching || !this.showMyPin) { 
+                    if ((this.showMyPin && isWatching) || 
+                        this.showAllRiders ||
+                        (this.showTeamMembers && isTeamMate) ||
+                        (this.showMarkedRiders && isMarked)
+                    ) {        
+                        
                         if (this.routeId != null) {
+                            
                             //console.log("route not null")
                             if (state.routeId === this.routeId) {
                                 let distance;
@@ -928,8 +948,8 @@ export class SauceElevationProfile {
                             console.log("got it", xCoord, xIdx, state.roadId, state.reverse, state.roadTime,
                                         {nodeRoadOfft, nodeOfft, reverse: state.reverse});
                         }*/
-                        let allOtherPins = this.showOnlyMyPin;
-                        this.showOnlyMyPin ? allOtherPins = 1 : allOtherPins = 1;
+                        let allOtherPins = this.showMyPin;
+                        this.showMyPin ? allOtherPins = 1 : allOtherPins = 1;
                         let watchingPinSize = 1.1 * this.pinSize;
                         let teamPinSize = 0.75 * this.pinSize;
                         let deemphasizePinSize = 0.35 * this.pinSize * allOtherPins;
@@ -937,26 +957,13 @@ export class SauceElevationProfile {
                         let watchingPinColor = this.pinColor;
                         let markedPinColor = this.pinColorMarked;
                         //console.log(allOtherPins)
-                        let teamMate = false;
-                        let marked = false;
-                        if (this.showTeamMembers || this.showMarkedRiders) {
-                            const ad = common.getAthleteDataCacheEntry(state.athleteId);                            
-                            if (ad && (ad.athlete && ad.athlete.team)) {                                
-                                if (this.showTeamMembers && ad.athlete.team == this.watchingTeam) {
-                                    teamMate = true;
-                                }
-                            } 
-                            if (ad && (ad.athlete && ad.athlete.marked)) {                                
-                                if (this.showMarkedRiders) {
-                                    marked = true;
-                                }
-                            } 
-                        }
-                        if (isWatching)
+                        
+                        if (isWatching && this.showMyPin)
                         {                        
                             //let nextSegment = this.getNextSegment(allMarkLines, xCoord)
                             //console.log(xCoord)
                             //debugger
+                            /*
                             if (this.showTeamMembers) {
                                 const ad = common.getAthleteDataCacheEntry(state.athleteId);                            
                                 if (ad && (ad.athlete && ad.athlete.team)) {
@@ -970,6 +977,7 @@ export class SauceElevationProfile {
                                     this.watchingTeam = "";
                                 }
                             }
+                            */
                             if (this.currentLap != state.laps + 1 && state.eventSubgroupId != 0) {
                                 console.log("Setting current lap to: " + (state.laps + 1))
                                 this.currentLap = state.laps + 1;
@@ -1186,9 +1194,9 @@ export class SauceElevationProfile {
                             name: state.athleteId,
                             coord: [xCoord, yCoord],
                             symbol: "pin",
-                            symbolSize: isWatching ? this.em(watchingPinSize) : (teamMate || marked) ? this.em(teamPinSize) : deemphasize ? this.em(deemphasizePinSize) : this.em(otherPinSize),
+                            symbolSize: isWatching ? this.em(watchingPinSize) : ((isTeamMate && this.showTeamMembers) || (isMarked && this.showMarkedRiders)) ? this.em(teamPinSize) : deemphasize ? this.em(deemphasizePinSize) : this.em(otherPinSize),
                             itemStyle: {
-                                color: isWatching ? watchingPinColor : teamMate ? watchingPinColor : marked ? markedPinColor : deemphasize ? '#0002' : '#fff7',
+                                color: isWatching ? watchingPinColor : (isTeamMate && this.showTeamMembers) ? watchingPinColor : (isMarked && this.showMarkedRiders) ? markedPinColor : deemphasize ? '#0002' : '#fff7',
                                 borderWidth: this.em(isWatching ? 0.04 : 0.02),
                             },
                             emphasis: {

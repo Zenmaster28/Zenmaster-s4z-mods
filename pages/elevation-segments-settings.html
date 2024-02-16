@@ -94,27 +94,27 @@
                     <key data-added="2023-12-03">Pin size:</key>
                     <input type="range" name="pinSize" min="0.1" max="2" step="0.1"/>
                     <input type="number" name="pinSize" min="0.1" max="2" step="0.1" style="--size: 5"/>
-                </label>
-                <label title="Pin color for watching">
-                    <key data-added="2023-12-03">Pin color:</key>                    
+                </label>                
+                <hr> Pins to show
+                <label title="Only show my/watching pin">
+                    <key data-added="2023-12-06">&nbsp;&nbsp;- My pin:</key>
+                    <input type="checkbox" name="showMyPin"/>&nbsp;
                     <input type="color" name="pinColor">
                 </label>
-                <label title="Only show my/watching pin">
-                    <key data-added="2023-12-06">Only show my pin:</key>
-                    <input type="checkbox" name="showOnlyMyPin"/>
-                </label>
                 <label title="Show members of my team">
-                    <key data-added="2024-02-14">Show team members:</key>
-                    <input type="checkbox" name="showTeamMembers" data-depends-on="!showOnlyMyPin"/>
+                    <key data-added="2024-02-14">&nbsp;&nbsp;- Team members:</key>
+                    <input type="checkbox" name="showTeamMembers"/>
                 </label>
                 <label title="Show marked riders">
-                    <key data-added="2024-02-14">Show marked riders:</key>
-                    <input type="checkbox" name="showMarkedRiders" data-depends-on="!showOnlyMyPin"/>
-                </label>
-                <label title="Pin color for marked riders">
-                    <key data-added="2024-02-14">&nbsp;&nbsp;- Marked pin color:</key>                    
-                    <input type="color" name="pinColorMarked" data-depends-on="showMarkedRiders">
-                </label>
+                    <key data-added="2024-02-14">&nbsp;&nbsp;- Marked riders:</key>
+                    <input type="checkbox" name="showMarkedRiders"/>&nbsp;
+                    <input type="color" name="pinColorMarked">
+                </label>  
+                <label title="Show all rider pins (aka the riff raff)">
+                    <key data-added="2024-02-14">&nbsp;&nbsp;- All riders:</key>
+                    <input type="checkbox" name="showAllRiders"/>
+                </label>              
+                <hr>
                 <label title="The type of line used for segments and laps">
                     <key data-added="2023-12-03">Segment Line type:</key>
                     Start:&nbsp;
