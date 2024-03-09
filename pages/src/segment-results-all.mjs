@@ -845,7 +845,8 @@ async function getSegmentResults(watching) {
             getKnownRacers(watching.state.eventSubgroupId);
         }
         if (routeSegments.length > 0)        {
-            let currentLocation = zen.getxCoord(watching, routeInfo);            
+            //let currentLocation = zen.getxCoord(watching, routeInfo); 
+            let currentLocation = watching.segmentData.currentPosition;           
             //let segmentStatus = getSegmentStatus(routeSegments, currentLocation, settings.nextSegmentThreshold);            
             let segmentStatus = getSegmentStatus(routeSegments, currentLocation, settings.nextSegmentThreshold);            
             if (segmentStatus.status != lastStatus) {

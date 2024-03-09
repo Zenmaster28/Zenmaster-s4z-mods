@@ -83,7 +83,16 @@
                     <key data-added="2023-12-30">Show completed laps:</key>
                     <input type="checkbox" name="showCompletedLaps" data-depends-on="showLapMarker">
                 </label>
-
+                <label>
+                    <key data-added="2024-02-29">Gradient color scheme:</key>
+                    <select name="colorScheme">
+                        <option value="sauce">Sauce</option>
+                        <option value="vv">Veloviewer (ish)</option>  
+                        <option value="cvdBuRd">CVD-BuRd</option>             
+                        <option value="cvdPRGn">CVD-PRGn</option>        
+                        <option value="cvdSunset">CVD-Sunset</option>                                            
+                    </select>
+                </label>
                 <hr/>
                 <label>
                     <key>Font scaling:</key>
@@ -100,6 +109,7 @@
                     <key data-added="2023-12-06">&nbsp;&nbsp;- My pin:</key>
                     <input type="checkbox" name="showMyPin"/>&nbsp;
                     <input type="color" name="pinColor">
+                    <input type="text" name="pinColor" size="7">
                 </label>
                 <label title="Show members of my team">
                     <key data-added="2024-02-14">&nbsp;&nbsp;- Team members:</key>
@@ -109,6 +119,7 @@
                     <key data-added="2024-02-14">&nbsp;&nbsp;- Marked riders:</key>
                     <input type="checkbox" name="showMarkedRiders"/>&nbsp;
                     <input type="color" name="pinColorMarked">
+                    <input type="text" name="pinColorMarked" size="7">
                 </label>  
                 <label title="Show all rider pins (aka the riff raff)">
                     <key>&nbsp;&nbsp;- All riders:</key>
@@ -135,6 +146,10 @@
                     <key data-added="2023-12-03">Line size:</key>
                     <input type="range" name="lineSize" min="0.25" max="10" step="0.25"/>
                     <input type="number" name="lineSize" min="0.25" max="10" step="0.25" style="--size: 6"/>
+                </label>
+                <label>
+                    <key data-added="2024-03-02">Line/text color</key>
+                    <input type="color" name="lineTextColor" data-depends-on="showSegmentStart">
                 </label>
                 <label>
                     <key>Theme override:</key>

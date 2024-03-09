@@ -14,7 +14,7 @@ let allMarkLines = [];
 let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, refresh=1000}) {
         this.el = el;
         this.worldList = worldList;
         this.preferRoute = preferRoute;
@@ -24,6 +24,8 @@ export class SauceElevationProfile {
         this.showTeamMembers = showTeamMembers;
         this.showMarkedRiders = showMarkedRiders;
         this.showAllRiders = showAllRiders;
+        this.colorScheme = colorScheme;
+        this.lineTextColor = lineTextColor;
         this.currentLap = -1;
         this.lapCounter = 0;
         this.watchingTeam = "";
@@ -116,9 +118,12 @@ export class SauceElevationProfile {
                 smooth: 0.5,
                 type: 'line',
                 symbol: 'none',
+                emphasis: {
+                    disabled: true
+                },
                 areaStyle: {
                     origin: 'start',
-                },
+                },                
                 encode: {
                     x: 0,
                     y: 1,
@@ -321,22 +326,29 @@ export class SauceElevationProfile {
                             xAxis: markline.markLine,
                             lineStyle: {
                                 width: this.lineSize,
-                                type: this.lineTypeFinish
+                                type: this.lineTypeFinish,
+                                color: this.lineTextColor
                             }, 
                             label: {
                                 show: true,                            
-                                formatter: '|||'
+                                formatter: '|||',
+                                color: this.lineTextColor
                             }
                         }); 
                     }
                 } else {
                     markLines.push({
                         xAxis: markline.markLine,
-                        lineStyle: {width: this.lineSize, type: this.lineType},
+                        lineStyle: {
+                            width: this.lineSize,
+                            type: this.lineType,
+                            color: this.lineTextColor
+                        },
                         label: {
                             distance: 7,
                             position: 'insideEndTop',                    
-                            formatter: markline.name
+                            formatter: markline.name,
+                            color: this.lineTextColor
                         }
                     });
                 }
@@ -360,11 +372,16 @@ export class SauceElevationProfile {
         if ((lapStartIdx || this.showCompletedLaps) && this.showLapMarker) {
             markLines.push({
                 xAxis: distances[lapStartIdx],
-                lineStyle: {width: this.lineSize, type: this.lineType},
+                lineStyle: {
+                    width: this.lineSize, 
+                    type: this.lineType,
+                    color: this.lineTextColor
+                },
                 label: {
                     distance: 7,
                     position: 'insideMiddleBottom',
-                    formatter: `LAP`
+                    formatter: `LAP`,
+                    color: this.lineTextColor
                 }
             });            
             this._routeLeadinDistance = distances[lapStartIdx];
@@ -388,11 +405,16 @@ export class SauceElevationProfile {
             {
                 markLines.push({
                     xAxis: this._routeLeadinDistance + lapDistance * lap,
-                    lineStyle: {width: this.lineSize, type: this.lineType},
+                    lineStyle: {
+                        width: this.lineSize, 
+                        type: this.lineType,
+                        color: this.lineTextColor
+                    },
                     label: {
                         distance: 7,
                         position: 'insideMiddleBottom',
                         formatter: `LAP ${lap + 1}`,
+                        color: this.lineTextColor
                     }
                 });
             }
@@ -419,11 +441,16 @@ export class SauceElevationProfile {
                 
                 markLines.push({
                     xAxis: xDist,
-                    lineStyle: {width: this.lineSize, type: this.lineTypeFinish},
+                    lineStyle: {
+                        width: this.lineSize, 
+                        type: this.lineTypeFinish,
+                        color: this.lineTextColor
+                    },
                     label: {
                         distance: 7,
                         position: 'insideEndTop',
-                        formatter: `Finish`
+                        formatter: `Finish`,
+                        color: this.lineTextColor
                     }
                 });
                 //if (!isNaN(markLineIndex)) {   
@@ -463,9 +490,15 @@ export class SauceElevationProfile {
         if (this.showMaxLine) {
             markLineData.push({
                 type: 'max',
+                lineStyle: {
+                    width: this.lineSize, 
+                    type: this.lineType,
+                    color: this.lineTextColor
+                },
                 label: {
                     formatter: x => H.elevation(x.value, {suffix: true}),
                     position: options.reverse ? 'insideStartTop' : 'insideEndTop',
+                    color: this.lineTextColor
                 },
             });
         }
@@ -478,17 +511,122 @@ export class SauceElevationProfile {
             markLineData.push(...options.markLines);
         }
         const markAreaData = [];
+        let lineWidth = 1;
+        if (this.colorScheme == "vv") {
+            //console.log("Selected colorscheme is " + this.colorScheme)
+            const green  = {min: 0.00, max: 0.025, hMin: 100, hMax: 60, s: 0.75, l: 0.5}
+            const yellow = {min: 0.025, max: 0.085, hMin: 60, hMax: 40, s: 1, l: 0.5}
+            const orange = {min: 0.085, max: 0.105, hMin: 39, hMax: 20, s: 1, l: 0.5}
+            const red = {min: 0.105, max: 0.15, hMin: 19, hMax: 0, s: 1, l: 0.4}
+            const angryred = {min: 0.15, max: 0.25, hMin: 1, hMax: 0, s: 1, l: 0.25}
+            const lightblue = {min: -0.04, max: 0.00, hMin: 190, hMax: 175, s: 1, l: 0.5}
+            const medblue = {min: -0.09, max: -0.04, hMin: 200, hMax: 190, s: 1, l: 0.5}
+            const darkblue = {min: -0.17, max: -0.09, hMin: 250, hMax: 200, s: 1, l: 0.5}
+            const allColors = [green, yellow, orange, red, angryred, lightblue, medblue, darkblue];
+            lineWidth = 0;            
+            this.routeColorStops = distances.map((x, i) => {
+                const grade = grades[i];                            
+                let selectedColor = allColors.filter(x => grade >= x.min && grade < x.max)            
+                let color = Color.fromRGB(0,0,0)
+                if (selectedColor.length > 0) {
+                    color.h = getRelativeHue(grade,selectedColor) / 360
+                    color.s = selectedColor[0].s;
+                    color.l = selectedColor[0].l
+                }                
+                return {
+                    offset: x / distance,
+                    color: color.toString(),
+                };
+            });
+       } else if (this.colorScheme == "cvdBuRd") {
+            //console.log("Selected colorscheme is " + this.colorScheme)            
+            const ranges = [
+                {min: -0.5, r: 33, g: 102, b: 172}, // catch for extremes
+                {min: -0.17, r: 67, g: 147, b: 195},
+                {min: -0.09, r: 146, g: 197, b: 222},
+                {min: -0.04, r: 209, g: 229, b: 240},
+                {min: 0.00, r: 247, g: 247, b: 247},
+                {min: 0.015, r: 253, g: 219, b: 199},
+                {min: 0.055, r: 244, g: 165, b: 130},
+                {min: 0.105, r: 214, g: 96, b: 77},
+                {min: 0.17, r: 178, g: 24, b: 43},
+                {min: 0.5, r: 255, g: 238, b: 153} // catch for extremes
+            ];
+            lineWidth = 0;            
+            this.routeColorStops = distances.map((x, i) => {
+                const grade = grades[i];                 
+                let color = interpolateColor(grade, ranges)
+                //console.log(color.toString())              
+                return {
+                    offset: x / distance,
+                    color: color,
+                };
+            });
+       } else if (this.colorScheme == "cvdPRGn") {
+            //console.log("Selected colorscheme is " + this.colorScheme)               
+            const ranges = [
+                {min: -0.5, r: 118, g: 42, b: 131}, // catch for extremes
+                {min: -0.17, r: 153, g: 112, b: 171},
+                {min: -0.09, r: 194, g: 165, b: 207},
+                {min: -0.04, r: 231, g: 212, b: 232},
+                {min: 0.00, r: 247, g: 247, b: 247},
+                {min: 0.015, r: 217, g: 240, b: 211},
+                {min: 0.055, r: 172, g: 211, b: 158},
+                {min: 0.105, r: 90, g: 174, b: 97},
+                {min: 0.17, r: 27, g: 120, b: 55},
+                {min: 0.5, r: 255, g: 238, b: 153} // catch for extremes
+            ];
+                
+            lineWidth = 0;            
+            this.routeColorStops = distances.map((x, i) => {
+                const grade = grades[i];                 
+                let color = interpolateColor(grade, ranges)
+                //console.log(color.toString())              
+                return {
+                    offset: x / distance,
+                    color: color,
+                };
+            });
+        } else if (this.colorScheme == "cvdSunset") {
+            //console.log("Selected colorscheme is " + this.colorScheme)               
+            const ranges = [
+                {min: -0.5, r: 54, g: 75, b: 154}, // catch for extremes
+                {min: -0.17, r: 74, g: 123, b: 183},
+                {min: -0.09, r: 152, g: 202, b: 225},
+                {min: -0.04, r: 194, g: 228, b: 239},
+                {min: 0.00, r: 255, g: 255, b: 191},
+                {min: 0.015, r: 254, g: 218, b: 139},
+                {min: 0.055, r: 246, g: 126, b: 75},
+                {min: 0.105, r: 221, g: 61, b: 45},
+                {min: 0.17, r: 165, g: 0, b: 38},
+                {min: 0.5, r: 255, g: 255, b: 255} // catch for extremes
+            ];
+                
+            lineWidth = 0;            
+            this.routeColorStops = distances.map((x, i) => {
+                const grade = grades[i];                 
+                let color = interpolateColor(grade, ranges)
+                //console.log(color.toString())              
+                return {
+                    offset: x / distance,
+                    color: color,
+                };
+            });
+        } else {
+            lineWidth = 1;
+            this.routeColorStops = distances.map((x, i) => {
+                const steepness = Math.abs(grades[i] / 0.12);            
+                const color = Color.fromRGB(steepness, 0.4, 0.5 * steepness)
+                    .lighten(-0.25)
+                    .saturate(steepness - 0.33);                    
+                return {
+                    offset: x / distance,
+                    color: color.toString(),
+                };        
+            });
+        }
+       
         
-        this.routeColorStops = distances.map((x, i) => {
-            const steepness = Math.abs(grades[i] / 0.12);
-            const color = Color.fromRGB(steepness, 0.4, 0.5 * steepness)
-                .lighten(-0.25)
-                .saturate(steepness - 0.33);
-            return {
-                offset: x / distance,
-                color: color.toString(),
-            };
-        });
         this.chart.setOption({
             xAxis: {inverse: options.reverse},
             yAxis: {
@@ -506,6 +644,9 @@ export class SauceElevationProfile {
                         y2: 0,
                         colorStops: this.routeColorStops,
                     },
+                },
+                lineStyle: {
+                    width: lineWidth
                 },
                 markLine: {data: markLineData},                
                 data: distances.map((x, i) => [x, elevations[i], grades[i] * (options.reverse ? -1 : 1)]),
@@ -1029,7 +1170,7 @@ export class SauceElevationProfile {
                                 }
                                 //debugger
                             }
-                            if (this.profileZoom && !this.singleLapView) {
+                            if (this.profileZoom && !this.singleLapView && (this.forwardDistance < this.routeDistances.at(-1))) {
                                 //console.log(xCoord)
                                 const distance = this.forwardDistance; 
                                 let zoomStart;
@@ -1256,3 +1397,75 @@ export class SauceElevationProfile {
 function isBetween(n, a, b) {
     return (n - a) * (n - b) <= 0
  }
+ function getRelativeHue(grade, ranges) {
+    // Find the range in which the grade falls
+    const range = ranges.find(range => grade >= range.min && grade <= range.max);
+    
+    if (!range) {
+        //debugger
+        throw new Error('Grade is not within any defined range');
+    }
+    
+    // Calculate the relative position within the range
+    const relativePosition = (grade - range.min) / (range.max - range.min);
+    
+    // Interpolate the hMin and hMax values
+    const interpolatedHue = range.hMin + relativePosition * (range.hMax - range.hMin);
+    
+    return interpolatedHue;
+}
+function interpolateColor(grade, ranges) {
+    
+    // Find the appropriate range
+    let rangeIndex = 0;
+    while (rangeIndex < ranges.length - 1 && grade >= ranges[rangeIndex + 1].min) {
+        rangeIndex++;
+    }
+
+    // Perform linear interpolation
+    const lowerRange = ranges[rangeIndex];
+    const upperRange = ranges[rangeIndex + 1];
+
+    const factor = (grade - lowerRange.min) / (upperRange.min - lowerRange.min);
+
+    const r = Math.round(lowerRange.r + (upperRange.r - lowerRange.r) * factor);
+    const g = Math.round(lowerRange.g + (upperRange.g - lowerRange.g) * factor);
+    const b = Math.round(lowerRange.b + (upperRange.b - lowerRange.b) * factor);
+
+    // Convert RGB to HSL
+    const hslColor = rgbToHsl(r, g, b);
+
+    return hslColor;
+}
+
+// RGB to HSL conversion function
+function rgbToHsl(r, g, b) {
+    r /= 255;
+    g /= 255;
+    b /= 255;
+
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h, s, l = (max + min) / 2;
+
+    if (max == min) {
+        h = s = 0; // achromatic
+    } else {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+            case r:
+                h = (g - b) / d + (g < b ? 6 : 0);
+                break;
+            case g:
+                h = (b - r) / d + 2;
+                break;
+            case b:
+                h = (r - g) / d + 4;
+                break;
+        }
+        h /= 6;
+    }
+
+    const hslString = `hsl(${Math.round(h * 360)}deg ${Math.round(s * 100)}% ${Math.round(l * 100)}%)`;
+    return hslString;
+}

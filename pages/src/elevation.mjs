@@ -57,7 +57,9 @@ common.settingsStore.setDefault({
     forwardDistance: 5000,
     showTeamMembers: false,
     showMarkedRiders: false,
-    showAllRiders: true
+    showAllRiders: true,
+    colorScheme: "sauce",
+    lineTextColor: "#ffffff"
 });
 
 const settings = common.settingsStore.get();
@@ -142,8 +144,10 @@ function createElevationProfile({worldList}) {
     typeof(settings.showAllRiders) == "undefined" ? common.settingsStore.set("showAllRiders", true) : null;
     const showAllRiders = settings.showAllRiders;
     typeof(settings.pinColorMarked) == "undefined" ? common.settingsStore.set("pinColorMarked", "#9cb7ec") : null;
-    const pinColorMarked = settings.pinColorMarked;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders});
+    const pinColorMarked = settings.pinColorMarked;typeof(settings.colorScheme) == "undefined" ? common.settingsStore.set("colorScheme", "sauce") : null
+    const colorScheme = settings.colorScheme;typeof(settings.lineTextColor) == "undefined" ? common.settingsStore.set("lineTextColor", "#ffffff") : null;
+    const lineTextColor = settings.lineTextColor;
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor});
 }
 
 
@@ -321,14 +325,16 @@ export async function main() {
                         changed.has('showLoopSegments') ||                        
                         changed.has('lineType') ||
                         changed.has('lineTypeFinish') ||
-                        changed.has('lineSize') ||                         
+                        changed.has('lineSize') ||  
+                        changed.has('lineTextColor') ||                       
                         changed.has('showSegmentFinish') ||
                         changed.has('minSegmentLength') ||
                         changed.has('fontScale') ||
                         changed.has('overrideDistance') ||
                         changed.has('overrideLaps') ||
                         changed.has('yAxisMin') ||
-                        changed.has('singleLapView')
+                        changed.has('singleLapView') ||
+                        changed.has('colorScheme')
                     )
                 {
                     //console.log(changed);

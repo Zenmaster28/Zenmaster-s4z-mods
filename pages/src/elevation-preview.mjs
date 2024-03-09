@@ -48,7 +48,8 @@ common.settingsStore.setDefault({
     showOnlyMyPin: false,
     overrideDistance: 0,
     overrideLaps: 0,
-    yAxisMin: 200
+    yAxisMin: 200,
+    colorScheme: "sauce"
 });
 
 const settings = common.settingsStore.get();
@@ -118,7 +119,8 @@ function createElevationProfile({worldList}) {
     const overrideDistance = typeof(settings.overrideDistance) != "undefined" ? settings.overrideDistance : 0;
     const overrideLaps = typeof(settings.overrideLaps) != "undefined" ? settings.overrideLaps : 0;    
     const yAxisMin = typeof(settings.yAxisMin) != "undefined" ? settings.yAxisMin: 200;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, overrideDistance, overrideLaps, yAxisMin});
+    const colorScheme = settings.colorScheme;const lineTextColor = settings.lineTextColor;
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, overrideDistance, overrideLaps, yAxisMin, colorScheme, lineTextColor});
 }
 
 
@@ -289,13 +291,14 @@ export async function main() {
                         changed.has('lineType') ||
                         changed.has('lineTypeFinish') ||
                         changed.has('lineSize') || 
-                        //changed.has('pinColor') ||
+                        changed.has('lineTextColor') ||
                         changed.has('showSegmentFinish') ||
                         changed.has('minSegmentLength') ||
                         changed.has('fontScale')||
                         changed.has('overrideDistance') ||
                         changed.has('overrideLaps') ||
-                        changed.has('yAxisMin')
+                        changed.has('yAxisMin') ||
+                        changed.has('colorScheme')
                     )
                 {
                     //console.log(changed);
