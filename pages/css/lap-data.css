@@ -1,0 +1,60 @@
+html.solid-background {
+  background: var(--background-color);
+}
+html.solid-background body {
+  background: transparent !important;
+}
+#content {
+  scroll-behavior: smooth;
+  padding: 0;
+  overflow: auto;
+  position: relative;  
+  display: flex;
+  flex-direction: column;
+}
+#thisLapLarge {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  font-variant: small-caps tabular-nums;
+  font-size: calc(var(--font-scale) * 1.5em);
+}
+#newLapButton {
+  font-size: calc(var(--font-scale) * 2.5em);
+  font-variant: small-caps tabular-nums;
+  width: 100%;
+  background-color: transparent;
+  color: hsl(var(--theme-fg-hue) var(--theme-fg-sat) var(--theme-fg-light)/100%);
+  border: 0px
+}
+#thisLapSmall {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  font-variant: small-caps tabular-nums;
+  font-size: calc(var(--font-scale) * 0.9em);
+}
+#allLaps {
+  flex: 1;
+  overflow-y: auto;
+}
+#lapButton {
+  flex: 0 0 auto
+  
+}
+.container {
+  width: 100%;  
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant: small-caps tabular-nums;
+  font-size: calc(var(--font-scale) * 0.8em);
+}
+
+th, td {  
+  text-align: left;
+  white-space: nowrap; 
+  
+}
