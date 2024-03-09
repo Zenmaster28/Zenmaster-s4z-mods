@@ -652,8 +652,15 @@ function zToAltitude(worldMeta, z, {physicsSlopeScale}={}) {
 }
 
 
-export async function getModifiedRoute(id) {            
+export async function getModifiedRoute(id) {                   
         let route = await common.rpc.getRoute(id);
+        if (!route) {
+            console.log("Route not found in Sauce, checking json")
+            let newRoutes = await fetch("data/routes.json").then((response) => response.json()); 
+            route = newRoutes.find(x => x.id == id)
+            route.courseId = common.worldToCourseIds[route.worldId]
+            //debugger
+        }
         let missing = missingLeadinRoutes.filter(x => x.id == id)        
         let replacementLeadin;
         let leadin;        
@@ -676,6 +683,7 @@ export async function getModifiedRoute(id) {
                 const worldList = await common.getWorldList();
                 const worldMeta = worldList.find(x => x.courseId === route.courseId);
                 for (const [i, x] of route.manifest.entries()) {
+                    //debugger
                     const road = await common.getRoad(route.courseId, x.roadId);
                     const seg = road.curvePath.subpathAtRoadPercents(x.start, x.end);
                     seg.reverse = x.reverse;
@@ -779,8 +787,8 @@ export function preferredTeamColor(name) {
 
 export async function geto101() {
     let availableMods = await common.rpc.getAvailableMods();
-    let o101Mod = availableMods.find(x => x.id == "o101_s4z_mods");    
-    if (o101Mod && (o101Mod.enabled && checkVersion("1.1.4",o101Mod.manifest.version) <= 0)) {
+    let o101Mod = availableMods.find(x => x.id == "o101_s4z_mods");
+    if (o101Mod && (o101Mod.enabled && checkVersion("1.1.4",o101Mod.manifest.version)) <= 0) {
         let modPath = o101Mod.modPath.split("\\").at(-1)
         //o101common = await import("/mods/" + modPath + "/pages/src/o101/common.mjs")
         return modPath;
@@ -831,36 +839,18 @@ export function buildEventForm() {
         if (segment.name.includes("Finish")) {
             let label = document.createElement('label');
             let key = document.createElement('key');
-            key.innerHTML = segment.name.replace("Finish","[" + segment.repeat + "]") + ":";
-            let input = document.createElement('input');            
+            let input = document.createElement('input');
             input.type = "checkbox";
             input.checked = true;
             input.name = "eventSegData" + "|" + routeInfo.sg + "|" + segment.id + "|" + segment.repeat;
-            input.addEventListener("change", eventFormChanges)
-            //let inputScoreType = document.createElement('input');
-            let inputScoreType = document.createElement('select')
-            let selectOptions = ["FTS","FAL"]
-            for (let opt of selectOptions) {
-                let option = document.createElement("option")
-                option.value = opt;
-                option.text = opt;
-                inputScoreType.appendChild(option)
-            }
-            let inputScoreFormat = document.createElement('input');
-            inputScoreFormat.type = "textbox"
+            key.innerHTML = segment.name.replace("Finish","[" + segment.repeat + "]") + ":";
             label.appendChild(key);
             label.appendChild(input);
-            label.appendChild(inputScoreType)
-            label.appendChild(inputScoreFormat)
             segmentsForm.appendChild(label);
             i++;
         }
     }
     //debugger
-}
-
-export function eventFormChanges(e) {
-    debugger
 }
 
 export function fillArrayWithInterpolatedValues(arr, inc) {
@@ -874,4 +864,32 @@ export function fillArrayWithInterpolatedValues(arr, inc) {
         }
         return [value, ...interpolatedValues];
     });
+}
+
+export function generateLapDataTable(laps, sortOrder) {
+    // Sort the lap data based on lap counter in ascending or descending order
+    let lapData = sortOrder == "desc" ? laps.toReversed() : laps    
+
+    // Start building the HTML table
+    let tableHTML = '<table>';
+    tableHTML += '<tr><th>Lap</th><th>Time</th><th>Cadence</th><th>HR</th><th>Power</th></tr>';
+
+    // Loop through lap data and generate rows
+    lapData.forEach((data, index) => {
+        const lapCounter = sortOrder == "desc" ? lapData.length - index : index + 1;
+        const activeTime = data.stats.activeTime.toFixed(2);
+        const cadenceAvg = data.stats.cadence.avg ? data.stats.cadence.avg.toFixed(2) : 'N/A';
+        const draftAvg = data.stats.draft.avg ? data.stats.draft.avg.toFixed(2) : 'N/A';
+        const hrAvg = data.stats.hr.avg ? data.stats.hr.avg.toFixed(2) : 'N/A';
+        const powerAvg = data.stats.power.avg ? data.stats.power.avg.toFixed(2) : 'N/A';
+        const speedAvg = data.stats.speed.avg ? data.stats.speed.avg.toFixed(2) : 'N/A';
+
+        // Append row to the table
+        tableHTML += `<tr><td>${lapCounter}</td><td>${activeTime}</td><td>${cadenceAvg}</td><td>${hrAvg}</td><td>${powerAvg}</td></tr>`;
+    });
+
+    // Close the table
+    tableHTML += '</table>';
+
+    return tableHTML;
 }
