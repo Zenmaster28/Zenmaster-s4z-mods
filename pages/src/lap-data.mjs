@@ -22,7 +22,8 @@ function setBackground() {
 }
 
 common.settingsStore.setDefault({
-    fontScale: 1
+    fontScale: 1,
+    sortOrder: "desc"
 });
 
 common.settingsStore.addEventListener('changed', ev => {
@@ -35,6 +36,8 @@ let settings = common.settingsStore.get();
 if (settings.transparentNoData) {document.body.classList = "transparent-bg"};
 if (settings.ascDesc) {
     sortOrder = settings.ascDesc;
+} else {
+    sortOrder = "desc"
 }
 if (settings.includeLapButton) {
     includeLapButton = settings.includeLapButton;
@@ -67,7 +70,7 @@ async function getLapData(watching) {
     let lapData = await common.rpc.getAthleteLaps(watching.athleteId)    
     allLaps.innerHTML = generateLapDataTable(lapData)
     currentLaps = watching.lapCount
-
+    sortOrder == "asc" ? allLaps.scrollTop = allLaps.scrollHeight : null;
 }
 
 function generateLapDataTable(laps) {
@@ -75,7 +78,7 @@ function generateLapDataTable(laps) {
     let lapData = sortOrder == "desc" ? laps.toReversed().filter(x => x.stats.activeTime > 0) : laps.filter(x => x.stats.activeTime > 0)
     
     let tableHTML = '<table>';
-    tableHTML += '<tr><th>Lap</th><th>Time</th><th>Power</th><th>HR</th></tr>';
+    //tableHTML += '<tr><th>Lap</th><th>Time</th><th>Power</th><th>HR</th></tr>';
     //console.log(lapData)
     // Loop through lap data and generate rows
     let lapCounter = sortOrder == "desc" ? lapData.length : 1;

@@ -22,26 +22,36 @@ html.solid-background body {
 #newLapButton {
   font-size: calc(var(--font-scale) * 2.5em);
   font-variant: small-caps tabular-nums;
-  width: 100%;
+  margin: auto;
+  width:100%;
   background-color: transparent;
-  color: hsl(var(--theme-fg-hue) var(--theme-fg-sat) var(--theme-fg-light)/100%);
-  border: 0px
+  color: hsl(var(--theme-fg-hue) var(--theme-fg-sat) var(--theme-fg-light)/100%);    
+  border-width: 3px;
+}
+#lapButton {
+  flex: 0 0 auto;   
+  width: 95%;  
+  margin: auto;  
+  padding-bottom: 2%; 
+  
 }
 #thisLapSmall {
   display: flex;
   justify-content: space-evenly;
   width: 100%;
   font-variant: small-caps tabular-nums;
-  font-size: calc(var(--font-scale) * 0.9em);
+  font-size: calc(var(--font-scale) * 0.9em);  
 }
 #allLaps {
   flex: 1;
   overflow-y: auto;
+  scroll-behavior: smooth;
 }
-#lapButton {
-  flex: 0 0 auto
-  
+#allLaps th {
+  position: sticky;
+  top: 0;  
 }
+
 .container {
   width: 100%;  
 }
@@ -52,9 +62,23 @@ table {
   font-variant: small-caps tabular-nums;
   font-size: calc(var(--font-scale) * 0.8em);
 }
-
-th, td {  
+table th, td:nth-child(1) {
+  width: 20%;
   text-align: left;
   white-space: nowrap; 
-  
+}
+table th, td:nth-child(2) {
+  width: 30%;
+  text-align: left;
+  white-space: nowrap; 
+}
+table th, td:nth-child(3) {
+  width: 25%;
+  text-align: left;
+  white-space: nowrap; 
+}
+table th, td:nth-child(4) {
+  width: 25%;
+  text-align: left;
+  white-space: nowrap; 
 }
