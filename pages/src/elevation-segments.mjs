@@ -14,7 +14,7 @@ let allMarkLines = [];
 let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, refresh=1000}) {
         this.el = el;
         this.worldList = worldList;
         this.preferRoute = preferRoute;
@@ -24,6 +24,8 @@ export class SauceElevationProfile {
         this.showTeamMembers = showTeamMembers;
         this.showMarkedRiders = showMarkedRiders;
         this.showAllRiders = showAllRiders;
+        this.showRobopacers = showRobopacers;
+        this.showLeaderSweep = showLeaderSweep;
         this.colorScheme = colorScheme;
         this.lineTextColor = lineTextColor;
         this.currentLap = -1;
@@ -938,6 +940,11 @@ export class SauceElevationProfile {
                     const isWatching = state.athleteId === this.watchingId;                    
                     let isTeamMate = false;
                     let isMarked = false;
+                    let isPP = false;
+                    let isBeacon = false;  
+                    let isLeaderSweep = false;                  
+                    let beaconColour;
+                    let beaconImage;
                     const ad = common.getAthleteDataCacheEntry(state.athleteId);
                     if (ad && ad.athlete && ad.athlete.team) {
                         isWatching ? this.watchingTeam = ad.athlete.team : 
@@ -947,12 +954,28 @@ export class SauceElevationProfile {
                     if (ad && ad.athlete && ad.athlete.marked && !isWatching) {
                         isMarked = true;
                     }
+                    if (ad && ad.athlete && ad.athlete.type == "PACER_BOT" && ad.state.sport == "cycling" && !isWatching && this.showRobopacers) {
+                        isPP = true;
+                        isBeacon = true;
+                        let wkg = ad.state.power / ad.athlete.weight;
+                        beaconColour = wkg <= 2.0 ? "yellow" : (wkg > 2.0 && wkg <= 3.0) ? "blue" : (wkg > 3.0 && wkg < 4.0) ? "green" : "red"
+                        //debugger
+                        //console.log("found a PP mark")
+                    }
+                    if (ad && (ad.eventLeader || ad.eventSweeper) && this.showLeaderSweep) {                        
+                        isLeaderSweep = true;
+                        isBeacon = true;
+                        ad.eventLeader ? beaconColour = "yellow" : null;
+                        ad.eventSweeper ? beaconColour = "red" : null;
+                    }
                     //to do - restructure to check options and state status                    
                     //if (isWatching || !this.showMyPin) { 
                     if ((this.showMyPin && isWatching) || 
                         this.showAllRiders ||
                         (this.showTeamMembers && isTeamMate) ||
-                        (this.showMarkedRiders && isMarked)
+                        (this.showMarkedRiders && isMarked) ||
+                        (this.showRobopacers && isPP) || 
+                        (this.showLeaderSweep && isLeaderSweep)
                     ) {        
                         
                         if (this.routeId != null) {
@@ -1329,13 +1352,19 @@ export class SauceElevationProfile {
                                 //debugger
                             }
                         }
-                        //debugger
-                        //console.log({
+                        
+                        if (isBeacon) {                            
+                            beaconImage = "image://../pages/images/pp-" + beaconColour + ".png"                            
+                        }
+                        let symbolSize = isWatching ? this.em(watchingPinSize) : ((isTeamMate && this.showTeamMembers) || (isMarked && this.showMarkedRiders) || (isBeacon)) ? this.em(teamPinSize) : deemphasize ? this.em(deemphasizePinSize) : this.em(otherPinSize)
                         return {
                             name: state.athleteId,
                             coord: [xCoord, yCoord],
-                            symbol: "pin",
-                            symbolSize: isWatching ? this.em(watchingPinSize) : ((isTeamMate && this.showTeamMembers) || (isMarked && this.showMarkedRiders)) ? this.em(teamPinSize) : deemphasize ? this.em(deemphasizePinSize) : this.em(otherPinSize),
+                            //symbol: "pin",
+                            symbol: isBeacon ? beaconImage : "pin",                            
+                            //symbolSize: this.em(otherPinSize),
+                            symbolSize: symbolSize,
+                            symbolOffset: isBeacon ? [0, (-20 * this.pinSize)] : [0, 0],
                             itemStyle: {
                                 color: isWatching ? watchingPinColor : (isTeamMate && this.showTeamMembers) ? watchingPinColor : (isMarked && this.showMarkedRiders) ? markedPinColor : deemphasize ? '#0002' : '#fff7',
                                 borderWidth: this.em(isWatching ? 0.04 : 0.02),

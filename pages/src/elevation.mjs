@@ -59,7 +59,9 @@ common.settingsStore.setDefault({
     showMarkedRiders: false,
     showAllRiders: true,
     colorScheme: "sauce",
-    lineTextColor: "#ffffff"
+    lineTextColor: "#ffffff",
+    showRobopacers: false,
+    showLeaderSweep: false
 });
 
 const settings = common.settingsStore.get();
@@ -143,11 +145,15 @@ function createElevationProfile({worldList}) {
     const showMarkedRiders = settings.showMarkedRiders;
     typeof(settings.showAllRiders) == "undefined" ? common.settingsStore.set("showAllRiders", true) : null;
     const showAllRiders = settings.showAllRiders;
+    typeof(settings.showRobopacers) == "undefined" ? common.settingsStore.set("showRobopacers", false) : null;
+    const showRobopacers = settings.showRobopacers;
+    typeof(settings.showLeaderSweep) == "undefined" ? common.settingsStore.set("showLeaderSweep", false) : null;
+    const showLeaderSweep = settings.showLeaderSweep;
     typeof(settings.pinColorMarked) == "undefined" ? common.settingsStore.set("pinColorMarked", "#9cb7ec") : null;
     const pinColorMarked = settings.pinColorMarked;typeof(settings.colorScheme) == "undefined" ? common.settingsStore.set("colorScheme", "sauce") : null
     const colorScheme = settings.colorScheme;typeof(settings.lineTextColor) == "undefined" ? common.settingsStore.set("lineTextColor", "#ffffff") : null;
     const lineTextColor = settings.lineTextColor;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor});
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep});
 }
 
 
@@ -371,6 +377,10 @@ export async function main() {
             elProfile.showMarkedRiders = changed.get('showMarkedRiders');            
         } else if (changed.has('showAllRiders')) {
             elProfile.showAllRiders = changed.get('showAllRiders');            
+        } else if (changed.has('showRobopacers')) {
+            elProfile.showRobopacers = changed.get('showRobopacers');            
+        } else if (changed.has('showLeaderSweep')) {
+            elProfile.showLeaderSweep = changed.get('showLeaderSweep');            
         }
     });
 }
