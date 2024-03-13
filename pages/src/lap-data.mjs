@@ -8,8 +8,14 @@ const thisLap = document.getElementById("thisLap")
 const allLaps = document.getElementById("allLaps")
 let sortOrder = "asc"
 let currentLaps = -1;
-let includeLapButton = false;
-
+let includeLapButton = true;
+let includeSetButton = false;
+let lapHotkey = false;
+let setHotkey = false;
+let rideonBombAction = "none";
+let steeringAction = "none";
+let rideonBombRefresh = Date.now() - 5000;
+let steeringRefresh = Date.now() - 5000;
 
 function setBackground() {
     const {solidBackground, backgroundColor} = common.settingsStore.get();
@@ -23,7 +29,13 @@ function setBackground() {
 
 common.settingsStore.setDefault({
     fontScale: 1,
-    sortOrder: "desc"
+    sortOrder: "desc",
+    includeLapButton: true,
+    includeSetButton: false,
+    lapHotkey: false,
+    setHotkey: false,
+    rideonBombAction: "none",
+    steeringAction: "none"
 });
 
 common.settingsStore.addEventListener('changed', ev => {
@@ -39,10 +51,12 @@ if (settings.ascDesc) {
 } else {
     sortOrder = "desc"
 }
-if (settings.includeLapButton) {
-    includeLapButton = settings.includeLapButton;
-}
-
+includeLapButton = settings.includeLapButton;
+includeSetButton = settings.includeSetButton;
+lapHotkey = settings.lapHotkey;
+setHotkey = settings.setHotkey;
+rideonBombAction = settings.rideonBombAction;
+steeringAction = settings.steeringAction;
 
 function formatTime(seconds) {
     const hours = Math.floor(seconds / 3600);
@@ -68,44 +82,89 @@ function formatTime(seconds) {
 
 async function getLapData(watching) {
     let lapData = await common.rpc.getAthleteLaps(watching.athleteId)    
-    allLaps.innerHTML = generateLapDataTable(lapData)
+    let setData = watching.sets ? watching.sets : [-1];
+    allLaps.innerHTML = generateLapDataTable(lapData, setData)
     currentLaps = watching.lapCount
     sortOrder == "asc" ? allLaps.scrollTop = allLaps.scrollHeight : null;
+    
 }
 
-function generateLapDataTable(laps) {
-    // Sort the lap data based on lap counter in ascending or descending order    
-    let lapData = sortOrder == "desc" ? laps.toReversed().filter(x => x.stats.activeTime > 0) : laps.filter(x => x.stats.activeTime > 0)
-    
+function generateLapDataTable(laps, sets) {
+    console.log(sortOrder, sets, laps)
+    let setLaps = [];
+    if (laps.length > 0 && sets[0] != -1) {
+        for (let i = 0;i < sets.length; i++) {
+            setLaps.push(i == 0 ? laps.slice(0,sets[i]) : laps.slice(sets[i-1],sets[i]))        
+        }
+        let lastSet = laps.slice(sets.at(-1))
+        if (lastSet.length > 0) {
+            //console.log("adding final laps to set")
+            setLaps.push(lastSet)
+        }  
+    } else {
+        setLaps.push(laps)
+    }
+    sortOrder == "desc" ? setLaps = setLaps.toReversed() : null;
+    console.log(setLaps)
+    // Sort the lap data based on lap counter in ascending or descending order   
     let tableHTML = '<table>';
-    //tableHTML += '<tr><th>Lap</th><th>Time</th><th>Power</th><th>HR</th></tr>';
-    //console.log(lapData)
-    // Loop through lap data and generate rows
-    let lapCounter = sortOrder == "desc" ? lapData.length : 1;
-    for (let data of lapData) {
-    //lapData.forEach((data, index) => {
-        //console.log(lapCounter, data)
-        //const lapCounter = sortOrder == "desc" ? lapData.length - lapIndex : lapIndex;        
-        const activeTime = formatTime(data.stats.activeTime.toFixed(0), 0);
-        const cadenceAvg = data.stats.cadence.avg ? data.stats.cadence.avg.toFixed(0) : '-';
-        const draftAvg = data.stats.draft.avg ? data.stats.draft.avg.toFixed(2) : '-';
-        const hrAvg = data.stats.hr.avg ? data.stats.hr.avg.toFixed(0) : '-';
-        const powerAvg = data.stats.power.avg ? data.stats.power.avg.toFixed(0) : '-';
-        const speedAvg = data.stats.speed.avg ? data.stats.speed.avg.toFixed(2) : '-';
+    if (setLaps.length <= 1) {
+        document.getElementById("headerRow").innerHTML = "<table><tr><td>Lap</td><td>Time</td><td>Power</td><td>HR</td></tr></table>"
+        let lapData = sortOrder == "desc" ? laps.toReversed().filter(x => x.stats.activeTime > 0) : laps.filter(x => x.stats.activeTime > 0)
+        let setData = sortOrder == "desc" ? sets.toReversed() : sets;
         
-        // Append row to the table
-        tableHTML += `<tr><td>${lapCounter}</td><td>${activeTime}</td><td>${powerAvg}</td><td>${hrAvg}</td></tr>`;
-    
-        sortOrder == "desc" ? lapCounter-- : lapCounter++
-    };
-
-    // Close the table
-    tableHTML += '</table>';
-
+        let lapCounter = sortOrder == "desc" ? lapData.length : 1;
+        let rowClass = sortOrder == "desc" ? "lineRowDesc" : "lineRow";
+        let setIndex = 0;
+        let setCounter = setData[setIndex];
+        let repCounter = lapCounter;
+        for (let data of lapData) {    
+            const activeTime = formatTime(data.stats.activeTime.toFixed(0), 0);        
+            const hrAvg = data.stats.hr.avg ? data.stats.hr.avg.toFixed(0) : '-';
+            const powerAvg = data.stats.power.avg ? data.stats.power.avg.toFixed(0) : '-';                
+            
+            if (lapCounter == setCounter) {            
+                tableHTML += `<tr class=${rowClass}><td>${lapCounter}</td><td>${activeTime}</td><td>${powerAvg}</td><td>${hrAvg}</td></tr>`;
+                setIndex++;
+                setCounter = setData[setIndex]
+            } else {
+                tableHTML += `<tr><td>${lapCounter}</td><td>${activeTime}</td><td>${powerAvg}</td><td>${hrAvg}</td></tr>`;
+            }
+            sortOrder == "desc" ? repCounter-- : repCounter++
+            sortOrder == "desc" ? lapCounter-- : lapCounter++
+        };
+        
+        tableHTML += '</table>';
+    } else {
+        document.getElementById("headerRow").innerHTML = "<table><tr><td>Set</td><td>Time</td><td>Power</td><td>HR</td></tr></table>"
+        let setCounter = sortOrder == "desc" ? setLaps.length : 1;
+        for (let set of setLaps) {
+            
+            sortOrder == "desc" ? set = set.toReversed() : null;
+            let lapCounter = sortOrder == "desc" ? set.length : 1;
+            for (let data of set) {    
+                const activeTime = formatTime(data.stats.activeTime.toFixed(0), 0);        
+                const hrAvg = data.stats.hr.avg ? data.stats.hr.avg.toFixed(0) : '-';
+                const powerAvg = data.stats.power.avg ? data.stats.power.avg.toFixed(0) : '-';                
+                let rowClass = sortOrder == "desc" && lapCounter == 1 ? "lineRow" : sortOrder != "desc" && lapCounter == set.length ? "lineRow" : ""
+                tableHTML += `<tr class=${rowClass}><td>${setCounter}.${lapCounter}</td><td>${activeTime}</td><td>${powerAvg}</td><td>${hrAvg}</td></tr>`;                                
+                sortOrder == "desc" ? lapCounter-- : lapCounter++
+            };
+            sortOrder == "desc" ? setCounter -- : setCounter++
+        }
+    }
     return tableHTML;
 }
 
-function newLap() {
+async function newSet() {
+    //console.log("New Set")
+    let watching = await common.rpc.getAthleteData("watching")
+    if (!watching.sets) {
+        await common.rpc.updateAthleteData(watching.athleteId, {sets: []});
+    }
+    let setData = watching.sets ? watching.sets : [];
+    setData.push(watching.lapCount);
+    await common.rpc.updateAthleteData(watching.athleteId, {sets: setData})
     common.rpc.startLap();
 }
 
@@ -163,10 +222,32 @@ export async function main() {
         })        
     });
     if (includeLapButton) {
-        const lapButton = document.getElementById("lapButton")
-        lapButton.insertAdjacentHTML('beforeend', `<button id="newLapButton">Lap</button>`)
-        const newLapButton = document.getElementById("newLapButton")
-        newLapButton.addEventListener('click', ev => {common.rpc.startLap()})
+        const lapButton = document.getElementById("buttons");
+        lapButton.insertAdjacentHTML('beforeend', `<button id="newLapButton"><small>+</small>Lap</button>`);
+        const newLapButton = document.getElementById("newLapButton");
+        newLapButton.className = "controlButton";
+        newLapButton.addEventListener('click', ev => {common.rpc.startLap()});      
+    }
+    if (lapHotkey) {
+        window.addEventListener('keydown', function(event) {
+            if (event.key === 'l') {
+                common.rpc.startLap();
+            }
+        });
+    }
+    if (includeSetButton) {
+        const lapButton = document.getElementById("buttons");
+        lapButton.insertAdjacentHTML('beforeend', `<button id="newSetButton"><small>+</small>Set</button>`);
+        const newSetButton = document.getElementById("newSetButton");
+        newSetButton.className = "controlButton";
+        newSetButton.addEventListener('click', newSet);     
+    }
+    if (setHotkey) {
+        window.addEventListener('keydown', function(event) {
+            if (event.key === 's') {
+                newSet();
+            }
+        });
     }
     common.subscribe('athlete/watching', watching => {
         doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1); 
@@ -174,6 +255,23 @@ export async function main() {
         fieldRenderer.render();                       
         fieldRendererSm.setData(watching);
         fieldRendererSm.render();
+        
+        if (watching.state.rideonBomb && Date.now() - rideonBombRefresh > 5000 && rideonBombAction != "none") {
+            rideonBombRefresh = Date.now();            
+            if (rideonBombAction == "lap") {
+                common.rpc.startLap()
+            } else if (rideonBombAction == "set") {
+                newSet()
+            }
+        }
+        if (watching.state.activeSteer && !watching.state.rideonBomb && Date.now() - steeringRefresh > 5000 && steeringAction != "none") { // a ride on bomb also triggers activeSteer for some reason
+            steeringRefresh = Date.now()            
+            if (steeringAction == "lap") {
+                common.rpc.startLap()
+            } else if (steeringAction == "set") {
+                newSet()
+            }
+        }
         if (watching.lapCount != currentLaps) {
             getLapData(watching);
         }
@@ -188,10 +286,17 @@ export async function main() {
             setBackground();
         }
         if (changed.has("ascDesc") ||
-            changed.has("includeLapButton")
+            changed.has("includeLapButton") ||
+            changed.has("includeSetButton") ||
+            changed.has("lapHotkey") ||
+            changed.has("setHotkey")
         ) {
 //            sortOrder = changed.get('ascDesc');      
             location.reload()        
+        } else if (changed.has("rideonBombAction")) {
+            rideonBombAction = changed.get("rideonBombAction")
+        } else if (changed.has("steeringAction")) {
+            steeringAction = changed.get("steeringAction")
         }
         
     });

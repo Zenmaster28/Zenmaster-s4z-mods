@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html class="settings-page" tabindex="0" data-settings-key="lap-data-settings-v1">
+<html class="settings-page" tabindex="0" data-settings-key="lap-control-settings-v1">
     <head>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
         <meta name="apple-mobile-web-app-capable" content="yes"/>
         <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';"/>
 
-        <title>Lap data - Settings</title>
+        <title>Lap control - Settings</title>
 
         <script src="./src/preloads.js"></script>
 
@@ -93,7 +93,7 @@
         <div id="titlebar">
             <header>
                 <div class="logo"><img src="/pages/images/icon128.png"/></div>
-                <div class="title">Lap data - Settings</div>
+                <div class="title">Lap control - Settings</div>
                 <div class="filler"></div>
                 <div class="buttons">
                     <div title="Close this window" class="button close electron-only"><ms>close</ms></div>
@@ -103,39 +103,17 @@
         <div id="settings">
             <form id="options" class="section">
                 <div class="title">Window Settings</div>
-                <label>
-                    <key>Display order: </key>
-                    <select name="ascDesc">
-                        <option value="desc">Descending</option>
-                        <option value="asc">Ascending</option>                        
-                    </select>                                        
-                </label>   
+                  
                 <label>
                     <key>Buttons:</key>
                     <input type="checkbox" name="includeLapButton" checked>Lap
-                    <input type="checkbox" name="includeSetButton" checekd>New Set
+                    <input type="checkbox" name="includeSetButton" checked>New Set
                 </label> 
                 <label>
                     <key>Hotkeys:</key>
                     <input type="checkbox" name="lapHotkey" checked>Lap (l)
                     <input type="checkbox" name="setHotkey" checked>Set (s)
                 </label>
-                <label>
-                    <key>Ride on bomb action: </key>
-                    <select name="rideonBombAction">
-                        <option value="none">None</option>
-                        <option value="lap">+Lap</option>
-                        <option value="set">+Set</option>
-                    </select>
-                </label>
-                <label>
-                    <key>Steering action: </key>
-                    <select name="steeringAction">
-                        <option value="none">None</option>
-                        <option value="lap">+Lap</option>
-                        <option value="set">+Set</option>
-                    </select>
-                </label>                
                 <label>
                     <key>Font scaling:</key>
                     <input type="range" name="fontScale" min="0.1" max="2" step="0.05"/>

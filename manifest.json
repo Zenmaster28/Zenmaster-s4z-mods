@@ -29,6 +29,21 @@
             }
         },        
         {
+            "file": "pages/lap-controls.html",
+            "id": "Lap-controls",
+            "name": "Lap controls",
+            "description": "Lap controls",
+            "always_visible": true,
+            "overlay": true,
+            "frame": false,
+            "default_bounds": {
+                "width": 200,
+                "height": 175,
+                "x": -300,
+                "y": 100
+            }
+        },        
+        {
             "file": "pages/lap-data.html",
             "id": "Lap data",
             "name": "Lap data",
