@@ -61,7 +61,8 @@ common.settingsStore.setDefault({
     colorScheme: "sauce",
     lineTextColor: "#ffffff",
     showRobopacers: false,
-    showLeaderSweep: false
+    showLeaderSweep: false,
+    gradientOpacity: 0.7
 });
 
 const settings = common.settingsStore.get();
@@ -153,7 +154,9 @@ function createElevationProfile({worldList}) {
     const pinColorMarked = settings.pinColorMarked;typeof(settings.colorScheme) == "undefined" ? common.settingsStore.set("colorScheme", "sauce") : null
     const colorScheme = settings.colorScheme;typeof(settings.lineTextColor) == "undefined" ? common.settingsStore.set("lineTextColor", "#ffffff") : null;
     const lineTextColor = settings.lineTextColor;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep});
+    typeof(settings.gradientOpacity) == "undefined" ? common.settingsStore.set("gradientOpacity", 0.7) : null;
+    const gradientOpacity = settings.gradientOpacity;
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity});
 }
 
 
@@ -340,7 +343,8 @@ export async function main() {
                         changed.has('overrideLaps') ||
                         changed.has('yAxisMin') ||
                         changed.has('singleLapView') ||
-                        changed.has('colorScheme')
+                        changed.has('colorScheme') ||
+                        changed.has('gradientOpacity')
                     )
                 {
                     //console.log(changed);

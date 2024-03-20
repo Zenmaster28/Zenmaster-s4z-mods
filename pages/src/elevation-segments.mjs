@@ -14,7 +14,7 @@ let allMarkLines = [];
 let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, refresh=1000}) {
         this.el = el;
         this.worldList = worldList;
         this.preferRoute = preferRoute;
@@ -27,6 +27,7 @@ export class SauceElevationProfile {
         this.showRobopacers = showRobopacers;
         this.showLeaderSweep = showLeaderSweep;
         this.colorScheme = colorScheme;
+        this.gradientOpacity = gradientOpacity;
         this.lineTextColor = lineTextColor;
         this.currentLap = -1;
         this.lapCounter = 0;
@@ -647,6 +648,7 @@ export class SauceElevationProfile {
                         y2: 0,
                         colorStops: this.routeColorStops,
                     },
+                    opacity: this.gradientOpacity
                 },
                 lineStyle: {
                     width: lineWidth
@@ -1187,7 +1189,8 @@ export class SauceElevationProfile {
                                             areaStyle: {
                                                 color: {
                                                     colorStops: newColorStops
-                                                }
+                                                },
+                                                opacity: this.gradientOpacity
                                             }
                                         }]                                        
                                     })
@@ -1242,7 +1245,8 @@ export class SauceElevationProfile {
                                         areaStyle: {
                                             color: {
                                                 colorStops: newColorStops
-                                            }
+                                            },
+                                            opacity: this.gradientOpacity
                                         }
                                     }]                                                                           
                                 })
