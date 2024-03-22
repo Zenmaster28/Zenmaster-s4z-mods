@@ -141,7 +141,7 @@ async function updateSegmentInfo(watching) {
         let segmentInfo = await getSegment(watching.courseId, watching.segmentData.nextSegment.id);
         let segmentRoad = await getRoadData(watching.courseId, segmentInfo.roadId);
         let segmentBests = await getSegmentBests(watching.segmentData.nextSegment.id, watching.athleteId)
-        if (segmentBests)
+        if (segmentBests[0])
         {
             segmentBestTime.innerHTML = "PB: " + formatTime(segmentBests[0].elapsed);
         }
