@@ -218,7 +218,7 @@ export async function main() {
         mapping,
         fields: fields.fields.filter(({id}) => {
             const type = id.split('-')[1];
-            return ['lap'].includes(type);
+            return ['lap','cur'].includes(type);
         })        
     });
     if (includeLapButton) {
