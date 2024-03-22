@@ -57,6 +57,7 @@ common.settingsStore.setDefault({
     zoomNextSegment: false,
     zoomNextSegmentApproach: 100,
     zoomFinalKm: false,
+    zoomSlider: false,
     forwardDistance: 5000,
     showTeamMembers: false,
     showMarkedRiders: false,
@@ -145,6 +146,8 @@ function createElevationProfile({worldList}) {
     const zoomNextSegmentApproach = settings.zoomNextSegmentApproach;
     typeof(settings.zoomFinalKm) == "undefined" ? common.settingsStore.set("zoomFinalKm", false) : null;
     const zoomFinalKm = settings.zoomFinalKm;
+    typeof(settings.zoomSlider) == "undefined" ? common.settingsStore.set("zoomSlider", false) : null;
+    const zoomSlider = settings.zoomSlider;
     typeof(settings.forwardDistance) == "undefined" ? common.settingsStore.set("forwardDistance", 5000) : null;
     const forwardDistance = settings.forwardDistance;
     typeof(settings.showMyPin) == "undefined" ? common.settingsStore.set("showMyPin", true) : null;
@@ -165,7 +168,7 @@ function createElevationProfile({worldList}) {
     const lineTextColor = settings.lineTextColor;
     typeof(settings.gradientOpacity) == "undefined" ? common.settingsStore.set("gradientOpacity", 0.7) : null;
     const gradientOpacity = settings.gradientOpacity;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm});
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider});
 }
 
 
@@ -403,6 +406,8 @@ export async function main() {
             elProfile.zoomNextSegmentApproach = changed.get('zoomNextSegmentApproach');            
         } else if (changed.has('zoomFinalKm')) {
             elProfile.zoomFinalKm = changed.get('zoomFinalKm')
+        } else if (changed.has('zoomSlider')) {
+            elProfile.zoomSlider = changed.get('zoomSlider')
         }
     });
 }
