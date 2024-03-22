@@ -209,6 +209,19 @@
                     <input type="range" name="forwardDistance" min="1000" max="50000" step="500" data-depends-on="profileZoom"/>
                     <input type="number" name="forwardDistance" min="1000" max="50000" step="500" style="--size: 7" data-depends-on="profileZoom"/> meters
                 </label>
+                <label>
+                    <key data-added="2024-03-21">Zoom to next segment:</key>
+                    <input type="checkbox" name="zoomNextSegment" data-depends-on="!profileZoom">
+                </label>
+                <label>    
+                    <key data-added="2024-03-21">&nbsp;&nbsp;- Show the approaching </key>                
+                    <input type="range" name="zoomNextSegmentApproach" min="100" max="1000" step="100" data-depends-on="zoomNextSegment"/>
+                    <input type="number" name="zoomNextSegmentApproach" min="100" max="1000" step="100" style="--size: 7" data-depends-on="zoomNextSegment"/> meters
+                </label>
+                <label>
+                    <key data-added="2024-03-21">&nbsp;&nbsp;- After last segment<br>&nbsp;&nbsp;&nbsp;&nbsp;show final km</key>
+                    <input type="checkbox" name="zoomFinalKm" data-depends-on="zoomNextSegment">
+                </label>
             </form>
         </div>
     </body>
