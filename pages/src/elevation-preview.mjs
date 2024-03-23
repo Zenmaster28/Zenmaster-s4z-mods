@@ -49,7 +49,8 @@ common.settingsStore.setDefault({
     overrideDistance: 0,
     overrideLaps: 0,
     yAxisMin: 200,
-    colorScheme: "sauce"
+    colorScheme: "sauce",
+    zoomSlider: false
 });
 
 const settings = common.settingsStore.get();
@@ -120,7 +121,8 @@ function createElevationProfile({worldList}) {
     const overrideLaps = typeof(settings.overrideLaps) != "undefined" ? settings.overrideLaps : 0;    
     const yAxisMin = typeof(settings.yAxisMin) != "undefined" ? settings.yAxisMin: 200;
     const colorScheme = settings.colorScheme;const lineTextColor = settings.lineTextColor;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, overrideDistance, overrideLaps, yAxisMin, colorScheme, lineTextColor});
+    const zoomSlider = settings.zoomSlider;
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showOnlyMyPin, overrideDistance, overrideLaps, yAxisMin, colorScheme, lineTextColor, zoomSlider});
 }
 
 
@@ -317,6 +319,8 @@ export async function main() {
         {
             //console.log(changed);            
             elProfile.showOnlyMyPin = changed.get('showOnlyMyPin')
+        } else if (changed.has('zoomSlider')) {
+            elProfile.zoomSlider = changed.get('zoomSlider')
         }
     });
 }

@@ -163,50 +163,54 @@ export class SauceElevationProfile {
         this.onResize();
         this._resizeObserver = new ResizeObserver(() => this.onResize());
         this._resizeObserver.observe(this.el);
-        this._resizeObserver.observe(document.documentElement);   
-        document.getElementById("rightPanel").addEventListener('click', ev => { 
-            if (this.zoomSlider) {
-                let dz = this.chart.getOption().dataZoom
-                let dzShow;
-                if (dz[0]?.show == true) {
-                    // the slider is currently visible so toggle if off, get the current start and end values and recalculate the colorstops                    
-                    dzShow = false
-                    let dzStart = dz[0].startValue;
-                    let dzEnd = dz[0].endValue;
-                    
-                    let idxStart = common.binarySearchClosest(this.routeDistances, (dzStart)); 
-                    let idxFinish = common.binarySearchClosest(this.routeDistances, (dzEnd)); 
-                    const distance = dzEnd - dzStart;
-                    const dataZoomColorStops = Array.from(this.routeColorStops.slice(idxStart, idxFinish));                                    
-                    const newColorStops = dataZoomColorStops.map((stop, i) => ({
-                        offset: (this.routeDistances[idxStart + i] - this.routeDistances[idxStart]) / (distance),
-                        color: stop.color
-                    })) 
-                    this.chart.setOption({                    
-                        series: [{
-                            areaStyle: {
-                                color: {
-                                    colorStops: newColorStops
-                                },
-                                opacity: this.gradientOpacity
-                            }
-                        }]                                                                           
+        this._resizeObserver.observe(document.documentElement);  
+        const rightPanel = document.getElementById("rightPanel");
+        if (rightPanel) {
+            rightPanel.addEventListener('click', ev => { 
+                if (this.zoomSlider) {
+                    //console.log("rightPanel click and zoomSlider is enabled")
+                    let dz = this.chart.getOption().dataZoom
+                    let dzShow;
+                    if (dz[0]?.show == true) {
+                        // the slider is currently visible so toggle if off, get the current start and end values and recalculate the colorstops                    
+                        dzShow = false
+                        let dzStart = dz[0].startValue;
+                        let dzEnd = dz[0].endValue;
+                        
+                        let idxStart = common.binarySearchClosest(this.routeDistances, (dzStart)); 
+                        let idxFinish = common.binarySearchClosest(this.routeDistances, (dzEnd)); 
+                        const distance = dzEnd - dzStart;
+                        const dataZoomColorStops = Array.from(this.routeColorStops.slice(idxStart, idxFinish));                                    
+                        const newColorStops = dataZoomColorStops.map((stop, i) => ({
+                            offset: (this.routeDistances[idxStart + i] - this.routeDistances[idxStart]) / (distance),
+                            color: stop.color
+                        })) 
+                        this.chart.setOption({                    
+                            series: [{
+                                areaStyle: {
+                                    color: {
+                                        colorStops: newColorStops
+                                    },
+                                    opacity: this.gradientOpacity
+                                }
+                            }]                                                                           
+                        })
+                    } else {   
+                        //slider is off, toggle it on                 
+                        dzShow = true
+                    }            
+                    this.chart.setOption({
+                        dataZoom: [{
+                            type: "slider",
+                            top: "middle",
+                            left: 5,
+                            right: 10,
+                            show: dzShow
+                        }]
                     })
-                } else {   
-                    //slider is off, toggle it on                 
-                    dzShow = true
-                }            
-                this.chart.setOption({
-                    dataZoom: [{
-                        type: "slider",
-                        top: "middle",
-                        left: 5,
-                        right: 10,
-                        show: dzShow
-                    }]
-                })
-            }
-        })
+                }
+            })
+        }
     }
 
     destroy() {
