@@ -264,7 +264,16 @@ export class SauceElevationProfile {
         });
         this.renderAthleteStates([], /*force*/ true);
     }    
-    
+    clear() {
+        this.route = null;
+        this.routeId = null;
+        this._eventSubgroupId = null;
+        this._routeLeadinDistance = 0;
+        this.road = undefined;
+        this.reverse = undefined;
+        this.curvePath = undefined;
+        this.setData([], [], []);
+    }
 
     setCourse = common.asyncSerialize(async function(id) {
         if (id === this.courseId) {

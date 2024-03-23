@@ -4,7 +4,7 @@
     "description": "Arend's Mod Collection for S4Z",
     "author": "Arend teRaa",
     "website_url": "https://saucellc.io",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "content_js": [
         "pages/src/data-fields.js"
     ],
@@ -119,8 +119,8 @@
             }
         },
         {
-            "file": "pages/Route-Preview.html",
-            "id": "Route-Profile preview",
+            "file": "pages/route-preview-v2.html",
+            "id": "Route-Profile-preview-v2",
             "name": "Preview any Route Profile",
             "description": "Preview any Route Profile",
             "always_visible": true,
