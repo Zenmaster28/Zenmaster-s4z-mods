@@ -11,46 +11,63 @@ common.settingsStore.setDefault({
     backgroundColor: '#00ff00',
     hideHeader: false,
     splitFrontBehind: false,
-    sortByActive: true
+    sortByActive: true,
+    includeAero: true,
+    includeDraft: true,
+    includeFeather: true,
+    includeBurrito: true,
+    includeSteamroller: true,
+    includeAnvil: true,
+    includeCoffee: true
 });
-
+let settings = common.settingsStore.get();
 let powerupData = [
     {
         "name": "LIGHTNESS",
         "image": "feather.png",
-        "count": 0
+        "count": 0,
+        "include": typeof(settings.includeFeather) == "undefined" ? true : settings.includeFeather
     },
     {
         "name": "POWERUP_CNT",
         "image": "coffee.png",
-        "count": 0
+        "count": 0,
+        "include": typeof(settings.includeCoffee) == "undefined" ? true : settings.includeCoffee
     },
     {
         "name": "AERO",
         "image": "aero.png",
-        "count": 0
+        "count": 0,
+        "include": typeof(settings.includeAero) == "undefined" ? true : settings.includeAero
     },
     {
         "name": "DRAFTBOOST",
         "image": "draft.png",
-        "count": 0
+        "count": 0,
+        "include": typeof(settings.includeDraft) == "undefined" ? true : settings.includeDraft
     },
     {
         "name": "UNDRAFTABLE",
         "image": "burrito.png",
-        "count": 0
+        "count": 0,
+        "include": typeof(settings.includeBurrito) == "undefined" ? true : settings.includeBurrito
     },
     {
         "name": "STEAMROLLER",
         "image": "steamroller.png",
-        "count": 0},
+        "count": 0,
+        "include": typeof(settings.includeSteamroller) == "undefined" ? true : settings.includeSteamroller
+    },
     {
         "name": "ANVIL",
         "image": "anvil.png",
-        "count": 0}
+        "count": 0,
+        "include": typeof(settings.includeAnvil) == "undefined" ? true : settings.includeAnvil
+    }
 ]
-
-export async function main() {    common.initInteractionListeners();
+console.log(powerupData)
+export async function main() {    
+    common.initInteractionListeners();
     //contentEl = document.querySelector('#content');
     doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);
     common.subscribe('groups', groups => {
@@ -84,8 +101,11 @@ export async function main() {    common.initInteractionListeners();
         for (let i = 0; i < beforeWatching.length; i++) {            
             if (beforeWatching[i].state.activePowerUp != null)
             {
-                beforeActive = true;
-                break;
+                let includePU = powerupData.find(x => x.name == beforeWatching[i].state.activePowerUp)
+                if (includePU.include) {
+                    beforeActive = true;
+                    break;
+                }
             }
         }
         const watching = watchingIndex !== null ? myGroup.slice(watchingIndex, watchingIndex + 1) : [];
@@ -94,8 +114,11 @@ export async function main() {    common.initInteractionListeners();
         for (let i = 0; i < afterWatching.length; i++) {
             if (afterWatching[i].state.activePowerUp != null)
             {
-                afterActive = true;
-                break;
+                let includePU = powerupData.find(x => x.name == afterWatching[i].state.activePowerUp)
+                if (includePU.include) {
+                    afterActive = true;
+                    break;
+                }
             }
         }        
         const data = [
@@ -120,7 +143,8 @@ export async function main() {    common.initInteractionListeners();
                     cell.appendChild(text);
                     cell = tbodyRow.insertCell();                       
                 }
-                let clonePowerupData = powerupData.slice(0);                                
+                //debugger
+                let clonePowerupData = powerupData.slice(0).filter(x => x.include);                                
                 for (let powerup of clonePowerupData)
                 {                    
                     powerup.count = grouping.filter(x => x.state.activePowerUp == powerup.name).length;
@@ -168,6 +192,9 @@ export async function main() {    common.initInteractionListeners();
                 }
             }
         };
+    });
+    common.settingsStore.addEventListener('changed', ev => {
+        location.reload() 
     });
 }
 
