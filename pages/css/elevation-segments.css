@@ -60,5 +60,7 @@ div .segmentData .data {
   grid-gap: 20px;
   text-align: left;
 }
-
+input.options {
+  --size: 9
+}
 

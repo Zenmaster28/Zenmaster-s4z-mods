@@ -1,9 +1,9 @@
 import * as common from '/pages/src/common.mjs';
-import * as map from '/pages/src/map.mjs';
+import * as map from './map.mjs';
 import * as elevation from './elevation-segments.mjs';
 import * as fields from '/pages/src/fields.mjs';
 import * as data from '/shared/sauce/data.mjs';
-
+import * as zen from './segments-xCoord.mjs';
 
 
 const doc = document.documentElement;
@@ -39,6 +39,8 @@ const settings = common.settingsStore.get();
 const url = new URL(location);
 const courseSelect = document.querySelector('#titlebar select[name="course"]');
 const routeSelect = document.querySelector('#titlebar select[name="route"]');
+const lapsSelect = document.getElementById("laps");
+const distanceSelect = document.getElementById("customDistance")
 const demoState = {};
 
 let worldList;
@@ -82,7 +84,9 @@ function createZwiftMap() {
         fpsLimit: settings.fpsLimit || 30,
         zoomPriorityTilt: getSetting('zoomPriorityTilt', true),
         preferRoute: settings.routeProfile !== false,
-        zoomCenter: settings.zoomCenter || false
+        zoomCenter: settings.zoomCenter || false,
+        overrideDistance: settings.overrideDistance || 0,
+        overrideLaps: settings.overrideLaps || 0
     });
     const autoCenterBtn = document.querySelector('.map-controls .button.toggle-auto-center');
     const autoHeadingBtn = document.querySelector('.map-controls .button.toggle-auto-heading');
@@ -302,9 +306,18 @@ async function applyRoute() {
             <option ${x.id === routeId ? 'selected' : ''}
                     value="${x.id}">${common.stripHTML(x.name)}</option>`);
     }
-    if (routeId != null) {
-        const route = await common.getRoute(routeId);
-        const path = route.curvePath;
+    if (routeId != null) {        
+        const route = await zen.getModifiedRoute(routeId);
+        let path;
+        //debugger
+        if (zwiftMap.overrideDistance > 0) {
+            let idx = common.binarySearchClosest(route.distances, zwiftMap.overrideDistance)
+            path = route.curvePath;
+            path.nodes = path.nodes.slice(0, idx + 1)
+        } else {
+            path = route.curvePath;
+        }
+        //debugger
         _routeHighlights.push(
             zwiftMap.addHighlightPath(path, `route-1-${route.id}`, {width: 5, color: '#0004'}),
             zwiftMap.addHighlightPath(path, `route-2-${route.id}`, {width: 1.2, color: 'black'}),
@@ -314,7 +327,7 @@ async function applyRoute() {
         if (elProfile) {
             //await elProfile.setRoute(routeId);
             if (settings.overrideDistance > 0 || settings.overrideLaps > 0) {
-                console.log("overridedistance: " + settings.overrideDistance + " overridelaps: " + settings.overrideLaps)
+                //console.log("overridedistance: " + settings.overrideDistance + " overridelaps: " + settings.overrideLaps)
                 await elProfile.setRoute(+routeId, {laps: settings.overrideLaps, eventSubgroupId: 0, distance: settings.overrideDistance})
             } else {
                 await elProfile.setRoute(+routeId);
@@ -385,6 +398,9 @@ export async function main() {
     routeSelect.addEventListener('change', async ev => {
         routeId = Number(routeSelect.value);
         await applyRoute();
+        if (lapsSelect.value > 0) {
+            distanceSelect.value = parseInt(elProfile.routeDistances.at(-1))
+        }
     });
     courseSelect.addEventListener('change', async ev => {
         const id = Number(courseSelect.value);
@@ -396,6 +412,30 @@ export async function main() {
         routeId = undefined;
         await applyCourse();
         await applyRoute();
+    });
+    lapsSelect.addEventListener('change', async ev => {        
+        common.settingsStore.set("overrideLaps", lapsSelect.value)
+        if (lapsSelect.value >= 1) {
+            distanceSelect.value = "";
+            common.settingsStore.set("overrideDistance", "")
+            zwiftMap.overrideLaps = lapsSelect.value;
+            zwiftMap.overrideDistance = null;
+            elProfile.overrideLaps = lapsSelect.value;
+            elProfile.overrideDistance = null;
+        }
+        await applyRoute(); 
+        distanceSelect.value = parseInt(elProfile.routeDistances.at(-1))
+        //debugger      
+    });
+    distanceSelect.addEventListener('change', async ev => {
+        common.settingsStore.set("overrideDistance", distanceSelect.value)
+        if (distanceSelect.value > 0) {
+            lapsSelect.value = "";
+            common.settingsStore.set("overrideLaps", "")
+            elProfile.overrideDistance = distanceSelect.value;   
+            zwiftMap.overrideDistance = distanceSelect.value;  
+        }           
+        await applyRoute();        
     });
     [worldList, routesList] = await Promise.all([common.getWorldList(), common.getRouteList()]);
     routesList = Array.from(routesList).sort((a, b) => a.name < b.name ? -1 : 1);
@@ -427,10 +467,16 @@ export async function main() {
         zwiftMap.setTiltShift(0);
         zwiftMap.setVerticalOffset(0);
         zwiftMap._mapTransition.setDuration(500);
+        lapsSelect.value = settings.overrideLaps || 1;
+        distanceSelect.value = settings.overrideDistance || "";
+        //debugger
         //console.log("applying course")
         await applyCourse();
        // console.log("applying route")
         await applyRoute();
+        if (lapsSelect.value > 0) {
+            distanceSelect.value = parseInt(elProfile.routeDistances.at(-1))
+        }
         
     } else {
         let settingsSaveTimeout;        
@@ -522,7 +568,7 @@ export async function main() {
                         changed.has('showSegmentFinish') ||
                         changed.has('minSegmentLength') ||
                         changed.has('fontScale')||
-                        changed.has('overrideDistance') ||
+                        //changed.has('overrideDistance') ||
                         changed.has('overrideLaps') ||
                         changed.has('yAxisMin') ||
                         changed.has('colorScheme') ||
@@ -548,65 +594,12 @@ export async function main() {
             elProfile.showOnlyMyPin = changed.get('showOnlyMyPin')
         } else if (changed.has('zoomSlider')) {
             elProfile.zoomSlider = changed.get('zoomSlider')
+        } else if (changed.has('overrideDistance')) {
+            elProfile.overrideDistance = changed.get('overrideDistnace')
+            applyRoute();
         }
     });
-    /*
-    common.settingsStore.addEventListener('set', ev => {
-        if (!ev.data.remote) {
-            return;
-        }
-        const {key, value} = ev.data;
-        if (['solidBackground', 'backgroundColor', 'backgroundAlpha'].includes(key)) {
-            common.setBackground(settings);
-        } else if (key === 'profileHeight') {
-            if (elProfile) {
-                elProfile.el.style.setProperty('--profile-height', value / 100);
-                elProfile.chart.resize();
-            }
-        } else if (['profileOverlay', 'fields', 'routeProfile', 'showElevationMaxLine', 'zoomCenter'].includes(key)) {
-            location.reload();
-        } else if (changed.has('profileOverlay') || 
-                changed.has('fields') ||
-                changed.has('routeProfile') || 
-                changed.has('showElevationMaxLine') || 
-                changed.has('showSegmentStart') || 
-                changed.has('showLapMarker') ||
-                changed.has('showLoopSegments') ||
-                //changed.has('pinSize') ||
-                changed.has('lineType') ||
-                changed.has('lineTypeFinish') ||
-                changed.has('lineSize') || 
-                changed.has('lineTextColor') ||
-                changed.has('showSegmentFinish') ||
-                changed.has('minSegmentLength') ||
-                changed.has('fontScale')||
-                changed.has('overrideDistance') ||
-                changed.has('overrideLaps') ||
-                changed.has('yAxisMin') ||
-                changed.has('colorScheme')
-            )
-        {
-            //console.log(changed);
-            location.reload();
-        } else if(changed.has('pinSize'))
-        {   
-        elProfile.pinSize = changed.get('pinSize');            
-        } else if (changed.has('pinColor'))
-        {
-        //console.log(changed)
-        elProfile.pinColor = changed.get('pinColor');
-        } else if (changed.has('showNextSegment'))
-        {
-        elProfile.showNextSegment = changed.get('showNextSegment')
-        } else if (changed.has('showOnlyMyPin'))
-        {
-        //console.log(changed);            
-        elProfile.showOnlyMyPin = changed.get('showOnlyMyPin')
-        } else if (changed.has('zoomSlider')) {
-        elProfile.zoomSlider = changed.get('zoomSlider')
-        }
-    });
-    */
+    
 }
 
 

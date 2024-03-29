@@ -12,6 +12,7 @@ let zwiftSegmentsRequireStartEnd;
 let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
 
 export async function processRoute(courseId, routeId, laps, distance, includeLoops) { 
+    distance = parseInt(distance);
     curvePathIndex = 0;   
     routeSegments.length = 0;
     allMarkLines.length = 0;   
@@ -67,6 +68,7 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
             grades.pop();
         }
     }
+    //debugger
     routeFullData.distances = distances;
     routeFullData.elevations = elevations;
     routeFullData.grades = grades;
@@ -892,4 +894,7 @@ export function generateLapDataTable(laps, sortOrder) {
     tableHTML += '</table>';
 
     return tableHTML;
+}
+export function arrayToCSV(array) {
+    return array.map(row => row.join(',')).join('\n');
 }

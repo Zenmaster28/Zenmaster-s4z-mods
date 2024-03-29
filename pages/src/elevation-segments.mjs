@@ -58,6 +58,7 @@ export class SauceElevationProfile {
         this.routeGrades = [];
         this.routeColorStops = [];
         this.foundRoute = false;
+        this.foundRouteRoadseg = false;
         this.overrideDistance = overrideDistance;
         this.overrideLaps = overrideLaps;
         this.customDistance = 0;
@@ -355,7 +356,7 @@ export class SauceElevationProfile {
             this.customDistance = distance
         } else {
             this.customDistance = 0;
-        };        
+        };          
         this.road = null;
         this.reverse = null;
         routeSegments.length = 0;
@@ -369,6 +370,7 @@ export class SauceElevationProfile {
         //let routeGrades;
         let segmentsOnRoute = await zen.processRoute(this.courseId, this.routeId, laps, distance, this.showLoopSegments)
         console.log(segmentsOnRoute)
+        
         this.routeInfo = segmentsOnRoute;
         this.routeDistances = Array.from(segmentsOnRoute.routeFullData.distances);                    
         this.routeElevations = Array.from(segmentsOnRoute.routeFullData.elevations);        
@@ -532,7 +534,7 @@ export class SauceElevationProfile {
         
         //console.log(allMarkLines)
         //console.log(routeSegments)
-        //console.log(distances)
+        //console.log(this.routeDistances)
         //console.log(routeDistances)
         //this.setData(distances, elevations, grades, {markLines, markAreas});
         this.setData(this.routeDistances, this.routeElevations, this.routeGrades, {markLines, markAreas});
@@ -1068,6 +1070,7 @@ export class SauceElevationProfile {
                                         if (s && s.roadId === state.roadId && !!s.reverse === !!state.reverse &&
                                             s.includesRoadTime(state.roadTime)) {
                                             roadSeg = s;
+                                            this.foundRouteRoadseg = true;
                                             // We found the road segment but need to find the exact node offset
                                             // to support multi-lap configurations...
                                             for (let i = nearIdx; i >= 0 && i < nodes.length; i += dir) {
@@ -1464,6 +1467,7 @@ export class SauceElevationProfile {
                                     segmentData: {
                                         currentPosition: xCoord,
                                         routeSegments: routeSegments,
+                                        foundRoute: this.foundRouteRoadseg,
                                         nextSegment: {
                                             name: nextSegmentName,
                                             distanceToGo: nextSegmentDistanceToGo,

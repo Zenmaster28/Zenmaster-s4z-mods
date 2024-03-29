@@ -11,9 +11,10 @@
         <script src="/pages/src/preloads.js"></script>
 
         <link rel="manifest" href="geo-manifest.json"/>
-        <link id="favicon" rel="shortcut icon" href="images/favicon.png"/>
+        <link id="favicon" rel="shortcut icon" href="/pages/images/favicon.png"/>
         <link rel="stylesheet" href="/pages/css/common.css"/>
         <link rel="stylesheet" href="/pages/css/geo.css"/>
+        <link rel="stylesheet" href="./css/elevation-segments.css"/>
 
         <script type="module">
             import {main} from './src/elevation-preview-v2.mjs';
@@ -27,6 +28,10 @@
                 <div class="title">Route Preview</div>
                 <div class="course"><select required name="course"></select></div>
                 <div class="route"><select required name="route"></select></div>
+                <div class="title">&nbsp;Laps</div>
+                <div class="course"> <input id="laps" type="number" min="1" max="20"></div>
+                <div class="title">&nbsp;Distance (m)</div>
+                <div ><input id="customDistance" type="number" min="1000" max="100000" step="100" class="options"></div>
                 <div class="filler"></div>
                 <div class="buttons">
                     <a class="button open-settings" href="route-preview-settings-v2.html?width=450&height=630&child-window"
