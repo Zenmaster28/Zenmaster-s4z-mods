@@ -351,7 +351,8 @@ export class SauceElevationProfile {
         }
     }
 
-    setRoute = common.asyncSerialize(async function(id, {laps=1, eventSubgroupId, distance}={}) {         
+    setRoute = common.asyncSerialize(async function(id, {laps=1, eventSubgroupId, distance}={}) { 
+        distance = parseFloat(distance);        
         if (distance) {
             this.customDistance = distance
         } else {
@@ -466,9 +467,13 @@ export class SauceElevationProfile {
                     (this.route.distances[i] - (this.route.distances[i - 1] || 0)));
                 elevations.push(this.route.elevations[i]);
                 grades.push(this.route.grades[i]);
+            }            
+            
+            if (distance && distances[distances.length - 1] >= distance + 200) {
+                break;
             }
             if (this.showLapMarker)
-            {
+            {                
                 markLines.push({
                     xAxis: this._routeLeadinDistance + lapDistance * lap,
                     lineStyle: {
@@ -483,10 +488,6 @@ export class SauceElevationProfile {
                         color: this.lineTextColor
                     }
                 });
-            }
-            
-            if (distance && distances[distances.length - 1] >= distance + 200) {
-                break;
             }
             }          
             if (distance) {
@@ -536,7 +537,7 @@ export class SauceElevationProfile {
         //console.log(routeSegments)
         //console.log(this.routeDistances)
         //console.log(routeDistances)
-        //this.setData(distances, elevations, grades, {markLines, markAreas});
+        //this.setData(distances, elevations, grades, {markLines, markAreas});        
         this.setData(this.routeDistances, this.routeElevations, this.routeGrades, {markLines, markAreas});
         return this.route;
     });
@@ -986,7 +987,7 @@ export class SauceElevationProfile {
             }
             return true;
             //debugger
-            return this._roadSigs.has(sig);
+            //return this._roadSigs.has(sig);
         });
         const markPointLabelSize = 0.4;
         const deltaY = this._yAxisMax - this._yAxisMin;
