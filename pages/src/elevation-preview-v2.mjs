@@ -397,6 +397,15 @@ export async function main() {
     });
     routeSelect.addEventListener('change', async ev => {
         routeId = Number(routeSelect.value);
+        
+        distanceSelect.value = "";
+        zwiftMap.overrideLaps = 1;
+        elProfile.overrideDistance = 0;
+        zwiftMap.overrideDistance = 0;
+        lapsSelect.value = 1;
+        elProfile.overrideLaps = 1;
+        common.settingsStore.set("overrideDistance", 0)
+        common.settingsStore.set("overrideLaps", 1)
         await applyRoute();
         if (lapsSelect.value > 0) {
             distanceSelect.value = parseInt(elProfile.routeDistances.at(-1))
@@ -410,6 +419,12 @@ export async function main() {
         }
         courseId = id;
         routeId = undefined;
+        distanceSelect.value = "";
+        lapsSelect.value = 1;
+        elProfile.overrideLaps = 1;
+        zwiftMap.overrideLaps = 1;
+        elProfile.overrideDistance = 0;
+        zwiftMap.overrideDistance = 0;
         await applyCourse();
         await applyRoute();
     });
