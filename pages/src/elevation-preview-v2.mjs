@@ -324,6 +324,7 @@ async function applyRoute() {
             zwiftMap.addHighlightPath(path, `route-3-${route.id}`, {width: 0.5, color: 'gold'}),
         );
         centerMap(route.curvePath.flatten(1/3));
+        //debugger
         if (elProfile) {
             //await elProfile.setRoute(routeId);
             if (settings.overrideDistance > 0 || settings.overrideLaps > 0) {
@@ -333,7 +334,11 @@ async function applyRoute() {
                 await elProfile.setRoute(+routeId);
             }
         }
-        
+        if (route.supportedLaps) {
+            lapsSelect.disabled = false;
+        } else {            
+            lapsSelect.disabled = true;
+        }
     } else {
         zwiftMap.setVerticalOffset(0);
         zwiftMap.setDragOffset([0, 0]);
