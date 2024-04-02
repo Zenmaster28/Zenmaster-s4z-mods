@@ -447,15 +447,20 @@ export async function main() {
         distanceSelect.value = parseInt(elProfile.routeDistances.at(-1))
         //debugger      
     });
-    distanceSelect.addEventListener('change', async ev => {
-        common.settingsStore.set("overrideDistance", distanceSelect.value)
-        if (distanceSelect.value > 0) {
-            lapsSelect.value = "";
-            common.settingsStore.set("overrideLaps", "")
-            elProfile.overrideDistance = distanceSelect.value;   
-            zwiftMap.overrideDistance = distanceSelect.value;  
-        }           
-        await applyRoute();        
+    distanceSelect.addEventListener('change', async ev => {        
+        if (!elProfile.route.supportedLaps && distanceSelect.value > elProfile.route.distances.at(-1)) {            
+            distanceSelect.value = parseInt(elProfile.route.distances.at(-1));
+            
+        } else {
+            common.settingsStore.set("overrideDistance", distanceSelect.value)
+            if (distanceSelect.value > 0) {
+                lapsSelect.value = "";
+                common.settingsStore.set("overrideLaps", "")
+                elProfile.overrideDistance = distanceSelect.value;   
+                zwiftMap.overrideDistance = distanceSelect.value;  
+            }           
+            await applyRoute();   
+        }     
     });
     [worldList, routesList] = await Promise.all([common.getWorldList(), common.getRouteList()]);
     routesList = Array.from(routesList).sort((a, b) => a.name < b.name ? -1 : 1);
