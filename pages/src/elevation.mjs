@@ -340,23 +340,23 @@ export async function main() {
                         changed.has('fields') ||
                         changed.has('routeProfile') || 
                         changed.has('showElevationMaxLine') || 
-                        changed.has('showSegmentStart') || 
-                        changed.has('showLapMarker') ||
-                        changed.has('showCompletedLaps') ||
-                        changed.has('showLoopSegments') ||                        
-                        changed.has('lineType') ||
-                        changed.has('lineTypeFinish') ||
-                        changed.has('lineSize') ||  
-                        changed.has('lineTextColor') ||                       
-                        changed.has('showSegmentFinish') ||
-                        changed.has('minSegmentLength') ||
+                        //changed.has('showSegmentStart') || 
+                        //changed.has('showLapMarker') ||
+                        //changed.has('showCompletedLaps') ||
+                        //changed.has('showLoopSegments') ||                        
+                        //changed.has('lineType') ||
+                        //changed.has('lineTypeFinish') ||
+                        //changed.has('lineSize') ||  
+                        //changed.has('lineTextColor') ||                       
+                        //changed.has('showSegmentFinish') ||
+                        //changed.has('minSegmentLength') ||
                         changed.has('fontScale') ||
-                        changed.has('overrideDistance') ||
-                        changed.has('overrideLaps') ||
-                        changed.has('yAxisMin') ||
-                        changed.has('singleLapView') ||
-                        changed.has('colorScheme') ||
-                        changed.has('gradientOpacity')
+                        //changed.has('overrideDistance') ||
+                        //changed.has('overrideLaps') ||
+                        //changed.has('yAxisMin') ||
+                        changed.has('singleLapView')
+                        //changed.has('colorScheme') ||
+                        //changed.has('gradientOpacity')
                     )
                 {
                     //console.log(changed);
@@ -374,8 +374,7 @@ export async function main() {
         {
             elProfile.showNextSegment = changed.get('showNextSegment')
         } else if (changed.has('showMyPin'))
-        {
-            //console.log(changed);            
+        {            
             elProfile.showMyPin = changed.get('showMyPin')
         } else if (changed.has('setAthleteSegmentData'))
         {
@@ -383,7 +382,7 @@ export async function main() {
         }  else if (changed.has('profileZoom')) {
             elProfile.profileZoom = changed.get('profileZoom')
             if (!changed.get('profileZoom')) {
-                location.reload()
+                location.reload()                
             }
         } else if (changed.has('zoomNextSegment')) {
             elProfile.zoomNextSegment = changed.get('zoomNextSegment')
@@ -408,6 +407,70 @@ export async function main() {
             elProfile.zoomFinalKm = changed.get('zoomFinalKm')
         } else if (changed.has('zoomSlider')) {
             elProfile.zoomSlider = changed.get('zoomSlider')
+        } else if(changed.has('lineType'))
+        {   
+            elProfile.lineType = changed.get('lineType');            
+            elProfile.setRoute();
+        } else if(changed.has('lineTypeFinish'))
+        {   
+            elProfile.lineTypeFinish = changed.get('lineTypeFinish');            
+            elProfile.setRoute();
+        } else if(changed.has('lineSize'))
+        {   
+            elProfile.lineSize = changed.get('lineSize');            
+            elProfile.setRoute();
+        } else if(changed.has('lineTextColor'))
+        {   
+            elProfile.lineTextColor = changed.get('lineTextColor');            
+            elProfile.setRoute();
+        } else if(changed.has('showLapMarker'))
+        {   
+            elProfile.showLapMarker = changed.get('showLapMarker');            
+            elProfile.setRoute();
+        } else if(changed.has('showSegmentFinish'))
+        {   
+            elProfile.showSegmentFinish = changed.get('showSegmentFinish');            
+            elProfile.setRoute();
+        } else if(changed.has('minSegmentLength'))
+        {   
+            elProfile.minSegmentLength = changed.get('minSegmentLength');            
+            elProfile.setRoute();
+        } else if(changed.has('showSegmentStart'))
+        {   
+            elProfile.showSegmentStart = changed.get('showSegmentStart');            
+            elProfile.setRoute();
+        } else if(changed.has('showLoopSegments'))
+        {   
+            elProfile.showLoopSegments = changed.get('showLoopSegments');            
+            elProfile.setRoute();
+        } else if(changed.has('showCompletedLaps'))
+        {   
+            elProfile.showCompletedLaps = changed.get('showCompletedLaps');            
+            elProfile.setRoute();
+        } else if(changed.has('fontScale'))
+        {   
+            elProfile.fontScale = changed.get('fontScale');            
+            elProfile.setRoute();
+        } else if(changed.has('colorScheme'))
+        {   
+            elProfile.colorScheme = changed.get('colorScheme');            
+            elProfile.setRoute();
+        } else if(changed.has('yAxisMin'))
+        {   
+            elProfile.yAxisMin = changed.get('yAxisMin');            
+            elProfile.setRoute();
+        } else if(changed.has('gradientOpacity'))
+        {   
+            elProfile.gradientOpacity = changed.get('gradientOpacity');            
+            elProfile.setRoute();
+        } else if(changed.has('overrideDistance'))
+        {   
+            elProfile.overrideDistance = changed.get('overrideDistance');            
+            elProfile.setRoute();
+        } else if(changed.has('overrideLaps'))
+        {   
+            elProfile.overrideLaps = changed.get('overrideLaps');            
+            elProfile.setRoute();
         }
     });
 }
