@@ -63,4 +63,11 @@ div .segmentData .data {
 input.options {
   --size: 9
 }
-
+.poi-box {
+  position: absolute;
+  display: none;      
+  width: 150px;
+}
+.poi-input {
+  width: inherit;
+}

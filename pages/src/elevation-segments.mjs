@@ -73,7 +73,8 @@ export class SauceElevationProfile {
         this.forwardDistance = forwardDistance;
         this.refresh = refresh;
         this._lastRender = 0;
-        this._refreshTimeout = null;        
+        this._refreshTimeout = null; 
+        this.customPOI = [];       
         el.classList.add('sauce-elevation-profile-container');
         this.chart = ec.init(el, 'sauce', {renderer: 'svg'});
         this.chart.setOption({
@@ -84,7 +85,7 @@ export class SauceElevationProfile {
                     if (!value) {
                         return '';
                     }
-                                        
+                    this.hoverPoint = value;                  
                     if (this.watchingId && this.showMyPin) {
                     
                     let watchingPin =  this.chart.getOption().series[0].markPoint.data.find(x => x.name == this.watchingId)
@@ -162,13 +163,46 @@ export class SauceElevationProfile {
         this._statesQueue = [];
         this._busy = false;
         this.onResize();
+        let self = this;
         this._resizeObserver = new ResizeObserver(() => this.onResize());
         this._resizeObserver.observe(this.el);
         this._resizeObserver.observe(document.documentElement);  
         const rightPanel = document.getElementById("rightPanel");
-        if (rightPanel) {
+        if (rightPanel) {            
             rightPanel.addEventListener('click', ev => { 
-                if (this.zoomSlider) {
+                if (ev.ctrlKey) {
+                    let poiName;
+                    let poiMarkline = this.hoverPoint[0];
+                    const newPOIdiv = document.getElementById("newPOIdiv")
+                    const poiInput = document.getElementById("poiInput")
+                    newPOIdiv.style.display = "block";
+                    newPOIdiv.style.left = ev.clientX + "px";
+                    let vPos = (window.innerHeight - newPOIdiv.offsetHeight) / 3;
+                    newPOIdiv.style.top = vPos + "px";
+                    poiInput.focus();
+                    function handleKeypress(e) {                        
+                        if (e.key === "Enter") {                            
+                            let userInput = poiInput.value;                            
+                            poiName = userInput;                            
+                            newPOIdiv.style.display = "none";
+                            poiInput.value = "";
+                            
+                            self.customPOI.push({
+                                name: poiName,
+                                markLine: poiMarkline,
+                                id: "99999999",
+                                type: "custom"
+                            })
+                            self.setRoute(self.routeId)
+                            poiInput.removeEventListener("keydown", handleKeypress)                            
+                        } else if (e.key === "Escape") {
+                            newPOIdiv.style.display = "none";
+                        }
+                    }
+                    poiInput.addEventListener("keydown", handleKeypress);
+                    //debugger
+                    
+                } else if (this.zoomSlider) {
                     //console.log("rightPanel click and zoomSlider is enabled")
                     let dz = this.chart.getOption().dataZoom
                     let dzShow;
@@ -381,13 +415,20 @@ export class SauceElevationProfile {
             for (let segment of segmentsOnRoute.segments) {
                 routeSegments.push(segment)
             }
+            
+            if (this.customPOI.length > 0) {
+                for (let poi of this.customPOI) {
+                    segmentsOnRoute.markLines.push(poi)
+                }
+            }
+            //debugger
             for (let markline of segmentsOnRoute.markLines) {
                 allMarkLines.push(markline)
                 if (this.lineTypeFinish.includes("["))
                 {
                     this.lineTypeFinish = JSON.parse("[" + this.lineTypeFinish + "]")[0];
                 }                               
-                if (markline.name.includes("Finish")) {
+                if (markline.name.includes("Finish") && markline.type != "custom") {
                     if (this.showSegmentFinish && markline.segLength > this.minSegmentLength) {
                         markLines.push({
                             xAxis: markline.markLine,
