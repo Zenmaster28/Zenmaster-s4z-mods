@@ -328,6 +328,41 @@ export async function main() {
     }
     common.settingsStore.addEventListener('changed', ev => {
         const changed = ev.data.changed; 
+        const propsSetroute = [
+            'lineType',
+            'lineTypeFinish',
+            'lineSize',
+            'lineTextColor',
+            'showLapMarker',
+            'showSegmentFinish',
+            'minSegmentLength',
+            'showSegmentStart',
+            'showLoopSegments',
+            'showCompletedLaps',
+            'fontScale',
+            'colorScheme',
+            'yAxisMin',
+            'gradientOpacity',
+            'overrideDistance',
+            'overrideLaps'
+        ];
+        const props = [
+            'pinSize',
+            'pinColor',
+            'pinColorMarked',
+            'showNextSegment',
+            'showMyPin',
+            'setAthleteSegmentData',
+            'forwardDistance',
+            'showTeamMembers',
+            'showMarkedRiders',
+            'showAllRiders',
+            'showRobopacers',
+            'showLeaderSweep',
+            'zoomNextSegmentApproach',
+            'zoomFinalKm',
+            'zoomSlider'
+        ]
         //console.log(changed);
         if (changed.has('solidBackground') || changed.has('backgroundColor')) {
             setBackground();
@@ -339,47 +374,13 @@ export async function main() {
         } else if (changed.has('profileOverlay') || 
                         changed.has('fields') ||
                         changed.has('routeProfile') || 
-                        changed.has('showElevationMaxLine') || 
-                        //changed.has('showSegmentStart') || 
-                        //changed.has('showLapMarker') ||
-                        //changed.has('showCompletedLaps') ||
-                        //changed.has('showLoopSegments') ||                        
-                        //changed.has('lineType') ||
-                        //changed.has('lineTypeFinish') ||
-                        //changed.has('lineSize') ||  
-                        //changed.has('lineTextColor') ||                       
-                        //changed.has('showSegmentFinish') ||
-                        //changed.has('minSegmentLength') ||
-                        changed.has('fontScale') ||
-                        //changed.has('overrideDistance') ||
-                        //changed.has('overrideLaps') ||
-                        //changed.has('yAxisMin') ||
-                        changed.has('singleLapView')
-                        //changed.has('colorScheme') ||
-                        //changed.has('gradientOpacity')
+                        changed.has('showElevationMaxLine') ||                         
+                        changed.has('fontScale') ||                        
+                        changed.has('singleLapView')                        
                     )
-                {
-                    //console.log(changed);
+                {                    
                     location.reload();
-        } else if(changed.has('pinSize'))
-        {   
-            elProfile.pinSize = changed.get('pinSize');            
-        } else if (changed.has('pinColor'))
-        {         
-            elProfile.pinColor = changed.get('pinColor');
-        } else if (changed.has('pinColorMarked'))
-        {         
-            elProfile.pinColorMarked = changed.get('pinColorMarked');
-        } else if (changed.has('showNextSegment'))
-        {
-            elProfile.showNextSegment = changed.get('showNextSegment')
-        } else if (changed.has('showMyPin'))
-        {            
-            elProfile.showMyPin = changed.get('showMyPin')
-        } else if (changed.has('setAthleteSegmentData'))
-        {
-            elProfile.setAthleteSegmentData = changed.get('setAthleteSegmentData')
-        }  else if (changed.has('profileZoom')) {
+        } else if (changed.has('profileZoom')) {
             elProfile.profileZoom = changed.get('profileZoom')
             if (!changed.get('profileZoom')) {
                 location.reload()                
@@ -389,89 +390,18 @@ export async function main() {
             if (!changed.get('zoomNextSegment')) {
                 location.reload()
             }
-        } else if (changed.has('forwardDistance')) {
-            elProfile.forwardDistance = changed.get('forwardDistance')
-        } else if (changed.has('showTeamMembers')) {
-            elProfile.showTeamMembers = changed.get('showTeamMembers');            
-        } else if (changed.has('showMarkedRiders')) {
-            elProfile.showMarkedRiders = changed.get('showMarkedRiders');            
-        } else if (changed.has('showAllRiders')) {
-            elProfile.showAllRiders = changed.get('showAllRiders');            
-        } else if (changed.has('showRobopacers')) {
-            elProfile.showRobopacers = changed.get('showRobopacers');            
-        } else if (changed.has('showLeaderSweep')) {
-            elProfile.showLeaderSweep = changed.get('showLeaderSweep');            
-        } else if (changed.has('zoomNextSegmentApproach')) {
-            elProfile.zoomNextSegmentApproach = changed.get('zoomNextSegmentApproach');            
-        } else if (changed.has('zoomFinalKm')) {
-            elProfile.zoomFinalKm = changed.get('zoomFinalKm')
-        } else if (changed.has('zoomSlider')) {
-            elProfile.zoomSlider = changed.get('zoomSlider')
-        } else if(changed.has('lineType'))
-        {   
-            elProfile.lineType = changed.get('lineType');            
-            elProfile.setRoute();
-        } else if(changed.has('lineTypeFinish'))
-        {   
-            elProfile.lineTypeFinish = changed.get('lineTypeFinish');            
-            elProfile.setRoute();
-        } else if(changed.has('lineSize'))
-        {   
-            elProfile.lineSize = changed.get('lineSize');            
-            elProfile.setRoute();
-        } else if(changed.has('lineTextColor'))
-        {   
-            elProfile.lineTextColor = changed.get('lineTextColor');            
-            elProfile.setRoute();
-        } else if(changed.has('showLapMarker'))
-        {   
-            elProfile.showLapMarker = changed.get('showLapMarker');            
-            elProfile.setRoute();
-        } else if(changed.has('showSegmentFinish'))
-        {   
-            elProfile.showSegmentFinish = changed.get('showSegmentFinish');            
-            elProfile.setRoute();
-        } else if(changed.has('minSegmentLength'))
-        {   
-            elProfile.minSegmentLength = changed.get('minSegmentLength');            
-            elProfile.setRoute();
-        } else if(changed.has('showSegmentStart'))
-        {   
-            elProfile.showSegmentStart = changed.get('showSegmentStart');            
-            elProfile.setRoute();
-        } else if(changed.has('showLoopSegments'))
-        {   
-            elProfile.showLoopSegments = changed.get('showLoopSegments');            
-            elProfile.setRoute();
-        } else if(changed.has('showCompletedLaps'))
-        {   
-            elProfile.showCompletedLaps = changed.get('showCompletedLaps');            
-            elProfile.setRoute();
-        } else if(changed.has('fontScale'))
-        {   
-            elProfile.fontScale = changed.get('fontScale');            
-            elProfile.setRoute();
-        } else if(changed.has('colorScheme'))
-        {   
-            elProfile.colorScheme = changed.get('colorScheme');            
-            elProfile.setRoute();
-        } else if(changed.has('yAxisMin'))
-        {   
-            elProfile.yAxisMin = changed.get('yAxisMin');            
-            elProfile.setRoute();
-        } else if(changed.has('gradientOpacity'))
-        {   
-            elProfile.gradientOpacity = changed.get('gradientOpacity');            
-            elProfile.setRoute();
-        } else if(changed.has('overrideDistance'))
-        {   
-            elProfile.overrideDistance = changed.get('overrideDistance');            
-            elProfile.setRoute();
-        } else if(changed.has('overrideLaps'))
-        {   
-            elProfile.overrideLaps = changed.get('overrideLaps');            
-            elProfile.setRoute();
-        }
+        } 
+        props.forEach(property => {
+            if (changed.has(property)) {                
+                elProfile[property] = changed.get(property);                
+            }            
+        });
+        propsSetroute.forEach(property => {
+            if (changed.has(property)) {                
+                elProfile[property] = changed.get(property);
+                elProfile.setRoute(elProfile.routeId);
+            }
+        });
     });
 }
 
@@ -479,6 +409,5 @@ export async function settingsMain() {
     common.initInteractionListeners();
     (await common.initSettingsForm('form'))();
 }
-
 
 setBackground();
