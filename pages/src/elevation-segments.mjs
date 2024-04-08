@@ -164,45 +164,36 @@ export class SauceElevationProfile {
         this._busy = false;
         this.onResize();
         let self = this;
+        this.newPOIClicked = false;
         this._resizeObserver = new ResizeObserver(() => this.onResize());
         this._resizeObserver.observe(this.el);
         this._resizeObserver.observe(document.documentElement);  
         const rightPanel = document.getElementById("rightPanel");
-        if (rightPanel) {            
+        const newPOIbutton = document.getElementById('newPOIbutton')
+        if (newPOIbutton) {
+            newPOIbutton.addEventListener('click', ev => {
+                this.newPOIClicked = true;
+                document.documentElement.classList.toggle('settings-mode');            
+                rightPanel.addEventListener('mouseup', ev => {                
+                    if (this.newPOIClicked) {
+                        this.createPOI(ev, self, this.hoverPoint[0]);                    
+                    };
+                });  
+                rightPanel.addEventListener('touchend', ev => {                
+                    if (this.newPOIClicked) {
+                        this.createPOI(ev, self, this.hoverPoint[0]);                    
+                    };
+                });          
+            });
+        }
+        if (rightPanel) {                       
             rightPanel.addEventListener('click', ev => { 
+                
                 if (ev.ctrlKey) {
-                    let poiName;
-                    let poiMarkline = this.hoverPoint[0];
-                    const newPOIdiv = document.getElementById("newPOIdiv")
-                    const poiInput = document.getElementById("poiInput")
-                    newPOIdiv.style.display = "block";
-                    newPOIdiv.style.left = ev.clientX + "px";
-                    let vPos = (window.innerHeight - newPOIdiv.offsetHeight) / 3;
-                    newPOIdiv.style.top = vPos + "px";
-                    poiInput.focus();
-                    function handleKeypress(e) {                        
-                        if (e.key === "Enter") {                            
-                            let userInput = poiInput.value;                            
-                            poiName = userInput;                            
-                            newPOIdiv.style.display = "none";
-                            poiInput.value = "";
-                            
-                            self.customPOI.push({
-                                name: poiName,
-                                markLine: poiMarkline,
-                                id: "99999999",
-                                type: "custom"
-                            })
-                            self.setRoute(self.routeId)
-                            poiInput.removeEventListener("keydown", handleKeypress)                            
-                        } else if (e.key === "Escape") {
-                            newPOIdiv.style.display = "none";
-                        }
-                    }
-                    poiInput.addEventListener("keydown", handleKeypress);
-                    //debugger
+                    this.createPOI(ev, self, this.hoverPoint[0]);
                     
-                } else if (this.zoomSlider) {
+                } else if (this.zoomSlider && !this.newPOIClicked) {
+                    
                     //console.log("rightPanel click and zoomSlider is enabled")
                     let dz = this.chart.getOption().dataZoom
                     let dzShow;
@@ -247,7 +238,45 @@ export class SauceElevationProfile {
             })
         }
     }
-
+    createPOI(ev, self, xValue) {                
+        const newPOIdiv = document.getElementById("newPOIdiv")
+        const poiInput = document.getElementById("poiInput")
+        newPOIdiv.style.display = "block";
+        newPOIdiv.style.left = ev.clientX + "px";
+        let vPos = (window.innerHeight - newPOIdiv.offsetHeight) / 3;
+        newPOIdiv.style.top = vPos + "px";
+        poiInput.focus();
+        function handleKeypress(e) {                        
+            if (e.key === "Enter") { 
+                if (poiInput.value != "") {                    
+                    newPOIdiv.style.display = "none";
+                    self.customPOI.push({
+                        name: poiInput.value,
+                        markLine: xValue,
+                        id: "99999999",
+                        type: "custom"
+                    })
+                    poiInput.value = "";
+                    self.setRoute(self.routeId)
+                    poiInput.removeEventListener("keydown", handleKeypress)
+                    self.newPOIClicked = false;
+                } else {
+                    poiInput.value = "";
+                    newPOIdiv.style.display = "none";
+                    poiInput.removeEventListener("keydown", handleKeypress)
+                    self.newPOIClicked = false;
+                }                           
+            } else if (e.key === "Escape") {                
+                poiInput.value = "";
+                newPOIdiv.style.display = "none";
+                poiInput.removeEventListener("keydown", handleKeypress)
+                self.newPOIClicked = false;
+            }
+        }
+        poiInput.addEventListener("keydown", handleKeypress);
+        
+        //debugger
+    }
     destroy() {
         this._resizeObserver.disconnect();
         this.chart.dispose();
