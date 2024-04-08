@@ -297,7 +297,7 @@ async function applyRoute() {
         _routeHighlights.pop().elements.forEach(x => x.remove());
     }
     routeSelect.replaceChildren();
-    routeSelect.insertAdjacentHTML('beforeend', `<option value disabled selected>Route</option>`);
+    routeSelect.insertAdjacentHTML('beforeend', `<option value disabled selected>Route</option>`);    
     for (const x of routesList) {
         if (x.courseId !== courseId) {
             continue;
@@ -464,6 +464,17 @@ export async function main() {
     });
     [worldList, routesList] = await Promise.all([common.getWorldList(), common.getRouteList()]);
     routesList = Array.from(routesList).sort((a, b) => a.name < b.name ? -1 : 1);
+    let newRoutes = await fetch("data/routes.json").then((response) => response.json()); 
+    newRoutes.forEach(newRoute => {
+        const exists = routesList.some(route => route.id === newRoute.id);
+        if (!exists) {
+            newRoute.courseId = common.worldToCourseIds[newRoute.worldId]
+            console.log("Adding route: " + newRoute.name + " to " + common.worldToNames[newRoute.worldId])            
+            routesList.push(newRoute);
+        }
+    });
+    routesList.sort((a, b) => a.name < b.name ? -1 : 1);
+    //debugger
     console.log("Creating map")
     zwiftMap = createZwiftMap();
     window.zwiftMap = zwiftMap;  // DEBUG
