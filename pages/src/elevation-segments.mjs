@@ -173,20 +173,20 @@ export class SauceElevationProfile {
         if (newPOIbutton) {
             newPOIbutton.addEventListener('click', ev => {
                 this.newPOIClicked = true;
-                document.documentElement.classList.toggle('settings-mode');            
-                rightPanel.addEventListener('mouseup', ev => {                
-                    if (this.newPOIClicked) {
-                        this.createPOI(ev, self, this.hoverPoint[0]);                    
-                    };
-                });  
-                rightPanel.addEventListener('touchend', ev => {                
-                    if (this.newPOIClicked) {
-                        this.createPOI(ev, self, this.hoverPoint[0]);                    
-                    };
-                });          
+                document.documentElement.classList.toggle('settings-mode'); 
             });
         }
-        if (rightPanel) {                       
+        if (rightPanel) {        
+            rightPanel.addEventListener('mouseup', ev => {                
+                if (this.newPOIClicked) {
+                    this.createPOI(ev, self, this.hoverPoint[0]);                    
+                };
+            });  
+            rightPanel.addEventListener('touchend', ev => {                
+                if (this.newPOIClicked) {
+                    this.createPOI(ev, self, this.hoverPoint[0]);                    
+                };
+            });                
             rightPanel.addEventListener('click', ev => { 
                 
                 if (ev.ctrlKey) {
