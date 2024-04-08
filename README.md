@@ -6,4 +6,4 @@ A collection of mods for Sauce 4 Zwift
 * Watopia and Makuri Islands pace partner current locations
 * Lap data windows for workouts
 
-![Zenmaster-s4z](https://github.com/Zenmaster28/Zenmaster-s4z-mods/assets/6671862/819ffe36-24fc-41f0-a2fc-284806463501)
+![Zenmaster-s4z](https://github.com/Zenmaster28/Zenmaster-s4z-mods/assets/6671862/b0755c7e-422f-49f6-9848-7a5c80b84830)
