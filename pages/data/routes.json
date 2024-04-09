@@ -22589,6 +22589,54 @@
         "worldId": 13
     },
     {
+        "ascentInMeters": 33.1,
+        "blockedForMeetups": false,
+        "distanceInMeters": 3012,
+        "eventOnly": false,
+        "eventPaddocks": "1,2,3,4,5",
+        "freeRideLeadinAscentInMeters": 0.1,
+        "freeRideLeadinDistanceInMeters": 14.6,
+        "id": 1258415487,
+        "leadinAscentInMeters": 0.4,
+        "leadinDistanceInMeters": 246.9,
+        "levelLocked": 0,
+        "manifest": [
+            {
+                "end": 0.387663,
+                "leadin": true,
+                "reverse": true,
+                "roadId": 9,
+                "start": 0
+            },
+            {
+                "end": 1,
+                "leadin": true,
+                "reverse": true,
+                "roadId": 9,
+                "start": 0.997194
+            },
+            {
+                "end": 0.997193,
+                "reverse": true,
+                "roadId": 9,
+                "start": 0
+            },
+            {
+                "end": 1,                
+                "reverse": true,
+                "roadId": 9,
+                "start": 0.997194
+            }
+        ],
+        "meetupLeadinAscentInMeters": 0.1,
+        "meetupLeadinDistanceInMeters": 24.2,
+        "name": "Glasgow Crit Circuit Reverse",
+        "sportType": 3,
+        "supportedLaps": true,
+        "useAlternateEventRamp": false,
+        "worldId": 13
+    },
+    {
         "ascentInMeters": 71,
         "blockedForMeetups": false,
         "distanceInMeters": 8045.7,
