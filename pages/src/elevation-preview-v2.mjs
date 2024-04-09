@@ -473,9 +473,7 @@ export async function main() {
             routesList.push(newRoute);
         }
     });
-    routesList.sort((a, b) => a.name < b.name ? -1 : 1);
-    //debugger
-    console.log("Creating map")
+    routesList.sort((a, b) => a.name < b.name ? -1 : 1);    
     zwiftMap = createZwiftMap();
     window.zwiftMap = zwiftMap;  // DEBUG
     window.MapEntity = map.MapEntity;
@@ -490,11 +488,9 @@ export async function main() {
                 point.setPosition(pos);
             }
         });
-    }
-    //console.log("courseid is " + courseId)
+    };    
     if (courseId != null) {
-        if (!settings.showMap) {
-            console.log("hiding map")
+        if (!settings.showMap) {            
             document.getElementById("mapDiv").style.visibility = "hidden"
         }
         doc.classList.add('explore');
@@ -504,11 +500,8 @@ export async function main() {
         zwiftMap.setVerticalOffset(0);
         zwiftMap._mapTransition.setDuration(500);
         lapsSelect.value = settings.overrideLaps || 1;
-        distanceSelect.value = settings.overrideDistance || "";
-        //debugger
-        //console.log("applying course")
-        await applyCourse();
-       // console.log("applying route")
+        distanceSelect.value = settings.overrideDistance || "";        
+        await applyCourse();       
         await applyRoute();
         if (lapsSelect.value > 0) {
             distanceSelect.value = parseInt(elProfile.routeDistances.at(-1))
