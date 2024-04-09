@@ -643,7 +643,7 @@ export class SauceElevationProfile {
             options.markLines.sort((a,b) => {
                 return a.xAxis - b.xAxis;
             })
-            console.log(options.markLines)
+            //console.log(options.markLines)
 
             markLineData.push(...options.markLines);
         }
@@ -1258,25 +1258,8 @@ export class SauceElevationProfile {
                         //console.log(allOtherPins)
                         
                         if (isWatching && this.showMyPin)
-                        {                        
-                            //let nextSegment = this.getNextSegment(allMarkLines, xCoord)
-                            //console.log(xCoord)
-                            //debugger
-                            /*
-                            if (this.showTeamMembers) {
-                                const ad = common.getAthleteDataCacheEntry(state.athleteId);                            
-                                if (ad && (ad.athlete && ad.athlete.team)) {
-                                    if (this.watchingTeam != ad.athlete.team) {
-                                        console.log("Setting watching team to: " + ad.athlete.team)
-                                        //debugger
-                                        this.watchingTeam = ad.athlete.team;       
-                                    }                         
-                                } else if (this.watchingTeam) {
-                                    console.log("Clearing watching team")
-                                    this.watchingTeam = "";
-                                }
-                            }
-                            */
+                        {                       
+                            
                             if (this.currentLap != state.laps + 1 && state.eventSubgroupId != 0) {
                                 console.log("Setting current lap to: " + (state.laps + 1))
                                 this.currentLap = state.laps + 1;

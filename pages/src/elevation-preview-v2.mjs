@@ -530,9 +530,8 @@ export async function main() {
             if (ad.state.routeId != currentRoute) {
                 if (!currentRoute) {
                     currentRoute = zwiftMap.routeId;
-                } else if (settings.zoomCenter) {
-                    console.log("Centering for new watching")
-                    //location.reload()
+                } else if (settings.zoomCenter) {                    
+                    
                     centerMap(zwiftMap.route.curvePath.flatten(1/3))
                     currentRoute = zwiftMap.routeId
                 }

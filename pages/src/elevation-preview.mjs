@@ -227,26 +227,24 @@ export async function main() {
     if (urlQuery.has('preview')) {
         const center = urlQuery.get('center');
         const [course, road] = urlQuery.get('preview').split(',');
-        const routeId = urlQuery.get('route');
-        //debugger
+        const routeId = urlQuery.get('route');        
         //await zwiftMap.setCourse(+course || 6);
         if (elProfile) {
             let routeInfo = await zen.getModifiedRoute(parseInt(routeId));            
             let routeCourse = routeInfo.courseId;
             await elProfile.setCourse(+routeCourse || 13);
-            //debugger
+            
             let routeListOptions = document.getElementById('routeListSelect');
             for (let i = 0; i < routeListOptions.children.length - 1; i++)
             {
                 
                 if (routeListOptions.children[i].value == routeId)
-                {
-                    //debugger
+                {                    
                     routeListOptions.children[i].selected = true;
                     break;
                 }
             }
-            //await elProfile.setRoute(routeId);
+            
         }
         if (center) {
             //zwiftMap.setCenter(center.split(',').map(Number));
@@ -258,23 +256,20 @@ export async function main() {
             //zwiftMap.setActiveRoad(+road || 0);
         }
         if (elProfile) {
-            if (routeId) {
-                console.log("Setting route")
+            if (routeId) {                
                 if (settings.overrideDistance > 0 || settings.overrideLaps > 0) {
-                    console.log("overridedistance: " + settings.overrideDistance + " overridelaps: " + settings.overrideLaps)
+                    //console.log("overridedistance: " + settings.overrideDistance + " overridelaps: " + settings.overrideLaps)
                     await elProfile.setRoute(+routeId, {laps: settings.overrideLaps, eventSubgroupId: 0, distance: settings.overrideDistance})
                 } else {
                     await elProfile.setRoute(+routeId);
-                }
-                //debugger                
+                }                         
             } else {
                 elProfile.setRoad(+road || 0);
             }
         }
     } 
     common.settingsStore.addEventListener('changed', ev => {
-        const changed = ev.data.changed; 
-        //console.log(changed);
+        const changed = ev.data.changed;         
         if (changed.has('solidBackground') || changed.has('backgroundColor')) {
             setBackground();
         } else if (changed.has('profileHeight')) {

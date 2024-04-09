@@ -90,7 +90,7 @@ async function getLapData(watching) {
 }
 
 function generateLapDataTable(laps, sets) {
-    console.log(sortOrder, sets, laps)
+    //console.log(sortOrder, sets, laps)
     let setLaps = [];
     if (laps.length > 0 && sets[0] != -1) {
         for (let i = 0;i < sets.length; i++) {
@@ -105,7 +105,7 @@ function generateLapDataTable(laps, sets) {
         setLaps.push(laps)
     }
     sortOrder == "desc" ? setLaps = setLaps.toReversed() : null;
-    console.log(setLaps)
+    //console.log(setLaps)
     // Sort the lap data based on lap counter in ascending or descending order   
     let tableHTML = '<table>';
     if (setLaps.length <= 1) {

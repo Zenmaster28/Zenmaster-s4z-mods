@@ -38,7 +38,7 @@ setHotkey = settings.setHotkey;
 if (settings.transparentNoData) {document.body.classList = "transparent-bg"};
 
 async function newSet() {
-    console.log("New Set")
+    //console.log("New Set")
     let watching = await common.rpc.getAthleteData("watching")
     if (!watching.sets) {
         await common.rpc.updateAthleteData(watching.athleteId, {sets: []});
