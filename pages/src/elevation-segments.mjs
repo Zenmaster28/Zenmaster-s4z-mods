@@ -1093,7 +1093,7 @@ export class SauceElevationProfile {
                         isPP = true;
                         isBeacon = true;
                         let wkg = ad.state.power / ad.athlete.weight;
-                        beaconColour = wkg <= 2.0 ? "yellow" : (wkg > 2.0 && wkg <= 3.0) ? "blue" : (wkg > 3.0 && wkg < 4.0) ? "green" : "red"
+                        beaconColour = wkg <= 2.0 ? "#ffff00" : (wkg > 2.0 && wkg <= 3.0) ? "#00ffff" : (wkg > 3.0 && wkg < 4.0) ? "#00ff40" : "#ff0000"
                         //debugger
                         //console.log("found a PP mark")
                     }
@@ -1571,12 +1571,11 @@ export class SauceElevationProfile {
                                 //debugger
                             }
                         }
-                        
-                        if (isBeacon) {                            
-                            beaconImage = "image://../pages/images/pp-" + beaconColour + ".png"                            
-                        }                        
                         let symbol;
-                        if (this.pinName) {
+                        if (isBeacon) {                            
+                            //beaconImage = "image://../pages/images/pp-" + beaconColour + ".png"                            
+                            symbol = "path://m 19.000923,56.950256 h 1.021954 V 100 h -0.963276 z m -1.266211,-22.991813 7.026027,-6.131803 -3.321394,9.069959 z m 3.832378,2.107806 a 2.4271723,2.3632993 0 0 1 -2.427172,2.3633 2.4271723,2.3632993 0 0 1 -2.427171,-2.3633 2.4271723,2.3632993 0 0 1 2.427171,-2.363299 2.4271723,2.3632993 0 0 1 2.427172,2.363299 z M 19.521675,13.903697 1.1291999,24.759155 1.2559791,46.349633 19.521675,57.20826 37.917319,46.859918 38.174047,25.015882 Z m 0.129951,10.475121 A 11.369386,11.369386 0 0 1 31.020536,35.747733 11.369386,11.369386 0 0 1 19.651624,47.116646 11.369386,11.369386 0 0 1 8.2827093,35.747733 11.369386,11.369386 0 0 1 19.651626,24.378818 Z M 1,11.858402 19.523156,1 38.174058,11.789339 38.046313,19.267666 19.581839,9.5589751 1.0932144,19.081236 Z"
+                        } else if (this.pinName) {
                             symbol = zen.pins.find(x => x.name == this.pinName).path;
                         } else {
                             symbol = zen.pins.find(x => x.name == "Default").path;
@@ -1586,12 +1585,13 @@ export class SauceElevationProfile {
                         return {
                             name: state.athleteId,
                             coord: [xCoord, yCoord],                            
-                            symbol: isBeacon? beaconImage : symbol,
+                            //symbol: isBeacon? beaconImage : symbol,
+                            symbol: symbol,
                             symbolKeepAspect: true,                            
                             symbolSize: symbolSize,                                                        
                             symbolOffset: [0, -(symbolSize / 2)],                            
                             itemStyle: {
-                                color: isWatching ? watchingPinColor : (isTeamMate && this.showTeamMembers) ? watchingPinColor : (isMarked && this.showMarkedRiders) ? markedPinColor : deemphasize ? '#0002' : '#fff7',
+                                color: isBeacon? beaconColour : isWatching ? watchingPinColor : (isTeamMate && this.showTeamMembers) ? watchingPinColor : (isMarked && this.showMarkedRiders) ? markedPinColor : deemphasize ? '#0002' : '#fff7',
                                 borderWidth: this.em(isWatching ? 0.04 : 0.02),
                             },
                             emphasis: {

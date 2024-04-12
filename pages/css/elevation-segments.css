@@ -87,15 +87,16 @@ input.options {
   display: grid;
   grid-template-columns: 3fr 1fr;
 }
-#pinList {
+.pinList {
   display: flex;
   flex-wrap: wrap;
+  padding: 0.5em 0.8em;
 }
 
-.pin {
-  width: 50px;
+.pin {  
+  width: auto;
   height: 50px;
-  margin: 5px;
+  margin: 2px;
   cursor: pointer;
   background-size: cover;
 }
