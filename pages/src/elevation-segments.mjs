@@ -14,7 +14,7 @@ let allMarkLines = [];
 let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, refresh=1000}) {
         this.el = el;
         this.worldList = worldList;
         this.preferRoute = preferRoute;
@@ -43,6 +43,7 @@ export class SauceElevationProfile {
         this.pinSize = pinSize;
         this.pinColor = pinColor;
         this.pinColorMarked = pinColorMarked;
+        this.pinName = pinName;
         this.showMyPin = showMyPin;
         this.setAthleteSegmentData = setAthleteSegmentData;
         const {fontScale} = common.settingsStore.get();        
@@ -1573,16 +1574,22 @@ export class SauceElevationProfile {
                         
                         if (isBeacon) {                            
                             beaconImage = "image://../pages/images/pp-" + beaconColour + ".png"                            
-                        }
+                        }                        
+                        let symbol;
+                        if (this.pinName) {
+                            symbol = zen.pins.find(x => x.name == this.pinName).path;
+                        } else {
+                            symbol = zen.pins.find(x => x.name == "Default").path;
+                        }                        
                         let symbolSize = isWatching ? this.em(watchingPinSize) : ((isTeamMate && this.showTeamMembers) || (isMarked && this.showMarkedRiders) || (isBeacon)) ? this.em(teamPinSize) : deemphasize ? this.em(deemphasizePinSize) : this.em(otherPinSize)
+                        
                         return {
                             name: state.athleteId,
-                            coord: [xCoord, yCoord],
-                            //symbol: "pin",
-                            symbol: isBeacon ? beaconImage : "pin",                            
-                            //symbolSize: this.em(otherPinSize),
-                            symbolSize: symbolSize,
-                            symbolOffset: isBeacon ? [0, (-20 * this.pinSize)] : [0, 0],
+                            coord: [xCoord, yCoord],                            
+                            symbol: isBeacon? beaconImage : symbol,
+                            symbolKeepAspect: true,                            
+                            symbolSize: symbolSize,                                                        
+                            symbolOffset: [0, -(symbolSize / 2)],                            
                             itemStyle: {
                                 color: isWatching ? watchingPinColor : (isTeamMate && this.showTeamMembers) ? watchingPinColor : (isMarked && this.showMarkedRiders) ? markedPinColor : deemphasize ? '#0002' : '#fff7',
                                 borderWidth: this.em(isWatching ? 0.04 : 0.02),

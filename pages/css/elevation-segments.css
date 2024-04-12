@@ -71,3 +71,35 @@ input.options {
 .poi-input {
   width: inherit;
 }
+.pin-path {
+  fill: red;
+  width: 100%;
+  height: 100%;
+  background-color: white;  
+}
+.pin-container {  
+  height: 50px;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+}
+.pinSettings {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+}
+#pinList {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.pin {
+  width: 50px;
+  height: 50px;
+  margin: 5px;
+  cursor: pointer;
+  background-size: cover;
+}
+
+.selected {
+  border: 2px solid red;
+}

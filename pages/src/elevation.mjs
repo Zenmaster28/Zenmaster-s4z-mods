@@ -66,7 +66,8 @@ common.settingsStore.setDefault({
     lineTextColor: "#ffffff",
     showRobopacers: false,
     showLeaderSweep: false,
-    gradientOpacity: 0.7
+    gradientOpacity: 0.7,
+    pinName: "Default"
 });
 
 const settings = common.settingsStore.get();
@@ -168,7 +169,9 @@ function createElevationProfile({worldList}) {
     const lineTextColor = settings.lineTextColor;
     typeof(settings.gradientOpacity) == "undefined" ? common.settingsStore.set("gradientOpacity", 0.7) : null;
     const gradientOpacity = settings.gradientOpacity;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider});
+    typeof(settings.pinName) == "undefined" ? common.settingsStore.set("pinName", "Default") : null;
+    const pinName = settings.pinName;
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName});
 }
 
 
@@ -361,7 +364,8 @@ export async function main() {
             'showLeaderSweep',
             'zoomNextSegmentApproach',
             'zoomFinalKm',
-            'zoomSlider'
+            'zoomSlider',
+            'pinName'
         ]
         //console.log(changed);
         if (changed.has('solidBackground') || changed.has('backgroundColor')) {
