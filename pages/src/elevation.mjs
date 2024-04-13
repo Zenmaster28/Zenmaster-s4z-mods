@@ -67,7 +67,8 @@ common.settingsStore.setDefault({
     showRobopacers: false,
     showLeaderSweep: false,
     gradientOpacity: 0.7,
-    pinName: "Default"
+    pinName: "Default",
+    useCustomPin: false    
 });
 
 const settings = common.settingsStore.get();
@@ -171,7 +172,11 @@ function createElevationProfile({worldList}) {
     const gradientOpacity = settings.gradientOpacity;
     typeof(settings.pinName) == "undefined" ? common.settingsStore.set("pinName", "Default") : null;
     const pinName = settings.pinName;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName});
+    typeof(settings.useCustomPin) == "undefined" ? common.settingsStore.set("useCustomPin", false) : null;
+    const useCustomPin = settings.useCustomPin;
+    typeof(settings.customPin) == "undefined" ? common.settingsStore.set("customPin", "") : null;
+    const customPin = settings.customPin;
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin});
 }
 
 
@@ -365,7 +370,9 @@ export async function main() {
             'zoomNextSegmentApproach',
             'zoomFinalKm',
             'zoomSlider',
-            'pinName'
+            'pinName',
+            'useCustomPin',
+            'customPin'
         ]
         //console.log(changed);
         if (changed.has('solidBackground') || changed.has('backgroundColor')) {

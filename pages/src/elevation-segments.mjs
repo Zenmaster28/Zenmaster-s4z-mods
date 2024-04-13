@@ -14,7 +14,7 @@ let allMarkLines = [];
 let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, refresh=1000}) {
         this.el = el;
         this.worldList = worldList;
         this.preferRoute = preferRoute;
@@ -44,6 +44,8 @@ export class SauceElevationProfile {
         this.pinColor = pinColor;
         this.pinColorMarked = pinColorMarked;
         this.pinName = pinName;
+        this.useCustomPin = useCustomPin;
+        this.customPin = customPin;
         this.showMyPin = showMyPin;
         this.setAthleteSegmentData = setAthleteSegmentData;
         const {fontScale} = common.settingsStore.get();        
@@ -1575,6 +1577,9 @@ export class SauceElevationProfile {
                         if (isBeacon) {                            
                             //beaconImage = "image://../pages/images/pp-" + beaconColour + ".png"                            
                             symbol = "path://m 19.000923,56.950256 h 1.021954 V 100 h -0.963276 z m -1.266211,-22.991813 7.026027,-6.131803 -3.321394,9.069959 z m 3.832378,2.107806 a 2.4271723,2.3632993 0 0 1 -2.427172,2.3633 2.4271723,2.3632993 0 0 1 -2.427171,-2.3633 2.4271723,2.3632993 0 0 1 2.427171,-2.363299 2.4271723,2.3632993 0 0 1 2.427172,2.363299 z M 19.521675,13.903697 1.1291999,24.759155 1.2559791,46.349633 19.521675,57.20826 37.917319,46.859918 38.174047,25.015882 Z m 0.129951,10.475121 A 11.369386,11.369386 0 0 1 31.020536,35.747733 11.369386,11.369386 0 0 1 19.651624,47.116646 11.369386,11.369386 0 0 1 8.2827093,35.747733 11.369386,11.369386 0 0 1 19.651626,24.378818 Z M 1,11.858402 19.523156,1 38.174058,11.789339 38.046313,19.267666 19.581839,9.5589751 1.0932144,19.081236 Z"
+                        } else if (this.customPin && this.useCustomPin) {
+                            //debugger
+                            symbol = this.customPin;
                         } else if (this.pinName) {
                             symbol = zen.pins.find(x => x.name == this.pinName).path;
                         } else {
