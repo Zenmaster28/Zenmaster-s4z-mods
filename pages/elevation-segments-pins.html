@@ -18,9 +18,15 @@
         <script type="module">
             import {pins, showPinList} from './src/segments-xCoord.mjs';
             import {settingsMain} from './src/elevation.mjs';
-            settingsMain();  
+            settingsMain();             
             showPinList();               
-            
+            const pinColorInput = document.getElementsByName("pinColor")
+            for (let pInput of pinColorInput) {
+                pInput.addEventListener("input", function() {
+                    showPinList()
+                });
+                //debugger
+            };
         </script>
     </head>
     <body>

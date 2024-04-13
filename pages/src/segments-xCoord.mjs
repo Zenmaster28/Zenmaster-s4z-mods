@@ -934,20 +934,27 @@ export const pins = [
         "name": "Pin 6",
         "width": 25,
         "path": "path://M 25.177123,100.23616 V 48.673663 M 9.6818094,25.236162 C 9.6818094,16.67835 16.61931,9.74085 25.177123,9.74085 m 23.4375,15.495312 A 23.437501,23.437501 0 0 1 25.177123,48.673663 23.437501,23.437501 0 0 1 1.7396217,25.236162 23.437501,23.437501 0 0 1 25.177123,1.7986623 23.437501,23.437501 0 0 1 48.614623,25.236162 Z"
+    },
+    {
+        "name": "Pin star",
+        "width": 28,
+        "path": "path://m 24.162109,41.076172 v 57.644531 h 3.453125 V 41.076172 Z M 25.382812,1 20.107422,17.412109 c -0.533564,1.660866 -2.073347,2.783203 -3.81836,2.783203 H 1 l 12.058594,9.283204 c 1.36,1.046914 1.90111,2.843937 1.351562,4.464843 L 8.6347656,51 23.361328,41.857422 c 0.25403,-0.158077 0.524422,-0.275308 0.800781,-0.371094 v -0.410156 h 3.453125 v 0.800781 L 42.123047,51 36.53125,33.902344 c -0.525572,-1.604453 0.01033,-3.36505 1.337891,-4.408203 L 49.771484,20.195312 H 34.664062 c -1.724329,-4.69e-4 -3.257092,-1.103489 -3.80664,-2.74414 z"
     }
 ];
 
 export function showPinList() {
     const pinList = document.getElementById("pinList")
-    const pinName = document.getElementById("pinName")
+    pinList.innerHTML = "";
+    const pinName = document.getElementById("pinName")    
     let selectedPin = null
     let settingsPin = common.settingsStore.get("pinName")
+    let fillColor = common.settingsStore.get("pinColor")    
     pins.forEach(pin => {
         const pinDiv = document.createElement("div");
         let pinPath = pin.path.replace("path://","")
         pinDiv.classList.add("pin") 
         let pinOffset = -(50 - pin.width); // because I don't know really what I'm doing with vector paths, this sort of centers it
-        pinDiv.innerHTML = '<svg class="pin-path" viewBox="' + pinOffset + ' 0 100 100"><path d="' + pinPath + '" fill="red" stroke="black" stroke-width="2" /></svg>'
+        pinDiv.innerHTML = `<svg class="pin-path" viewBox="${pinOffset} 0 100 100"><path d="${pinPath}" fill="${fillColor}" stroke="black" stroke-width="2" /></svg>`
         pinDiv.addEventListener("click", () => {
             const allPins = pinList.querySelectorAll(".pin");
             //debugger
