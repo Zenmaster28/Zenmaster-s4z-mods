@@ -100,7 +100,22 @@ input.options {
   cursor: pointer;
   background-size: cover;
 }
-
 .selected {
   border: 2px solid red;
+}
+.segmentTable tr, td {
+  padding-bottom: 0.4em;
+}
+.segmentTable th:first-child, td:first-child,
+th:last-child, td:last-child {
+  width: 1%; 
+  padding-right: 10px;
+  text-align: left;
+}
+
+.segmentTable th, td {
+  width: auto; 
+  max-width: 100px;
+  overflow: hidden;  
+  text-align: left;
 }

@@ -73,6 +73,7 @@ common.settingsStore.setDefault({
 
 const settings = common.settingsStore.get();
 
+
 let watchdog;
 let inGame;
 let zwiftMap;
@@ -111,10 +112,35 @@ function getSetting(key, def) {
     return v === undefined ? def : v;
 }
 
+function editSegments() {
+    console.log("Edit segments clicked")
+    let segmentData = elProfile.routeInfo.markLines.filter(x => !x.name.includes("Finish"))
+    segmentData.sort((a, b) => {
+        return a.markLine - b.markLine;
+    });
+    console.log(segmentData)
+    let outData = [];
+    for (let seg of segmentData) {
+        let newSeg = {
+            "Name": seg.name,
+            "id": seg.id,
+            "Repeat": seg.repeat,
+            
+        }
+        outData.push(newSeg)
+    }
+    let jsonSegments = JSON.stringify(outData)
+    let jsonEncoded = encodeURIComponent(jsonSegments)
+    let editWindow = window.open("elevation-edit-segments.html?data=" + jsonEncoded, "_blank");    
+}
+
 function createElevationProfile({worldList}) {
     const el = document.querySelector('.elevation-profile');
     if (settings.profileHeight) {
         el.style.setProperty('--profile-height', settings.profileHeight / 100);
+    }
+    if (settings.editedSegments && settings.editedSegments.length > 0) {
+        common.settingsStore.set("editedSegments", null)
     }
     const preferRoute = settings.routeProfile !== false;
     const showMaxLine = settings.showElevationMaxLine !== false;
@@ -230,7 +256,10 @@ async function initialize() {
 export async function main() {
     common.initInteractionListeners();   
     
-
+    const editSegmentsButton = document.getElementById("editSegmentsButton")
+    editSegmentsButton.addEventListener("click", function() {
+        editSegments();
+    });
     const fieldsEl = document.querySelector('#content .fields');
     const fieldRenderer = new common.Renderer(fieldsEl, {fps: 1});
     const mapping = [];
@@ -375,6 +404,12 @@ export async function main() {
             'customPin'
         ]
         //console.log(changed);
+        if (changed.has('editedSegments')) {
+            let editedSegments = JSON.parse(changed.get('editedSegments'))
+            elProfile.editedSegments = editedSegments;
+            elProfile.setRoute(elProfile.routeId)
+            console.log(editedSegments)
+        }
         if (changed.has('solidBackground') || changed.has('backgroundColor')) {
             setBackground();
         } else if (changed.has('profileHeight')) {

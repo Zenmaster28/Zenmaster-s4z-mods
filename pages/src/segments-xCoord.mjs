@@ -980,3 +980,104 @@ export function showPinList() {
     })  
       
 }
+
+export function buildSegmentsTable(data, segmentSettings) {                
+    let table = document.createElement('table');
+    table.className = "segmentTable";
+    table.id = "segmentTable";
+    let headerRow = table.insertRow();
+    let headers = Object.keys(data[0]);
+    headers.unshift("Show")
+    // Add headers to the table
+    //headerRow.insertCell().textContent = "Show";
+    headers.forEach(function(header) {
+        let th = document.createElement('th');
+        th.textContent = header;
+        headerRow.appendChild(th);
+        if (header == "id") {
+                th.hidden = true;
+        }
+    });
+    headers.shift();
+
+    // Add rows to the table
+    data.forEach(function(obj) {
+        let row = table.insertRow();
+        // Add checkbox to each row
+        let checkboxCell = row.insertCell();
+        let checkbox = document.createElement('input');
+        checkbox.type = "checkbox";
+        
+        let segmentMatch;
+         if (typeof(segmentSettings) != "undefined" && segmentSettings != null) {
+            //debugger
+            segmentMatch = segmentSettings.find(x => x.repeat == obj.repeat && x.id == obj.id)
+         }
+        checkbox.checked = segmentMatch ? segmentMatch.Include : true;
+        checkbox.onclick = function() {
+            //toggleSegment(obj.id, obj.repeat, this.checked);
+            returnData();
+        };
+        checkboxCell.appendChild(checkbox);
+        headers.forEach(function(header) {
+            let cell = row.insertCell();
+            if (header == "Name") {
+                //debugger
+                cell.innerHTML = '<input type="text" size="40" value="' + obj[header] + '">'
+                let inputText = cell.querySelector('input[type="text"]');
+                inputText.addEventListener('keydown', function(event) {
+                    if (event.keyCode === 13) {
+                        returnData();
+                    }
+                });
+                inputText.addEventListener('blur', function() {
+                    returnData();
+                })
+            } else {
+                cell.textContent = obj[header];
+            }
+            if (header == "id") {
+                cell.hidden = true;
+            }
+        });
+
+        
+    });
+
+    return table;
+}
+function returnData() {
+    let segmentArray = [];
+    let table = document.getElementById("segmentTable");
+
+    // Iterate over each row of the table
+    for (let i = 1; i < table.rows.length; i++) {
+        let row = table.rows[i];
+        let segmentObject = {};
+
+        // Iterate over each cell of the row
+        for (let j = 0; j < row.cells.length; j++) {
+            let cell = row.cells[j];
+
+            // For the first cell (checkbox), set property to true or false
+            if (j === 0) {
+                //debugger
+                segmentObject['Include'] = cell.querySelector('input[type="checkbox"]').checked;
+            } else if (j === 1) {
+                segmentObject['displayName'] = cell.querySelector('input[type="text"]').value
+            } else {
+                // For other cells, set property to cell content                            
+                let header = table.rows[0].cells[j].textContent;
+                let content = cell.textContent;
+                segmentObject[header] = content;
+            }
+        }
+
+        segmentArray.push(segmentObject);
+    }
+    //debugger
+    console.log(segmentArray)
+    let jsonReturn = JSON.stringify(segmentArray)
+    common.settingsStore.set("editedSegments", jsonReturn)
+    //window.opener.postMessage(segmentArray, window.location.origin)
+}

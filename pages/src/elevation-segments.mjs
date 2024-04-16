@@ -77,7 +77,8 @@ export class SauceElevationProfile {
         this.refresh = refresh;
         this._lastRender = 0;
         this._refreshTimeout = null; 
-        this.customPOI = [];       
+        this.customPOI = [];
+        this.editedSegments = [];       
         el.classList.add('sauce-elevation-profile-container');
         this.chart = ec.init(el, 'sauce', {renderer: 'svg'});
         this.chart.setOption({
@@ -173,6 +174,7 @@ export class SauceElevationProfile {
         this._resizeObserver.observe(document.documentElement);  
         const rightPanel = document.getElementById("rightPanel");
         const newPOIbutton = document.getElementById('newPOIbutton')
+        
         if (newPOIbutton) {
             newPOIbutton.addEventListener('click', ev => {
                 this.newPOIClicked = true;
@@ -191,7 +193,7 @@ export class SauceElevationProfile {
                 };
             });                
             rightPanel.addEventListener('click', ev => { 
-                
+                //debugger
                 if (ev.ctrlKey) {
                     this.createPOI(ev, self, this.hoverPoint[0]);
                     
@@ -418,6 +420,7 @@ export class SauceElevationProfile {
     }
 
     setRoute = common.asyncSerialize(async function(id, {laps=1, eventSubgroupId, distance}={}) { 
+        console.log(this.editedSegments)        
         distance = parseFloat(distance);        
         if (distance) {
             this.customDistance = distance
@@ -455,6 +458,28 @@ export class SauceElevationProfile {
             }
             //debugger
             for (let markline of segmentsOnRoute.markLines) {
+                //debugger
+                if (this.editedSegments && this.editedSegments.length > 0) {
+                    //console.log("Found edited segments")
+                    let segCheck = this.editedSegments.find(x => x.id == markline.id && x.Repeat == markline.repeat)
+                    
+                        //console.log("Found a matching segment and enabled is ", segCheck.Include)
+                    if (segCheck) {
+                        if (!segCheck.Include) {
+                            continue
+                        }
+                        //if (segCheck.displayName != markline.name && !markline.name.includes("Finish")) {
+                        if (segCheck.displayName != markline.name) {
+                            //debugger
+                            if (markline.name.includes("Finish")) {
+                                markline.displayName = segCheck.displayName + " Finish"
+                            } else {
+                                markline.displayName = segCheck.displayName;
+                            }
+                        }
+                    }
+                    
+                }
                 allMarkLines.push(markline)
                 if (this.lineTypeFinish.includes("["))
                 {
@@ -477,6 +502,7 @@ export class SauceElevationProfile {
                         }); 
                     }
                 } else {
+                    let marklineName = markline.displayName ? markline.displayName : markline.name;
                     markLines.push({
                         xAxis: markline.markLine,
                         lineStyle: {
@@ -487,7 +513,7 @@ export class SauceElevationProfile {
                         label: {
                             distance: 7,
                             position: 'insideEndTop',                    
-                            formatter: markline.name,
+                            formatter: marklineName,
                             color: this.lineTextColor
                         }
                     });
@@ -1466,7 +1492,9 @@ export class SauceElevationProfile {
                                 }
                                 
                             }
-                            let nextSegment = zen.getNextSegment(allMarkLines, xCoord)
+                            //console.log(allMarkLines)
+                            let nextSegment = zen.getNextSegment(allMarkLines, xCoord) 
+                            //console.log(nextSegment)                           
                             let distanceToGo;
                             let distanceToGoUnits;
                             if (this.showNextSegment && this.showSegmentStart)
@@ -1478,7 +1506,7 @@ export class SauceElevationProfile {
                                     nextSegment.markLine - xCoord > 1000 ? distanceToGo = ((nextSegment.markLine - xCoord) / 1000).toFixed(2) : distanceToGo = (nextSegment.markLine - xCoord).toFixed(0);
                                     nextSegment.markLine - xCoord > 1000 ? distanceToGoUnits = "km" : distanceToGoUnits = "m";
                                     nextSegment.markLine - xCoord > 1000 ? this.refresh = 1000 : this.refresh = 200;
-                                    nextSegmentDiv.innerHTML = nextSegment.name + ": " + distanceToGo + distanceToGoUnits;
+                                    nextSegmentDiv.innerHTML = (nextSegment.displayName ?? nextSegment.name) + ": " + distanceToGo + distanceToGoUnits;
                                     nextSegmentDiv.style.visibility = "";
                                 }
                                 else
@@ -1502,11 +1530,14 @@ export class SauceElevationProfile {
                                 nextSegment.markLine - xCoord > 1000 ? this.refresh = 1000 : this.refresh = 200;
                                 nextSegment == -1 ? this.refresh = 1000 : "";
                                 const routeSegments = allMarkLines;
+                                //console.log(routeSegments)
                                 let nextSegmentName;
-                                let nextSegmentDistanceToGo;                            
+                                let nextSegmentDistanceToGo;
+                                let nextSegmentDisplayName;                            
                                 if (nextSegment.name) {
                                     nextSegmentName = nextSegment.name;
                                     nextSegmentDistanceToGo = distanceToGo;
+                                    nextSegmentDisplayName = nextSegment.displayName ?? null;
                                 } else {
                                     //debugger
                                     nextSegmentName = "Finish";
@@ -1527,6 +1558,7 @@ export class SauceElevationProfile {
                                         foundRoute: this.foundRouteRoadseg,
                                         nextSegment: {
                                             name: nextSegmentName,
+                                            displayName: nextSegmentDisplayName,
                                             distanceToGo: nextSegmentDistanceToGo,
                                             distanceToGoUnits: distanceToGoUnits,
                                             id: nextSegment.id,

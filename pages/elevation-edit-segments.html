@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html class="settings-page" tabindex="0" data-settings-key="elevation-segments-settings-v1">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+        <!--
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';"/>
+        -->
+        <title>Edit segments</title>
+        <!--
+        <script src="/pages/src/preloads.js"></script>
+        -->
+        <link id="favicon" rel="shortcut icon" href="/pages/images/favicon.png"/>
+        <link rel="stylesheet" href="/pages/css/common.css"/>
+        <link rel="stylesheet" href="./css/elevation-segments.css"/>        
+        
+        <script type="module">            
+            window.resizeTo(500, 500)
+            window.moveTo((screen.width / 2) - 250, 100)
+            import * as common from '/pages/src/common.mjs'; 
+            import {buildSegmentsTable} from './src/segments-xCoord.mjs';
+            const settings = common.settingsStore.get();
+            const closeButton = document.getElementsByClassName("button close electron-only");
+            closeButton[0].addEventListener('click', function() {
+                window.close();
+            })
+            let segmentSettings;
+            if (typeof(settings.editedSegments) != "undefined") {
+                segmentSettings = JSON.parse(settings.editedSegments)
+            } else {
+                segmentSettings = false;
+            }            
+            console.log("segments from settings ", segmentSettings)            
+            let jsonData = window.location.search.substring(1).split('=')[1];
+            let decodedData = decodeURIComponent(jsonData);
+            let segmentData = JSON.parse(decodedData);
+            console.log(segmentData)
+            const segmentsTableDiv = document.getElementById("segmentsTableDiv")
+            segmentsTableDiv.appendChild(buildSegmentsTable(segmentData, segmentSettings))
+            
+        </script>
+    </head>
+    <body>
+        <div id="titlebar">
+            <header>
+                <div class="logo"><img src="/pages/images/icon128.png"/></div>
+                <div class="title">Edit segments</div>
+                <div class="filler"></div>
+                <div class="buttons">
+                    <div title="Close this window" class="button close electron-only"><ms>close</ms></div>
+                </div>
+            </header>
+        </div>        
+        <div id="settings">
+            <form class="section">
+                
+                
+            </form>
+        </div>
+        <div id="segmentsTableDiv">
+
+        </div>
+    </body>
+</html>
