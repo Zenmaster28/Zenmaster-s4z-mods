@@ -252,7 +252,7 @@ function getScoreFormat() {
 async function doApproach(routeSegments,segIdx, currentLocation,watching) {    
     document.body.classList.remove("transparent-bg");
     activeSegment = routeSegments[segIdx].id;
-    activeSegmentName = routeSegments[segIdx].name;
+    activeSegmentName = routeSegments[segIdx].displayName ?? routeSegments[segIdx].name;
     activeSegmentMarkLine = routeSegments[segIdx].markLine;
     activeSegmentMarkLine - currentLocation < 200 ? refreshRate = 1000 : refreshRate = 10000;  // refresh at 1s intervals for 200 meters before segment, then 10s.    
     if (settings.approachingInfo)
@@ -321,7 +321,7 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching) {
         //console.log(segTimer)
     }
     activeSegment = routeSegments[segIdx].id;
-    activeSegmentName = routeSegments[segIdx].name;
+    activeSegmentName = routeSegments[segIdx].displayName ?? routeSegments[segIdx].name;
     activeSegmentMarkLine = routeSegments[segIdx].markLine;    
     let distanceFromSegmentEnd = activeSegmentMarkLine - currentLocation;
     if (distanceFromSegmentEnd < 50)
@@ -390,7 +390,7 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching) {
     }
     document.body.classList.remove("transparent-bg");
     activeSegment = routeSegments[segIdx].id;
-    activeSegmentName = routeSegments[segIdx].name;
+    activeSegmentName = routeSegments[segIdx].displayName ?? routeSegments[segIdx].name;
     activeSegmentMarkLine = routeSegments[segIdx].markLine;    
     let distanceFromSegment = currentLocation - activeSegmentMarkLine;
     if (distanceFromSegment < 50)

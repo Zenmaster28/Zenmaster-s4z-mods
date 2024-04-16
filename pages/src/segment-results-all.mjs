@@ -288,7 +288,7 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching) {
     }
     document.body.classList.remove("transparent-bg");
     activeSegment = routeSegments[segIdx].id;
-    activeSegmentName = routeSegments[segIdx].name;
+    activeSegmentName = routeSegments[segIdx].displayName ?? routeSegments[segIdx].name;
     activeSegmentMarkLine = routeSegments[segIdx].markLine;
     activeSegmentRepeat = routeSegments[segIdx].repeat;  
     //debugger
@@ -405,7 +405,7 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching) {
         //console.log(segTimer)
     }
     activeSegment = routeSegments[segIdx].id;
-    activeSegmentName = routeSegments[segIdx].name;
+    activeSegmentName = routeSegments[segIdx].displayName ?? routeSegments[segIdx].name;
     activeSegmentMarkLine = routeSegments[segIdx].markLine; 
     activeSegmentRepeat = routeSegments[segIdx].repeat;     
     //debugger    
@@ -520,7 +520,7 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching) {
     
     document.body.classList.remove("transparent-bg");
     activeSegment = routeSegments[segIdx].id;
-    activeSegmentName = routeSegments[segIdx].name;
+    activeSegmentName = routeSegments[segIdx].displayName ?? routeSegments[segIdx].name;
     activeSegmentMarkLine = routeSegments[segIdx].markLine;
     activeSegmentRepeat = routeSegments[segIdx].repeat;    
     let distanceFromSegment = currentLocation - activeSegmentMarkLine;
@@ -801,7 +801,8 @@ async function getSegmentResults(watching) {
             routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId)             
         }
         routeInfo.sg = watching.state.eventSubgroupId
-        console.log(routeInfo)   
+        console.log(routeInfo) 
+        console.log(watching.segmentData)  
         common.settingsStore.set("routeInfo", routeInfo)
         const settings = common.settingsStore.get();
         eventSettings = Object.keys(settings).reduce((result, key) => {
@@ -829,7 +830,7 @@ async function getSegmentResults(watching) {
         
         
         inProgress = false;
-    }else if (watching.state.eventSubgroupId == 0 && settings.FTSorFAL == "FAL")
+    } else if (watching.state.eventSubgroupId == 0 && settings.FTSorFAL == "FAL")
     {
         //FAL disabled outside of events
         if (settings.transparentNoData) 
@@ -840,7 +841,12 @@ async function getSegmentResults(watching) {
     //else if (watching.segmentData)
     else if (routeInfo.segments)
     {   
-        let routeSegments = routeInfo.markLines;
+        let routeSegments;
+        if (watching.segmentData && watching.segmentData.routeSegments) {
+            routeSegments = watching.segmentData.routeSegments
+        } else {
+            routeSegments = routeInfo.markLines;
+        }
         if (Date.now() - allRacerRefresh > 30000) {
             getKnownRacers(watching.state.eventSubgroupId);
         }
@@ -856,6 +862,7 @@ async function getSegmentResults(watching) {
             }
             lastStatus = segmentStatus.status;
             //console.log(segmentStatus)
+            //debugger
             switch(segmentStatus.status) {
                 case "Approaching" : 
                     await doApproach(routeSegments,segmentStatus.nextSegmentIndex, currentLocation,watching);
