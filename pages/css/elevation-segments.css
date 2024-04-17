@@ -121,4 +121,5 @@ th:last-child, td:last-child {
 }
 .segmentList {
   padding: 0.5em 0.8em;  
+  overflow: auto;
 }
