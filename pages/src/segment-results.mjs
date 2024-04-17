@@ -583,6 +583,7 @@ async function getSegmentResults(watching) {
         if (routeSegments.length > 0)
         {
             let currentLocation = watching.segmentData.currentPosition;
+            routeSegments = routeSegments.filter(x => x.type != "custom")
             let segmentStatus = getSegmentStatus(routeSegments, currentLocation, settings.nextSegmentThreshold);
             //console.log(segmentStatus)
             if (segmentStatus.status != lastStatus) {

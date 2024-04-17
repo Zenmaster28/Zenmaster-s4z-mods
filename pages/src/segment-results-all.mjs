@@ -853,8 +853,10 @@ async function getSegmentResults(watching) {
         if (routeSegments.length > 0)        {
             //let currentLocation = zen.getxCoord(watching, routeInfo); 
             let currentLocation = watching.segmentData.currentPosition;           
-            //let segmentStatus = getSegmentStatus(routeSegments, currentLocation, settings.nextSegmentThreshold);            
-            let segmentStatus = getSegmentStatus(routeSegments, currentLocation, settings.nextSegmentThreshold);            
+            //let segmentStatus = getSegmentStatus(routeSegments, currentLocation, settings.nextSegmentThreshold); 
+            routeSegments = routeSegments.filter(x => x.type != "custom")           
+            let segmentStatus = getSegmentStatus(routeSegments, currentLocation, settings.nextSegmentThreshold); 
+            //console.log(segmentStatus)           
             if (segmentStatus.status != lastStatus) {
                 //console.log("Resetting after status change from: " + lastStatus + " to " + segmentStatus.status)
                 noPB = false;
