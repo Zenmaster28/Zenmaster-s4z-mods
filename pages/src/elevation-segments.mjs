@@ -258,8 +258,9 @@ export class SauceElevationProfile {
                     self.customPOI.push({
                         name: poiInput.value,
                         markLine: xValue,
-                        id: "99999999",
-                        type: "custom"
+                        id: Math.floor(Math.random() * 10000),
+                        type: "custom",
+                        repeat: 1
                     })
                     poiInput.value = "";
                     self.setRoute(self.routeId)
@@ -453,22 +454,26 @@ export class SauceElevationProfile {
             
             if (this.customPOI.length > 0) {
                 for (let poi of this.customPOI) {
-                    segmentsOnRoute.markLines.push(poi)
+                    if (this.editedSegments && this.editedSegments.length > 0 && this.editedSegments.find(x => x.id == poi.id)) {
+                        //TODO find matching POI
+                        console.log("Found edited segments")
+                        
+                        segmentsOnRoute.markLines.push(poi)
+                        
+                    } else {
+                        console.log("No edited segments")
+                        segmentsOnRoute.markLines.push(poi)
+                    }
                 }
-            }
-            //debugger
-            for (let markline of segmentsOnRoute.markLines) {
-                //debugger
+            }            
+            for (let markline of segmentsOnRoute.markLines) {                
                 if (this.editedSegments && this.editedSegments.length > 0) {
                     //console.log("Found edited segments")
-                    let segCheck = this.editedSegments.find(x => x.id == markline.id && x.Repeat == markline.repeat)
-                    
-                        //console.log("Found a matching segment and enabled is ", segCheck.Include)
+                    let segCheck = this.editedSegments.find(x => x.id == markline.id && x.Repeat == markline.repeat)                         
                     if (segCheck) {
                         if (!segCheck.Include) {
                             continue
-                        }
-                        //if (segCheck.displayName != markline.name && !markline.name.includes("Finish")) {
+                        }                        
                         if (segCheck.displayName != markline.name) {
                             //debugger
                             if (markline.name.includes("Finish")) {
