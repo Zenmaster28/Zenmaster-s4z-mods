@@ -119,3 +119,6 @@ th:last-child, td:last-child {
   overflow: hidden;  
   text-align: left;
 }
+.segmentList {
+  padding: 0.5em 0.8em;  
+}

@@ -29,7 +29,7 @@
             if (typeof(settings.editedSegments) != "undefined") {
                 segmentSettings = JSON.parse(settings.editedSegments)
             } else {
-                segmentSettings = false;
+                segmentSettings = null;
             }            
             console.log("segments from settings ", segmentSettings)            
             let jsonData = window.location.search.substring(1).split('=')[1];
@@ -58,7 +58,7 @@
                 
             </form>
         </div>
-        <div id="segmentsTableDiv">
+        <div id="segmentsTableDiv" class="segmentList">
 
         </div>
     </body>
