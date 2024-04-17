@@ -112,23 +112,24 @@ function getSetting(key, def) {
     return v === undefined ? def : v;
 }
 
-function editSegments() {
-    console.log("Edit segments clicked")
-    let segmentData = elProfile.routeInfo.markLines.filter(x => !x.name.includes("Finish"))
+function editSegments() {    
+    let segmentData = elProfile.routeInfo.markLines.filter(x => !x.name.includes("Finish") || x.type == "custom")
+    //let segmentData = elProfile.routeSegments.filter(x => !x.name.includes("Finish"))
+    //debugger
+    //console.log(segmentData)
     segmentData.sort((a, b) => {
         return a.markLine - b.markLine;
-    });
-    console.log(segmentData)
+    });     
     let outData = [];
     for (let seg of segmentData) {
         let newSeg = {
             "Name": seg.name,
             "id": seg.id,
             "Repeat": seg.repeat,
-            
+            "displayName": seg.displayName ?? null
         }
         outData.push(newSeg)
-    }
+    }    
     let jsonSegments = JSON.stringify(outData)
     let jsonEncoded = encodeURIComponent(jsonSegments)
     let editWindow = window.open("elevation-edit-segments.html?data=" + jsonEncoded, "_blank");    
@@ -406,9 +407,8 @@ export async function main() {
         //console.log(changed);
         if (changed.has('editedSegments')) {
             let editedSegments = JSON.parse(changed.get('editedSegments'))
-            elProfile.editedSegments = editedSegments;
-            elProfile.setRoute(elProfile.routeId)
-            console.log(editedSegments)
+            elProfile.editedSegments = editedSegments;            
+            elProfile.setRoute(elProfile.routeId)            
         }
         if (changed.has('solidBackground') || changed.has('backgroundColor')) {
             setBackground();

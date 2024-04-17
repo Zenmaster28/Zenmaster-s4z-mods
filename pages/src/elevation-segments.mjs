@@ -58,6 +58,7 @@ export class SauceElevationProfile {
         this.routeDistances = [];
         this.routeElevations = [];
         this.routeInfo = [];
+        this.routeSegments = [];
         this.routeGrades = [];
         this.routeColorStops = [];
         this.foundRoute = false;
@@ -420,8 +421,7 @@ export class SauceElevationProfile {
         }
     }
 
-    setRoute = common.asyncSerialize(async function(id, {laps=1, eventSubgroupId, distance}={}) { 
-        console.log(this.editedSegments)        
+    setRoute = common.asyncSerialize(async function(id, {laps=1, eventSubgroupId, distance}={}) {         
         distance = parseFloat(distance);        
         if (distance) {
             this.customDistance = distance
@@ -440,8 +440,6 @@ export class SauceElevationProfile {
         //let routeElevations;
         //let routeGrades;
         let segmentsOnRoute = await zen.processRoute(this.courseId, this.routeId, laps, distance, this.showLoopSegments)
-        console.log(segmentsOnRoute)
-        
         this.routeInfo = segmentsOnRoute;
         this.routeDistances = Array.from(segmentsOnRoute.routeFullData.distances);                    
         this.routeElevations = Array.from(segmentsOnRoute.routeFullData.elevations);        
@@ -455,27 +453,22 @@ export class SauceElevationProfile {
             if (this.customPOI.length > 0) {
                 for (let poi of this.customPOI) {
                     if (this.editedSegments && this.editedSegments.length > 0 && this.editedSegments.find(x => x.id == poi.id)) {
-                        //TODO find matching POI
-                        console.log("Found edited segments")
-                        
-                        segmentsOnRoute.markLines.push(poi)
-                        
-                    } else {
-                        console.log("No edited segments")
+                        //debugger
+                        poi.name = this.editedSegments.find(x => x.id == poi.id).displayName;
+                        segmentsOnRoute.markLines.push(poi)                        
+                    } else {                        
                         segmentsOnRoute.markLines.push(poi)
                     }
                 }
             }            
             for (let markline of segmentsOnRoute.markLines) {                
-                if (this.editedSegments && this.editedSegments.length > 0) {
-                    //console.log("Found edited segments")
+                if (this.editedSegments && this.editedSegments.length > 0) {                    
                     let segCheck = this.editedSegments.find(x => x.id == markline.id && x.Repeat == markline.repeat)                         
                     if (segCheck) {
                         if (!segCheck.Include) {
-                            continue
+                            continue // if the segment is included, go to next item
                         }                        
-                        if (segCheck.displayName != markline.name) {
-                            //debugger
+                        if (segCheck.displayName != markline.name) {                            
                             if (markline.name.includes("Finish")) {
                                 markline.displayName = segCheck.displayName + " Finish"
                             } else {
@@ -1556,6 +1549,7 @@ export class SauceElevationProfile {
                                     
                                 }
                                 //debugger
+                                //this.routeSegments = routeSegments;
                                 const athleteSegmentData = {
                                     segmentData: {
                                         currentPosition: xCoord,

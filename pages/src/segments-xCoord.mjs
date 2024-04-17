@@ -961,8 +961,7 @@ export function showPinList() {
         let pinOffset = -(50 - pin.width); // because I don't know really what I'm doing with vector paths, this sort of centers it
         pinDiv.innerHTML = `<svg class="pin-path" viewBox="${pinOffset} 0 100 100"><path d="${pinPath}" fill="${fillColor}" stroke="black" stroke-width="2" /></svg>`
         pinDiv.addEventListener("click", () => {
-            const allPins = pinList.querySelectorAll(".pin");
-            //debugger
+            const allPins = pinList.querySelectorAll(".pin");            
             allPins.forEach(pin => {
                 pin.classList.remove("selected");
             });
@@ -987,43 +986,38 @@ export function buildSegmentsTable(data, segmentSettings) {
     table.id = "segmentTable";
     let headerRow = table.insertRow();
     let headers = Object.keys(data[0]);
-    headers.unshift("Show")
-    // Add headers to the table
-    //headerRow.insertCell().textContent = "Show";
+    headers.splice(headers.indexOf("displayName"))
+    headers.unshift("Show")    
     headers.forEach(function(header) {
         let th = document.createElement('th');
         th.textContent = header;
-        headerRow.appendChild(th);
+        if (header != "displayName") {
+            headerRow.appendChild(th);
+        }
         if (header == "id") {
-                th.hidden = true;
+                th.hidden = true;  // hide the id column but we want the data in the table
         }
     });
-    headers.shift();
-
-    // Add rows to the table
+    headers.shift();    
     data.forEach(function(obj) {
-        let row = table.insertRow();
-        // Add checkbox to each row
+        let row = table.insertRow();        
         let checkboxCell = row.insertCell();
         let checkbox = document.createElement('input');
-        checkbox.type = "checkbox";
-        
+        checkbox.type = "checkbox";        
         let segmentMatch;
-         if (typeof(segmentSettings) != "undefined" && segmentSettings != null) {
-            //debugger
+         if (typeof(segmentSettings) != "undefined" && segmentSettings != null) {            
             segmentMatch = segmentSettings.find(x => x.repeat == obj.repeat && x.id == obj.id)
          }
         checkbox.checked = segmentMatch ? segmentMatch.Include : true;
-        checkbox.onclick = function() {
-            //toggleSegment(obj.id, obj.repeat, this.checked);
+        checkbox.onclick = function() {            
             returnData();
         };
         checkboxCell.appendChild(checkbox);
         headers.forEach(function(header) {
             let cell = row.insertCell();
-            if (header == "Name") {
-                //debugger
-                cell.innerHTML = '<input type="text" size="40" value="' + obj[header] + '">'
+            if (header == "Name") {  
+                let segmentName = obj["displayName"] ?? obj["Name"]                
+                cell.innerHTML = '<input type="text" size="40" value="' + segmentName + '">'
                 let inputText = cell.querySelector('input[type="text"]');
                 inputText.addEventListener('keydown', function(event) {
                     if (event.keyCode === 13) {
@@ -1037,47 +1031,33 @@ export function buildSegmentsTable(data, segmentSettings) {
                 cell.textContent = obj[header];
             }
             if (header == "id") {
-                cell.hidden = true;
+                cell.hidden = true;  // hide the id column but we want the data in the table
             }
-        });
-
-        
+        });        
     });
 
     return table;
 }
 function returnData() {
     let segmentArray = [];
-    let table = document.getElementById("segmentTable");
-
-    // Iterate over each row of the table
+    let table = document.getElementById("segmentTable");    
     for (let i = 1; i < table.rows.length; i++) {
         let row = table.rows[i];
         let segmentObject = {};
-
-        // Iterate over each cell of the row
         for (let j = 0; j < row.cells.length; j++) {
             let cell = row.cells[j];
-
-            // For the first cell (checkbox), set property to true or false
-            if (j === 0) {
-                //debugger
+            if (j === 0) {                
                 segmentObject['Include'] = cell.querySelector('input[type="checkbox"]').checked;
             } else if (j === 1) {
                 segmentObject['displayName'] = cell.querySelector('input[type="text"]').value
-            } else {
-                // For other cells, set property to cell content                            
+            } else {                
                 let header = table.rows[0].cells[j].textContent;
                 let content = cell.textContent;
                 segmentObject[header] = content;
             }
         }
-
         segmentArray.push(segmentObject);
-    }
-    //debugger
-    console.log(segmentArray)
+    }        
     let jsonReturn = JSON.stringify(segmentArray)
-    common.settingsStore.set("editedSegments", jsonReturn)
-    //window.opener.postMessage(segmentArray, window.location.origin)
+    common.settingsStore.set("editedSegments", jsonReturn)    
 }
