@@ -16,7 +16,7 @@
         <link rel="stylesheet" href="./css/elevation-segments.css"/>        
         
         <script type="module">            
-            window.resizeTo(500, 500)
+            window.resizeTo(500, 200)
             window.moveTo((screen.width / 2) - 250, 100)
             import * as common from '/pages/src/common.mjs'; 
             import {buildSegmentsTable} from './src/segments-xCoord.mjs';
@@ -38,7 +38,8 @@
             console.log(segmentData)
             const segmentsTableDiv = document.getElementById("segmentsTableDiv")
             segmentsTableDiv.appendChild(buildSegmentsTable(segmentData, segmentSettings))
-            
+            let tableHeight = document.getElementById("segmentTable").offsetHeight            
+            window.resizeTo(500, tableHeight + 100)
         </script>
     </head>
     <body>
@@ -52,12 +53,7 @@
                 </div>
             </header>
         </div>        
-        <div id="settings">
-            <form class="section">
-                
-                
-            </form>
-        </div>
+        
         <div id="segmentsTableDiv" class="segmentList">
 
         </div>
