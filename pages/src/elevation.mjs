@@ -112,8 +112,9 @@ function getSetting(key, def) {
     return v === undefined ? def : v;
 }
 
-function editSegments() {    
-    let segmentData = elProfile.routeInfo.markLines.filter(x => !x.name.includes("Finish") || x.type == "custom")
+function editSegments() { 
+           
+    let segmentData = elProfile.routeInfo.markLines ? elProfile.routeInfo.markLines.filter(x => !x.name.includes("Finish") || x.type == "custom") : [];
     //let segmentData = elProfile.routeSegments.filter(x => !x.name.includes("Finish"))
     //debugger
     //console.log(segmentData)

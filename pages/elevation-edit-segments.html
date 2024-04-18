@@ -33,9 +33,15 @@
             }                        
             let jsonData = window.location.search.substring(1).split('=')[1];
             let decodedData = decodeURIComponent(jsonData);
-            let segmentData = JSON.parse(decodedData);                                    
-            segmentsTableDiv.appendChild(buildSegmentsTable(segmentData, segmentSettings))                        
-            window.resizeTo(500, document.getElementById("segmentTable").offsetHeight + 100)
+            let segmentData = JSON.parse(decodedData); 
+            if (segmentData.length > 0) {
+                segmentsTableDiv.appendChild(buildSegmentsTable(segmentData, segmentSettings))                        
+                window.resizeTo(500, document.getElementById("segmentTable").offsetHeight + 100)
+            } else {
+                segmentsTableDiv.innerHTML = "&#x1f937;"
+                segmentsTableDiv.style = "font-size: 10em"
+            }
+            
         </script>
     </head>
     <body>
