@@ -10,6 +10,7 @@ let worldSegments;
 let curvePathIndex = 0;
 let zwiftSegmentsRequireStartEnd;
 let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
+let replacementLeadins = await fetch("data/leadinData.json").then((response) => response.json());
 
 export async function processRoute(courseId, routeId, laps, distance, includeLoops) { 
     distance = parseInt(distance);
@@ -25,6 +26,7 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
     routeFullData = await getModifiedRoute(routeId); 
     worldSegments = await common.rpc.getSegments(courseId);
     zwiftSegmentsRequireStartEnd = await fetch("data/segRequireStartEnd.json").then((response) => response.json());
+    
     const distances = Array.from(routeFullData.distances);
     const elevations = Array.from(routeFullData.elevations);
     const grades = Array.from(routeFullData.grades);
@@ -138,6 +140,7 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
         markLines: allMarkLines,
         segmentRepeats
     }
+    console.log(routeInfo)
     //debugger
     return routeInfo;
 }
@@ -663,13 +666,30 @@ export async function getModifiedRoute(id) {
             route.courseId = common.worldToCourseIds[route.worldId]
             //debugger
         }
-        let missing = missingLeadinRoutes.filter(x => x.id == id)        
-        let replacementLeadin;
+        let missing = missingLeadinRoutes.filter(x => x.id == id)
+                
+        let replacementLeadin =  replacementLeadins.filter(x => 
+            x.eventPaddocks == route.eventPaddocks && x.courseId == route.courseId && (x.roadId == route.manifest.find(m => !m.hasOwnProperty('leadin') || !m.leadin)?.roadId) && (x.reverse == (route.manifest.find(m => !m.hasOwnProperty('leadin') || !m.leadin)?.reverse ?? false))
+        ) 
+        //debugger
+        if (replacementLeadin.length > 0) {
+            console.log("Found a matching replacement leadin!")
+        } else {
+            console.log("No matching replacement leadin")
+        }
         let leadin;        
-        if (missing.length > 0) {
+        if (missing.length > 0 || replacementLeadin.length > 0) {
             //replacementLeadin = await common.rpc.getRoute(missing[0].replacement)
             //leadin = replacementLeadin.manifest.filter(x => x.leadin);
-            leadin = missing[0].leadin;
+            if (replacementLeadin.length > 0) {
+                leadin = replacementLeadin[0].leadin
+                if (replacementLeadin[0].replace) {
+                    route.manifest = route.manifest.filter(x => !x.leadin) // we are replacing the leadin so remove the existing one
+                }
+                //debugger                
+            } else if (missing.length > 0) {
+                leadin = missing[0].leadin;
+            }
             //debugger
         } else {
             replacementLeadin = [];
@@ -1060,4 +1080,26 @@ function returnData() {
     }        
     let jsonReturn = JSON.stringify(segmentArray)
     common.settingsStore.set("editedSegments", jsonReturn)    
+}
+export function selectObject(obj, ...properties) {
+    if (!obj || typeof obj !== 'object') {
+      throw new TypeError('Input must be an object');
+    }
+  
+    const selectedObject = {};
+  
+    for (const prop of properties) {
+      // Handle nested properties using recursion
+      if (prop.includes('.')) {
+        const [parentProp, childProp] = prop.split('.');
+        selectedObject[parentProp] = selectObject(obj[parentProp] || {}, childProp);
+      } else {
+        // Handle direct properties
+        if (Object.hasOwnProperty.call(obj, prop)) {
+          selectedObject[prop] = obj[prop];
+        }
+      }
+    }
+  
+    return selectedObject;
 }
