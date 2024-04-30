@@ -35,7 +35,8 @@ common.settingsStore.setDefault({
     lapHotkey: false,
     setHotkey: false,
     rideonBombAction: "none",
-    steeringAction: "none"
+    steeringAction: "none",
+    fields: 2
 });
 
 common.settingsStore.addEventListener('changed', ev => {
@@ -200,7 +201,7 @@ export async function main() {
             return ['lap'].includes(type);
         })        
     });    
-    const numFieldsSm = 2;
+    const numFieldsSm = settings.fields || 2;
     mapping.length = 0;
     for (let i = 0; i < (isNaN(numFieldsSm) ? 1 : numFieldsSm); i++) {
         const id = `fs${i + 1}`;
@@ -210,16 +211,16 @@ export async function main() {
             </div>
         `);                
         mapping.push({id, default: defaults[id] || 'time-lap'});
-    }
+    }    
     
-    
-    //debugger
     fieldRendererSm.addRotatingFields({
         mapping,
-        fields: fields.fields.filter(({id}) => {
-            const type = id.split('-')[1];
-            return ['lap','cur'].includes(type);
-        })        
+        fields: fields.fields.filter(x => !["athlete", "course", "draft", "Segments"].includes(x.group))
+        //fields: fields.fields.filter(({id}) => {
+        //    const type = id.split('-')[1];
+        //    return ['lap','cur'].includes(type);
+        //})        
+
     });
     if (includeLapButton) {
         const lapButton = document.getElementById("buttons");
@@ -289,7 +290,8 @@ export async function main() {
             changed.has("includeLapButton") ||
             changed.has("includeSetButton") ||
             changed.has("lapHotkey") ||
-            changed.has("setHotkey")
+            changed.has("setHotkey") ||
+            changed.has("fields")
         ) {
 //            sortOrder = changed.get('ascDesc');      
             location.reload()        
