@@ -60,15 +60,15 @@ html.solid-background body {
 }
 #thisLapSmall {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(45%, 1fr)); /* Two items per row */
-  grid-gap: 10px; /* Adjust the gap between items */
+  grid-template-columns: repeat(auto-fill, minmax(45%, 1fr)); 
+  grid-gap: 10px;
   width: 100%;
   font-variant: small-caps tabular-nums;
   font-size: calc(var(--font-scale) * 0.9em);  
 }
 
 #thisLapSmall > div {
-  width: 100%; /* Ensure each child takes up the full width of its grid cell */
+  width: 100%; 
 }
 #allLaps {
   flex: 1;
