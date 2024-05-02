@@ -61,7 +61,7 @@ html.solid-background body {
 #thisLapSmall {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(45%, 1fr)); 
-  grid-gap: 10px;
+  grid-gap: 1px;
   width: 100%;
   font-variant: small-caps tabular-nums;
   font-size: calc(var(--font-scale) * 0.9em);  
@@ -115,4 +115,14 @@ table th, td:nth-child(4) {
 }
 .lineRowDesc {
   border-top: 1px solid #fff;
+}
+.key {
+  font-variant: tabular-nums;
+  text-align: right;
+  min-width: unset;
+}
+.value {
+  font-variant: tabular-nums;
+  text-align: right;  
+  min-width: unset;
 }
