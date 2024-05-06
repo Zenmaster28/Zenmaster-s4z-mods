@@ -844,9 +844,17 @@ async function getSegmentResults(watching) {
         let routeSegments;
         if (watching.segmentData && watching.segmentData.routeSegments) {
             routeSegments = watching.segmentData.routeSegments
+            let excludes = routeInfo.markLines.filter(x => x.exclude)
+            if (excludes.length > 0) {
+                for (let ex of excludes) {
+                    let segMatch = routeSegments.find(x => x.id == ex.id && x.name == ex.name && x.repeat == ex.repeat)
+                    segMatch.exclude = true;
+                }
+            }
         } else {
             routeSegments = routeInfo.markLines;
         }
+        //debugger
         if (Date.now() - allRacerRefresh > 30000) {
             getKnownRacers(watching.state.eventSubgroupId);
         }
