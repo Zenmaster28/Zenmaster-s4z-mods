@@ -297,14 +297,15 @@ async function applyRoute() {
         _routeHighlights.pop().elements.forEach(x => x.remove());
     }
     routeSelect.replaceChildren();
-    routeSelect.insertAdjacentHTML('beforeend', `<option value disabled selected>Route</option>`);    
+    routeSelect.insertAdjacentHTML('beforeend', `<option value disabled selected>Route</option>`);  
+    //console.log(routesList)  
     for (const x of routesList) {
         if (x.courseId !== courseId) {
             continue;
         }
         routeSelect.insertAdjacentHTML('beforeend', `
             <option ${x.id === routeId ? 'selected' : ''}
-                    value="${x.id}">${common.stripHTML(x.name)}</option>`);
+                    value="${x.id}">${common.stripHTML(x.name)} (${common.stripHTML((x.distanceInMeters / 1000).toFixed(1))}km / ${common.stripHTML(x.ascentInMeters.toFixed(0))}m)</option>`);
     }
     if (routeId != null) {        
         const route = await zen.getModifiedRoute(routeId);
