@@ -4,7 +4,7 @@
     "description": "Arend's Mod Collection for S4Z",
     "author": "Arend teRaa",
     "website_url": "https://saucellc.io",
-    "version": "1.3.1",
+    "version": "1.3.2",
     "content_js": [
         "pages/src/data-fields.js"
     ],
@@ -24,6 +24,21 @@
             "default_bounds": {
                 "width": 100,
                 "height": 450,
+                "x": -300,
+                "y": 100
+            }
+        },        
+        {
+            "file": "pages/datagrid.html",
+            "id": "data-grid",
+            "name": "Data Grid",
+            "description": "A customizable grid to display any available Sauce data fields",
+            "always_visible": true,
+            "overlay": true,
+            "frame": false,
+            "default_bounds": {
+                "width": 200,
+                "height": 175,
                 "x": -300,
                 "y": 100
             }

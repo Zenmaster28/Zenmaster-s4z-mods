@@ -1,0 +1,27 @@
+html.solid-background {
+  background: var(--background-color);
+}
+html.solid-background body {
+  background: transparent !important;
+}
+#content {
+  scroll-behavior: smooth;
+  padding: 0;
+  overflow: auto;
+  position: relative;  
+  display: grid;  
+  font-variant: small-caps tabular-nums;
+  font-size: calc(var(--font-scale) * 0.9em);  
+}
+
+.key {
+  font-variant: tabular-nums;
+  text-align: right;
+  min-width: unset;
+}
+.value {
+  font-variant: tabular-nums;
+  text-align: right;  
+  min-width: unset;
+}
+
