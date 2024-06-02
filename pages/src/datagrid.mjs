@@ -32,29 +32,6 @@ common.settingsStore.addEventListener('changed', ev => {
 let settings = common.settingsStore.get();
 if (settings.transparentNoData) {document.body.classList = "transparent-bg"};
 
-function formatTime(seconds) {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const remainingSeconds = Math.floor(seconds % 60);
-
-    let formattedTime = '';
-
-    if (hours > 0) {
-        formattedTime += hours.toString().padStart(2, '0') + ':';
-    }
-
-    if (hours === 0 && minutes === 0) {
-        formattedTime += '0:';
-    } else {
-        formattedTime += minutes.toString().padStart(1, '0') + ':';
-    }
-
-    formattedTime += remainingSeconds.toString().padStart(2, '0');
-
-    return formattedTime;
-}
-
-
 export async function main() {
     common.initInteractionListeners();          
     const numFields = settings.fields || 2;
@@ -67,23 +44,23 @@ export async function main() {
         f1: 'pwr-cur',
         f2: 'hr-cur'        
     };        
-    
-    //const numFields = 5
+        
     mapping.length = 0;
     content.style.gridTemplateColumns = `repeat(${numCols}, 1fr)`;
     for (let i = 0; i < (isNaN(numFields) ? 1 : numFields); i++) {
         const id = `f${i + 1}`;
-        let keyDiv = settings.includeFieldNames ? '<div class="key"></div>:&nbsp' : '';
-        const unitDiv = settings.includeUnits ? '<div class="unit"></div>' : '';
-        let keyname = localStorage.getItem('browser-def-id-datagrid.html-' + id);
+        let keyDiv = settings.includeFieldNames ? '<div class="key"></div><div id="sep">:&nbsp</div>' : '';
+        let unitDiv = settings.includeUnits ? '<div class="unit"></div>' : '';
+        let keyname = localStorage.getItem('XXXbrowser-def-id-datagrid.html-' + id);
+        
         if (keyname) {
             keyname = keyname.replace(/"/g, '');
         }
-        let keyData = fields.fields.find(x => x.id == keyname)        
-        if (keyData && keyData.key == "") {
-            keyDiv = settings.includeFieldNames ? '<div class="key"></div>' : '';
+        let keyData = fields.fields.find(x => x.id == keyname)         
+        if (keyData && (keyData.key == "" || keyData.id.includes("name"))) {            
+            keyDiv = settings.includeFieldNames ? '' : '';
         } else {
-            keyDiv = settings.includeFieldNames ? '<div class="key"></div>:&nbsp' : '';
+            keyDiv = settings.includeFieldNames ? '<div class="key"></div><div class="sep">:&nbsp</div>' : '';
         }
         content.insertAdjacentHTML('beforeend', `
             <div data-field="${id}" style="display: flex">
@@ -98,12 +75,19 @@ export async function main() {
         fields: fields.fields
 
     });
+    fieldRenderer.fields.forEach((data, dataFields) => {        
+        let keyData = fields.fields.find(x => x.id == data.active.id)
+        if (keyData && settings.includeFieldNames && (keyData.key == "" || keyData.id.includes("name"))) {                        
+            data.el.getElementsByClassName("sep")[0].innerHTML = "" // take out the : if no key name            
+        }
+    })
+    
     common.subscribe('athlete/watching', watching => {
-        doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1); 
+        doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);         
         fieldRenderer.setData(watching);
-        fieldRenderer.render();  
-    });
-           
+        fieldRenderer.render();          
+    });    
+
     common.subscribe('watching-athlete-change', async athleteId => {
         console.log("Watching athlete changed")        
         
