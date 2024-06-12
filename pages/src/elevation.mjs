@@ -55,6 +55,7 @@ common.settingsStore.setDefault({
     singleLapView: false,
     profileZoom: false,
     zoomNextSegment: false,
+    zoomSegmentOnlyWithinApproach: false,
     zoomNextSegmentApproach: 100,
     zoomFinalKm: false,
     zoomSlider: false,
@@ -172,6 +173,8 @@ function createElevationProfile({worldList}) {
     const profileZoom = settings.profileZoom;
     typeof(settings.zoomNextSegment) == "undefined" ? common.settingsStore.set("zoomNextSegment", false) : null;
     const zoomNextSegment = settings.zoomNextSegment;
+    typeof(settings.zoomSegmentOnlyWithinApproach) == "undefined" ? common.settingsStore.set("zoomSegmentOnlyWithinApproach", false) : null;
+    const zoomSegmentOnlyWithinApproach = settings.zoomSegmentOnlyWithinApproach;
     typeof(settings.zoomNextSegmentApproach) == "undefined" ? common.settingsStore.set("zoomNextSegmentApproach", 100) : null;
     const zoomNextSegmentApproach = settings.zoomNextSegmentApproach;
     typeof(settings.zoomFinalKm) == "undefined" ? common.settingsStore.set("zoomFinalKm", false) : null;
@@ -204,7 +207,7 @@ function createElevationProfile({worldList}) {
     const useCustomPin = settings.useCustomPin;
     typeof(settings.customPin) == "undefined" ? common.settingsStore.set("customPin", "") : null;
     const customPin = settings.customPin;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin});
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach});
 }
 
 
@@ -435,6 +438,11 @@ export async function main() {
         } else if (changed.has('zoomNextSegment')) {
             elProfile.zoomNextSegment = changed.get('zoomNextSegment')
             if (!changed.get('zoomNextSegment')) {
+                location.reload()
+            }
+        } else if (changed.has('zoomSegmentOnlyWithinApproach')) {
+            elProfile.zoomSegmentOnlyWithinApproach = changed.get('zoomSegmentOnlyWithinApproach')
+            if (!changed.get('zoomSegmentOnlyWithinApproach')) {
                 location.reload()
             }
         } 

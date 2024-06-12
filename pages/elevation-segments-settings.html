@@ -180,6 +180,10 @@
                     <key data-added="2024-03-21">Zoom to next segment:</key>
                     <input type="checkbox" name="zoomNextSegment" data-depends-on="!profileZoom">
                 </label>
+                <label title="Only zoom to the next segment when within the approach distance in the following option">
+                    <key data-added="2024-06-11">&nbsp;&nbsp;- Only when within<br>&nbsp;&nbsp;&nbsp;&nbsp;approach distance </key>
+                    <input type="checkbox" name="zoomSegmentOnlyWithinApproach" data-depends-on="zoomNextSegment">
+                </label>
                 <label>    
                     <key data-added="2024-03-21">&nbsp;&nbsp;- Show the approaching </key>                
                     <input type="range" name="zoomNextSegmentApproach" min="100" max="1000" step="100" data-depends-on="zoomNextSegment"/>
