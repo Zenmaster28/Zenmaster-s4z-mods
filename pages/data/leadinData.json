@@ -1,6 +1,6 @@
 [
     {
-    "eventPaddocks": "x11,12,13,14,15",
+    "eventPaddocks": "11,12,13,14,15",
     "roadId": 81,
     "courseId": 6,
     "reverse": false,
@@ -28,7 +28,7 @@
     ]
     },
     {
-        "eventPaddocks": "x1,2,3,4",
+        "eventPaddocks": "1,2,3,4",
         "roadId": 0,
         "courseId": 6,
         "reverse": true,
@@ -44,7 +44,7 @@
         ]
     },
     {
-        "eventPaddocks": "x1,2,3,4",
+        "eventPaddocks": "1,2,3,4",
         "roadId": 26,
         "courseId": 14,
         "reverse": true,
