@@ -12,6 +12,7 @@ const H = locale.human;
 let routeSegments = [];
 let allMarkLines = [];
 let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
+const allRoutes = await zen.getAllRoutes();
 
 export class SauceElevationProfile {
     constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, refresh=1000}) {
@@ -390,7 +391,45 @@ export class SauceElevationProfile {
         }
     }
 
-    setRoad(id, reverse=false) {
+    setRoad(id, reverse=false, roadSegments) {
+        let markLines = [];
+        for (let segment of roadSegments) {
+            for (let markline of segment.markLines) {
+                //debugger
+                if (this.showSegmentStart && !markline.name.includes("Finish")) {
+                    markLines.push({
+                        xAxis: markline.markLine,
+                        lineStyle: {
+                            width: this.lineSize,
+                            type: this.lineType,
+                            color: this.lineTextColor
+                        },
+                        label: {
+                            distance: 7,
+                            position: 'insideEndTop',                    
+                            formatter: markline.name,
+                            color: this.lineTextColor
+                        }
+                    });
+                } else if (this.showSegmentFinish && markline.name.includes("Finish")) {
+                    markLines.push({
+                        xAxis: markline.markLine,
+                        lineStyle: {
+                            width: this.lineSize,
+                            type: this.lineTypeFinish,
+                            color: this.lineTextColor
+                        },
+                        label: {
+                            show: true,                            
+                            formatter: '|||',
+                            color: this.lineTextColor
+                        }
+                    });
+                }
+            }
+        }
+        //debugger
+        //console.log(markLines)
         routeSegments.length = 0;
         allMarkLines.length = 0;
         this.lapCounter = 1;
@@ -413,14 +452,17 @@ export class SauceElevationProfile {
         this._routeLeadinDistance = 0;
         this.road = this.roads ? this.roads.find(x => x.id === id) : undefined;
         if (this.road) {
+            console.log(this.road)
             this.reverse = reverse;
             this.curvePath = this.road.curvePath;
-            this._roadSigs.add(`${id}-${!!reverse}`);
-            this.setData(this.road.distances, this.road.elevations, this.road.grades, {reverse});
+            this._roadSigs.add(`${id}-${!!reverse}`);  
+            //debugger          
+            this.setData(this.road.distances, this.road.elevations, this.road.grades, {reverse, markLines});
         } else {
             this.reverse = undefined;
             this.curvePath = undefined;
         }
+        
     }
 
     setRoute = common.asyncSerialize(async function(id, {laps=1, eventSubgroupId, distance}={}) {         
@@ -644,7 +686,10 @@ export class SauceElevationProfile {
     setData(distances, elevations, grades, options={}) {
         this._distances = distances;
         this._elevations = elevations;
+        options.reverse ? grades = grades.map(grade => -grade) : null;
         this._grades = grades;
+        
+        //console.log(grades)
         const distance = distances[distances.length - 1] - distances[0];
         this._yMax = Math.max(...elevations);
         this._yMin = Math.min(...elevations);
@@ -704,6 +749,7 @@ export class SauceElevationProfile {
                     color: color.toString(),
                 };
             });
+            //debugger
        } else if (this.colorScheme == "cvdBuRd") {
             //console.log("Selected colorscheme is " + this.colorScheme)            
             const ranges = [
@@ -937,21 +983,24 @@ export class SauceElevationProfile {
 
     async _renderAthleteStates(states, force) {
         const watching = states.find(x => x.athleteId === this.watchingId); 
-         
+        
         if (!watching && (this.courseId == null || (!this.road && !this.route))) {
             return;
         } else if (watching) {
             if (watching.courseId !== this.courseId) {
                 await this.setCourse(watching.courseId);
             }
+            const knownRoute = allRoutes.find(x => x.id == watching.routeId)
+            this.knownRoad = await common.rpc.getRoad(watching.courseId, watching.roadId)
+            //debugger
             if (this.preferRoute) {
-                if ((!watching.routeId && !this.routeOverride && (Date.now() - this.routeOverrideTS > 5000)) || (!watching.routeId && (Date.now() - this.routeOverrideTS > 5000))) {
+                if ((!watching.routeId && !this.routeOverride && (Date.now() - this.routeOverrideTS > 5000)) || (!watching.routeId && (Date.now() - this.routeOverrideTS > 5000)) || !knownRoute) {
                     //console.log("No route on watching, looking for a PP in group")
                     this.routeOverrideTS = Date.now();
                     this.routeOverride = await this.getPpRoute();
                 }
                 
-                if (watching.routeId || this.routeOverride) {
+                if ((watching.routeId && knownRoute) || this.routeOverride) {
                     
                     if (watching.routeId) {
                         this.routeOverride = false;
@@ -1045,290 +1094,352 @@ export class SauceElevationProfile {
                     await this.setRoute(sg.routeId, {laps: sg.laps, eventSubgroupId: sg.id, distance: this.customDistance});
                 }
             }
-            if (!this.routeId) {
-                if (!this.road || this.road.id !== watching.roadId || this.reverse !== watching.reverse) {
-                    this.setRoad(watching.roadId, watching.reverse);
+            if (!this.routeId || !knownRoute && !this.routeOverride) {                
+                if (this.knownRoad) {
+                    
+                    if (!this.road || this.road.id !== watching.roadId || this.reverse !== watching.reverse) {
+                        let roadSegments = await zen.getRoadSegments(this.courseId, watching.roadId, watching.reverse)
+                        console.log("Setting road to", watching.roadId, "reverse:", watching.reverse)
+                        this.setRoad(watching.roadId, watching.reverse, roadSegments);
+                    }
+                } else {
+                    
                 }
             }
         }
-        const now = Date.now();        
-        for (const state of states) {
-            if (!this.marks.has(state.athleteId)) {
-                this.marks.set(state.athleteId, {
-                    athleteId: state.athleteId,
-                    state,
-                });
+        //debugger
+        if (this.knownRoad) {
+            const now = Date.now();        
+            for (const state of states) {
+                if (!this.marks.has(state.athleteId)) {
+                    this.marks.set(state.athleteId, {
+                        athleteId: state.athleteId,
+                        state,
+                    });
+                }
+                const mark = this.marks.get(state.athleteId);
+                mark.state = state;
+                mark.lastSeen = now;
             }
-            const mark = this.marks.get(state.athleteId);
-            mark.state = state;
-            mark.lastSeen = now;
-        }
-        common.idle().then(() => this._updateAthleteDetails(states.map(x => x.athleteId)));
-        if (!force && now - this._lastRender < this.refresh) {
-            clearTimeout(this._refreshTimeout);
-            this._refreshTimeout = setTimeout(
-                () => this.renderAthleteStates([]),
-                this.refresh - (now - this._lastRender));
-            return;
-        }
-        if (!force && !common.isVisible()) {
-            cancelAnimationFrame(this._visAnimFrame);
-            this._visAnimFrame = requestAnimationFrame(() => this.renderAthleteStates([]));
-            return;
-        }
-        this._lastRender = now;
-        const marks = Array.from(this.marks.values()).filter(x => {
-            const sig = `${x.state.roadId}-${!!x.state.reverse}`;
-            //debugger
-            const stateWatching = x.state.athleteId === this.watchingId;                                        
-            if (!this._roadSigs.has(sig) && stateWatching) {
-                //console.log("We are on a road (" + sig + ") that isn't included in the route manifest")
+            common.idle().then(() => this._updateAthleteDetails(states.map(x => x.athleteId)));
+            if (!force && now - this._lastRender < this.refresh) {
+                clearTimeout(this._refreshTimeout);
+                this._refreshTimeout = setTimeout(
+                    () => this.renderAthleteStates([]),
+                    this.refresh - (now - this._lastRender));
+                return;
             }
-            return true;
-            //debugger
-            //return this._roadSigs.has(sig);
-        });
-        const markPointLabelSize = 0.4;
-        const deltaY = this._yAxisMax - this._yAxisMin;
-        const nodes = this.curvePath.nodes; 
-        //debugger   
-        this.chart.setOption({series: [{
-            markPoint: {
-                itemStyle: {borderColor: '#222b'},
-                animation: false,
-                data: marks.map(({state}) => {                                        
-                    let roadSeg;
-                    let nodeRoadOfft;
-                    let deemphasize;
-                    const isWatching = state.athleteId === this.watchingId;                    
-                    let isTeamMate = false;
-                    let isMarked = false;
-                    let isPP = false;
-                    let isBeacon = false;  
-                    let isLeaderSweep = false;                  
-                    let beaconColour;
-                    let beaconImage;
-                    const ad = common.getAthleteDataCacheEntry(state.athleteId);
-                    if (ad && ad.athlete && ad.athlete.team) {
-                        isWatching ? this.watchingTeam = ad.athlete.team : 
-                        ad.athlete.team == this.watchingTeam ? isTeamMate = true : null;   
-                        //debugger                     
-                    } 
-                    if (ad && ad.athlete && ad.athlete.marked && !isWatching) {
-                        isMarked = true;
-                    }
-                    if (ad && ad.athlete && ad.athlete.type == "PACER_BOT" && ad.state.sport == "cycling" && !isWatching && this.showRobopacers) {
-                        isPP = true;
-                        isBeacon = true;
-                        let wkg = ad.state.power / ad.athlete.weight;
-                        beaconColour = wkg <= 2.0 ? "#ffff00" : (wkg > 2.0 && wkg <= 3.0) ? "#00ffff" : (wkg > 3.0 && wkg < 4.0) ? "#00ff40" : "#ff0000"
-                        //debugger
-                        //console.log("found a PP mark")
-                    }
-                    if (ad && (ad.eventLeader || ad.eventSweeper) && this.showLeaderSweep) {                        
-                        isLeaderSweep = true;
-                        isBeacon = true;
-                        ad.eventLeader ? beaconColour = "yellow" : null;
-                        ad.eventSweeper ? beaconColour = "red" : null;
-                    }
-                    //to do - restructure to check options and state status                    
-                    //if (isWatching || !this.showMyPin) { 
-                    if ((this.showMyPin && isWatching) || 
-                        this.showAllRiders ||
-                        (this.showTeamMembers && isTeamMate) ||
-                        (this.showMarkedRiders && isMarked) ||
-                        (this.showRobopacers && isPP) || 
-                        (this.showLeaderSweep && isLeaderSweep)
-                    ) {        
-                        
-                        if (this.routeId != null) {
+            if (!force && !common.isVisible()) {
+                cancelAnimationFrame(this._visAnimFrame);
+                this._visAnimFrame = requestAnimationFrame(() => this.renderAthleteStates([]));
+                return;
+            }
+            this._lastRender = now;
+            const marks = Array.from(this.marks.values()).filter(x => {
+                const sig = `${x.state.roadId}-${!!x.state.reverse}`;
+                //debugger
+                const stateWatching = x.state.athleteId === this.watchingId;                                        
+                if (!this._roadSigs.has(sig) && stateWatching) {
+                    //console.log("We are on a road (" + sig + ") that isn't included in the route manifest")
+                }
+                return true;
+                //debugger
+                //return this._roadSigs.has(sig);
+            });
+            const markPointLabelSize = 0.4;
+            const deltaY = this._yAxisMax - this._yAxisMin;
+            const nodes = this.curvePath.nodes; 
+            //debugger   
+            this.chart.setOption({series: [{
+                markPoint: {
+                    itemStyle: {borderColor: '#222b'},
+                    animation: false,
+                    data: marks.map(({state}) => {                                        
+                        let roadSeg;
+                        let nodeRoadOfft;
+                        let deemphasize;
+                        const isWatching = state.athleteId === this.watchingId;                    
+                        let isTeamMate = false;
+                        let isMarked = false;
+                        let isPP = false;
+                        let isBeacon = false;  
+                        let isLeaderSweep = false;                  
+                        let beaconColour;
+                        let beaconImage;
+                        const ad = common.getAthleteDataCacheEntry(state.athleteId);
+                        if (ad && ad.athlete && ad.athlete.team) {
+                            isWatching ? this.watchingTeam = ad.athlete.team : 
+                            ad.athlete.team == this.watchingTeam ? isTeamMate = true : null;   
+                            //debugger                     
+                        } 
+                        if (ad && ad.athlete && ad.athlete.marked && !isWatching) {
+                            isMarked = true;
+                        }
+                        if (ad && ad.athlete && ad.athlete.type == "PACER_BOT" && ad.state.sport == "cycling" && !isWatching && this.showRobopacers) {
+                            isPP = true;
+                            isBeacon = true;
+                            let wkg = ad.state.power / ad.athlete.weight;
+                            beaconColour = wkg <= 2.0 ? "#ffff00" : (wkg > 2.0 && wkg <= 3.0) ? "#00ffff" : (wkg > 3.0 && wkg < 4.0) ? "#00ff40" : "#ff0000"
+                            //debugger
+                            //console.log("found a PP mark")
+                        }
+                        if (ad && (ad.eventLeader || ad.eventSweeper) && this.showLeaderSweep) {                        
+                            isLeaderSweep = true;
+                            isBeacon = true;
+                            ad.eventLeader ? beaconColour = "yellow" : null;
+                            ad.eventSweeper ? beaconColour = "red" : null;
+                        }
+                        //to do - restructure to check options and state status                    
+                        //if (isWatching || !this.showMyPin) { 
+                        if ((this.showMyPin && isWatching) || 
+                            this.showAllRiders ||
+                            (this.showTeamMembers && isTeamMate) ||
+                            (this.showMarkedRiders && isMarked) ||
+                            (this.showRobopacers && isPP) || 
+                            (this.showLeaderSweep && isLeaderSweep)
+                        ) {        
                             
-                            //console.log("route not null")
-                            if (state.routeId === this.routeId) {
-                                let distance;
-                                if (this._eventSubgroupId != null) {
-                                    deemphasize = state.eventSubgroupId !== this._eventSubgroupId;
-                                    distance = state.eventDistance;
-                                } else {
-                                    // Outside of events state.progress represents the progress of single lap.
-                                    // However, if the lap counter is > 0 then the progress % does not include
-                                    // leadin.
-                                    const floor = state.laps ? this._routeLeadinDistance : 0;
-                                    const totDist = this._distances[this._distances.length - 1];
-                                    distance = state.progress * (totDist - floor) + floor;
-                                }
-                                const nearIdx = common.binarySearchClosest(this._distances, distance);
-                                const nearRoadSegIdx = nodes[nearIdx].index;
-                                // NOTE: This technique does not work for bots or people who joined a bot.
-                                // I don't know why but progress and eventDistance are completely wrong.
+                            if (this.routeId != null) {
                                 
-                                roadSearch:
-                                for (let offt = 0; offt < 12; offt++) {
-                                    for (const dir of [1, -1]) {
-                                        const segIdx = nearRoadSegIdx + (offt * dir);
-                                        const s = this.route.roadSegments[segIdx];
-                                        if (s && s.roadId === state.roadId && !!s.reverse === !!state.reverse &&
-                                            s.includesRoadTime(state.roadTime)) {
-                                            roadSeg = s;
-                                            this.foundRouteRoadseg = true;
-                                            // We found the road segment but need to find the exact node offset
-                                            // to support multi-lap configurations...
-                                            for (let i = nearIdx; i >= 0 && i < nodes.length; i += dir) {
-                                                if (nodes[i].index === segIdx) {
-                                                    // Rewind to first node of this segment.
-                                                    while (i > 0 && nodes[i - 1].index === segIdx) {
-                                                        i--;
+                                //console.log("route not null")
+                                if (state.routeId === this.routeId) {
+                                    let distance;
+                                    if (this._eventSubgroupId != null) {
+                                        deemphasize = state.eventSubgroupId !== this._eventSubgroupId;
+                                        distance = state.eventDistance;
+                                    } else {
+                                        // Outside of events state.progress represents the progress of single lap.
+                                        // However, if the lap counter is > 0 then the progress % does not include
+                                        // leadin.
+                                        const floor = state.laps ? this._routeLeadinDistance : 0;
+                                        const totDist = this._distances[this._distances.length - 1];
+                                        distance = state.progress * (totDist - floor) + floor;
+                                    }
+                                    const nearIdx = common.binarySearchClosest(this._distances, distance);
+                                    const nearRoadSegIdx = nodes[nearIdx].index;
+                                    // NOTE: This technique does not work for bots or people who joined a bot.
+                                    // I don't know why but progress and eventDistance are completely wrong.
+                                    
+                                    roadSearch:
+                                    for (let offt = 0; offt < 12; offt++) {
+                                        for (const dir of [1, -1]) {
+                                            const segIdx = nearRoadSegIdx + (offt * dir);
+                                            const s = this.route.roadSegments[segIdx];
+                                            if (s && s.roadId === state.roadId && !!s.reverse === !!state.reverse &&
+                                                s.includesRoadTime(state.roadTime)) {
+                                                roadSeg = s;
+                                                this.foundRouteRoadseg = true;
+                                                // We found the road segment but need to find the exact node offset
+                                                // to support multi-lap configurations...
+                                                for (let i = nearIdx; i >= 0 && i < nodes.length; i += dir) {
+                                                    if (nodes[i].index === segIdx) {
+                                                        // Rewind to first node of this segment.
+                                                        while (i > 0 && nodes[i - 1].index === segIdx) {
+                                                            i--;
+                                                        }
+                                                        nodeRoadOfft = i;
+                                                        break;
                                                     }
-                                                    nodeRoadOfft = i;
-                                                    break;
                                                 }
+                                                break roadSearch;
                                             }
-                                            break roadSearch;
                                         }
                                     }
                                 }
+                                if (!roadSeg) {
+                                    // Not on our route but might be nearby..
+                                    
+                                    const i = this.route.roadSegments.findIndex(x =>
+                                        x.roadId === state.roadId &&
+                                        !!x.reverse === !!state.reverse &&
+                                        x.includesRoadTime(state.roadTime));
+                                    if (i === -1) {
+                                        
+                                        //return null;
+                                    }
+                                    roadSeg = this.route.roadSegments[i];
+                                    nodeRoadOfft = nodes.findIndex(x => x.index === i);
+                                    deemphasize = true;
+                                }
+                            } else if (this.road && this.road.id === state.roadId) {
+                                roadSeg = this.road.curvePath;
+                                nodeRoadOfft = 0;
                             }
                             if (!roadSeg) {
-                                // Not on our route but might be nearby..
-                                
-                                const i = this.route.roadSegments.findIndex(x =>
-                                    x.roadId === state.roadId &&
-                                    !!x.reverse === !!state.reverse &&
-                                    x.includesRoadTime(state.roadTime));
-                                if (i === -1) {
-                                    
-                                    //return null;
-                                }
-                                roadSeg = this.route.roadSegments[i];
-                                nodeRoadOfft = nodes.findIndex(x => x.index === i);
-                                deemphasize = true;
+                                //console.log("No roadseg found")
+                                //debugger
+                                //return null;
                             }
-                        } else if (this.road && this.road.id === state.roadId) {
-                            roadSeg = this.road.curvePath;
-                            nodeRoadOfft = 0;
-                        }
-                        if (!roadSeg) {
-                            //console.log("No roadseg found")
                             //debugger
-                            //return null;
-                        }
-                        //debugger
-                        let xCoord;
-                        let yCoord;
-                        let xIdx;
-                        if (roadSeg) {
-                            this.foundRoute = true;
-                            const bounds = roadSeg.boundsAtRoadTime(state.roadTime);
-                            const nodeOfft = roadSeg.reverse ?
-                                roadSeg.nodes.length - 1 - (bounds.index + bounds.percent) :
-                                bounds.index + bounds.percent;
-                            xIdx = nodeRoadOfft + nodeOfft;
-                            if (xIdx < 0 || xIdx > this._distances.length - 1) {
-                                //console.log(this._distances)
-                                console.error("route index offset bad!", {xIdx});
-                                return null;
-                            }
-                            
-                            //let xCoord;
-                            //let yCoord;
-                            if (xIdx % 1) {
-                                const i = xIdx | 0;
-                                const dDelta = this._distances[i + 1] - this._distances[i];
-                                const eDelta = this._elevations[i + 1] - this._elevations[i];
-                                xCoord = this._distances[i] + dDelta * (xIdx % 1);
-                                yCoord = this._elevations[i] + eDelta * (xIdx % 1);
-                                //debugger
-                            } else {
-                                xCoord = this._distances[xIdx];
-                                yCoord = this._elevations[xIdx];
-                            }
-                            if (isNaN(xCoord) || xCoord == null) {
-                                console.error('xCoord is NaN or null');
-                                //debugger
-                            }
-                        } else if (isWatching && this.foundRoute) {
-                            let routeOffset;
-                            if (this.deltas.length > 15) {
-                                routeOffset = this.deltas.reduce((a, b) => a + b, 0) / this.deltas.length;
-                                //console.log("Calculated route offset to " + routeOffset)
-                            } else {
-                                routeOffset = 0;
-                                //console.log("No route offset found")
-                            }
-                            if (state.eventDistance > 0) {
-                                xCoord = state.eventDistance - routeOffset;
-                                let idxGuess = common.binarySearchClosest(this.routeDistances, (state.eventDistance - routeOffset));
-                                const dDelta = this.routeDistances[idxGuess + 1] - this.routeDistances[idxGuess];
-                                const idxDelta = 1 - ((this.routeDistances[idxGuess + 1] - xCoord) / dDelta);
-                                const eDelta = this.routeElevations[idxGuess + 1] - this.routeElevations[idxGuess];
-                                yCoord = this.routeElevations[idxGuess] + (eDelta * idxDelta);
-                                //yCoord = 287.27796358066405; // just a test
-                                xIdx = 0;
-                                //console.log("xCoord is " + xCoord + " yCoord is " + yCoord)
-                                //debugger
-                            } else {
-                                //console.log("waiting for eventDistance > 0 before setting xCoord")
-                                xCoord = null;
-                            }
-                        }
-                        /*if (isWatching) {
-                            // XXX
-                            console.log("got it", xCoord, xIdx, state.roadId, state.reverse, state.roadTime,
-                                        {nodeRoadOfft, nodeOfft, reverse: state.reverse});
-                        }*/
-                        let allOtherPins = this.showMyPin;
-                        this.showMyPin ? allOtherPins = 1 : allOtherPins = 1;
-                        let watchingPinSize = 1.1 * this.pinSize;
-                        let teamPinSize = 0.75 * this.pinSize;
-                        let deemphasizePinSize = 0.35 * this.pinSize * allOtherPins;
-                        let otherPinSize = 0.55 * this.pinSize * allOtherPins;
-                        let watchingPinColor = this.pinColor;
-                        let markedPinColor = this.pinColorMarked;
-                        //console.log(allOtherPins)
-                        
-                        if (isWatching && this.showMyPin)
-                        {                       
-                            
-                            if (this.currentLap != state.laps + 1 && state.eventSubgroupId != 0) {
-                                console.log("Setting current lap to: " + (state.laps + 1))
-                                this.currentLap = state.laps + 1;
-                                let leadinNodesCount = 0;
-                                let leadin = this.routeInfo.routeFullData.roadSegments.filter(x => x.leadin)
-                                if (leadin.length > 0) {                
-                                    for (let rs of leadin) {
-                                        leadinNodesCount += rs.nodes.length;
-                                    }
-                                }
-                                let lapCurvePath = this.routeInfo.routeFullData.roadSegments.filter(x => (x.lap == 1 && !x.leadin))
-                                let lapNodesCount = 0;
-                                for (let rs of lapCurvePath) {
-                                    lapNodesCount += rs.nodes.length;
-                                }
-                                let lapStart;
-                                let lapFinish;
-                                if (this.currentLap == 1) {
-                                    lapStart = 0;
-                                    lapFinish = leadinNodesCount + lapNodesCount;
-                                } else {
-                                    lapStart = leadinNodesCount + (lapNodesCount * (this.currentLap - 1));
-                                    lapFinish = lapStart + lapNodesCount;
+                            let xCoord;
+                            let yCoord;
+                            let xIdx;
+                            if (roadSeg) {
+                                this.foundRoute = true;
+                                const bounds = roadSeg.boundsAtRoadTime(state.roadTime);
+                                const nodeOfft = roadSeg.reverse ?
+                                    roadSeg.nodes.length - 1 - (bounds.index + bounds.percent) :
+                                    bounds.index + bounds.percent;
+                                xIdx = nodeRoadOfft + nodeOfft;
+                                if (xIdx < 0 || xIdx > this._distances.length - 1) {
+                                    //console.log(this._distances)
+                                    console.error("route index offset bad!", {xIdx});
+                                    return null;
                                 }
                                 
-                                if (this.singleLapView) {                                    
-                                    const distance = this.routeDistances[lapFinish - 1] - this.routeDistances[lapStart];                                    
-                                    const dataZoomData = [];
-                                    const dataZoomColorStops = Array.from(this.routeColorStops.slice(lapStart, lapFinish));                                    
+                                //let xCoord;
+                                //let yCoord;
+                                if (xIdx % 1) {
+                                    const i = xIdx | 0;
+                                    const dDelta = this._distances[i + 1] - this._distances[i];
+                                    const eDelta = this._elevations[i + 1] - this._elevations[i];
+                                    xCoord = this._distances[i] + dDelta * (xIdx % 1);
+                                    yCoord = this._elevations[i] + eDelta * (xIdx % 1);
+                                    //debugger
+                                } else {
+                                    xCoord = this._distances[xIdx];
+                                    yCoord = this._elevations[xIdx];
+                                }
+                                if (isNaN(xCoord) || xCoord == null) {
+                                    console.error('xCoord is NaN or null');
+                                    //debugger
+                                }
+                            } else if (isWatching && this.foundRoute) {
+                                let routeOffset;
+                                if (this.deltas.length > 15) {
+                                    routeOffset = this.deltas.reduce((a, b) => a + b, 0) / this.deltas.length;
+                                    //console.log("Calculated route offset to " + routeOffset)
+                                } else {
+                                    routeOffset = 0;
+                                    //console.log("No route offset found")
+                                }
+                                if (state.eventDistance > 0) {
+                                    xCoord = state.eventDistance - routeOffset;
+                                    let idxGuess = common.binarySearchClosest(this.routeDistances, (state.eventDistance - routeOffset));
+                                    const dDelta = this.routeDistances[idxGuess + 1] - this.routeDistances[idxGuess];
+                                    const idxDelta = 1 - ((this.routeDistances[idxGuess + 1] - xCoord) / dDelta);
+                                    const eDelta = this.routeElevations[idxGuess + 1] - this.routeElevations[idxGuess];
+                                    yCoord = this.routeElevations[idxGuess] + (eDelta * idxDelta);
+                                    //yCoord = 287.27796358066405; // just a test
+                                    xIdx = 0;
+                                    //console.log("xCoord is " + xCoord + " yCoord is " + yCoord)
+                                    //debugger
+                                } else {
+                                    //console.log("waiting for eventDistance > 0 before setting xCoord")
+                                    xCoord = null;
+                                }
+                            }
+                            /*if (isWatching) {
+                                // XXX
+                                console.log("got it", xCoord, xIdx, state.roadId, state.reverse, state.roadTime,
+                                            {nodeRoadOfft, nodeOfft, reverse: state.reverse});
+                            }*/
+                            let allOtherPins = this.showMyPin;
+                            this.showMyPin ? allOtherPins = 1 : allOtherPins = 1;
+                            let watchingPinSize = 1.1 * this.pinSize;
+                            let teamPinSize = 0.75 * this.pinSize;
+                            let deemphasizePinSize = 0.35 * this.pinSize * allOtherPins;
+                            let otherPinSize = 0.55 * this.pinSize * allOtherPins;
+                            let watchingPinColor = this.pinColor;
+                            let markedPinColor = this.pinColorMarked;
+                            //console.log(allOtherPins)
+                            
+                            if (isWatching && this.showMyPin)
+                            {                       
+                                
+                                if (this.currentLap != state.laps + 1 && state.eventSubgroupId != 0) {
+                                    console.log("Setting current lap to: " + (state.laps + 1))
+                                    this.currentLap = state.laps + 1;
+                                    let leadinNodesCount = 0;
+                                    let leadin = this.routeInfo.routeFullData.roadSegments.filter(x => x.leadin)
+                                    if (leadin.length > 0) {                
+                                        for (let rs of leadin) {
+                                            leadinNodesCount += rs.nodes.length;
+                                        }
+                                    }
+                                    let lapCurvePath = this.routeInfo.routeFullData.roadSegments.filter(x => (x.lap == 1 && !x.leadin))
+                                    let lapNodesCount = 0;
+                                    for (let rs of lapCurvePath) {
+                                        lapNodesCount += rs.nodes.length;
+                                    }
+                                    let lapStart;
+                                    let lapFinish;
+                                    if (this.currentLap == 1) {
+                                        lapStart = 0;
+                                        lapFinish = leadinNodesCount + lapNodesCount;
+                                    } else {
+                                        lapStart = leadinNodesCount + (lapNodesCount * (this.currentLap - 1));
+                                        lapFinish = lapStart + lapNodesCount;
+                                    }
+                                    
+                                    if (this.singleLapView) {                                    
+                                        const distance = this.routeDistances[lapFinish - 1] - this.routeDistances[lapStart];                                    
+                                        const dataZoomData = [];
+                                        const dataZoomColorStops = Array.from(this.routeColorStops.slice(lapStart, lapFinish));                                    
+                                        const newColorStops = dataZoomColorStops.map((stop, i) => ({
+                                            offset: (this.routeDistances[lapStart + i] - this.routeDistances[lapStart]) / distance,
+                                            color: stop.color
+                                        }))                                    
+                                        dataZoomData.push({
+                                            type: 'inside',
+                                            startValue: this.routeDistances[lapStart],
+                                            endValue: this.routeDistances[lapFinish]
+                                        })
+                                        this.chart.setOption({
+                                            dataZoom: dataZoomData[0],
+                                            series: [{
+                                                areaStyle: {
+                                                    color: {
+                                                        colorStops: newColorStops
+                                                    },
+                                                    opacity: this.gradientOpacity
+                                                }
+                                            }]                                        
+                                        })
+                                    }
+                                    //debugger
+                                }
+                                if (this.profileZoom && !this.singleLapView && (this.forwardDistance < this.routeDistances.at(-1))) {
+                                    //console.log(xCoord)
+                                    const distance = this.forwardDistance; 
+                                    let zoomStart;
+                                    let zoomFinish;
+                                    if (xCoord - 500 > 0 && typeof(xCoord) != "undefined") {
+                                        let zoomIdx = common.binarySearchClosest(this.routeDistances, (xCoord - 500))
+                                        //zoomStart = xCoord - 500;
+                                        zoomStart = this.routeDistances[zoomIdx]
+                                    } else {
+                                        zoomStart = 0;
+                                    }
+                                    if (xCoord + distance < this.routeDistances.at(-1) && typeof(xCoord) != "undefined") {
+                                        let zoomIdx = common.binarySearchClosest(this.routeDistances, (xCoord + distance))
+                                        //zoomFinish = xCoord + distance;                
+                                        zoomFinish = this.routeDistances[zoomIdx]
+                                    } else if (typeof(xCoord) == "undefined") {
+                                        //console.log("XCoord is undefined")
+                                        zoomFinish = distance;
+                                        zoomStart = 0;
+                                    } else {
+                                        zoomFinish = this.routeDistances.at(-1);
+                                        zoomStart = zoomFinish - distance
+                                    }
+                                    let idxStart = common.binarySearchClosest(this.routeDistances, (zoomStart)); 
+                                    let idxFinish = common.binarySearchClosest(this.routeDistances, (zoomFinish)); 
+                                    
+                                    const dataZoomColorStops = Array.from(this.routeColorStops.slice(idxStart, idxFinish));                                    
                                     const newColorStops = dataZoomColorStops.map((stop, i) => ({
-                                        offset: (this.routeDistances[lapStart + i] - this.routeDistances[lapStart]) / distance,
+                                        offset: (this.routeDistances[idxStart + i] - this.routeDistances[idxStart]) / (distance + 500),
                                         color: stop.color
-                                    }))                                    
+                                    })) 
+                                    //console.log(newColorStops)
+                                    const dataZoomData = [];                                                              
                                     dataZoomData.push({
                                         type: 'inside',
-                                        startValue: this.routeDistances[lapStart],
-                                        endValue: this.routeDistances[lapFinish]
+                                        startValue: zoomStart,
+                                        endValue: zoomFinish
                                     })
                                     this.chart.setOption({
-                                        dataZoom: dataZoomData[0],
+                                        dataZoom: dataZoomData[0], 
                                         series: [{
                                             areaStyle: {
                                                 color: {
@@ -1336,88 +1447,123 @@ export class SauceElevationProfile {
                                                 },
                                                 opacity: this.gradientOpacity
                                             }
-                                        }]                                        
+                                        }]                                                                           
                                     })
-                                }
-                                //debugger
-                            }
-                            if (this.profileZoom && !this.singleLapView && (this.forwardDistance < this.routeDistances.at(-1))) {
-                                //console.log(xCoord)
-                                const distance = this.forwardDistance; 
-                                let zoomStart;
-                                let zoomFinish;
-                                if (xCoord - 500 > 0 && typeof(xCoord) != "undefined") {
-                                    let zoomIdx = common.binarySearchClosest(this.routeDistances, (xCoord - 500))
-                                    //zoomStart = xCoord - 500;
-                                    zoomStart = this.routeDistances[zoomIdx]
-                                } else {
-                                    zoomStart = 0;
-                                }
-                                if (xCoord + distance < this.routeDistances.at(-1) && typeof(xCoord) != "undefined") {
-                                    let zoomIdx = common.binarySearchClosest(this.routeDistances, (xCoord + distance))
-                                    //zoomFinish = xCoord + distance;                
-                                    zoomFinish = this.routeDistances[zoomIdx]
-                                } else if (typeof(xCoord) == "undefined") {
-                                    //console.log("XCoord is undefined")
-                                    zoomFinish = distance;
-                                    zoomStart = 0;
-                                } else {
-                                    zoomFinish = this.routeDistances.at(-1);
-                                    zoomStart = zoomFinish - distance
-                                }
-                                let idxStart = common.binarySearchClosest(this.routeDistances, (zoomStart)); 
-                                let idxFinish = common.binarySearchClosest(this.routeDistances, (zoomFinish)); 
-                                
-                                const dataZoomColorStops = Array.from(this.routeColorStops.slice(idxStart, idxFinish));                                    
-                                const newColorStops = dataZoomColorStops.map((stop, i) => ({
-                                    offset: (this.routeDistances[idxStart + i] - this.routeDistances[idxStart]) / (distance + 500),
-                                    color: stop.color
-                                })) 
-                                //console.log(newColorStops)
-                                const dataZoomData = [];                                                              
-                                dataZoomData.push({
-                                    type: 'inside',
-                                    startValue: zoomStart,
-                                    endValue: zoomFinish
-                                })
-                                this.chart.setOption({
-                                    dataZoom: dataZoomData[0], 
-                                    series: [{
-                                        areaStyle: {
-                                            color: {
-                                                colorStops: newColorStops
-                                            },
-                                            opacity: this.gradientOpacity
-                                        }
-                                    }]                                                                           
-                                })
-                            } else if (this.zoomNextSegment && !this.singleLapView) {
-                                let nextSegment = zen.getNextSegment(allMarkLines, xCoord)
-                                if (nextSegment != -1) {
-                                    let segmentMarkLines = allMarkLines.filter(x => x.id == nextSegment.id && x.repeat == nextSegment.repeat)
-                                    let segmentStart = segmentMarkLines[0];
-                                    let segmentFinish = segmentMarkLines[1];
-                                    //debugger
-                                    if (this.zoomSegmentOnlyWithinApproach && (segmentStart.markLine - xCoord < this.zoomNextSegmentApproach) || !this.zoomSegmentOnlyWithinApproach) {
-                                        //console.log("we are within the segment approach distance, zoom in!")
-                                        
-                                        let zoomStart;
-                                        let zoomFinish;
-                                        if (segmentStart.markLine - 500 > 0) {
-                                            let zoomIdx = common.binarySearchClosest(this.routeDistances, (segmentStart.markLine - this.zoomNextSegmentApproach))
-                                            //zoomStart = xCoord - 500;
-                                            zoomStart = this.routeDistances[zoomIdx]
-                                        } else {
-                                            zoomStart = 0;
-                                        }
-                                        if (segmentFinish.markLine + 200 < this.routeDistances.at(-1)) {
-                                            let zoomIdx = common.binarySearchClosest(this.routeDistances, (segmentFinish.markLine + 100))
-                                            //zoomFinish = xCoord + distance;                
-                                            zoomFinish = this.routeDistances[zoomIdx]
-                                        } else {
-                                            zoomFinish = this.routeDistances.at(-1);                                        
-                                        }
+                                } else if (this.zoomNextSegment && !this.singleLapView) {
+                                    let nextSegment = zen.getNextSegment(allMarkLines, xCoord)
+                                    if (nextSegment != -1) {
+                                        let segmentMarkLines = allMarkLines.filter(x => x.id == nextSegment.id && x.repeat == nextSegment.repeat)
+                                        let segmentStart = segmentMarkLines[0];
+                                        let segmentFinish = segmentMarkLines[1];
+                                        //debugger
+                                        if (this.zoomSegmentOnlyWithinApproach && (segmentStart.markLine - xCoord < this.zoomNextSegmentApproach) || !this.zoomSegmentOnlyWithinApproach) {
+                                            //console.log("we are within the segment approach distance, zoom in!")
+                                            
+                                            let zoomStart;
+                                            let zoomFinish;
+                                            if (segmentStart.markLine - 500 > 0) {
+                                                let zoomIdx = common.binarySearchClosest(this.routeDistances, (segmentStart.markLine - this.zoomNextSegmentApproach))
+                                                //zoomStart = xCoord - 500;
+                                                zoomStart = this.routeDistances[zoomIdx]
+                                            } else {
+                                                zoomStart = 0;
+                                            }
+                                            if (segmentFinish.markLine + 200 < this.routeDistances.at(-1)) {
+                                                let zoomIdx = common.binarySearchClosest(this.routeDistances, (segmentFinish.markLine + 100))
+                                                //zoomFinish = xCoord + distance;                
+                                                zoomFinish = this.routeDistances[zoomIdx]
+                                            } else {
+                                                zoomFinish = this.routeDistances.at(-1);                                        
+                                            }
 
+                                            let idxStart = common.binarySearchClosest(this.routeDistances, (zoomStart)); 
+                                            let idxFinish = common.binarySearchClosest(this.routeDistances, (zoomFinish)); 
+                                            let segmentElevations = this.routeElevations.slice(idxStart, idxFinish)                                    
+                                            //console.log(segmentElevations)
+                                            let segmentMin = Math.floor(Math.min(...segmentElevations) - 5)
+                                            let segmentMax = Math.ceil(Math.max(...segmentElevations) + 5)
+                                            //console.log("Min elev: " + segmentMin + " Max elev: " + segmentMax)
+                                            //debugger
+                                            const dataZoomColorStops = Array.from(this.routeColorStops.slice(idxStart, idxFinish));
+                                            const distance = (segmentFinish.markLine + 100) - (segmentStart.markLine - this.zoomNextSegmentApproach)                                    
+                                            const newColorStops = dataZoomColorStops.map((stop, i) => ({
+                                                offset: (this.routeDistances[idxStart + i] - this.routeDistances[idxStart]) / (distance), // fix distance colorstops
+                                                color: stop.color
+                                            })) 
+                                            //console.log(newColorStops)
+                                            const dataZoomData = [];                                                              
+                                            dataZoomData.push({
+                                                type: 'inside',
+                                                startValue: zoomStart,
+                                                endValue: zoomFinish
+                                            })
+                                            this.chart.setOption({
+                                                dataZoom: dataZoomData[0], 
+                                                series: [{
+                                                    areaStyle: {
+                                                        color: {
+                                                            colorStops: newColorStops
+                                                        },
+                                                        opacity: this.gradientOpacity
+                                                    }
+                                                }],
+                                                yAxis: {
+                                                    min: segmentMin,
+                                                    max: segmentMax
+                                                }                                                                          
+                                            })
+                                            this.zoomedIn = true;
+                                        } else if (this.zoomedIn) {
+                                            //zoom back out
+                                            //console.log("Segment complete, zoom back out")
+                                            this.zoomedIn = false;
+                                            let zoomStart = this.routeDistances.at(0);
+                                            let zoomFinish = this.routeDistances.at(-1);
+                                            let idxStart = common.binarySearchClosest(this.routeDistances, (zoomStart)); 
+                                            let idxFinish = common.binarySearchClosest(this.routeDistances, (zoomFinish)); 
+                                            let elevations = this.routeElevations.slice(idxStart, idxFinish)                                    
+                                            //console.log(segmentElevations)
+                                            //let segmentMin = Math.floor(Math.min(...segmentElevations) - 5)
+                                            //let segmentMax = Math.ceil(Math.max(...segmentElevations) + 5)
+                                            this._yMax = Math.max(...elevations);
+                                            this._yMin = Math.min(...elevations);
+                                            this._yAxisMin = Math.floor(this._yMin > 0 ? Math.max(0, this._yMin - 20) : this._yMin) - 10;
+                                            this._yAxisMax = Math.ceil(Math.max(this._yMax, this._yMin + this.yAxisMin)) + 5;
+                                            //console.log("Min elev: " + segmentMin + " Max elev: " + segmentMax)
+                                            //debugger
+                                            const dataZoomColorStops = Array.from(this.routeColorStops.slice(idxStart, idxFinish));
+                                            const distance = zoomFinish - zoomStart;
+                                            const newColorStops = dataZoomColorStops.map((stop, i) => ({
+                                                offset: (this.routeDistances[idxStart + i] - this.routeDistances[idxStart]) / (distance), // fix distance colorstops
+                                                color: stop.color
+                                            })) 
+                                            //console.log(newColorStops)
+                                            const dataZoomData = [];                                                              
+                                            dataZoomData.push({
+                                                type: 'inside',
+                                                startValue: zoomStart,
+                                                endValue: zoomFinish
+                                            })
+                                            this.chart.setOption({
+                                                dataZoom: dataZoomData[0], 
+                                                series: [{
+                                                    areaStyle: {
+                                                        color: {
+                                                            colorStops: newColorStops
+                                                        },
+                                                        opacity: this.gradientOpacity
+                                                    }
+                                                }],
+                                                yAxis: {
+                                                    min: this._yAxisMin,
+                                                    max: this._yAxisMax
+                                                }                                                                          
+                                            })
+                                        }
+                                        //debugger
+                                    } else if (this.zoomFinalKm) {
+                                        let zoomStart = this.routeDistances.at(-1) - 1000;
+                                        let zoomFinish = this.routeDistances.at(-1);
                                         let idxStart = common.binarySearchClosest(this.routeDistances, (zoomStart)); 
                                         let idxFinish = common.binarySearchClosest(this.routeDistances, (zoomFinish)); 
                                         let segmentElevations = this.routeElevations.slice(idxStart, idxFinish)                                    
@@ -1427,7 +1573,7 @@ export class SauceElevationProfile {
                                         //console.log("Min elev: " + segmentMin + " Max elev: " + segmentMax)
                                         //debugger
                                         const dataZoomColorStops = Array.from(this.routeColorStops.slice(idxStart, idxFinish));
-                                        const distance = (segmentFinish.markLine + 100) - (segmentStart.markLine - this.zoomNextSegmentApproach)                                    
+                                        const distance = zoomFinish - zoomStart;
                                         const newColorStops = dataZoomColorStops.map((stop, i) => ({
                                             offset: (this.routeDistances[idxStart + i] - this.routeDistances[idxStart]) / (distance), // fix distance colorstops
                                             color: stop.color
@@ -1454,10 +1600,9 @@ export class SauceElevationProfile {
                                                 max: segmentMax
                                             }                                                                          
                                         })
-                                        this.zoomedIn = true;
                                     } else if (this.zoomedIn) {
                                         //zoom back out
-                                        //console.log("Segment complete, zoom back out")
+                                        //console.log("No more segments, zoom back out")
                                         this.zoomedIn = false;
                                         let zoomStart = this.routeDistances.at(0);
                                         let zoomFinish = this.routeDistances.at(-1);
@@ -1502,262 +1647,181 @@ export class SauceElevationProfile {
                                             }                                                                          
                                         })
                                     }
-                                    //debugger
-                                } else if (this.zoomFinalKm) {
-                                    let zoomStart = this.routeDistances.at(-1) - 1000;
-                                    let zoomFinish = this.routeDistances.at(-1);
-                                    let idxStart = common.binarySearchClosest(this.routeDistances, (zoomStart)); 
-                                    let idxFinish = common.binarySearchClosest(this.routeDistances, (zoomFinish)); 
-                                    let segmentElevations = this.routeElevations.slice(idxStart, idxFinish)                                    
-                                    //console.log(segmentElevations)
-                                    let segmentMin = Math.floor(Math.min(...segmentElevations) - 5)
-                                    let segmentMax = Math.ceil(Math.max(...segmentElevations) + 5)
-                                    //console.log("Min elev: " + segmentMin + " Max elev: " + segmentMax)
-                                    //debugger
-                                    const dataZoomColorStops = Array.from(this.routeColorStops.slice(idxStart, idxFinish));
-                                    const distance = zoomFinish - zoomStart;
-                                    const newColorStops = dataZoomColorStops.map((stop, i) => ({
-                                        offset: (this.routeDistances[idxStart + i] - this.routeDistances[idxStart]) / (distance), // fix distance colorstops
-                                        color: stop.color
-                                    })) 
-                                    //console.log(newColorStops)
-                                    const dataZoomData = [];                                                              
-                                    dataZoomData.push({
-                                        type: 'inside',
-                                        startValue: zoomStart,
-                                        endValue: zoomFinish
-                                    })
-                                    this.chart.setOption({
-                                        dataZoom: dataZoomData[0], 
-                                        series: [{
-                                            areaStyle: {
-                                                color: {
-                                                    colorStops: newColorStops
-                                                },
-                                                opacity: this.gradientOpacity
-                                            }
-                                        }],
-                                        yAxis: {
-                                            min: segmentMin,
-                                            max: segmentMax
-                                        }                                                                          
-                                    })
-                                } else if (this.zoomedIn) {
-                                    //zoom back out
-                                    //console.log("No more segments, zoom back out")
-                                    this.zoomedIn = false;
-                                    let zoomStart = this.routeDistances.at(0);
-                                    let zoomFinish = this.routeDistances.at(-1);
-                                    let idxStart = common.binarySearchClosest(this.routeDistances, (zoomStart)); 
-                                    let idxFinish = common.binarySearchClosest(this.routeDistances, (zoomFinish)); 
-                                    let elevations = this.routeElevations.slice(idxStart, idxFinish)                                    
-                                    //console.log(segmentElevations)
-                                    //let segmentMin = Math.floor(Math.min(...segmentElevations) - 5)
-                                    //let segmentMax = Math.ceil(Math.max(...segmentElevations) + 5)
-                                    this._yMax = Math.max(...elevations);
-                                    this._yMin = Math.min(...elevations);
-                                    this._yAxisMin = Math.floor(this._yMin > 0 ? Math.max(0, this._yMin - 20) : this._yMin) - 10;
-                                    this._yAxisMax = Math.ceil(Math.max(this._yMax, this._yMin + this.yAxisMin)) + 5;
-                                    //console.log("Min elev: " + segmentMin + " Max elev: " + segmentMax)
-                                    //debugger
-                                    const dataZoomColorStops = Array.from(this.routeColorStops.slice(idxStart, idxFinish));
-                                    const distance = zoomFinish - zoomStart;
-                                    const newColorStops = dataZoomColorStops.map((stop, i) => ({
-                                        offset: (this.routeDistances[idxStart + i] - this.routeDistances[idxStart]) / (distance), // fix distance colorstops
-                                        color: stop.color
-                                    })) 
-                                    //console.log(newColorStops)
-                                    const dataZoomData = [];                                                              
-                                    dataZoomData.push({
-                                        type: 'inside',
-                                        startValue: zoomStart,
-                                        endValue: zoomFinish
-                                    })
-                                    this.chart.setOption({
-                                        dataZoom: dataZoomData[0], 
-                                        series: [{
-                                            areaStyle: {
-                                                color: {
-                                                    colorStops: newColorStops
-                                                },
-                                                opacity: this.gradientOpacity
-                                            }
-                                        }],
-                                        yAxis: {
-                                            min: this._yAxisMin,
-                                            max: this._yAxisMax
-                                        }                                                                          
-                                    })
-                                }
-                                
-                            }
-                            //console.log(allMarkLines)
-                            let nextSegment = zen.getNextSegment(allMarkLines, xCoord) 
-                            //console.log(nextSegment)                           
-                            let distanceToGo;
-                            let distanceToGoUnits;
-                            if (this.showNextSegment && this.showSegmentStart)
-                            {
-                                let nextSegmentDiv = document.getElementById('nextSegmentDiv');
-                                
-                                if (nextSegment != -1)
-                                {
-                                    nextSegment.markLine - xCoord > 1000 ? distanceToGo = ((nextSegment.markLine - xCoord) / 1000).toFixed(2) : distanceToGo = (nextSegment.markLine - xCoord).toFixed(0);
-                                    nextSegment.markLine - xCoord > 1000 ? distanceToGoUnits = "km" : distanceToGoUnits = "m";
-                                    nextSegment.markLine - xCoord > 1000 ? this.refresh = 1000 : this.refresh = 200;
-                                    nextSegmentDiv.innerHTML = (nextSegment.displayName ?? nextSegment.name) + ": " + distanceToGo + distanceToGoUnits;
-                                    nextSegmentDiv.style.visibility = "";
-                                }
-                                else
-                                {                                
-                                    nextSegmentDiv.innerHTML = "";
-                                    nextSegmentDiv.style.visibility = "hidden";
-                                }
-                            }
-                            else
-                            {
-                                this.refresh < 1000 ? this.refresh = 1000 : this.refresh = 1000;
-                                let nextSegmentDiv = document.getElementById('nextSegmentDiv');
-                                nextSegmentDiv.innerHTML = "";
-                                nextSegmentDiv.style.visibility = "hidden";                     
-                            }
-                            if (this.setAthleteSegmentData)
-                            {
-                                
-                                nextSegment.markLine - xCoord > 1000 ? distanceToGo = parseFloat((nextSegment.markLine - xCoord) / 1000).toFixed(2) : distanceToGo = parseFloat(nextSegment.markLine - xCoord).toFixed(0);
-                                nextSegment.markLine - xCoord > 1000 ? distanceToGoUnits = "km" : distanceToGoUnits = "m";
-                                nextSegment.markLine - xCoord > 1000 ? this.refresh = 1000 : this.refresh = 200;
-                                nextSegment == -1 ? this.refresh = 1000 : "";
-                                const routeSegments = allMarkLines;
-                                //console.log(routeSegments)
-                                let nextSegmentName;
-                                let nextSegmentDistanceToGo;
-                                let nextSegmentDisplayName;                            
-                                if (nextSegment.name) {
-                                    nextSegmentName = nextSegment.name;
-                                    nextSegmentDistanceToGo = distanceToGo;
-                                    nextSegmentDisplayName = nextSegment.displayName ?? null;
-                                } else {
-                                    //debugger
-                                    nextSegmentName = "Finish";
-                                    if ((this.routeDistances.at(-1) - xCoord) > 1000) {
-                                        nextSegmentDistanceToGo = parseFloat(((this.routeDistances.at(-1) - xCoord) / 1000)).toFixed(2)
-                                        distanceToGoUnits = "km"
-                                    } else {
-                                        nextSegmentDistanceToGo = parseFloat((this.routeDistances.at(-1) - xCoord)).toFixed(0)
-                                        distanceToGoUnits = "m"
-                                    }
                                     
                                 }
-                                //debugger
-                                //this.routeSegments = routeSegments;
-                                const athleteSegmentData = {
-                                    segmentData: {
-                                        currentPosition: xCoord,
-                                        routeSegments: routeSegments,
-                                        foundRoute: this.foundRouteRoadseg,
-                                        nextSegment: {
-                                            name: nextSegmentName,
-                                            displayName: nextSegmentDisplayName,
-                                            distanceToGo: nextSegmentDistanceToGo,
-                                            distanceToGoUnits: distanceToGoUnits,
-                                            id: nextSegment.id,
-                                            repeat: nextSegment.repeat,
-                                            xCoord
-                                        }
+                                //console.log(allMarkLines)
+                                let nextSegment = zen.getNextSegment(allMarkLines, xCoord) 
+                                //console.log(nextSegment)                           
+                                let distanceToGo;
+                                let distanceToGoUnits;
+                                if (this.showNextSegment && this.showSegmentStart)
+                                {
+                                    let nextSegmentDiv = document.getElementById('nextSegmentDiv');
+                                    
+                                    if (nextSegment != -1)
+                                    {
+                                        nextSegment.markLine - xCoord > 1000 ? distanceToGo = ((nextSegment.markLine - xCoord) / 1000).toFixed(2) : distanceToGo = (nextSegment.markLine - xCoord).toFixed(0);
+                                        nextSegment.markLine - xCoord > 1000 ? distanceToGoUnits = "km" : distanceToGoUnits = "m";
+                                        nextSegment.markLine - xCoord > 1000 ? this.refresh = 1000 : this.refresh = 200;
+                                        nextSegmentDiv.innerHTML = (nextSegment.displayName ?? nextSegment.name) + ": " + distanceToGo + distanceToGoUnits;
+                                        nextSegmentDiv.style.visibility = "";
+                                    }
+                                    else
+                                    {                                
+                                        nextSegmentDiv.innerHTML = "";
+                                        nextSegmentDiv.style.visibility = "hidden";
                                     }
                                 }
+                                else
+                                {
+                                    this.refresh < 1000 ? this.refresh = 1000 : this.refresh = 1000;
+                                    let nextSegmentDiv = document.getElementById('nextSegmentDiv');
+                                    nextSegmentDiv.innerHTML = "";
+                                    nextSegmentDiv.style.visibility = "hidden";                     
+                                }
+                                //console.log("xCoord is", xCoord)
+                                if (this.setAthleteSegmentData)
+                                {
+                                    
+                                    nextSegment.markLine - xCoord > 1000 ? distanceToGo = parseFloat((nextSegment.markLine - xCoord) / 1000).toFixed(2) : distanceToGo = parseFloat(nextSegment.markLine - xCoord).toFixed(0);
+                                    nextSegment.markLine - xCoord > 1000 ? distanceToGoUnits = "km" : distanceToGoUnits = "m";
+                                    nextSegment.markLine - xCoord > 1000 ? this.refresh = 1000 : this.refresh = 200;
+                                    nextSegment == -1 ? this.refresh = 1000 : "";
+                                    const routeSegments = allMarkLines;
+                                    //console.log(routeSegments)
+                                    let nextSegmentName;
+                                    let nextSegmentDistanceToGo;
+                                    let nextSegmentDisplayName;                            
+                                    if (nextSegment.name) {
+                                        nextSegmentName = nextSegment.name;
+                                        nextSegmentDistanceToGo = distanceToGo;
+                                        nextSegmentDisplayName = nextSegment.displayName ?? null;
+                                    } else {
+                                        //debugger
+                                        nextSegmentName = "Finish";
+                                        if ((this.routeDistances.at(-1) - xCoord) > 1000) {
+                                            nextSegmentDistanceToGo = parseFloat(((this.routeDistances.at(-1) - xCoord) / 1000)).toFixed(2)
+                                            distanceToGoUnits = "km"
+                                        } else {
+                                            nextSegmentDistanceToGo = parseFloat((this.routeDistances.at(-1) - xCoord)).toFixed(0)
+                                            distanceToGoUnits = "m"
+                                        }
+                                        
+                                    }
+                                    //debugger
+                                    //this.routeSegments = routeSegments;
+                                    
+                                    const athleteSegmentData = {
+                                        segmentData: {
+                                            currentPosition: xCoord,
+                                            routeSegments: routeSegments,
+                                            foundRoute: this.foundRouteRoadseg,
+                                            nextSegment: {
+                                                name: nextSegmentName,
+                                                displayName: nextSegmentDisplayName,
+                                                distanceToGo: nextSegmentDistanceToGo,
+                                                distanceToGoUnits: distanceToGoUnits,
+                                                id: nextSegment.id,
+                                                repeat: nextSegment.repeat,
+                                                xCoord
+                                            }
+                                        }
+                                    }
+                                    //debugger
+                                    //console.log("updating athlete, refresh rate: " + this.refresh)
+                                    common.rpc.updateAthleteData(this.watchingId, athleteSegmentData)
+                                }  
+                                
+                                
+                                let deltaAvg = this.deltas.reduce((a, b) => a + b, 0) / this.deltas.length                        
+                                let distDelta = state.eventDistance - xCoord;
+                                
                                 //debugger
-                                //console.log("updating athlete, refresh rate: " + this.refresh)
-                                common.rpc.updateAthleteData(this.watchingId, athleteSegmentData)
-                            }  
-                            
-                            
-                            let deltaAvg = this.deltas.reduce((a, b) => a + b, 0) / this.deltas.length                        
-                            let distDelta = state.eventDistance - xCoord;
-                            
-                            //debugger
-                            if (this.deltas.length <= 10 ||
-                                ((this.deltas.length >= 10 && distDelta < (deltaAvg * 2) && isBetween((Math.abs(deltaAvg) - Math.abs(distDelta)), -50, 50)) ||
-                                isNaN(deltaAvg))
-                                ) // make sure the computed distDelta isn't way different than average due to a misplaced pin
-                            {
-                                if (state.eventDistance > 0 && xCoord > 0 && distDelta != 0) {
-                                    this.deltas.push(distDelta);  
-                                    this.deltaIgnoreCount = 0;                              
-                                    if (this.deltas.length > 50)
-                                    {            
-                                        this.deltas.shift();                    
-                                    }   
+                                if (this.deltas.length <= 10 ||
+                                    ((this.deltas.length >= 10 && distDelta < (deltaAvg * 2) && isBetween((Math.abs(deltaAvg) - Math.abs(distDelta)), -50, 50)) ||
+                                    isNaN(deltaAvg))
+                                    ) // make sure the computed distDelta isn't way different than average due to a misplaced pin
+                                {
+                                    if (state.eventDistance > 0 && xCoord > 0 && distDelta != 0) {
+                                        this.deltas.push(distDelta);  
+                                        this.deltaIgnoreCount = 0;                              
+                                        if (this.deltas.length > 50)
+                                        {            
+                                            this.deltas.shift();                    
+                                        }   
+                                    } else {
+                                        //console.log("eventdistance " + state.eventDistance + " xCoord " + xCoord + " distdelta " + distDelta )
+                                    }
+                                    //console.log("deltas is " + this.deltas.reduce((a, b) => a + b, 0) / this.deltas.length);
                                 } else {
-                                    //console.log("eventdistance " + state.eventDistance + " xCoord " + xCoord + " distdelta " + distDelta )
+                                    //console.log("Ignoring distDelta " + distDelta + " that is more than double the avg " + deltaAvg + " or distDelta deviates from the avg by > 50")
+                                    //console.log("deltaAvg is: " + deltaAvg + " distDelta is: " + distDelta )
+                                    this.deltaIgnoreCount++
+                                    if (this.deltaIgnoreCount > 10) {
+                                        //console.log("Something is wrong, resetting deltas")
+                                        this.deltaIgnoreCount = 0;
+                                        this.deltas.length = 0;
+                                    }
+                                    //debugger
                                 }
-                                //console.log("deltas is " + this.deltas.reduce((a, b) => a + b, 0) / this.deltas.length);
-                            } else {
-                                //console.log("Ignoring distDelta " + distDelta + " that is more than double the avg " + deltaAvg + " or distDelta deviates from the avg by > 50")
-                                //console.log("deltaAvg is: " + deltaAvg + " distDelta is: " + distDelta )
-                                this.deltaIgnoreCount++
-                                if (this.deltaIgnoreCount > 10) {
-                                    //console.log("Something is wrong, resetting deltas")
-                                    this.deltaIgnoreCount = 0;
-                                    this.deltas.length = 0;
-                                }
-                                //debugger
                             }
-                        }
-                        let symbol;
-                        if (isBeacon) {                            
-                            //beaconImage = "image://../pages/images/pp-" + beaconColour + ".png"                            
-                            symbol = "path://m 19.000923,56.950256 h 1.021954 V 100 h -0.963276 z m -1.266211,-22.991813 7.026027,-6.131803 -3.321394,9.069959 z m 3.832378,2.107806 a 2.4271723,2.3632993 0 0 1 -2.427172,2.3633 2.4271723,2.3632993 0 0 1 -2.427171,-2.3633 2.4271723,2.3632993 0 0 1 2.427171,-2.363299 2.4271723,2.3632993 0 0 1 2.427172,2.363299 z M 19.521675,13.903697 1.1291999,24.759155 1.2559791,46.349633 19.521675,57.20826 37.917319,46.859918 38.174047,25.015882 Z m 0.129951,10.475121 A 11.369386,11.369386 0 0 1 31.020536,35.747733 11.369386,11.369386 0 0 1 19.651624,47.116646 11.369386,11.369386 0 0 1 8.2827093,35.747733 11.369386,11.369386 0 0 1 19.651626,24.378818 Z M 1,11.858402 19.523156,1 38.174058,11.789339 38.046313,19.267666 19.581839,9.5589751 1.0932144,19.081236 Z"
-                        } else if (this.customPin && this.useCustomPin) {
-                            //debugger
-                            symbol = this.customPin;
-                        } else if (this.pinName) {
-                            symbol = zen.pins.find(x => x.name == this.pinName).path;
-                        } else {
-                            symbol = zen.pins.find(x => x.name == "Default").path;
-                        }                        
-                        let symbolSize = isWatching ? this.em(watchingPinSize) : ((isTeamMate && this.showTeamMembers) || (isMarked && this.showMarkedRiders) || (isBeacon)) ? this.em(teamPinSize) : deemphasize ? this.em(deemphasizePinSize) : this.em(otherPinSize)
-                        
-                        return {
-                            name: state.athleteId,
-                            coord: [xCoord, yCoord],                            
-                            //symbol: isBeacon? beaconImage : symbol,
-                            symbol: symbol,
-                            symbolKeepAspect: true,                            
-                            symbolSize: symbolSize,                                                        
-                            symbolOffset: [0, -(symbolSize / 2)],                            
-                            itemStyle: {
-                                color: isBeacon? beaconColour : isWatching ? watchingPinColor : (isTeamMate && this.showTeamMembers) ? watchingPinColor : (isMarked && this.showMarkedRiders) ? markedPinColor : deemphasize ? '#0002' : '#fff7',
-                                borderWidth: this.em(isWatching ? 0.04 : 0.02),
-                            },
-                            emphasis: {
-                                label: {
-                                    fontSize: this.em(markPointLabelSize),
-                                    fontWeight: 400,
-                                    lineHeight: this.em(1.15 * markPointLabelSize),
-                                    position: (state.altitude - this._yAxisMin) / deltaY > 0.4 ? 'bottom' : 'top',
-                                    backgroundColor: '#222e',
-                                    borderRadius: this.em(0.22 * markPointLabelSize),
-                                    borderWidth: 1,
-                                    borderColor: '#fff9',
-                                    align: (xIdx > this._distances.length / 2) ^ this.reverse ? 'right' : 'left',
-                                    padding: [
-                                        this.em(0.2 * markPointLabelSize),
-                                        this.em(0.3 * markPointLabelSize)
-                                    ],
-                                    formatter: this.onMarkEmphasisLabel.bind(this),
-                                }
-                            },
-                        };
+                            let symbol;
+                            if (isBeacon) {                            
+                                //beaconImage = "image://../pages/images/pp-" + beaconColour + ".png"                            
+                                symbol = "path://m 19.000923,56.950256 h 1.021954 V 100 h -0.963276 z m -1.266211,-22.991813 7.026027,-6.131803 -3.321394,9.069959 z m 3.832378,2.107806 a 2.4271723,2.3632993 0 0 1 -2.427172,2.3633 2.4271723,2.3632993 0 0 1 -2.427171,-2.3633 2.4271723,2.3632993 0 0 1 2.427171,-2.363299 2.4271723,2.3632993 0 0 1 2.427172,2.363299 z M 19.521675,13.903697 1.1291999,24.759155 1.2559791,46.349633 19.521675,57.20826 37.917319,46.859918 38.174047,25.015882 Z m 0.129951,10.475121 A 11.369386,11.369386 0 0 1 31.020536,35.747733 11.369386,11.369386 0 0 1 19.651624,47.116646 11.369386,11.369386 0 0 1 8.2827093,35.747733 11.369386,11.369386 0 0 1 19.651626,24.378818 Z M 1,11.858402 19.523156,1 38.174058,11.789339 38.046313,19.267666 19.581839,9.5589751 1.0932144,19.081236 Z"
+                            } else if (this.customPin && this.useCustomPin) {
+                                //debugger
+                                symbol = this.customPin;
+                            } else if (this.pinName) {
+                                symbol = zen.pins.find(x => x.name == this.pinName).path;
+                            } else {
+                                symbol = zen.pins.find(x => x.name == "Default").path;
+                            }                        
+                            let symbolSize = isWatching ? this.em(watchingPinSize) : ((isTeamMate && this.showTeamMembers) || (isMarked && this.showMarkedRiders) || (isBeacon)) ? this.em(teamPinSize) : deemphasize ? this.em(deemphasizePinSize) : this.em(otherPinSize)
+                            
+                            return {
+                                name: state.athleteId,
+                                coord: [xCoord, yCoord],                            
+                                //symbol: isBeacon? beaconImage : symbol,
+                                symbol: symbol,
+                                symbolKeepAspect: true,                            
+                                symbolSize: symbolSize,                                                        
+                                symbolOffset: [0, -(symbolSize / 2)],                            
+                                itemStyle: {
+                                    color: isBeacon? beaconColour : isWatching ? watchingPinColor : (isTeamMate && this.showTeamMembers) ? watchingPinColor : (isMarked && this.showMarkedRiders) ? markedPinColor : deemphasize ? '#0002' : '#fff7',
+                                    borderWidth: this.em(isWatching ? 0.04 : 0.02),
+                                },
+                                emphasis: {
+                                    label: {
+                                        fontSize: this.em(markPointLabelSize),
+                                        fontWeight: 400,
+                                        lineHeight: this.em(1.15 * markPointLabelSize),
+                                        position: (state.altitude - this._yAxisMin) / deltaY > 0.4 ? 'bottom' : 'top',
+                                        backgroundColor: '#222e',
+                                        borderRadius: this.em(0.22 * markPointLabelSize),
+                                        borderWidth: 1,
+                                        borderColor: '#fff9',
+                                        align: (xIdx > this._distances.length / 2) ^ this.reverse ? 'right' : 'left',
+                                        padding: [
+                                            this.em(0.2 * markPointLabelSize),
+                                            this.em(0.3 * markPointLabelSize)
+                                        ],
+                                        formatter: this.onMarkEmphasisLabel.bind(this),
+                                    }
+                                },
+                            };
+                    }
+                    }).filter(x => x),
+                },
+            }]});   
+         
+            for (const [athleteId, mark] of this.marks.entries()) {
+                if (now - mark.lastSeen > 15000) {
+                    this.marks.delete(athleteId);
                 }
-                }).filter(x => x),
-            },
-        }]});        
-        for (const [athleteId, mark] of this.marks.entries()) {
-            if (now - mark.lastSeen > 15000) {
-                this.marks.delete(athleteId);
             }
+        } else {
+            this.clear()
         }
     }    
 

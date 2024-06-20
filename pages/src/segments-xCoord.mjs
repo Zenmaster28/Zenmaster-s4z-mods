@@ -1,6 +1,7 @@
 import * as common from '/pages/src/common.mjs';
 import * as curves from '/shared/curves.mjs';
 
+
 let routeSegments = [];
 let allMarkLines = [];
 let lapStartIdx;
@@ -265,6 +266,7 @@ function getSegmentMarkline(segment) {
     };
     return [markLineStart,markLineFinish];
 }
+
 
 export async function getSegmentsOnRoute(courseId, routeId, eventSubgroupId) {     
     routeSegments.length = 0;
@@ -656,6 +658,75 @@ function zToAltitude(worldMeta, z, {physicsSlopeScale}={}) {
         (physicsSlopeScale || worldMeta.physicsSlopeScale) + worldMeta.altitudeOffsetHack : null;
 }
 
+export async function getAllRoutes() {
+    let allRoutes = [];
+    let sauceRoutes = await common.rpc.getRoutes();
+    let zenRoutes = await fetch("data/routes.json").then((response) => response.json());
+    for (let route of zenRoutes) {
+        let match = sauceRoutes.find(x => x.id == route.id)
+        //debugger
+        if (match) {
+            allRoutes.push(match)
+        } else {
+            allRoutes.push(route)
+        }
+    }
+    return allRoutes;
+}
+
+export async function getRoadSegments(courseId, roadId, reverse) {
+    let worldSegments = await common.rpc.getSegments(courseId)
+    let roadSegments = worldSegments.filter(x => x.roadId == roadId && x.reverse == reverse)
+    let thisRoad = await common.getRoad(courseId, roadId)
+    for (let segment of roadSegments) {
+        segment.bounds = thisRoad.curvePath.boundsAtRoadPercent(segment.roadStart)
+        segment.boundsFinish = thisRoad.curvePath.boundsAtRoadPercent(segment.roadFinish)
+        let marklines = await getRoadSegmentMarkline(segment, thisRoad)
+        segment.markLines = marklines
+        //debugger
+    }
+    return roadSegments
+    //debugger
+}
+
+async function getRoadSegmentMarkline(segment, thisRoad) {    
+    const distances = Array.from(thisRoad.distances);
+    let percentOffset;
+    let boundsLineIndex = segment.bounds.index
+    segment.reverse ? percentOffset = (segment.bounds.percent) : percentOffset = segment.bounds.percent;
+    let indexOffset = (distances[boundsLineIndex + 1] - distances[boundsLineIndex]) * percentOffset;
+    let markLineIndex = distances[boundsLineIndex] + indexOffset                
+    //allMarkLines.push({name: segment.name, markLine: markLineIndex, id: segment.id})  // segment start lines
+    //debugger
+    const markLineStart = {
+        name: segment.name, 
+        markLine: markLineIndex, 
+        id: segment.id, 
+        repeat: segment.repeat, 
+        segLength: segment.distance
+    };
+
+    boundsLineIndex = segment.boundsFinish.index
+    segment.reverse ? percentOffset = (segment.boundsFinish.percent) : percentOffset = segment.boundsFinish.percent;
+    if (boundsLineIndex < distances.length - 1)
+    {
+        indexOffset = (distances[boundsLineIndex + 1] - distances[boundsLineIndex]) * percentOffset
+    }
+    else
+    {
+        indexOffset = 0;
+    }
+    let markLineIndexFinish = distances[boundsLineIndex] + indexOffset        
+    //allMarkLines.push({name: segment.name + " Finish", markLine: markLineIndex, id: segment.id})  // segment finish line  
+    const markLineFinish = {
+        name: segment.name + " Finish", 
+        markLine: markLineIndexFinish, 
+        id: segment.id, 
+        repeat: segment.repeat, 
+        segLength: segment.distance,
+    };
+    return [markLineStart,markLineFinish];
+}
 
 export async function getModifiedRoute(id) {                   
         let route = await common.rpc.getRoute(id);
@@ -663,7 +734,13 @@ export async function getModifiedRoute(id) {
             console.log("Route not found in Sauce, checking json")
             let newRoutes = await fetch("data/routes.json").then((response) => response.json()); 
             route = newRoutes.find(x => x.id == id)
-            route.courseId = common.worldToCourseIds[route.worldId]
+            if (!route) {
+                console.log("No matching route found, switching to road view")
+                return -1
+            } else {
+                console.log("Found route", route.name, "in json")
+                route.courseId = common.worldToCourseIds[route.worldId]
+            }
             //debugger
         }
         let missing = missingLeadinRoutes.filter(x => x.id == id)
@@ -871,6 +948,41 @@ export function buildEventForm() {
             segmentsForm.appendChild(label);
             i++;
         }
+    }
+    //debugger
+}
+export async function buildPointsForm() {    
+    const localRouteInfo = localStorage.getItem("routeInfo")
+    let routeInfo;
+    let segmentData;
+    if (localRouteInfo) {
+        routeInfo = JSON.parse(localRouteInfo);
+    } else {
+        segmentData = (await common.rpc.getAthleteData("watching")).segmentData
+        segmentData = segmentData.routeSegments.filter(x => x.type != "custom" && !x.name.includes("Finish"));
+    }
+    //debugger
+    //const routeInfo = common.settingsStore.get("routeInfo")
+    const segmentsForm = document.getElementById("options") 
+    const formTitle = document.getElementById("formTitle") 
+    const settings = common.settingsStore.get();
+    formTitle.innerHTML = "Segments to include (" + settings.FTSorFAL + ")"  
+    let i = 1;
+    console.log(routeInfo)
+    for (let segment of segmentData) {
+        
+            let label = document.createElement('label');
+            let key = document.createElement('key');
+            let input = document.createElement('input');
+            input.type = "checkbox";
+            input.checked = true;
+            //input.name = "eventSegData" + "|" + routeInfo.sg + "|" + segment.id + "|" + segment.repeat;
+            key.innerHTML = segment.name.replace("Finish","[" + segment.repeat + "]") + ":";
+            label.appendChild(key);
+            label.appendChild(input);
+            segmentsForm.appendChild(label);
+            i++;
+        
     }
     //debugger
 }
@@ -1102,4 +1214,65 @@ export function selectObject(obj, ...properties) {
     }
   
     return selectedObject;
+}
+
+export function convertWorkoutData(data) {
+    const lines = data.split("\n"); // Split the data by line breaks
+    const workout = {};
+    let workoutDetails = data.substring(data.indexOf('<workout>') + 9, data.indexOf('</workout>'))
+    let warmupStart = workoutDetails.indexOf('<Warmup')
+    let warmupEnd = workoutDetails.indexOf('</Warmup>') + 9
+    let warmup = workoutDetails.substring(warmupStart, warmupEnd)
+    let cooldownStart = workoutDetails.indexOf('<Cooldown')
+    let cooldownEnd = workoutDetails.indexOf('</Cooldown>') + 11
+    let cooldown = workoutDetails.substring(cooldownStart, cooldownEnd)
+    let workoutBody = workoutDetails.substring(warmupEnd + 1, cooldownStart - 9)
+    //console.log(workoutBody)
+    workout.warmup = parseWorkoutLineToObject(warmup);
+    workout.body = parseWorkoutBody(workoutBody);
+    workout.cooldown = parseWorkoutLineToObject(cooldown);
+  
+    return workout;
+  }
+  
+  
+export function xmlToKeyValuePair(xmlString) {
+    // Remove the opening and closing tags
+    const content = xmlString.substring(xmlString.indexOf('>') + 1, xmlString.lastIndexOf('<'));
+
+    // Split the content into key and value
+    const keyValue = xmlString.substring(xmlString.indexOf('<') + 1, xmlString.indexOf('>'))
+
+    // Trim any extra spaces
+    const key = keyValue.trim();
+    const value = content.trim();
+
+    return { [key]: value };
+}
+
+function parseWorkoutLineToObject(xmlString, offset) {
+    //console.log(xmlString)
+    let offsetMarker = offset || 0
+    const content = xmlString.substring(xmlString.indexOf('<') + 1 + offsetMarker, xmlString.indexOf('>') - 1 + offsetMarker).trim();
+    const contentSplit = content.split(" ")    
+    const obj = {};
+    obj.name = contentSplit[0];
+    for (let i = 1; i < contentSplit.length; i++) {        
+        const [prop, value] = contentSplit[i].split('=')        
+        obj[prop.trim()] = value.replace(/"/g, '');
+    }
+    return obj;
+}
+
+function parseWorkoutBody(body) {    
+    let bodyDetails = []
+    const lines = body.split("\n");
+    for (let line of lines) {
+        if (line.indexOf('textevent') == -1 && line.indexOf('</') == -1 && line != "") {
+            //console.log(line)
+            let parsedLine = parseWorkoutLineToObject(line)
+            bodyDetails.push(parsedLine)
+        }
+    }
+    return bodyDetails
 }
