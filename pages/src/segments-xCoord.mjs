@@ -659,18 +659,10 @@ function zToAltitude(worldMeta, z, {physicsSlopeScale}={}) {
 }
 
 export async function getAllRoutes() {
-    let allRoutes = [];
-    let sauceRoutes = await common.rpc.getRoutes();
-    let zenRoutes = await fetch("data/routes.json").then((response) => response.json());
-    for (let route of zenRoutes) {
-        let match = sauceRoutes.find(x => x.id == route.id)
-        //debugger
-        if (match) {
-            allRoutes.push(match)
-        } else {
-            allRoutes.push(route)
-        }
-    }
+    const sauceRoutes = await common.rpc.getRoutes();
+    const zenRoutes = await fetch("data/routes.json").then((response) => response.json());
+    const combinedRoutes = [...sauceRoutes, ...zenRoutes];
+    const allRoutes = combinedRoutes.filter((obj, index, self) => index === self.findIndex((x) => x.id === obj.id));
     return allRoutes;
 }
 
