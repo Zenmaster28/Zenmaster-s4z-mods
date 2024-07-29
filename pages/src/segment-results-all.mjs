@@ -862,7 +862,7 @@ async function getSegmentResults(watching) {
             //let currentLocation = zen.getxCoord(watching, routeInfo); 
             let currentLocation = watching.segmentData.currentPosition;           
             //let segmentStatus = getSegmentStatus(routeSegments, currentLocation, settings.nextSegmentThreshold); 
-            routeSegments = routeSegments.filter(x => x.type != "custom")           
+            routeSegments = routeSegments.filter(x => x.type != "custom" && !x.finishArchOnly)           
             let segmentStatus = getSegmentStatus(routeSegments, currentLocation, settings.nextSegmentThreshold); 
             //console.log(segmentStatus)           
             if (segmentStatus.status != lastStatus) {

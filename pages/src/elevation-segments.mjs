@@ -15,7 +15,7 @@ let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((res
 const allRoutes = await zen.getAllRoutes();
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, refresh=1000}) {
         this.el = el;
         this.worldList = worldList;
         this.preferRoute = preferRoute;
@@ -35,6 +35,7 @@ export class SauceElevationProfile {
         this.watchingTeam = "";
         this.showSegmentStart = showSegmentStart;  
         this.showSegmentFinish = showSegmentFinish;
+        this.showAllArches = showAllArches;
         this.minSegmentLength = minSegmentLength;
         this.showLoopSegments = showLoopSegments;
         this.showNextSegment = showNextSegment;
@@ -483,7 +484,7 @@ export class SauceElevationProfile {
         //let routeDistances;
         //let routeElevations;
         //let routeGrades;
-        let segmentsOnRoute = await zen.processRoute(this.courseId, this.routeId, laps, distance, this.showLoopSegments)
+        let segmentsOnRoute = await zen.processRoute(this.courseId, this.routeId, laps, distance, this.showLoopSegments, this.showAllArches)
         this.routeInfo = segmentsOnRoute;
         this.routeDistances = Array.from(segmentsOnRoute.routeFullData.distances);                    
         this.routeElevations = Array.from(segmentsOnRoute.routeFullData.elevations);        
@@ -527,7 +528,7 @@ export class SauceElevationProfile {
                 {
                     this.lineTypeFinish = JSON.parse("[" + this.lineTypeFinish + "]")[0];
                 }                               
-                if (markline.name.includes("Finish") && markline.type != "custom") {
+                if (markline.name.includes("Finish") && markline.type != "custom" && !markline.finishArchOnly) {
                     if (this.showSegmentFinish && markline.segLength > this.minSegmentLength) {
                         markLines.push({
                             xAxis: markline.markLine,
@@ -539,10 +540,28 @@ export class SauceElevationProfile {
                             label: {
                                 show: true,                            
                                 formatter: '|||',
-                                color: this.lineTextColor
+                                color: this.lineTextColor,
+                                rotate: 0
                             }
                         }); 
                     }
+                } else if (markline.finishArchOnly) {
+                    let archSymbol = 
+                    markLines.push({
+                        xAxis: markline.markLine,
+                        lineStyle: {
+                            width: this.lineSize,
+                            type: this.lineTypeFinish,
+                            color: this.lineTextColor
+                        }, 
+                        label: {
+                            show: true,                            
+                            formatter: '\u25e0',  
+                            fontSize: this.em(0.4 * this.fontScale),
+                            color: this.lineTextColor,
+                            rotate: 0
+                        }
+                    });
                 } else {
                     let marklineName = markline.displayName ? markline.displayName : markline.name;
                     markLines.push({
@@ -556,7 +575,8 @@ export class SauceElevationProfile {
                             distance: 7,
                             position: 'insideEndTop',                    
                             formatter: marklineName,
-                            color: this.lineTextColor
+                            color: this.lineTextColor,
+                            rotate: 90
                         }
                     });
                 }
@@ -589,7 +609,8 @@ export class SauceElevationProfile {
                     distance: 7,
                     position: 'insideMiddleBottom',
                     formatter: `LAP`,
-                    color: this.lineTextColor
+                    color: this.lineTextColor,
+                    rotate: 90
                 }
             });            
             this._routeLeadinDistance = distances[lapStartIdx];
@@ -626,7 +647,8 @@ export class SauceElevationProfile {
                         distance: 7,
                         position: 'insideMiddleBottom',
                         formatter: `LAP ${lap + 1}`,
-                        color: this.lineTextColor
+                        color: this.lineTextColor,
+                        rotate: 90
                     }
                 });
             }

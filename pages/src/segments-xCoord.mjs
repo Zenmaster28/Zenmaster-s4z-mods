@@ -13,7 +13,7 @@ let zwiftSegmentsRequireStartEnd;
 let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
 let replacementLeadins = await fetch("data/leadinData.json").then((response) => response.json());
 
-export async function processRoute(courseId, routeId, laps, distance, includeLoops) { 
+export async function processRoute(courseId, routeId, laps, distance, includeLoops, showAllArches) { 
     distance = parseInt(distance);
     curvePathIndex = 0;   
     routeSegments.length = 0;
@@ -27,7 +27,12 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
     routeFullData = await getModifiedRoute(routeId); 
     worldSegments = await common.rpc.getSegments(courseId);
     zwiftSegmentsRequireStartEnd = await fetch("data/segRequireStartEnd.json").then((response) => response.json());
-    
+    if (showAllArches) {
+        //console.log("Showing all arches - processRoute")
+    } else {
+        //console.log("Not showing all arches - processRoute")
+        showAllArches = false
+    }
     const distances = Array.from(routeFullData.distances);
     const elevations = Array.from(routeFullData.elevations);
     const grades = Array.from(routeFullData.grades);
@@ -79,7 +84,7 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
     let rsIdx = 0;   
     for (let roadSegment of routeFullData.roadSegments)
     {
-        let segments = findSegmentsOnRoadSection(roadSegment, curvePathIndex, rsIdx);
+        let segments = findSegmentsOnRoadSection(roadSegment, curvePathIndex, rsIdx, showAllArches);
         //console.log(rsIdx, roadSegment.reverse, roadSegment.roadId, segments)
         if (segments.length > 0 && routeSegments.length > 0) {
             //debugger
@@ -96,7 +101,12 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
                     ) {
                     // make sure we didn't match this same segment on the last roadSegment as it would be a duplicate (probably Fuego Flats)
                     if (!includeLoops && (segment.name.toLowerCase().includes("loop") || (segment.archId == null) || segment.roadStart == segment.roadFinish)) {
-                        //don't include loops if not specified
+                        //don't include loops if not specified - unless showing all arches
+                        if (showAllArches) {
+                            segment.finishArchOnly = true;
+                            segment.type = "custom";
+                            routeSegments.push(segment);    
+                        }
                     } else {
                         routeSegments.push(segment);
                     }
@@ -110,6 +120,12 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
                 
                 if (!includeLoops && (segment.name.toLowerCase().includes("loop") || (segment.archId == null) || segment.roadStart == segment.roadFinish)) {
                     //don't include loops if not specified
+                    //debugger
+                    if (showAllArches) {
+                        segment.finishArchOnly = true;
+                        segment.type = "custom";
+                        routeSegments.push(segment);    
+                    }
                 } else {
                     routeSegments.push(segment)
                 }
@@ -121,11 +137,14 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
     for (let segment of routeSegments)
     {
         let markLines = getSegmentMarkline(segment);
+        //console.log(markLines)
         if (markLines)
         {
             
             for (let i = 0; i < markLines.length; i++) {
-                isNaN(markLines[i].markLine) ? "" : allMarkLines.push(markLines[i]);
+                if (markLines[i]) {
+                    isNaN(markLines[i].markLine) ? "" : allMarkLines.push(markLines[i]);
+                }
             }
         }
         //debugger
@@ -146,7 +165,8 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
     return routeInfo;
 }
 
-function findSegmentsOnRoadSection(thisRoad, cpIndex, rsIdx) {
+function findSegmentsOnRoadSection(thisRoad, cpIndex, rsIdx, showAllArches) {
+    
     typeof thisRoad.reverse === 'undefined' ? thisRoad.reverse = false : "";
     typeof thisRoad.lap === 'undefined' ? thisRoad.lap = 1 : "";
     const segmentsOnRoad = worldSegments.filter(x => (x.roadId == thisRoad.roadId));
@@ -155,14 +175,22 @@ function findSegmentsOnRoadSection(thisRoad, cpIndex, rsIdx) {
         // there are segments on this road, check if they match this roadSection
         //console.log("Found " + segmentsOnRoad.length + " possible segments on this road")
         for (let segment of segmentsOnRoad) {
-            if (segment.roadStart == null || segment.reverse != thisRoad.reverse) {
+            if ((segment.roadStart == null || segment.reverse != thisRoad.reverse) && (!showAllArches)) {
                 // skip segments with no roadStart value and the segment and road direction must match
                 continue;
-            }
+            }            
             segment.id == "1065262910" ? segment.id = "18245132094" : ""; // leg snapper segment id workaround
-            let includeSegment = false;            
-            let foundSegmentStart = thisRoad.includesRoadPercent(segment.roadStart);  // does the roadSection go through the start of the segment
+            let includeSegment = false;   
+            let wrongWay = false;
+            if (segment.reverse != thisRoad.reverse) {
+                wrongWay = true;
+                includeSegment = false;
+                //console.log("We are going the wrong way for this segment")
+            }         
+            let foundSegmentStart = wrongWay ? false : thisRoad.includesRoadPercent(segment.roadStart);  // does the roadSection go through the start of the segment
             let foundSegmentEnd = thisRoad.includesRoadPercent(segment.roadFinish); // does the roadSection go through the end of the segment
+            //debugger
+            // let showAllArches = true;
             if (zwiftSegmentsRequireStartEnd.includes(segment.id)) {
                 if (foundSegmentStart && foundSegmentEnd) {
                     // segment is flagged as requiring the roadSection to go through both the start and end of segment and it does!                    
@@ -170,8 +198,8 @@ function findSegmentsOnRoadSection(thisRoad, cpIndex, rsIdx) {
                 } 
             }
             else if (foundSegmentStart || foundSegmentEnd) {
-                // segment only requires going through start or end and it does
-                includeSegment = true;
+                // segment only requires going through start or end and it does                
+                includeSegment = wrongWay ? false : true;
             }
             if (includeSegment) {
                 let newSegment = {...segment}
@@ -222,12 +250,95 @@ function findSegmentsOnRoadSection(thisRoad, cpIndex, rsIdx) {
                     //debugger
                 }
 
+            } else if (!includeSegment && showAllArches && foundSegmentEnd && !foundSegmentStart) {
+                let newSegment = {...segment}
+                newSegment.bounds = thisRoad.boundsAtRoadPercent(segment.roadStart);
+                newSegment.bounds.curvePathIndex = cpIndex;
+                //newSegment.bounds.roadSegment = parseInt(roadIndex);
+                newSegment.boundsFinish = thisRoad.boundsAtRoadPercent(segment.roadFinish);
+                newSegment.boundsFinish.curvePathIndex = cpIndex;
+                //newSegment.boundsFinish.roadSegment = parseInt(roadIndex);
+                newSegment.leadin = thisRoad.leadin ?? false;                        
+                let originIndex = findNodesIndex(thisRoad, newSegment.bounds.origin, newSegment.bounds.next, thisRoad.reverse, cpIndex); 
+                let originFinishIndex = findNodesIndex(thisRoad, newSegment.boundsFinish.origin, newSegment.boundsFinish.next, thisRoad.reverse, cpIndex); 
+                newSegment.bounds.originIndex = originIndex; 
+                newSegment.boundsFinish.originIndex = originFinishIndex;                    
+                newSegment.bounds.markLines = [];
+                newSegment.boundsFinish.markLines = [];
+                newSegment.lap = thisRoad.lap;
+                newSegment.matchedStart = foundSegmentStart;
+                newSegment.matchedEnd = foundSegmentEnd;
+                newSegment.finishArchOnly = true;
+                let segmentRepeats = routeSegments.filter(x => x.id == newSegment.id)
+                if (segmentRepeats.length > 0) {
+                    // found a repeated segment
+                    //debugger 
+                    newSegment.repeat = segmentRepeats.length + 1;
+                } else {
+                    newSegment.repeat = 1;
+                }
+                newSegment.roadSegmentIndex = rsIdx;
+                if (originIndex != -1 && (
+                        routeSegments.length == 0 || 
+                        (newSegment.bounds.roadSegment - 1 != routeSegments[routeSegments.length - 1].bounds.roadSegment ||
+                            newSegment.name != routeSegments[routeSegments.length - 1].name
+                        )
+                    ))
+                {                            
+                    //routeSegments.push(newSegment);
+                    roadSegments.push(newSegment);
+                    //return newSegment;
+                }
+                else if (originIndex = -1 && foundSegmentEnd && (routeSegments.length == 0 || newSegment.bounds.roadSegment - 1 != routeSegments[routeSegments.length - 1].bounds.roadSegment)) // didn't match the start of the segment but found the end AND it's not on the list of segments requiring the start and end.  We must be in Scotland....
+                {
+                    //debugger
+                    //routeSegments.push(newSegment);
+                    roadSegments.push(newSegment);
+                    //return newSegment;
+                } else {
+                    console.log("Segment ignored for some reason...")
+                    //debugger
+                }
+
             }
         }
     }
-    
-    return roadSegments;
+    //console.log(roadSegments)
+    const filteredSegments = [];
+    if (roadSegments.length > 0) {
+        let groupedSegments = groupBy(roadSegments, 'roadFinish')
+        for (let s in groupedSegments) {
+            if (groupedSegments[s].length > 1) {
+                filteredSegments.push(groupedSegments[s].find(x => x.reverse == thisRoad.reverse))
+            } else {
+                filteredSegments.push(groupedSegments[s][0])
+            }
+        }
+    }
+    if (roadSegments.length > 0) {
+        //debugger
+    }
+    return filteredSegments
+    //return roadSegments;
 }
+
+export const groupBy = (array, key) => {
+    return array.reduce((result, currentValue) => {
+        // Get the value of the key we want to group by
+        const groupKey = currentValue[key];
+
+        // If the key is not already in the result object, add it
+        if (!result[groupKey]) {
+            result[groupKey] = [];
+        }
+
+        // Add the current object to the group
+        result[groupKey].push(currentValue);
+
+        // Return the result object for the next iteration
+        return result;
+    }, {});
+};
 
 function getSegmentMarkline(segment) {
     const distances = Array.from(routeFullData.distances);
@@ -237,7 +348,7 @@ function getSegmentMarkline(segment) {
     let indexOffset = (distances[boundsLineIndex + 1] - distances[boundsLineIndex]) * percentOffset;
     let markLineIndex = distances[boundsLineIndex] + indexOffset                
     //allMarkLines.push({name: segment.name, markLine: markLineIndex, id: segment.id})  // segment start lines
-    const markLineStart = {
+    const markLineStart = segment.finishArchOnly ? null : {
         name: segment.name, 
         markLine: markLineIndex, 
         id: segment.id, 
@@ -257,7 +368,11 @@ function getSegmentMarkline(segment) {
     }
     let markLineIndexFinish = distances[boundsLineIndex] + indexOffset        
     //allMarkLines.push({name: segment.name + " Finish", markLine: markLineIndex, id: segment.id})  // segment finish line  
-    const markLineFinish = {
+    const markLineFinish = segment.finishArchOnly ? {
+        name: segment.name + " Finish",
+        markLine: markLineIndexFinish,
+        finishArchOnly: true
+    } : {
         name: segment.name + " Finish", 
         markLine: markLineIndexFinish, 
         id: segment.id, 

@@ -49,6 +49,10 @@
                     <key data-added="2023-12-04">Show segment finish:</key>
                     <input type="checkbox" name="showSegmentFinish" data-depends-on="showSegmentStart"/>
                 </label>
+                <label title="Show all arch banners regardless of whether or not the entire segment is on the route">
+                    <key data-added="2024-07-26">Show all arches:</key>
+                    <input type="checkbox" name="showAllArches"/>
+                </label>
                 <label title="The minimum length a segment must be to show the finish.  If too short then there is too much overlap.">
                     <key data-added="2023-12-04">Min segment length</key>
                     <input type="range" name="minSegmentLength" min="100" max="5000" step="100" data-depends-on="showSegmentFinish"/>

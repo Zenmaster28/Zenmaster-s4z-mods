@@ -32,7 +32,8 @@ common.settingsStore.setDefault({
     autoCenter: true,
     // v1.1+
     disableChat: false,
-    showMap: true
+    showMap: true,
+    showAllArches: false
 });
 
 const settings = common.settingsStore.get();
@@ -157,7 +158,9 @@ function createElevationProfile() {
     const lineTypeFinish = settings.lineTypeFinish ? settings.lineTypeFinish : "[5, 10]";
     const lineSize = settings.lineSize ? settings.lineSize : 1.0;
     const pinColor = settings.pinColor ? settings.pinColor : "#ff430e";
-    const showSegmentFinish = settings.showSegmentFinish !== false;
+    const showSegmentFinish = settings.showSegmentFinish !== false;    
+    typeof(settings.showAllArches) == "undefined" ? common.settingsStore.set("showAllArches", false) : null;
+    const showAllArches = settings.showAllArches;
     const minSegmentLength = settings.minSegmentLength ? settings.minSegmentLength : 500;
     const showNextSegment = settings.showNextSegment !== false;    
     const setAthleteSegmentData = settings.setAthleteSegmentData !== false;
@@ -201,7 +204,7 @@ function createElevationProfile() {
     const lineTextColor = settings.lineTextColor;
     typeof(settings.gradientOpacity) == "undefined" ? common.settingsStore.set("gradientOpacity", 0.7) : null;
     const gradientOpacity = settings.gradientOpacity;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider});
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, showAllArches});
     //return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, colorScheme, showSegmentStart});
 }
 
@@ -602,7 +605,8 @@ export async function main() {
                         changed.has('yAxisMin') ||
                         changed.has('colorScheme') ||
                         changed.has('showMap') ||
-                        changed.has('gradientOpacity')
+                        changed.has('gradientOpacity') ||
+                        changed.has('showAllArches')
                     )
                 {
                     //console.log(changed);
