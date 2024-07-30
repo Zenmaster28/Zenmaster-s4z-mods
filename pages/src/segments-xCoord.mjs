@@ -909,6 +909,76 @@ export async function getModifiedRoute(id) {
         
 }
 
+export async function getSegmentPath(id) {
+    let segment = await common.rpc.getSegment(id.toString())
+    console.log(segment)
+    //debugger
+    if (segment) {
+        segment.curvePath = new curves.CurvePath();
+        segment.roadSegments = []; 
+        const worldList = await common.getWorldList();
+        const worldMeta = worldList.find(x => x.worldId === segment.worldId);
+        let i = 1;
+        let loop = false;
+        if (segment.name.toLowerCase().includes("loop") || segment.roadStart == segment.roadFinish) {
+            i = 2;
+            loop = true;
+        }
+        for (let r=0;r <i;r++) {
+            let seg;      
+            
+            const road = await common.getRoad(common.worldToCourseIds[segment.worldId], segment.roadId);
+            console.log(road)
+            if (segment.reverse) {
+                //debugger
+                if (loop && r == 0) {
+                    console.log("Reverse Looped segment and first pass")
+                    seg = road.curvePath.subpathAtRoadPercents(segment.roadFinish, 1);
+                } else if (loop && r == 1) {
+                    console.log("Reverse Looped segment and second pass")
+                    seg = road.curvePath.subpathAtRoadPercents(0, segment.roadStart);
+                    //seg = road.curvePath.subpathAtRoadPercents(segment.roadFinish, 1);
+                } else if (!loop) {
+                    seg = road.curvePath.subpathAtRoadPercents(segment.roadFinish, segment.roadStart);
+                }
+            } else {
+                if (loop && r == 0) {
+                    console.log("Looped segment and first pass")
+                    seg = road.curvePath.subpathAtRoadPercents(segment.roadStart, 1);
+                    //seg = seg.toReversed();
+                    //seg = road.curvePath.subpathAtRoadPercents(0, segment.roadStart);
+                } else if (loop && r == 1) {
+                    console.log("Looped segment and second pass")
+                    seg = road.curvePath.subpathAtRoadPercents(0, segment.roadFinish);
+                    //seg = seg.toReversed();
+                    //seg = road.curvePath.subpathAtRoadPercents(segment.roadFinish, 1);
+                } else if (!loop) {
+                    seg = road.curvePath.subpathAtRoadPercents(segment.roadStart, segment.roadFinish);
+                }
+            }
+            seg.reverse = segment.reverse;
+            //seg.leadin = segment.leadin;
+            seg.roadId = segment.roadId;
+            for (const xx of seg.nodes) {
+                //xx.index = i;
+            }
+            console.log(seg)
+            segment.roadSegments.push(seg);
+            //if (r == 0) {
+                segment.curvePath.extend(segment.reverse ? seg.toReversed() : seg);
+            //}
+            
+            // NOTE: No support for physicsSlopeScaleOverride of portal roads.
+            // But I've not seen portal roads used in a route either.
+            //debugger
+        }
+        Object.assign(segment, supplimentPath(worldMeta, segment.curvePath));
+        //debugger
+        console.log(segment)
+    }
+    return segment;
+}
+
 export function getNextSegment(arr, number) {
     // Sort the array based on the roadindex property
     if (arr.length == 0) {

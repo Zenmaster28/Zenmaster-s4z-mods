@@ -1,0 +1,620 @@
+import * as common from '/pages/src/common.mjs';
+import * as map from './map.mjs';
+import * as elevation from './elevation-segments.mjs';
+import * as fields from '/pages/src/fields.mjs';
+import * as data from '/shared/sauce/data.mjs';
+import * as zen from './segments-xCoord.mjs';
+
+
+const doc = document.documentElement;
+
+common.settingsStore.setDefault({
+    // v0.13.0...
+    profileOverlay: true,
+    mapStyle: 'default',
+    tiltShift: false,
+    tiltShiftAmount: 80,
+    sparkle: false,
+    solidBackground: false,
+    transparency: 0,
+    backgroundColor: '#00ff00',
+    fields: 1,
+    autoHeading: true,
+    quality: 50,
+    verticalOffset: 0,
+    fpsLimit: 30,
+    // v0.13.1...
+    zoomPriorityTilt: true,
+    // v1.0.0
+    profileHeight: 20,
+    routeProfile: true,
+    showElevationMaxLine: true,
+    autoCenter: true,
+    // v1.1+
+    disableChat: false,
+    showMap: true,
+    showAllArches: false
+});
+
+const settings = common.settingsStore.get();
+const url = new URL(location);
+const courseSelect = document.querySelector('#titlebar select[name="course"]');
+const segmentSelect = document.querySelector('#titlebar select[name="segment"]');
+//const lapsSelect = document.getElementById("laps");
+//const distanceSelect = document.getElementById("customDistance")
+const demoState = {};
+
+let worldList;
+let segmentsList;
+let watchdog;
+let inGame;
+let zwiftMap;
+let elProfile;
+let courseId = Number(url.searchParams.get('course')) || 6;
+let urlRoute = url.searchParams.get('route')
+let routeId = urlRoute ? BigInt(urlRoute) : undefined;
+//debugger
+let currentRoute;
+
+function qualityScale(raw) {
+    raw = raw || 1;
+    const min = 0.2;
+    return Math.min(2, (raw / 100) * (1 - min) + min);
+}
+
+
+function getSetting(key, def) {
+    const v = settings[key];
+    return v === undefined ? def : v;
+}
+
+
+function createZwiftMap() {
+    const opacity = 1 - 1 / (100 / (settings.transparency || 0));
+    const autoCenter = getSetting('autoCenter', true);
+    const zm = new map.SauceZwiftMap({
+        el: document.querySelector('.map'),
+        worldList,
+        zoom: settings.zoom,
+        autoHeading: autoCenter && getSetting('autoHeading', true),
+        autoCenter,
+        style: settings.mapStyle,
+        opacity,
+        tiltShift: settings.tiltShift && ((settings.tiltShiftAmount || 0) / 100),
+        sparkle: settings.sparkle,
+        quality: qualityScale(settings.quality || 80),
+        verticalOffset: settings.verticalOffset / 100,
+        fpsLimit: settings.fpsLimit || 30,
+        zoomPriorityTilt: getSetting('zoomPriorityTilt', true),
+        preferRoute: settings.routeProfile !== false,
+        zoomCenter: settings.zoomCenter || false,
+        overrideDistance: settings.overrideDistance || 0,
+        overrideLaps: settings.overrideLaps || 0
+    });
+    const autoCenterBtn = document.querySelector('.map-controls .button.toggle-auto-center');
+    const autoHeadingBtn = document.querySelector('.map-controls .button.toggle-auto-heading');
+
+    function autoCenterHandler(en) {
+        if (en) {
+            zm.setDragOffset([0, 0]);
+        }
+        zm.setAutoCenter(en);
+        zm.setAutoHeading(!en ? false : !!settings.autoHeading);
+        autoCenterBtn.classList.toggle('primary', !!en);
+        autoCenterBtn.classList.remove('outline');
+        autoHeadingBtn.classList.toggle('disabled', !en);
+        settings.autoCenter = en;
+        common.settingsStore.set(null, settings);
+    }
+
+    function autoHeadingHandler(en) {
+        zm.setAutoHeading(en);
+        if (en) {
+            zm.setHeadingOffset(0);
+        }
+        autoHeadingBtn.classList.remove('outline');
+        autoHeadingBtn.classList.toggle('primary', !!en);
+        settings.autoHeading = en;
+        common.settingsStore.set(null, settings);
+    }
+
+    autoCenterBtn.classList.toggle('primary', settings.autoCenter !== false);
+    autoCenterBtn.addEventListener('click', () =>
+        autoCenterHandler(!autoCenterBtn.classList.contains('primary')));
+    autoHeadingBtn.classList.toggle('disabled', settings.autoCenter === false);
+    autoHeadingBtn.classList.toggle('primary', settings.autoHeading !== false);
+    autoHeadingBtn.addEventListener('click', () =>
+        autoHeadingHandler(!autoHeadingBtn.classList.contains('primary')));
+
+    zm.addEventListener('drag', ev => {
+        if (ev.drag) {
+            const dragging = !!(ev.drag && (ev.drag[0] || ev.drag[1]));
+            if (dragging && settings.autoCenter !== false) {
+                autoCenterBtn.classList.remove('primary');
+                autoCenterBtn.classList.add('outline');
+            }
+        } else if (ev.heading) {
+            if (autoHeadingBtn.classList.contains('primary')) {
+                autoHeadingBtn.classList.remove('primary');
+                autoHeadingBtn.classList.add('outline');
+            }
+        }
+    });
+
+    return zm;
+}
+
+
+function createElevationProfile() {
+    const el = document.querySelector('.elevation-profile');
+    if (settings.profileHeight) {
+        el.style.setProperty('--profile-height', settings.profileHeight / 100);
+    }
+    const preferRoute = settings.routeProfile !== false;
+    const showMaxLine = settings.showElevationMaxLine !== false;
+    const showLapMarker = settings.showLapMarker !== false;
+    const showSegmentStart = settings.showSegmentStart !== false;   
+    const showLoopSegments = settings.showLoopSegments !== false; 
+    const pinSize = settings.pinSize ? settings.pinSize : 1;
+    const lineType = settings.lineType ? settings.lineType : "solid";
+    const lineTypeFinish = settings.lineTypeFinish ? settings.lineTypeFinish : "[5, 10]";
+    const lineSize = settings.lineSize ? settings.lineSize : 1.0;
+    const pinColor = settings.pinColor ? settings.pinColor : "#ff430e";
+    const showSegmentFinish = settings.showSegmentFinish !== false;    
+    typeof(settings.showAllArches) == "undefined" ? common.settingsStore.set("showAllArches", false) : null;
+    const showAllArches = settings.showAllArches;
+    const minSegmentLength = settings.minSegmentLength ? settings.minSegmentLength : 500;
+    const showNextSegment = settings.showNextSegment !== false;    
+    const setAthleteSegmentData = settings.setAthleteSegmentData !== false;
+    typeof(settings.showCompletedLaps) == "undefined" ? common.settingsStore.set("showCompletedLaps", true) : null;
+    const showCompletedLaps = settings.showCompletedLaps;  
+    typeof(settings.overrideDistance) == "undefined" ? common.settingsStore.set("overrideDistance", 0) : null 
+    const overrideDistance = settings.overrideDistance;
+    typeof(settings.overrideLaps) == "undefined" ? common.settingsStore.set("overrideLaps", 0) : null;
+    const overrideLaps = settings.overrideLaps;    
+    typeof(settings.yAxisMin) == "undefined" ? common.settingsStore.set("yAxisMin", 200) : null;
+    const yAxisMin = settings.yAxisMin;
+    typeof(settings.singleLapView) == "undefined" ? common.settingsStore.set("singleLapView", false) : null;
+    const singleLapView = settings.singleLapView !== false;
+    typeof(settings.profileZoom) == "undefined" ? common.settingsStore.set("profileZoom", false) : null;
+    const profileZoom = settings.profileZoom;
+    typeof(settings.zoomNextSegment) == "undefined" ? common.settingsStore.set("zoomNextSegment", false) : null;
+    const zoomNextSegment = settings.zoomNextSegment;
+    typeof(settings.zoomNextSegmentApproach) == "undefined" ? common.settingsStore.set("zoomNextSegmentApproach", 100) : null;
+    const zoomNextSegmentApproach = settings.zoomNextSegmentApproach;
+    typeof(settings.zoomFinalKm) == "undefined" ? common.settingsStore.set("zoomFinalKm", false) : null;
+    const zoomFinalKm = settings.zoomFinalKm;
+    typeof(settings.zoomSlider) == "undefined" ? common.settingsStore.set("zoomSlider", false) : null;
+    const zoomSlider = settings.zoomSlider;
+    typeof(settings.forwardDistance) == "undefined" ? common.settingsStore.set("forwardDistance", 5000) : null;
+    const forwardDistance = settings.forwardDistance;
+    typeof(settings.showMyPin) == "undefined" ? common.settingsStore.set("showMyPin", true) : null;
+    const showMyPin = settings.showMyPin;
+    typeof(settings.showTeamMembers) == "undefined" ? common.settingsStore.set("showTeamMembers", false) : null;
+    const showTeamMembers =  settings.showTeamMembers;
+    typeof(settings.showMarkedRiders) == "undefined" ? common.settingsStore.set("showMarkedRiders", false) : null;
+    const showMarkedRiders = settings.showMarkedRiders;
+    typeof(settings.showAllRiders) == "undefined" ? common.settingsStore.set("showAllRiders", true) : null;
+    const showAllRiders = settings.showAllRiders;
+    typeof(settings.showRobopacers) == "undefined" ? common.settingsStore.set("showRobopacers", false) : null;
+    const showRobopacers = settings.showRobopacers;
+    typeof(settings.showLeaderSweep) == "undefined" ? common.settingsStore.set("showLeaderSweep", false) : null;
+    const showLeaderSweep = settings.showLeaderSweep;
+    typeof(settings.pinColorMarked) == "undefined" ? common.settingsStore.set("pinColorMarked", "#9cb7ec") : null;
+    const pinColorMarked = settings.pinColorMarked;typeof(settings.colorScheme) == "undefined" ? common.settingsStore.set("colorScheme", "sauce") : null
+    const colorScheme = settings.colorScheme;typeof(settings.lineTextColor) == "undefined" ? common.settingsStore.set("lineTextColor", "#ffffff") : null;
+    const lineTextColor = settings.lineTextColor;
+    typeof(settings.gradientOpacity) == "undefined" ? common.settingsStore.set("gradientOpacity", 0.7) : null;
+    const gradientOpacity = settings.gradientOpacity;
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, showAllArches});
+    //return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, colorScheme, showSegmentStart});
+}
+
+
+function setWatching(id) {
+    console.info("Now watching:", id);
+    zwiftMap.setWatching(id);
+    if (elProfile) {
+        elProfile.setWatching(id);
+    }
+}
+
+
+async function initialize() {
+    const ad = await common.rpc.getAthleteData('self');
+    inGame = !!ad && ad.age < 15000;
+    if (!inGame) {
+        if (!demoState.intervalId) {
+            demoState.intervalId = true; // lock
+            console.info("User not active: Starting demo mode...");
+            if (elProfile) {
+                elProfile.clear();
+            }
+            const randomCourseId = worldList[worldList.length * Math.random() | 0].courseId;
+            let heading = 0;
+            demoState.transitionDurationSave = zwiftMap.getTransitionDuration();
+            demoState.zoomSave = zwiftMap.zoom;
+            zwiftMap.setZoom(0.2, {disableEvent: true});
+            await zwiftMap.setCourse(randomCourseId);
+            if (demoState.intervalId === true) {  // could have been cancelled during await
+                zwiftMap.setHeading(heading += 5);
+                zwiftMap.setTransitionDuration(1100);
+                demoState.intervalId = setInterval(() => {
+                    zwiftMap.setHeading(heading += 5);
+                }, 1000);
+            }
+        }
+        return;
+    } else if (demoState.intervalId) {
+        console.info("User detected in game: Ending demo mode.");
+        clearInterval(demoState.intervalId);
+        demoState.intervalId = null;
+        zwiftMap.setTransitionDuration(demoState.transitionDurationSave);
+        zwiftMap.setZoom(demoState.zoomSave, {disableEvent: true});
+    }
+    zwiftMap.setAthlete(ad.athleteId);
+    if (elProfile) {
+        elProfile.setAthlete(ad.athleteId);
+    }
+    if (!ad.watching) {
+        const watching = await common.rpc.getAthleteData('watching');
+        if (watching) {
+            setWatching(watching.athleteId);
+        }
+    } else {
+        setWatching(ad.athleteId);
+    }
+    if (ad.state) {
+        zwiftMap.incPause();
+        try {
+            await zwiftMap.renderAthleteStates([ad.state]);
+        } finally {
+            zwiftMap.decPause();
+        }
+        if (elProfile) {
+            await elProfile.renderAthleteStates([ad.state]);
+        }
+    }
+}
+
+
+function centerMap(positions, options) {
+    const xMin = data.min(positions.map(x => x[0]));
+    const yMin = data.min(positions.map(x => x[1]));
+    const xMax = data.max(positions.map(x => x[0]));
+    const yMax = data.max(positions.map(x => x[1]));
+    zwiftMap.setDragOffset([0, 0]);
+    zwiftMap.setBounds([xMin, yMax], [xMax, yMin], options);
+}
+
+
+const _routeHighlights = [];
+async function applySegment() {
+    console.log("applying segment")    
+    //console.log("zoomCenter is " + zoomCenter)
+    //debugger
+    if (routeId != null) {
+        url.searchParams.set('route', routeId);
+    } else {
+        url.searchParams.delete('route');
+    }
+    history.replaceState({}, '', url);
+    while (_routeHighlights.length) {
+        _routeHighlights.pop().elements.forEach(x => x.remove());
+    }
+    segmentSelect.replaceChildren();
+    segmentSelect.insertAdjacentHTML('beforeend', `<option value disabled selected>Segment</option>`);  
+    console.log(segmentsList)  
+    for (const x of segmentsList) {        
+        if (common.worldToCourseIds[x.worldId] !== courseId) {
+            continue;
+        }        
+        segmentSelect.insertAdjacentHTML('beforeend', `
+            <option ${x.id == routeId ? 'selected' : ''}
+                    value="${x.id}">${common.stripHTML(x.name)} (${common.stripHTML((x.distance).toFixed(0))}m) </option>`);
+    }
+    if (routeId != null) {        
+        const route = await zen.getSegmentPath(routeId);
+        let path;
+        //debugger
+        if (zwiftMap.overrideDistance > 0) {
+            let idx = common.binarySearchClosest(route.distances, zwiftMap.overrideDistance)
+            path = route.curvePath;
+            path.nodes = path.nodes.slice(0, idx + 1)
+        } else {
+            path = route.curvePath;
+        }
+        //debugger
+        _routeHighlights.push(
+            zwiftMap.addHighlightPath(path, `route-1-${route.id}`, {width: 5, color: '#0004'}),
+            zwiftMap.addHighlightPath(path, `route-2-${route.id}`, {width: 1.2, color: 'black'}),
+            zwiftMap.addHighlightPath(path, `route-3-${route.id}`, {width: 0.5, color: 'gold'}),
+        );
+        centerMap(route.curvePath.flatten(1/3));
+        //debugger
+        if (elProfile) {
+            //await elProfile.setRoute(routeId);
+            if (settings.overrideDistance > 0 || settings.overrideLaps > 0) {
+                //console.log("overridedistance: " + settings.overrideDistance + " overridelaps: " + settings.overrideLaps)
+                //await elProfile.setRoute(routeId.toString(), {laps: settings.overrideLaps, eventSubgroupId: 0, distance: settings.overrideDistance, segmentOnly: true})
+                await elProfile.setSegment(route)
+            } else {
+                await elProfile.setRoute(+routeId);
+            }
+        }
+        //if (route.supportedLaps) {
+        //    lapsSelect.disabled = false;
+        //} else {            
+        //    lapsSelect.disabled = true;
+        //}
+    } else {
+        zwiftMap.setVerticalOffset(0);
+        zwiftMap.setDragOffset([0, 0]);
+        zwiftMap.setZoom(0.3);
+        if (elProfile) {
+            elProfile.clear();
+        }
+    }
+}
+
+async function getCourseSegments(courseId) {
+    [worldList, segmentsList] = await Promise.all([common.getWorldList(), common.rpc.getSegments(courseId)]);    
+    segmentsList = Array.from(segmentsList).sort((a, b) => a.name < b.name ? -1 : 1); 
+    segmentsList = segmentsList.filter(x => x.distance > 50 && !x.name.toLowerCase().includes("loop") && x.roadStart !== x.roadFinish)    // get rid of invalid short segments and looped segments
+    return [worldList,segmentsList];
+}
+
+async function applyCourse() {
+    console.log("applying course")    
+    if (courseId != null) {
+        url.searchParams.set('course', courseId);
+    } else {
+        url.searchParams.delete('course');
+    }
+    history.replaceState({}, '', url);
+    courseSelect.replaceChildren();
+    for (const x of worldList) {
+        courseSelect.insertAdjacentHTML('beforeend', `
+            <option ${x.courseId === courseId ? 'selected' : ''}
+                    value="${x.courseId}">${common.stripHTML(x.name)}</option>`);
+    }
+    if (courseId != null) {
+        await zwiftMap.setCourse(courseId);
+        if (elProfile) {
+            await elProfile.setCourse(courseId);
+        }
+    }    
+}
+
+
+export async function main() {
+    common.initInteractionListeners();
+    common.setBackground(settings);
+    const fieldsEl = document.querySelector('#content .fields');
+    const fieldRenderer = new common.Renderer(fieldsEl, {fps: 1});
+    const mapping = [];
+    const defaults = {
+        f1: 'grade',
+        f2: 'altitude',
+    };
+    const numFields = common.settingsStore.get('fields');
+    for (let i = 0; i < (isNaN(numFields) ? 1 : numFields); i++) {
+        const id = `f${i + 1}`;
+        fieldsEl.insertAdjacentHTML('afterbegin', `
+            <div class="field" data-field="${id}">
+                <div class="key"></div><div class="value"></div><abbr class="unit"></abbr>
+            </div>
+        `);
+        mapping.push({id, default: defaults[id] || 'time-elapsed'});
+    }
+    fieldRenderer.addRotatingFields({
+        mapping,
+        fields: fields.fields.filter(({id}) => {
+            const type = id.split('-')[0];
+            return ['ev', 'game-laps', 'progress', 'rt', 'el', 'grade', 'altitude'].includes(type);
+        })
+    });
+    segmentSelect.addEventListener('change', async ev => {
+        //routeId = Number(segmentSelect.value);
+        routeId = BigInt(segmentSelect.value);
+        //debugger
+        //distanceSelect.value = "";
+        //zwiftMap.overrideLaps = 1;
+        //elProfile.overrideDistance = 0;
+        //zwiftMap.overrideDistance = 0;
+        //lapsSelect.value = 1;
+        //elProfile.overrideLaps = 1;
+        //common.settingsStore.set("overrideDistance", 0)
+        //common.settingsStore.set("overrideLaps", 1)
+        await applySegment();
+        //if (lapsSelect.value > 0) {
+        //    distanceSelect.value = parseInt(elProfile.routeDistances.at(-1))
+        //}
+    });
+    courseSelect.addEventListener('change', async ev => {
+        const id = Number(courseSelect.value);
+        if (id === courseId) {
+            console.debug("debounce course change");
+            return;
+        }
+        courseId = id;
+        routeId = undefined;
+        //distanceSelect.value = "";
+        //lapsSelect.value = 1;
+        //elProfile.overrideLaps = 1;
+        //zwiftMap.overrideLaps = 1;
+        //elProfile.overrideDistance = 0;
+        //zwiftMap.overrideDistance = 0;
+        [worldList, segmentsList] = await getCourseSegments(courseId)
+        await applyCourse();
+        await applySegment();
+    });
+    
+    
+    //[worldList, segmentsList] = await Promise.all([common.getWorldList(), common.rpc.getSegments(courseId)]);    
+    //segmentsList = Array.from(segmentsList).sort((a, b) => a.name < b.name ? -1 : 1); 
+    //segmentsList = segmentsList.filter(x => x.distance > 50)    // get rid of invalid short segments
+    [worldList, segmentsList] = await getCourseSegments(courseId)
+    
+    zwiftMap = createZwiftMap();
+    window.zwiftMap = zwiftMap;  // DEBUG
+    window.MapEntity = map.MapEntity;
+    if (settings.profileOverlay) {
+        const point = zwiftMap.addPoint([0, 0], 'circle');
+        point.toggleHidden(true);
+        elProfile = createElevationProfile();
+        elProfile.chart.on('updateAxisPointer', ev => {
+            const pos = elProfile.curvePath.nodes[ev.dataIndex]?.end;
+            point.toggleHidden(!pos);
+            if (pos) {
+                point.setPosition(pos);
+            }
+        });
+    };    
+    if (courseId != null) {
+        if (!settings.showMap) {            
+            document.getElementById("mapDiv").style.visibility = "hidden"
+        }
+        doc.classList.add('explore');
+        doc.querySelector('#titlebar').classList.add('always-visible');
+        zwiftMap.setZoom(0.3);
+        zwiftMap.setTiltShift(0);
+        zwiftMap.setVerticalOffset(0);
+        zwiftMap._mapTransition.setDuration(500);
+        //lapsSelect.value = settings.overrideLaps || 1;
+        //distanceSelect.value = settings.overrideDistance || "";        
+        await applyCourse();       
+        await applySegment();
+        //if (lapsSelect.value > 0) {
+        //    distanceSelect.value = parseInt(elProfile.routeDistances.at(-1))
+        //}
+        
+    } else {
+        let settingsSaveTimeout;        
+        zwiftMap.addEventListener('zoom', ev => {
+            clearTimeout(settingsSaveTimeout);
+            settings.zoom = Number(ev.zoom.toFixed(2));
+            settingsSaveTimeout = setTimeout(() => common.settingsStore.set(null, settings), 100);
+        });
+        await initialize();
+        common.subscribe('watching-athlete-change', async athleteId => {
+            if (!inGame) {
+                await initialize();
+            } else {
+                setWatching(athleteId);
+                
+            }
+            
+        });
+        common.subscribe('athlete/watching', ad => {
+            fieldRenderer.setData(ad);
+            fieldRenderer.render();
+            if (ad.state.routeId != currentRoute) {
+                if (!currentRoute) {
+                    currentRoute = zwiftMap.routeId;
+                } else if (settings.zoomCenter) {                    
+                    
+                    centerMap(zwiftMap.route.curvePath.flatten(1/3))
+                    currentRoute = zwiftMap.routeId
+                }
+            }
+        });
+        setInterval(() => {
+            if (inGame && performance.now() - watchdog > 10000) {
+                console.warn("Watchdog triggered by inactivity");
+                inGame = false;
+                initialize();
+            }
+        }, 3333);
+        common.subscribe('states', async states => {
+            if (!inGame) {
+                await initialize();
+            }
+            watchdog = performance.now();
+            zwiftMap.renderAthleteStates(states);
+            if (elProfile) {
+                elProfile.renderAthleteStates(states);
+            }
+        });
+        common.subscribe('chat', chat => {
+            if (settings.disableChat) {
+                return;
+            }
+            if (chat.muted) {
+                console.debug("Ignoring muted chat message");
+                return;
+            }
+            const ent = zwiftMap.getEntity(chat.from);
+            if (ent) {
+                ent.addChatMessage(chat);
+            }
+        });
+        if (settings.zoomCenter) {
+            centerMap(zwiftMap.route.curvePath.flatten(1/3))
+        }
+    }
+    common.settingsStore.addEventListener('changed', ev => {
+        const changed = ev.data.changed; 
+        //console.log(changed);
+        if (changed.has('solidBackground') || changed.has('backgroundColor')) {
+            setBackground();
+        } else if (changed.has('profileHeight')) {
+            if (elProfile) {
+                elProfile.el.style.setProperty('--profile-height', changed.get('profileHeight') / 100);
+                elProfile.chart.resize();
+            }
+        } else if (changed.has('profileOverlay') || 
+                        changed.has('fields') ||
+                        changed.has('routeProfile') || 
+                        changed.has('showElevationMaxLine') || 
+                        changed.has('showSegmentStart') || 
+                        changed.has('showLapMarker') ||
+                        changed.has('showLoopSegments') ||
+                        //changed.has('pinSize') ||
+                        changed.has('lineType') ||
+                        changed.has('lineTypeFinish') ||
+                        changed.has('lineSize') || 
+                        changed.has('lineTextColor') ||
+                        changed.has('showSegmentFinish') ||
+                        changed.has('minSegmentLength') ||
+                        changed.has('fontScale')||
+                        //changed.has('overrideDistance') ||
+                        changed.has('overrideLaps') ||
+                        changed.has('yAxisMin') ||
+                        changed.has('colorScheme') ||
+                        changed.has('showMap') ||
+                        changed.has('gradientOpacity') ||
+                        changed.has('showAllArches')
+                    )
+                {
+                    //console.log(changed);
+                    location.reload();
+        } else if(changed.has('pinSize'))
+        {   
+            elProfile.pinSize = changed.get('pinSize');            
+        } else if (changed.has('pinColor'))
+        {
+            //console.log(changed)
+            elProfile.pinColor = changed.get('pinColor');
+        } else if (changed.has('showNextSegment'))
+        {
+            elProfile.showNextSegment = changed.get('showNextSegment')
+        } else if (changed.has('showOnlyMyPin'))
+        {
+            //console.log(changed);            
+            elProfile.showOnlyMyPin = changed.get('showOnlyMyPin')
+        } else if (changed.has('zoomSlider')) {
+            elProfile.zoomSlider = changed.get('zoomSlider')
+        } else if (changed.has('overrideDistance')) {
+            elProfile.overrideDistance = changed.get('overrideDistnace')
+            applySegment();
+        }
+    });
+    
+}
+
+
+export async function settingsMain() {
+    common.initInteractionListeners();
+    (await common.initSettingsForm('form'))();
+}

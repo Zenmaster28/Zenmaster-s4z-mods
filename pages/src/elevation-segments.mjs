@@ -465,6 +465,14 @@ export class SauceElevationProfile {
         }
         
     }
+    setSegment = common.asyncSerialize(async function(segment) {
+        const distances = Array.from(segment.distances);
+        const elevations = Array.from(segment.elevations);
+        const grades = Array.from(segment.grades);        
+        this.curvePath = segment.curvePath
+        this.setData(distances, elevations, grades);
+        //debugger
+    })
 
     setRoute = common.asyncSerialize(async function(id, {laps=1, eventSubgroupId, distance}={}) {         
         distance = parseFloat(distance);        
