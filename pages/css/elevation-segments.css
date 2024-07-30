@@ -123,13 +123,15 @@ th:last-child, td:last-child {
   padding: 0.5em 0.8em;  
   overflow: auto;
 }
-#content {
-  display: grid;
+.segmentContent {
+  display: grid !important;
   grid-template-columns: 1fr 1fr;
   grid-gap: 20px;
   text-align: left;
+  font-variant: tabular-nums;
+  font-size: calc(var(--font-scale) * 1em);
 }
-#content > .elevation-profile {
+.segmentContent > .elevation-profile {
   --profile-height: 0.20;
   flex: 0 0 auto;
   position: absolute;
@@ -140,15 +142,15 @@ th:last-child, td:last-child {
   pointer-events: none;
   transform: translateZ(0);
   height: calc(var(--profile-height) * 100%);
-  width: 50%;
+  width: 50% !important;
   overflow: hidden;
 }
-#content > .elevation-profile svg > g {
+.segmentContent > .elevation-profile svg > g {
   pointer-events: all;
 }
-#content > .map {
+.segmentContent > .map {
   flex: 1 1 0;
-  width: 101%;
+  width: 101% !important;
   height: 100%;
 }
 
@@ -162,14 +164,17 @@ th:last-child, td:last-child {
   text-align: left;
 }
 #resultsTable td:first-child, #resultsTable th:first-child {
-  width: 30%;
+  width: 25%;
 }
 
 #resultsTable td:nth-child(2), #resultsTable th:nth-child(2),
 #resultsTable td:nth-child(3), #resultsTable th:nth-child(3) {
-  width: 20%;
+  width: 15%;
 }
 
 #resultsTable td:last-child, #resultsTable th:last-child {
-  width: 30%;
+  width: 45%;
+}
+#stats {
+  overflow-y: auto;
 }

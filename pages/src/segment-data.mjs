@@ -34,9 +34,10 @@ common.settingsStore.setDefault({
     showMap: true,
     showAllArches: false,
     sortBy: "time",
-    sortOrder: "asc"
+    sortOrder: "asc",
+    showResults: true
 });
-
+doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  
 const settings = common.settingsStore.get();
 const url = new URL(location);
 const courseSelect = document.querySelector('#titlebar select[name="course"]');
@@ -51,8 +52,8 @@ let inGame;
 let zwiftMap;
 let elProfile;
 let courseId = Number(url.searchParams.get('course')) || 6;
-let urlRoute = url.searchParams.get('route')
-let routeId = urlRoute ? BigInt(urlRoute) : undefined;
+let urlSegment = url.searchParams.get('segment')
+let segmentId = urlSegment ? BigInt(urlSegment) : undefined;
 let currentRoute;
 
 function qualityScale(raw) {
@@ -273,11 +274,11 @@ function centerMap(positions, options) {
 const _routeHighlights = [];
 async function applySegment() {
     //console.log("applying segment")    
-    //console.log("zoomCenter is " + zoomCenter)
-    if (routeId != null) {
-        url.searchParams.set('route', routeId);
+    
+    if (segmentId != null) {
+        url.searchParams.set('segment', segmentId);
     } else {
-        url.searchParams.delete('route');
+        url.searchParams.delete('segment');
     }
     history.replaceState({}, '', url);
     while (_routeHighlights.length) {
@@ -291,63 +292,83 @@ async function applySegment() {
             continue;
         }        
         segmentSelect.insertAdjacentHTML('beforeend', `
-            <option ${x.id == routeId ? 'selected' : ''}
+            <option ${x.id == segmentId ? 'selected' : ''}
                     value="${x.id}">${common.stripHTML(x.name)} (${common.stripHTML((x.distance).toFixed(0))}m) </option>`);
     }
-    if (routeId != null) {        
-        const route = await zen.getSegmentPath(routeId);
+    if (segmentId != null) {        
+        const segment = await zen.getSegmentPath(segmentId);
         let path;
         //debugger
         if (zwiftMap.overrideDistance > 0) {
             let idx = common.binarySearchClosest(route.distances, zwiftMap.overrideDistance)
-            path = route.curvePath;
+            path = segment.curvePath;
             path.nodes = path.nodes.slice(0, idx + 1)
         } else {
-            path = route.curvePath;
+            path = segment.curvePath;
         }
         //debugger
         _routeHighlights.push(
-            zwiftMap.addHighlightPath(path, `route-1-${route.id}`, {width: 5, color: '#0004'}),
-            zwiftMap.addHighlightPath(path, `route-2-${route.id}`, {width: 1.2, color: 'black'}),
-            zwiftMap.addHighlightPath(path, `route-3-${route.id}`, {width: 0.5, color: 'gold'}),
+            zwiftMap.addHighlightPath(path, `route-1-${segment.id}`, {width: 5, color: '#0004'}),
+            zwiftMap.addHighlightPath(path, `route-2-${segment.id}`, {width: 1.2, color: 'black'}),
+            zwiftMap.addHighlightPath(path, `route-3-${segment.id}`, {width: 0.5, color: 'gold'}),
         );
         let padding = 0.2;
-        if (route.distance < 1000) {
+        if (segment.distance < 1000) {
             padding = 0.8
-        } else if (route.distance >= 1000 && route.distance < 2500) {
+        } else if (segment.distance >= 1000 && segment.distance < 2500) {
             padding = 0.6
         }
-        centerMap(route.curvePath.flatten(1/3), {padding: padding});
+        centerMap(segment.curvePath.flatten(1/3), {padding: padding});
         //debugger    
-        await elProfile.setSegment(route)
+        await elProfile.setSegment(segment)
         const segmentInfoDiv = document.getElementById("segmentInfo");
         const athleteTimesDiv = document.getElementById("athleteTimes")
-        segmentInfoDiv.innerHTML = "Segment: "
-        segmentInfoDiv.innerHTML += route.name + "<br>Distance: " + route.distance.toFixed(0) + "m"
-        let segmentBests = await getSegmentBests(route.id)
-        if (settings.sortBy == "date") {
-            segmentBests.sort((a,b) => {
-                if (settings.sortOrder == "desc") { 
-                    return b.ts - a.ts
-                } else {
-                    return a.ts - b.ts
-                }
-            })
-        } else if (settings.sortOrder == "desc") {
-            segmentBests.sort((a,b) => {
-                return b.elapsed - a.elapsed
-            })
-        }
-        if (segmentBests.length > 0) {
-            let tableOutput = "<table id='resultsTable'><tr><th>Time</th><th>Power (w)</th><th>weight (kg)</th><th>Date</th></tr>"
-            for (let r of segmentBests) {
-                tableOutput += `<tr><td>${zen.formatTime(r.elapsed * 1000)}</td><td>${r.avgPower}</td><td>${r.weight}</td><td>${zen.formatTs(r.ts)}</td></tr>`
+        athleteTimesDiv.innerHTML = ""
+        segmentInfoDiv.innerHTML = `<h1 style="font-size:calc(var(--font-scale) * 1.5em);">${segment.name} (${segment.distance.toFixed(0)}m)</h1><hr>`
+        //segmentInfoDiv.innerHTML += segment.name + "<br>Distance: " + segment.distance.toFixed(0) + "m<hr>"
+        if (settings.showResults) {
+            let segmentBests = await getSegmentBests(segment.id)
+            if (settings.sortBy == "date") {
+                segmentBests.sort((a,b) => {
+                    if (settings.sortOrder == "desc") { 
+                        return b.ts - a.ts
+                    } else {
+                        return a.ts - b.ts
+                    }
+                })
+            } else if (settings.sortOrder == "desc") {
+                segmentBests.sort((a,b) => {
+                    return b.elapsed - a.elapsed
+                })
             }
-            athleteTimesDiv.innerHTML = tableOutput
-        } else {
-            athleteTimesDiv.innerHTML = "No recent results found"
+            if (segmentBests.length > 0) {
+                let tableOutput = "<table id='resultsTable'><tr><th><b>Time</th><th><b>Power (w)</th><th><b>Weight (kg)</th><th><b>Date</th></tr>"
+                for (let r of segmentBests) {
+                    tableOutput += `<tr><td>${zen.formatTime(r.elapsed * 1000)}</td><td>${r.avgPower}</td><td>${r.weight}</td><td>${zen.formatTs(r.ts)}</td></tr>`
+                }
+                athleteTimesDiv.innerHTML = tableOutput
+            } else {
+                athleteTimesDiv.innerHTML = "No recent results found"
+            }
         }
-        //debugger
+        let segmentRoutes = await getSegmentRoutes(segment, courseId)
+        athleteTimesDiv.innerHTML += "<hr><b>Routes that pass through this segment (click on the route to view details)</b><br>"
+        //console.log(segmentRoutes)
+        if (segmentRoutes.length > 0) {
+            segmentRoutes.sort((a,b) => {
+                if (a.name < b.name) {
+                    return -1
+                }
+                if (a.name > b.name) {
+                    return 1
+                }
+                return 0
+            })
+            for (let rte of segmentRoutes) {
+                athleteTimesDiv.innerHTML += `<a href=route-preview-v2.html?course=${rte.courseId}&route=${rte.id} 
+                target=routepreview>${rte.name} (${(rte.distanceInMeters / 1000).toFixed(1)}km / ${rte.ascentInMeters.toFixed(0)}m)</a><br>`
+            }
+        }
     }  else {
         zwiftMap.setVerticalOffset(0);
         zwiftMap.setDragOffset([0, 0]);
@@ -355,13 +376,67 @@ async function applySegment() {
         if (elProfile) {
             elProfile.clear();
         }
+        document.getElementById("segmentInfo").innerHTML = "<br><br><br><br><center>Choose a segment from the dropdown list."
     }
 }
 
-async function getSegmentBests(segmentId) {
+async function getSegmentRoutes(segment, courseId) {
+    const routeList = await common.getRouteList(courseId)
+    let zwiftSegmentsRequireStartEnd = await fetch("data/segRequireStartEnd.json").then((response) => response.json());
+    let requireStartEnd = zwiftSegmentsRequireStartEnd.includes(segment.id)
+    //debugger
+    let filteredRoutes
+    if (requireStartEnd) {
+        if (segment.reverse) {
+            filteredRoutes = routeList.filter(route => 
+                route.manifest.some(roadSeg => roadSeg.roadId === segment.roadId && 
+                    roadSeg.reverse == segment.reverse &&
+                    roadSeg.end >= segment.roadStart &&
+                    roadSeg.start <= segment.roadFinish
+                )
+            );
+        } else {
+            filteredRoutes = routeList.filter(route => 
+                route.manifest.some(roadSeg => roadSeg.roadId === segment.roadId &&                 
+                    roadSeg.start <= segment.roadStart &&
+                    roadSeg.end >= segment.roadFinish
+                )
+            );
+        }
+    } else {
+        if (segment.reverse) {
+            filteredRoutes = routeList.filter(route => 
+                route.manifest.some(roadSeg => roadSeg.roadId === segment.roadId &&
+                    roadSeg.reverse == segment.reverse &&
+                    ((roadSeg.end >= segment.roadStart &&
+                        roadSeg.start <= segment.roadStart) ||
+                    (roadSeg.start <= segment.roadFinish &&
+                        roadSeg.end >= segment.roadFinish
+                    ))
+                )
+            );
+        } else {
+            filteredRoutes = routeList.filter(route => 
+                route.manifest.some(roadSeg => roadSeg.roadId === segment.roadId &&  
+                    !roadSeg.reverse &&
+                    ((roadSeg.start <= segment.roadStart &&
+                        roadSeg.end >= segment.roadStart) ||
+                    (roadSeg.start <= segment.roadFinish &&
+                        roadSeg.end >= segment.roadFinish
+                    ))
+                )
+            );
+        }
+    }    
+    //console.log(filteredRoutes);
+    return filteredRoutes;
+}
+
+
+async function getSegmentBests(id) {
     let athleteId = await common.rpc.getAthlete("self")
     athleteId = athleteId.id
-    let segmentBests = await common.rpc.getSegmentResults(segmentId, {athleteId: athleteId, from: Date.now() - 86400000 * 90,})
+    let segmentBests = await common.rpc.getSegmentResults(id, {athleteId: athleteId, from: Date.now() - 86400000 * 90,})
     if (segmentBests) {
         return segmentBests;
     }
@@ -406,7 +481,7 @@ export async function main() {
     common.initInteractionListeners();
     common.setBackground(settings);
     segmentSelect.addEventListener('change', async ev => {        
-        routeId = BigInt(segmentSelect.value);
+        segmentId = BigInt(segmentSelect.value);
         await applySegment();
     });
     courseSelect.addEventListener('change', async ev => {
@@ -416,7 +491,7 @@ export async function main() {
             return;
         }
         courseId = id;
-        routeId = undefined;
+        segmentId = undefined;
         [worldList, segmentsList] = await getCourseSegments(courseId)
         elProfile.clear();
         await applyCourse();        
