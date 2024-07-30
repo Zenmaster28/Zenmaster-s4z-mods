@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html class="settings-page" tabindex="0" data-settings-key="segment-data-settings">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+        <!--
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';"/>
+        -->
+        <title>Segment Preview - Settings</title>
+
+        <script src="/pages/src/preloads.js"></script>
+
+        <link id="favicon" rel="shortcut icon" href="/pages/images/favicon.png"/>
+        <link rel="stylesheet" href="/pages/css/common.css"/>
+        <link rel="stylesheet" href="./css/elevation-segments.css"/>
+
+        <script type="module">
+            import {settingsMain} from './src/elevation.mjs';
+            settingsMain();
+        </script>
+    </head>
+    <body>
+        <div id="titlebar">
+            <header>
+                <div class="logo"><img src="/pages/images/icon128.png"/></div>
+                <div class="title">Segment Preview - Settings</div>
+                <div class="filler"></div>
+                <div class="buttons">
+                    <div title="Close this window" class="button close electron-only"><ms>close</ms></div>
+                </div>
+            </header>
+        </div>
+        <div id="settings">
+            <form class="section">
+                <label>
+                    <key>Show map:</key>
+                    <input type="checkbox" name="showMap"/>
+                </label>
+                <label title="Indicate what the max elevation is with a horizontal line on the chart">
+                    <key data-added="2023-11-01">Show max elevation:</key>
+                    <input type="checkbox" name="showElevationMaxLine" checked/>
+                </label>
+                <label>
+                    <key>Sort segment times by:</key>
+                    <select name="sortBy">
+                        <option value="time">Segment time</option>
+                        <option value="date">Date</option>
+                    </select>
+                    <select name="sortOrder">
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select>
+                </label>
+                <label>
+                    <key data-added="2024-02-29">Gradient color scheme:</key>
+                    <select name="colorScheme">
+                        <option value="sauce">Sauce</option>
+                        <option value="vv">Veloviewer (ish)</option>  
+                        <option value="cvdBuRd">CVD-BuRd</option>             
+                        <option value="cvdPRGn">CVD-PRGn</option>        
+                        <option value="cvdSunset">CVD-Sunset</option>                                            
+                    </select>
+                </label>
+                <label>
+                    <key data-added="2024-03-20">Gradient color opacity:</key>
+                    <input type="range" name="gradientOpacity" min="0" max="1" step="0.05"/>
+                    <input type="number" name="gradientOpacity" min="0" max="1" step="0.05" style="--size: 5"/>
+                </label>
+                <hr/>
+                <label>
+                    <key data-added="2023-05-30">Profile height:</key>
+                    <input type="range" name="profileHeight" min="5" max="100" step="1" value="20"/>
+                    <input type="number" name="profileHeight" min="5" max="100" step="1" style="--size: 5" value="20"/>%
+                </label>
+                <label>
+                    <key>Font scaling:</key>
+                    <input type="range" name="fontScale" min="0.5" max="2" step="0.1"/>
+                    <input type="number" name="fontScale" min="0.5" max="2" step="0.1" style="--size: 5"/>
+                </label>
+                
+                <label>
+                    <key>Theme override:</key>
+                    <select is="sauce-theme" override></select>
+                </label>                
+                             
+            </form>
+        </div>
+    </body>
+</html>

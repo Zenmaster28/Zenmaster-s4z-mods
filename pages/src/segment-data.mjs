@@ -1,7 +1,6 @@
 import * as common from '/pages/src/common.mjs';
 import * as map from './map.mjs';
 import * as elevation from './elevation-segments.mjs';
-import * as fields from '/pages/src/fields.mjs';
 import * as data from '/shared/sauce/data.mjs';
 import * as zen from './segments-xCoord.mjs';
 
@@ -33,15 +32,16 @@ common.settingsStore.setDefault({
     // v1.1+
     disableChat: false,
     showMap: true,
-    showAllArches: false
+    showAllArches: false,
+    sortBy: "time",
+    sortOrder: "asc"
 });
 
 const settings = common.settingsStore.get();
 const url = new URL(location);
 const courseSelect = document.querySelector('#titlebar select[name="course"]');
 const segmentSelect = document.querySelector('#titlebar select[name="segment"]');
-//const lapsSelect = document.getElementById("laps");
-//const distanceSelect = document.getElementById("customDistance")
+const statsDiv = document.getElementById("stats");
 const demoState = {};
 
 let worldList;
@@ -53,7 +53,6 @@ let elProfile;
 let courseId = Number(url.searchParams.get('course')) || 6;
 let urlRoute = url.searchParams.get('route')
 let routeId = urlRoute ? BigInt(urlRoute) : undefined;
-//debugger
 let currentRoute;
 
 function qualityScale(raw) {
@@ -91,18 +90,13 @@ function createZwiftMap() {
         overrideDistance: settings.overrideDistance || 0,
         overrideLaps: settings.overrideLaps || 0
     });
-    const autoCenterBtn = document.querySelector('.map-controls .button.toggle-auto-center');
-    const autoHeadingBtn = document.querySelector('.map-controls .button.toggle-auto-heading');
-
+    
     function autoCenterHandler(en) {
         if (en) {
             zm.setDragOffset([0, 0]);
         }
         zm.setAutoCenter(en);
         zm.setAutoHeading(!en ? false : !!settings.autoHeading);
-        autoCenterBtn.classList.toggle('primary', !!en);
-        autoCenterBtn.classList.remove('outline');
-        autoHeadingBtn.classList.toggle('disabled', !en);
         settings.autoCenter = en;
         common.settingsStore.set(null, settings);
     }
@@ -112,20 +106,9 @@ function createZwiftMap() {
         if (en) {
             zm.setHeadingOffset(0);
         }
-        autoHeadingBtn.classList.remove('outline');
-        autoHeadingBtn.classList.toggle('primary', !!en);
         settings.autoHeading = en;
         common.settingsStore.set(null, settings);
     }
-
-    autoCenterBtn.classList.toggle('primary', settings.autoCenter !== false);
-    autoCenterBtn.addEventListener('click', () =>
-        autoCenterHandler(!autoCenterBtn.classList.contains('primary')));
-    autoHeadingBtn.classList.toggle('disabled', settings.autoCenter === false);
-    autoHeadingBtn.classList.toggle('primary', settings.autoHeading !== false);
-    autoHeadingBtn.addEventListener('click', () =>
-        autoHeadingHandler(!autoHeadingBtn.classList.contains('primary')));
-
     zm.addEventListener('drag', ev => {
         if (ev.drag) {
             const dragging = !!(ev.drag && (ev.drag[0] || ev.drag[1]));
@@ -206,8 +189,7 @@ function createElevationProfile() {
     const lineTextColor = settings.lineTextColor;
     typeof(settings.gradientOpacity) == "undefined" ? common.settingsStore.set("gradientOpacity", 0.7) : null;
     const gradientOpacity = settings.gradientOpacity;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, showAllArches});
-    //return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, colorScheme, showSegmentStart});
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, showAllArches});    
 }
 
 
@@ -283,16 +265,15 @@ function centerMap(positions, options) {
     const yMin = data.min(positions.map(x => x[1]));
     const xMax = data.max(positions.map(x => x[0]));
     const yMax = data.max(positions.map(x => x[1]));
-    zwiftMap.setDragOffset([0, 0]);
+    zwiftMap.setDragOffset([0, 0]);    
     zwiftMap.setBounds([xMin, yMax], [xMax, yMin], options);
 }
 
 
 const _routeHighlights = [];
 async function applySegment() {
-    console.log("applying segment")    
+    //console.log("applying segment")    
     //console.log("zoomCenter is " + zoomCenter)
-    //debugger
     if (routeId != null) {
         url.searchParams.set('route', routeId);
     } else {
@@ -304,7 +285,7 @@ async function applySegment() {
     }
     segmentSelect.replaceChildren();
     segmentSelect.insertAdjacentHTML('beforeend', `<option value disabled selected>Segment</option>`);  
-    console.log(segmentsList)  
+    //console.log(segmentsList)  
     for (const x of segmentsList) {        
         if (common.worldToCourseIds[x.worldId] !== courseId) {
             continue;
@@ -330,24 +311,44 @@ async function applySegment() {
             zwiftMap.addHighlightPath(path, `route-2-${route.id}`, {width: 1.2, color: 'black'}),
             zwiftMap.addHighlightPath(path, `route-3-${route.id}`, {width: 0.5, color: 'gold'}),
         );
-        centerMap(route.curvePath.flatten(1/3));
-        //debugger
-        if (elProfile) {
-            //await elProfile.setRoute(routeId);
-            if (settings.overrideDistance > 0 || settings.overrideLaps > 0) {
-                //console.log("overridedistance: " + settings.overrideDistance + " overridelaps: " + settings.overrideLaps)
-                //await elProfile.setRoute(routeId.toString(), {laps: settings.overrideLaps, eventSubgroupId: 0, distance: settings.overrideDistance, segmentOnly: true})
-                await elProfile.setSegment(route)
-            } else {
-                await elProfile.setRoute(+routeId);
-            }
+        let padding = 0.2;
+        if (route.distance < 1000) {
+            padding = 0.8
+        } else if (route.distance >= 1000 && route.distance < 2500) {
+            padding = 0.6
         }
-        //if (route.supportedLaps) {
-        //    lapsSelect.disabled = false;
-        //} else {            
-        //    lapsSelect.disabled = true;
-        //}
-    } else {
+        centerMap(route.curvePath.flatten(1/3), {padding: padding});
+        //debugger    
+        await elProfile.setSegment(route)
+        const segmentInfoDiv = document.getElementById("segmentInfo");
+        const athleteTimesDiv = document.getElementById("athleteTimes")
+        segmentInfoDiv.innerHTML = "Segment: "
+        segmentInfoDiv.innerHTML += route.name + "<br>Distance: " + route.distance.toFixed(0) + "m"
+        let segmentBests = await getSegmentBests(route.id)
+        if (settings.sortBy == "date") {
+            segmentBests.sort((a,b) => {
+                if (settings.sortOrder == "desc") { 
+                    return b.ts - a.ts
+                } else {
+                    return a.ts - b.ts
+                }
+            })
+        } else if (settings.sortOrder == "desc") {
+            segmentBests.sort((a,b) => {
+                return b.elapsed - a.elapsed
+            })
+        }
+        if (segmentBests.length > 0) {
+            let tableOutput = "<table id='resultsTable'><tr><th>Time</th><th>Power (w)</th><th>weight (kg)</th><th>Date</th></tr>"
+            for (let r of segmentBests) {
+                tableOutput += `<tr><td>${zen.formatTime(r.elapsed * 1000)}</td><td>${r.avgPower}</td><td>${r.weight}</td><td>${zen.formatTs(r.ts)}</td></tr>`
+            }
+            athleteTimesDiv.innerHTML = tableOutput
+        } else {
+            athleteTimesDiv.innerHTML = "No recent results found"
+        }
+        //debugger
+    }  else {
         zwiftMap.setVerticalOffset(0);
         zwiftMap.setDragOffset([0, 0]);
         zwiftMap.setZoom(0.3);
@@ -357,15 +358,27 @@ async function applySegment() {
     }
 }
 
+async function getSegmentBests(segmentId) {
+    let athleteId = await common.rpc.getAthlete("self")
+    athleteId = athleteId.id
+    let segmentBests = await common.rpc.getSegmentResults(segmentId, {athleteId: athleteId, from: Date.now() - 86400000 * 90,})
+    if (segmentBests) {
+        return segmentBests;
+    }
+    else {
+        return [];
+    }
+}
+
 async function getCourseSegments(courseId) {
     [worldList, segmentsList] = await Promise.all([common.getWorldList(), common.rpc.getSegments(courseId)]);    
     segmentsList = Array.from(segmentsList).sort((a, b) => a.name < b.name ? -1 : 1); 
-    segmentsList = segmentsList.filter(x => x.distance > 50 && !x.name.toLowerCase().includes("loop") && x.roadStart !== x.roadFinish)    // get rid of invalid short segments and looped segments
+    segmentsList = segmentsList.filter(x => x.distance > 50 && !x.name.toLowerCase().includes("loop") && x.roadStart !== x.roadFinish && !x.name.toLowerCase().includes("crit") && !x.name.toLowerCase().includes("uci"))    // get rid of invalid short segments and looped segments
     return [worldList,segmentsList];
 }
 
 async function applyCourse() {
-    console.log("applying course")    
+    //console.log("applying course")    
     if (courseId != null) {
         url.searchParams.set('course', courseId);
     } else {
@@ -383,53 +396,18 @@ async function applyCourse() {
         if (elProfile) {
             await elProfile.setCourse(courseId);
         }
-    }    
+    }     
+    document.getElementById("segmentInfo").innerHTML = ""
+    document.getElementById("athleteTimes").innerHTML = ""
 }
 
 
 export async function main() {
     common.initInteractionListeners();
     common.setBackground(settings);
-    const fieldsEl = document.querySelector('#content .fields');
-    const fieldRenderer = new common.Renderer(fieldsEl, {fps: 1});
-    const mapping = [];
-    const defaults = {
-        f1: 'grade',
-        f2: 'altitude',
-    };
-    const numFields = common.settingsStore.get('fields');
-    for (let i = 0; i < (isNaN(numFields) ? 1 : numFields); i++) {
-        const id = `f${i + 1}`;
-        fieldsEl.insertAdjacentHTML('afterbegin', `
-            <div class="field" data-field="${id}">
-                <div class="key"></div><div class="value"></div><abbr class="unit"></abbr>
-            </div>
-        `);
-        mapping.push({id, default: defaults[id] || 'time-elapsed'});
-    }
-    fieldRenderer.addRotatingFields({
-        mapping,
-        fields: fields.fields.filter(({id}) => {
-            const type = id.split('-')[0];
-            return ['ev', 'game-laps', 'progress', 'rt', 'el', 'grade', 'altitude'].includes(type);
-        })
-    });
-    segmentSelect.addEventListener('change', async ev => {
-        //routeId = Number(segmentSelect.value);
+    segmentSelect.addEventListener('change', async ev => {        
         routeId = BigInt(segmentSelect.value);
-        //debugger
-        //distanceSelect.value = "";
-        //zwiftMap.overrideLaps = 1;
-        //elProfile.overrideDistance = 0;
-        //zwiftMap.overrideDistance = 0;
-        //lapsSelect.value = 1;
-        //elProfile.overrideLaps = 1;
-        //common.settingsStore.set("overrideDistance", 0)
-        //common.settingsStore.set("overrideLaps", 1)
         await applySegment();
-        //if (lapsSelect.value > 0) {
-        //    distanceSelect.value = parseInt(elProfile.routeDistances.at(-1))
-        //}
     });
     courseSelect.addEventListener('change', async ev => {
         const id = Number(courseSelect.value);
@@ -439,21 +417,13 @@ export async function main() {
         }
         courseId = id;
         routeId = undefined;
-        //distanceSelect.value = "";
-        //lapsSelect.value = 1;
-        //elProfile.overrideLaps = 1;
-        //zwiftMap.overrideLaps = 1;
-        //elProfile.overrideDistance = 0;
-        //zwiftMap.overrideDistance = 0;
         [worldList, segmentsList] = await getCourseSegments(courseId)
-        await applyCourse();
+        elProfile.clear();
+        await applyCourse();        
         await applySegment();
-    });
+        
+    });  
     
-    
-    //[worldList, segmentsList] = await Promise.all([common.getWorldList(), common.rpc.getSegments(courseId)]);    
-    //segmentsList = Array.from(segmentsList).sort((a, b) => a.name < b.name ? -1 : 1); 
-    //segmentsList = segmentsList.filter(x => x.distance > 50)    // get rid of invalid short segments
     [worldList, segmentsList] = await getCourseSegments(courseId)
     
     zwiftMap = createZwiftMap();
@@ -481,13 +451,8 @@ export async function main() {
         zwiftMap.setTiltShift(0);
         zwiftMap.setVerticalOffset(0);
         zwiftMap._mapTransition.setDuration(500);
-        //lapsSelect.value = settings.overrideLaps || 1;
-        //distanceSelect.value = settings.overrideDistance || "";        
         await applyCourse();       
         await applySegment();
-        //if (lapsSelect.value > 0) {
-        //    distanceSelect.value = parseInt(elProfile.routeDistances.at(-1))
-        //}
         
     } else {
         let settingsSaveTimeout;        
@@ -497,28 +462,7 @@ export async function main() {
             settingsSaveTimeout = setTimeout(() => common.settingsStore.set(null, settings), 100);
         });
         await initialize();
-        common.subscribe('watching-athlete-change', async athleteId => {
-            if (!inGame) {
-                await initialize();
-            } else {
-                setWatching(athleteId);
-                
-            }
-            
-        });
-        common.subscribe('athlete/watching', ad => {
-            fieldRenderer.setData(ad);
-            fieldRenderer.render();
-            if (ad.state.routeId != currentRoute) {
-                if (!currentRoute) {
-                    currentRoute = zwiftMap.routeId;
-                } else if (settings.zoomCenter) {                    
-                    
-                    centerMap(zwiftMap.route.curvePath.flatten(1/3))
-                    currentRoute = zwiftMap.routeId
-                }
-            }
-        });
+        
         setInterval(() => {
             if (inGame && performance.now() - watchdog > 10000) {
                 console.warn("Watchdog triggered by inactivity");
@@ -526,29 +470,7 @@ export async function main() {
                 initialize();
             }
         }, 3333);
-        common.subscribe('states', async states => {
-            if (!inGame) {
-                await initialize();
-            }
-            watchdog = performance.now();
-            zwiftMap.renderAthleteStates(states);
-            if (elProfile) {
-                elProfile.renderAthleteStates(states);
-            }
-        });
-        common.subscribe('chat', chat => {
-            if (settings.disableChat) {
-                return;
-            }
-            if (chat.muted) {
-                console.debug("Ignoring muted chat message");
-                return;
-            }
-            const ent = zwiftMap.getEntity(chat.from);
-            if (ent) {
-                ent.addChatMessage(chat);
-            }
-        });
+        
         if (settings.zoomCenter) {
             centerMap(zwiftMap.route.curvePath.flatten(1/3))
         }
@@ -608,7 +530,7 @@ export async function main() {
         } else if (changed.has('overrideDistance')) {
             elProfile.overrideDistance = changed.get('overrideDistnace')
             applySegment();
-        }
+        } 
     });
     
 }

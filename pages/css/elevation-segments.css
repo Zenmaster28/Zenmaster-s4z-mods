@@ -123,3 +123,53 @@ th:last-child, td:last-child {
   padding: 0.5em 0.8em;  
   overflow: auto;
 }
+#content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 20px;
+  text-align: left;
+}
+#content > .elevation-profile {
+  --profile-height: 0.20;
+  flex: 0 0 auto;
+  position: absolute;
+  font-size: clamp(16px, var(--profile-height) * 30vh + 10px, 60px);
+  left: 0;
+  bottom: 0;
+  z-index: 10000;
+  pointer-events: none;
+  transform: translateZ(0);
+  height: calc(var(--profile-height) * 100%);
+  width: 50%;
+  overflow: hidden;
+}
+#content > .elevation-profile svg > g {
+  pointer-events: all;
+}
+#content > .map {
+  flex: 1 1 0;
+  width: 101%;
+  height: 100%;
+}
+
+#resultsTable {
+  width: 95%;
+  border-collapse: collapse;
+}
+
+#resultsTable th, #resultsTable td {
+  border: 1px solid #ddd;  
+  text-align: left;
+}
+#resultsTable td:first-child, #resultsTable th:first-child {
+  width: 30%;
+}
+
+#resultsTable td:nth-child(2), #resultsTable th:nth-child(2),
+#resultsTable td:nth-child(3), #resultsTable th:nth-child(3) {
+  width: 20%;
+}
+
+#resultsTable td:last-child, #resultsTable th:last-child {
+  width: 30%;
+}

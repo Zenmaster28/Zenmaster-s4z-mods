@@ -911,7 +911,7 @@ export async function getModifiedRoute(id) {
 
 export async function getSegmentPath(id) {
     let segment = await common.rpc.getSegment(id.toString())
-    console.log(segment)
+    //console.log(segment)
     //debugger
     if (segment) {
         segment.curvePath = new curves.CurvePath();
@@ -927,31 +927,25 @@ export async function getSegmentPath(id) {
         for (let r=0;r <i;r++) {
             let seg;      
             
-            const road = await common.getRoad(common.worldToCourseIds[segment.worldId], segment.roadId);
-            console.log(road)
+            const road = await common.getRoad(common.worldToCourseIds[segment.worldId], segment.roadId);            
             if (segment.reverse) {
                 //debugger
                 if (loop && r == 0) {
-                    console.log("Reverse Looped segment and first pass")
+                    //console.log("Reverse Looped segment and first pass")
                     seg = road.curvePath.subpathAtRoadPercents(segment.roadFinish, 1);
                 } else if (loop && r == 1) {
-                    console.log("Reverse Looped segment and second pass")
+                    //console.log("Reverse Looped segment and second pass")
                     seg = road.curvePath.subpathAtRoadPercents(0, segment.roadStart);
-                    //seg = road.curvePath.subpathAtRoadPercents(segment.roadFinish, 1);
                 } else if (!loop) {
                     seg = road.curvePath.subpathAtRoadPercents(segment.roadFinish, segment.roadStart);
                 }
             } else {
                 if (loop && r == 0) {
-                    console.log("Looped segment and first pass")
-                    seg = road.curvePath.subpathAtRoadPercents(segment.roadStart, 1);
-                    //seg = seg.toReversed();
-                    //seg = road.curvePath.subpathAtRoadPercents(0, segment.roadStart);
+                    //console.log("Looped segment and first pass")
+                    seg = road.curvePath.subpathAtRoadPercents(segment.roadStart, 1);                    
                 } else if (loop && r == 1) {
-                    console.log("Looped segment and second pass")
-                    seg = road.curvePath.subpathAtRoadPercents(0, segment.roadFinish);
-                    //seg = seg.toReversed();
-                    //seg = road.curvePath.subpathAtRoadPercents(segment.roadFinish, 1);
+                    //console.log("Looped segment and second pass")
+                    seg = road.curvePath.subpathAtRoadPercents(0, segment.roadFinish);                    
                 } else if (!loop) {
                     seg = road.curvePath.subpathAtRoadPercents(segment.roadStart, segment.roadFinish);
                 }
@@ -962,19 +956,15 @@ export async function getSegmentPath(id) {
             for (const xx of seg.nodes) {
                 //xx.index = i;
             }
-            console.log(seg)
+            //console.log(seg)
             segment.roadSegments.push(seg);
-            //if (r == 0) {
-                segment.curvePath.extend(segment.reverse ? seg.toReversed() : seg);
-            //}
+            segment.curvePath.extend(segment.reverse ? seg.toReversed() : seg);            
             
             // NOTE: No support for physicsSlopeScaleOverride of portal roads.
             // But I've not seen portal roads used in a route either.
             //debugger
         }
-        Object.assign(segment, supplimentPath(worldMeta, segment.curvePath));
-        //debugger
-        console.log(segment)
+        Object.assign(segment, supplimentPath(worldMeta, segment.curvePath));        
     }
     return segment;
 }
@@ -1452,4 +1442,37 @@ function parseWorkoutBody(body) {
         }
     }
     return bodyDetails
+}
+
+export function formatTs(timestamp) {
+    const date = new Date(timestamp); // Convert Unix timestamp to milliseconds
+    const options = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true 
+    };
+    return date.toLocaleString('en-US', options);
+}
+
+export const formatTime = (milliseconds,timePrecision) => {    
+    const ms = milliseconds.toString().substr(-3).slice(0,timePrecision);    
+    const seconds = Math.floor((milliseconds / 1000) % 60);
+    const minutes = Math.floor((milliseconds / 1000 / 60) % 60);                
+    const hours = Math.floor((milliseconds / 1000 / 60 / 60) % 60);     
+    if (hours != 0)
+    {
+        return hours.toString() + ":" + minutes.toString().padStart(2, "0") + ":" + seconds.toString().padStart(2, "0");
+    }
+    if (minutes != 0)
+    {
+        return minutes.toString().padStart(1, "0") + ":" + seconds.toString().padStart(2, "0") + "." + ms;
+    }
+    else
+    {
+        return seconds.toString().padStart(1, "0") + "." + ms;
+    }
 }
