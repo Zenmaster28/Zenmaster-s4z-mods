@@ -285,7 +285,7 @@ async function applySegment() {
         _routeHighlights.pop().elements.forEach(x => x.remove());
     }
     segmentSelect.replaceChildren();
-    segmentSelect.insertAdjacentHTML('beforeend', `<option value disabled selected>Segment</option>`);  
+    segmentSelect.insertAdjacentHTML('beforeend', `<option value disabled selected>Segments (${segmentsList.filter(x => common.worldToCourseIds[x.worldId] == courseId).length})</option>`);  
     //console.log(segmentsList)  
     for (const x of segmentsList) {        
         if (common.worldToCourseIds[x.worldId] !== courseId) {
