@@ -300,7 +300,7 @@ async function applyRoute() {
         _routeHighlights.pop().elements.forEach(x => x.remove());
     }
     routeSelect.replaceChildren();
-    routeSelect.insertAdjacentHTML('beforeend', `<option value disabled selected>Route</option>`);  
+    routeSelect.insertAdjacentHTML('beforeend', `<option value disabled selected>Routes (${routesList.filter(x => x.courseId == courseId).length})</option>`);  
     //console.log(routesList)  
     for (const x of routesList) {
         if (x.courseId !== courseId) {
