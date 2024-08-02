@@ -308,7 +308,9 @@ async function applyRoute() {
         }
         routeSelect.insertAdjacentHTML('beforeend', `
             <option ${x.id === routeId ? 'selected' : ''}
-                    value="${x.id}">${common.stripHTML(x.name)} (${common.stripHTML((x.distanceInMeters / 1000).toFixed(1))}km / ${common.stripHTML(x.ascentInMeters.toFixed(0))}m)</option>`);
+                    value="${x.id}">${common.stripHTML(x.name)} 
+                    (${common.stripHTML(((x.distanceInMeters + (x.leadinDistanceInMeters ?? 0)) / 1000).toFixed(1))}km / 
+                    ${common.stripHTML((x.ascentInMeters + (x.leadinAscentInMeters ?? 0)).toFixed(0))}m)</option>`);
     }
     if (routeId != null) {        
         const route = await zen.getModifiedRoute(routeId);
