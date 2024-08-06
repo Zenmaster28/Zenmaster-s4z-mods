@@ -235,5 +235,68 @@
                 "start": 0.978
             }
         ]
+    },
+    {
+        "id": 4102513789,
+        "leadin":
+        [
+            {
+                "end": 0.414,
+                "leadin": true,
+                "reverse": true,
+                "roadId": 149,
+                "start": 0.2657975578
+            }
+        ]
+    },
+    {
+        "id": 183635628,
+        "leadin":
+        [
+            {
+                "end": 0.4493834196279465,
+                "leadin": true,
+                "roadId": 149,
+                "start": 0.419
+            }
+        ]
+    },
+    {
+        "id": 1631692097,
+        "leadin":
+        [
+            {
+                "end": 0.414,
+                "leadin": true,
+                "reverse": true,
+                "roadId": 149,
+                "start": 0.38075143657624828
+            }
+        ]
+    },
+    {
+        "id": 2768300955,
+        "leadin":
+        [
+            {
+                "end": 0.414,
+                "leadin": true,
+                "reverse": true,
+                "roadId": 149,
+                "start": 0.3805903765
+            }
+        ]
+    },
+    {
+        "id": 270817258,
+        "leadin":
+        [
+            {
+                "end": 0.5829928492,                
+                "leadin": true,
+                "roadId": 149,
+                "start": 0.419
+            }
+        ]
     }
 ]
