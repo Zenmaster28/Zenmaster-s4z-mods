@@ -496,8 +496,8 @@ export class SauceElevationProfile {
         this.routeInfo = segmentsOnRoute;
         this.routeDistances = Array.from(segmentsOnRoute.routeFullData.distances);                    
         this.routeElevations = Array.from(segmentsOnRoute.routeFullData.elevations);        
-        this.routeGrades = Array.from(segmentsOnRoute.routeFullData.grades);                
-        if (this.showSegmentStart)
+        this.routeGrades = Array.from(segmentsOnRoute.routeFullData.grades);          
+        if (this.showSegmentStart || this.showAllArches)
         {   
             for (let segment of segmentsOnRoute.segments) {
                 routeSegments.push(segment)
@@ -513,7 +513,14 @@ export class SauceElevationProfile {
                         segmentsOnRoute.markLines.push(poi)
                     }
                 }
-            }            
+            }  
+            if (!this.showSegmentStart && this.showAllArches) {
+                segmentsOnRoute.markLines = segmentsOnRoute.markLines.filter(x => x.name.includes("Finish"))
+                for (let ml of segmentsOnRoute.markLines) {
+                    ml.finishArchOnly = true
+                }
+                //debugger
+            }
             for (let markline of segmentsOnRoute.markLines) {                
                 if (this.editedSegments && this.editedSegments.length > 0) {                    
                     let segCheck = this.editedSegments.find(x => x.id == markline.id && x.Repeat == markline.repeat)                         
@@ -1684,7 +1691,7 @@ export class SauceElevationProfile {
                                 //console.log(nextSegment)                           
                                 let distanceToGo;
                                 let distanceToGoUnits;
-                                if (this.showNextSegment && this.showSegmentStart)
+                                if (this.showNextSegment && (this.showSegmentStart || this.showAllArches))
                                 {
                                     let nextSegmentDiv = document.getElementById('nextSegmentDiv');
                                     
