@@ -382,6 +382,16 @@ async function applySegment() {
 
 async function getSegmentRoutes(segment, courseId) {
     const routeList = await common.getRouteList(courseId)
+    let newRoutes = await fetch("data/routes.json").then((response) => response.json()); 
+    newRoutes = newRoutes.filter(x => common.worldToCourseIds[x.worldId] == courseId)
+    newRoutes.forEach(newRoute => {
+        const exists = routeList.some(route => route.id === newRoute.id);
+        if (!exists) {
+            newRoute.courseId = common.worldToCourseIds[newRoute.worldId]
+            //console.log("Adding route: " + newRoute.name + " to " + common.worldToNames[newRoute.worldId])            
+            routeList.push(newRoute);
+        }
+    });
     let zwiftSegmentsRequireStartEnd = await fetch("data/segRequireStartEnd.json").then((response) => response.json());
     let requireStartEnd = zwiftSegmentsRequireStartEnd.includes(segment.id)
     //debugger
