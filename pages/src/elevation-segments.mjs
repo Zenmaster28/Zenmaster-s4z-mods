@@ -1438,11 +1438,13 @@ export class SauceElevationProfile {
                                 }
                                 if (this.profileZoom && !this.singleLapView && (this.forwardDistance < this.routeDistances.at(-1))) {
                                     //console.log(xCoord)
+                                    let offsetBack = 500
                                     const distance = this.forwardDistance; 
                                     let zoomStart;
                                     let zoomFinish;
-                                    if (xCoord - 500 > 0 && typeof(xCoord) != "undefined") {
-                                        let zoomIdx = common.binarySearchClosest(this.routeDistances, (xCoord - 500))
+                                    let approachingFinish = false
+                                    if (xCoord - offsetBack > 0 && typeof(xCoord) != "undefined") {
+                                        let zoomIdx = common.binarySearchClosest(this.routeDistances, (xCoord - offsetBack))
                                         //zoomStart = xCoord - 500;
                                         zoomStart = this.routeDistances[zoomIdx]
                                     } else {
@@ -1458,14 +1460,17 @@ export class SauceElevationProfile {
                                         zoomStart = 0;
                                     } else {
                                         zoomFinish = this.routeDistances.at(-1);
-                                        zoomStart = zoomFinish - distance
+                                        zoomStart = zoomFinish - distance - offsetBack
+                                        approachingFinish = true
                                     }
                                     let idxStart = common.binarySearchClosest(this.routeDistances, (zoomStart)); 
                                     let idxFinish = common.binarySearchClosest(this.routeDistances, (zoomFinish)); 
-                                    
+                                    if (approachingFinish) {
+                                        zoomStart = this.routeDistances.at(-(this.routeDistances.length - idxStart)) // adjust the zoom offset to line up with colorstops
+                                    }
                                     const dataZoomColorStops = Array.from(this.routeColorStops.slice(idxStart, idxFinish));                                    
                                     const newColorStops = dataZoomColorStops.map((stop, i) => ({
-                                        offset: (this.routeDistances[idxStart + i] - this.routeDistances[idxStart]) / (distance + 500),
+                                        offset: (this.routeDistances[idxStart + i] - this.routeDistances[idxStart]) / (distance + offsetBack),
                                         color: stop.color
                                     })) 
                                     //console.log(newColorStops)
@@ -1486,6 +1491,7 @@ export class SauceElevationProfile {
                                             }
                                         }]                                                                           
                                     })
+                                    //debugger
                                 } else if (this.zoomNextSegment && !this.singleLapView) {
                                     let nextSegment = zen.getNextSegment(allMarkLines, xCoord)
                                     if (nextSegment != -1) {
