@@ -15,7 +15,7 @@ let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((res
 const allRoutes = await zen.getAllRoutes();
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, refresh=1000}) {
         this.el = el;
         this.worldList = worldList;
         this.preferRoute = preferRoute;
@@ -27,6 +27,8 @@ export class SauceElevationProfile {
         this.showAllRiders = showAllRiders;
         this.showRobopacers = showRobopacers;
         this.showLeaderSweep = showLeaderSweep;
+        this.showGroups = showGroups;
+        this.groups = [];
         this.colorScheme = colorScheme;
         this.gradientOpacity = gradientOpacity;
         this.lineTextColor = lineTextColor;
@@ -1019,6 +1021,11 @@ export class SauceElevationProfile {
     }
 
     async _renderAthleteStates(states, force) {
+        
+        if (!states[0]) {
+            return
+        }
+        //console.log(states)
         const watching = states.find(x => x.athleteId === this.watchingId); 
         
         if (!watching && (this.courseId == null || (!this.road && !this.route))) {
@@ -1195,36 +1202,41 @@ export class SauceElevationProfile {
                         let roadSeg;
                         let nodeRoadOfft;
                         let deemphasize;
-                        const isWatching = state.athleteId === this.watchingId;                    
+                        const isWatching = (state.athleteId === this.watchingId);
                         let isTeamMate = false;
                         let isMarked = false;
                         let isPP = false;
                         let isBeacon = false;  
-                        let isLeaderSweep = false;                  
+                        let isLeaderSweep = false;  
+                        let isGroup = false;                
                         let beaconColour;
                         let beaconImage;
                         const ad = common.getAthleteDataCacheEntry(state.athleteId);
-                        if (ad && ad.athlete && ad.athlete.team) {
-                            isWatching ? this.watchingTeam = ad.athlete.team : 
-                            ad.athlete.team == this.watchingTeam ? isTeamMate = true : null;   
-                            //debugger                     
-                        } 
-                        if (ad && ad.athlete && ad.athlete.marked && !isWatching) {
-                            isMarked = true;
-                        }
-                        if (ad && ad.athlete && ad.athlete.type == "PACER_BOT" && ad.state.sport == "cycling" && !isWatching && this.showRobopacers) {
-                            isPP = true;
-                            isBeacon = true;
-                            let wkg = ad.state.power / ad.athlete.weight;
-                            beaconColour = wkg <= 2.0 ? "#ffff00" : (wkg > 2.0 && wkg <= 3.0) ? "#00ffff" : (wkg > 3.0 && wkg < 4.0) ? "#00ff40" : "#ff0000"
-                            //debugger
-                            //console.log("found a PP mark")
-                        }
-                        if (ad && (ad.eventLeader || ad.eventSweeper) && this.showLeaderSweep) {                        
-                            isLeaderSweep = true;
-                            isBeacon = true;
-                            ad.eventLeader ? beaconColour = "yellow" : null;
-                            ad.eventSweeper ? beaconColour = "red" : null;
+                        if (state.isGroup) {
+                            isGroup = true;
+                        } else {
+                            if (ad && ad.athlete && ad.athlete.team) {
+                                isWatching ? this.watchingTeam = ad.athlete.team : 
+                                ad.athlete.team == this.watchingTeam ? isTeamMate = true : null;   
+                                //debugger                     
+                            } 
+                            if (ad && ad.athlete && ad.athlete.marked && !isWatching) {
+                                isMarked = true;
+                            }
+                            if (ad && ad.athlete && ad.athlete.type == "PACER_BOT" && ad.state.sport == "cycling" && !isWatching && this.showRobopacers) {
+                                isPP = true;
+                                isBeacon = true;
+                                let wkg = ad.state.power / ad.athlete.weight;
+                                beaconColour = wkg <= 2.0 ? "#ffff00" : (wkg > 2.0 && wkg <= 3.0) ? "#00ffff" : (wkg > 3.0 && wkg < 4.0) ? "#00ff40" : "#ff0000"
+                                //debugger
+                                //console.log("found a PP mark")
+                            }
+                            if (ad && (ad.eventLeader || ad.eventSweeper) && this.showLeaderSweep) {                        
+                                isLeaderSweep = true;
+                                isBeacon = true;
+                                ad.eventLeader ? beaconColour = "yellow" : null;
+                                ad.eventSweeper ? beaconColour = "red" : null;
+                            }
                         }
                         //to do - restructure to check options and state status                    
                         //if (isWatching || !this.showMyPin) { 
@@ -1236,7 +1248,7 @@ export class SauceElevationProfile {
                             (this.showLeaderSweep && isLeaderSweep)
                         ) {        
                             
-                            if (this.routeId != null) {
+                            if (this.routeId != null) {                                
                                 
                                 //console.log("route not null")
                                 if (state.routeId === this.routeId) {
@@ -1374,6 +1386,7 @@ export class SauceElevationProfile {
                             let allOtherPins = this.showMyPin;
                             this.showMyPin ? allOtherPins = 1 : allOtherPins = 1;
                             let watchingPinSize = 1.1 * this.pinSize;
+                            let groupPinSize = 0.55 * this.pinSize;
                             let teamPinSize = 0.75 * this.pinSize;
                             let deemphasizePinSize = 0.35 * this.pinSize * allOtherPins;
                             let otherPinSize = 0.55 * this.pinSize * allOtherPins;
@@ -1812,6 +1825,8 @@ export class SauceElevationProfile {
                             if (isBeacon) {                            
                                 //beaconImage = "image://../pages/images/pp-" + beaconColour + ".png"                            
                                 symbol = "path://m 19.000923,56.950256 h 1.021954 V 100 h -0.963276 z m -1.266211,-22.991813 7.026027,-6.131803 -3.321394,9.069959 z m 3.832378,2.107806 a 2.4271723,2.3632993 0 0 1 -2.427172,2.3633 2.4271723,2.3632993 0 0 1 -2.427171,-2.3633 2.4271723,2.3632993 0 0 1 2.427171,-2.363299 2.4271723,2.3632993 0 0 1 2.427172,2.363299 z M 19.521675,13.903697 1.1291999,24.759155 1.2559791,46.349633 19.521675,57.20826 37.917319,46.859918 38.174047,25.015882 Z m 0.129951,10.475121 A 11.369386,11.369386 0 0 1 31.020536,35.747733 11.369386,11.369386 0 0 1 19.651624,47.116646 11.369386,11.369386 0 0 1 8.2827093,35.747733 11.369386,11.369386 0 0 1 19.651626,24.378818 Z M 1,11.858402 19.523156,1 38.174058,11.789339 38.046313,19.267666 19.581839,9.5589751 1.0932144,19.081236 Z"
+                            } else if (isGroup) {
+                                symbol = "path://M 50,50 a 50,50 0 1,0 0,100 a 50,50 0 1,0 0,-100 M 50,150 L 50,250"
                             } else if (this.customPin && this.useCustomPin) {
                                 //debugger
                                 symbol = this.customPin;
@@ -1820,47 +1835,124 @@ export class SauceElevationProfile {
                             } else {
                                 symbol = zen.pins.find(x => x.name == "Default").path;
                             }                        
-                            let symbolSize = isWatching ? this.em(watchingPinSize) : ((isTeamMate && this.showTeamMembers) || (isMarked && this.showMarkedRiders) || (isBeacon)) ? this.em(teamPinSize) : deemphasize ? this.em(deemphasizePinSize) : this.em(otherPinSize)
+                            let symbolSize = isGroup ? this.em(groupPinSize) : isWatching ? this.em(watchingPinSize) : ((isTeamMate && this.showTeamMembers) || (isMarked && this.showMarkedRiders) || (isBeacon)) ? this.em(teamPinSize) : deemphasize ? this.em(deemphasizePinSize) : this.em(otherPinSize)
                             
-                            return {
-                                name: state.athleteId,
-                                coord: [xCoord, yCoord],                            
-                                //symbol: isBeacon? beaconImage : symbol,
-                                symbol: symbol,
-                                symbolKeepAspect: true,                            
-                                symbolSize: symbolSize,                                                        
-                                symbolOffset: [0, -(symbolSize / 2)],                            
-                                itemStyle: {
-                                    color: isBeacon? beaconColour : isWatching ? watchingPinColor : (isTeamMate && this.showTeamMembers) ? watchingPinColor : (isMarked && this.showMarkedRiders) ? markedPinColor : deemphasize ? '#0002' : '#fff7',
-                                    borderWidth: this.em(isWatching ? 0.04 : 0.02),
-                                },
-                                emphasis: {
-                                    label: {
-                                        fontSize: this.em(markPointLabelSize),
-                                        fontWeight: 400,
-                                        lineHeight: this.em(1.15 * markPointLabelSize),
-                                        position: (state.altitude - this._yAxisMin) / deltaY > 0.4 ? 'bottom' : 'top',
-                                        backgroundColor: '#222e',
-                                        borderRadius: this.em(0.22 * markPointLabelSize),
-                                        borderWidth: 1,
-                                        borderColor: '#fff9',
-                                        align: (xIdx > this._distances.length / 2) ^ this.reverse ? 'right' : 'left',
-                                        padding: [
-                                            this.em(0.2 * markPointLabelSize),
-                                            this.em(0.3 * markPointLabelSize)
-                                        ],
-                                        formatter: this.onMarkEmphasisLabel.bind(this),
+                            if (isGroup) {
+                                if (isWatching) {
+                                  //debugger
+                                  const myGroup = this.groups.find(x => x.watching)
+                                  state.groupSpeed = myGroup.speed;
+                                  state.groupPower = myGroup.power;
+                                  state.groupWeight = myGroup.weight;
+                                  state.groupGapEst = myGroup.isGapEst;
+                                  state.groupSize = myGroup.athletes.length;
+                                }
+                                let maxGroupSize = 0;
+                                for (let group of this.groups) {
+                                    if (group.athletes.length > maxGroupSize) {
+                                        maxGroupSize = group.athletes.length;
                                     }
-                                },
+                                }
+                                //console.log("Max group size is ", maxGroupSize)
+                                if (state.groupSize > 1) {
+                                    const proportion = (state.groupSize - 2) / (maxGroupSize - 2)
+                                    const result = 1.5 + proportion * (1)
+                                    //console.log("Group size is ",state.groupSize, "proportion is ", result)
+                                    symbolSize = symbolSize * result;
+                                }
+                                return {
+                                    name: state.athleteId,
+                                    coord: [xCoord, yCoord],                            
+                                    //symbol: isBeacon? beaconImage : symbol,
+                                    symbol: symbol,
+                                    symbolKeepAspect: true,                            
+                                    symbolSize: symbolSize,                                                        
+                                    symbolOffset: [0, -(symbolSize / 2)],                            
+                                    itemStyle: {
+                                        color: isWatching ? watchingPinColor : '#fff7',
+                                        borderWidth: this.em(isWatching ? 0.04 : 0.02),
+                                    },
+                                    label: {
+                                        show: true,
+                                        formatter: state.groupSize > 1 ? state.groupSize.toString() : "",
+                                        color: 'white',
+                                        position: 'insideTop',
+                                        fontSize: symbolSize / 4,
+                                        offset: [0,4 * this.pinSize]
+                                    },
+                                    emphasis: {
+                                        label: {
+                                            fontSize: this.em(markPointLabelSize),
+                                            fontWeight: 400,
+                                            lineHeight: this.em(1.15 * markPointLabelSize),
+                                            position: (state.altitude - this._yAxisMin) / deltaY > 0.4 ? 'bottom' : 'top',
+                                            backgroundColor: '#222e',
+                                            borderRadius: this.em(0.22 * markPointLabelSize),
+                                            borderWidth: 1,
+                                            borderColor: '#fff9',
+                                            //align: (xIdx > this._distances.length / 2) ^ this.reverse ? 'right' : 'left',
+                                            align: 'left',
+                                            padding: [
+                                                this.em(0.2 * markPointLabelSize),
+                                                this.em(0.3 * markPointLabelSize)
+                                            ],
+                                            formatter: this.groupEmphasisLabel.bind(this),
+                                        }
+                                    },
+                                };
+                            } else {
+                                return {
+                                    name: state.athleteId,
+                                    coord: [xCoord, yCoord],                            
+                                    //symbol: isBeacon? beaconImage : symbol,
+                                    symbol: symbol,
+                                    symbolKeepAspect: true,                            
+                                    symbolSize: symbolSize,                                                        
+                                    symbolOffset: [0, -(symbolSize / 2)],                            
+                                    itemStyle: {
+                                        color: isBeacon? beaconColour : isWatching ? watchingPinColor : (isTeamMate && this.showTeamMembers) ? watchingPinColor : (isMarked && this.showMarkedRiders) ? markedPinColor : deemphasize ? '#0002' : '#fff7',
+                                        borderWidth: this.em(isWatching ? 0.04 : 0.02),
+                                    },
+                                    emphasis: {
+                                        label: {
+                                            fontSize: this.em(markPointLabelSize),
+                                            fontWeight: 400,
+                                            lineHeight: this.em(1.15 * markPointLabelSize),
+                                            position: (state.altitude - this._yAxisMin) / deltaY > 0.4 ? 'bottom' : 'top',
+                                            backgroundColor: '#222e',
+                                            borderRadius: this.em(0.22 * markPointLabelSize),
+                                            borderWidth: 1,
+                                            borderColor: '#fff9',
+                                            align: (xIdx > this._distances.length / 2) ^ this.reverse ? 'right' : 'left',
+                                            padding: [
+                                                this.em(0.2 * markPointLabelSize),
+                                                this.em(0.3 * markPointLabelSize)
+                                            ],
+                                            formatter: this.onMarkEmphasisLabel.bind(this),
+                                        }
+                                    },
+                                };
                             };
-                    }
+                    };
                     }).filter(x => x),
                 },
             }]});   
-         
-            for (const [athleteId, mark] of this.marks.entries()) {
-                if (now - mark.lastSeen > 15000) {
-                    this.marks.delete(athleteId);
+            if (!this.showGroups) {
+                for (const [athleteId, mark] of this.marks.entries()) {
+                    if (now - mark.lastSeen > 15000) {
+                        this.marks.delete(athleteId);
+                    }
+                }
+            } else {                
+                for (const [athleteId, mark] of this.marks.entries()) {
+                    //debugger
+                    //console.log("Mark: ",athleteId, mark.state.groupTS, "groupTS", this.groupTS)
+                    if (mark.state.groupTS != this.groupTS) {
+                        if (athleteId != this.watchingId) {
+                            this.marks.delete(athleteId)
+                            //console.log("Deleting mark for ", athleteId)
+                        }
+                    }
                 }
             }
         } else {
@@ -1885,6 +1977,31 @@ export class SauceElevationProfile {
         }
         const name = ad?.athlete?.fLast || `ID: ${mark.athleteId}`;
         return `${name} ${team}, ${H.power(mark.state.power, {suffix: true})}`;
+    }
+    groupEmphasisLabel(params) {
+        if (!params || !params.data || !params.data.name) {
+            return;
+        }
+        const mark = this.marks.get(params.data.name);
+        if (!mark) {
+            return;
+        }
+        //debugger
+        const size = `Riders: ${mark.state.groupSize}`;
+        const speed = `${mark.state.groupSpeed.toFixed(1)} kph`;
+        const wkg = (mark.state.groupPower / mark.state.groupWeight).toFixed(1)
+        const power = `${mark.state.groupPower.toFixed(0)}w (${wkg} w/kg)`;
+        //debugger
+        const gapDistance = typeof(mark.state.gapDistance) != "undefined"? `${mark.state.gapDistance?.toFixed(0)}m` : null;
+        const gapTime = `${mark.state.gapTime?.toFixed(0)}s`
+        //TODO: Gap distance and time 
+        if (gapDistance != null) {
+            return `${size}\n${speed}\n${power}\n${gapDistance}\n${gapTime}`;
+        } else {
+            return `${size}\n${speed}\n${power}`;
+        }
+        
+        //return `${name} ${team}, ${H.power(mark.state.power, {suffix: true})}`;
     }
 
     async _updateAthleteDetails(ids) {

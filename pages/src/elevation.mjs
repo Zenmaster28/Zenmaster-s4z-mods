@@ -70,7 +70,8 @@ common.settingsStore.setDefault({
     gradientOpacity: 0.7,
     pinName: "Default",
     useCustomPin: false,
-    showAllArches: false
+    showAllArches: false,
+    showGroups: false
 });
 
 const settings = common.settingsStore.get();
@@ -210,7 +211,9 @@ function createElevationProfile({worldList}) {
     const useCustomPin = settings.useCustomPin;
     typeof(settings.customPin) == "undefined" ? common.settingsStore.set("customPin", "") : null;
     const customPin = settings.customPin;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches});
+    typeof(settings.showGroups) == "undefined" ? common.settingsStore.set("showGroups", false) : null;
+    const showGroups = settings.showGroups;
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups});
 }
 
 
@@ -225,7 +228,8 @@ function setWatching(id) {
 
 async function initialize() {
     const ad = await common.rpc.getAthleteData('self');
-    //console.log("Initializing...", ad)
+    //const ad = await common.rpc.getAthleteData('watching');
+    console.log("Initializing...", ad)
     inGame = !!ad;
     if (!inGame) {
         console.info("User not active, starting demo mode...");
@@ -329,47 +333,137 @@ export async function main() {
         //elProfile.getSegmentsOnRoute();
         
         common.subscribe('watching-athlete-change', async athleteId => {
+            console.log("Watching athlete changed to ", athleteId)
             if (!inGame) {                
                 await initialize();
             } else {
+                console.log("Setting watching athlete to ", athleteId)
                 setWatching(athleteId);
                 //location.reload();
             }
         });
-        common.subscribe('athlete/watching', ad => {
-            //fieldRenderer.fps = 5;
-            if (ad.segmentData) { // ugh
-                if (ad.segmentData.nextSegment.distanceToGo) { // double ugh
-                    
-                    if (ad.segmentData.nextSegment.distanceToGoUnits == "m" && fieldRenderer.fps != 5) {
-                        //console.log("fps set to 5")
-                        fieldRenderer.fps = 5;
-                    } else if (ad.segmentData.nextSegment.distanceToGoUnits == "km" && fieldRenderer.fps != 1) {
-                        //console.log("fps set to 1")
-                        fieldRenderer.fps = 1;
+        
+        setInterval(() => {
+            //inGame = performance.now() - watchdog < 10000;
+        }, 3333);
+        if (settings.showGroups) {
+            common.subscribe('athlete/watching', ad => {
+                //fieldRenderer.fps = 5;
+                let states = [];
+                ad.state.isGroup = true;
+                states.push(ad.state)
+                //debugger
+                elProfile.renderAthleteStates(states);
+
+                if (ad.segmentData) { // ugh
+                    if (ad.segmentData.nextSegment.distanceToGo) { // double ugh
+                        
+                        if (ad.segmentData.nextSegment.distanceToGoUnits == "m" && fieldRenderer.fps != 5) {
+                            //console.log("fps set to 5")
+                            fieldRenderer.fps = 5;
+                        } else if (ad.segmentData.nextSegment.distanceToGoUnits == "km" && fieldRenderer.fps != 1) {
+                            //console.log("fps set to 1")
+                            fieldRenderer.fps = 1;
+                        }
                     }
                 }
-            }
-            fieldRenderer.setData(ad);
-            fieldRenderer.render();                       
-        });
-        setInterval(() => {
-            inGame = performance.now() - watchdog < 10000;
-        }, 3333);
-        common.subscribe('states', async states => {
-            if (!inGame) {                
-                await initialize();
-            }
-            if (!elProfile.watchingId) {
-                console.log("watching not set.")
-                await initialize();
-            }
-            watchdog = performance.now();
-            //elProfile.renderAthleteStates(states);
-            if (elProfile) {                                      
-                elProfile.renderAthleteStates(states);
-            }
-        });
+                fieldRenderer.setData(ad);
+                fieldRenderer.render();                       
+            });
+            common.subscribe('groups', async groups => {
+                //console.log("Groups around ", groups.length)
+                //debugger
+                if (!inGame) {
+                    console.log("Not inGame, initializing")   
+                    await initialize();
+                }
+                let states = [];
+                let ts = Date.now()
+                for (let group of groups) {
+                    let infinite = group.gap < 0 ? -Infinity : Infinity
+                    let groupMinimum = {
+                        gapDistance: infinite
+                    };
+                    //debugger
+                    for (let athlete of group.athletes) {
+                        if (group.watching) {
+                            //console.log("continuing after watching")
+                            continue;
+                            //groupMinimum = group.athletes.find(x => x.watching)
+                            
+                        } else if (group.gap < 0) { // group is in front so we want least negative gapDistance for the back of the group
+                            //debugger
+                            //console.log("Group is in front")
+                            if (athlete.gapDistance > groupMinimum.gapDistance) {                                
+                                groupMinimum = athlete;
+                            }
+                        } else { // group is behind so we want lease positive gapDistance for the front of the group
+                            //debugger
+                            //console.log("Group is behind")
+                            //debugger
+                            if (athlete.gapDistance < groupMinimum.gapDistance) {                                
+                                groupMinimum = athlete;
+                            }
+                        }
+                        groupMinimum.state.isGroup = true;  
+                        groupMinimum.state.groupSize = group.athletes.length;
+                        groupMinimum.state.groupSpeed = group.speed;
+                        groupMinimum.state.groupPower = group.power;
+                        groupMinimum.state.groupWeight = group.weight;
+                        groupMinimum.state.groupGapEst = group.isGapEst;
+                        groupMinimum.state.groupSize = group.athletes.length;
+                        groupMinimum.state.groupTS = ts;
+                        groupMinimum.state.gapTime = groupMinimum.gap;
+                        groupMinimum.state.gapDistance = groupMinimum.gapDistance;
+                    }
+                    if (typeof(groupMinimum.state) != "undefined") {
+                        states.push(groupMinimum.state)
+                    }
+                }
+                //debugger
+                states = states.filter(x => x.isGroup)
+                //debugger
+                if (states.length > 0)  { 
+                    elProfile.groupTS = ts;               
+                    elProfile.groups = groups;
+                    //debugger
+                    //elProfile.marks.clear();
+                    elProfile.renderAthleteStates(states);
+                }
+            });
+        } else {
+            common.subscribe('athlete/watching', ad => {
+                //fieldRenderer.fps = 5;
+                if (ad.segmentData) { // ugh
+                    if (ad.segmentData.nextSegment.distanceToGo) { // double ugh
+                        
+                        if (ad.segmentData.nextSegment.distanceToGoUnits == "m" && fieldRenderer.fps != 5) {
+                            //console.log("fps set to 5")
+                            fieldRenderer.fps = 5;
+                        } else if (ad.segmentData.nextSegment.distanceToGoUnits == "km" && fieldRenderer.fps != 1) {
+                            //console.log("fps set to 1")
+                            fieldRenderer.fps = 1;
+                        }
+                    }
+                }
+                fieldRenderer.setData(ad);
+                fieldRenderer.render();                       
+            });
+            common.subscribe('states', async states => {
+                if (!inGame) {                
+                    await initialize();
+                }
+                if (!elProfile.watchingId) {
+                    console.log("watching not set.")
+                    await initialize();
+                }
+                watchdog = performance.now();
+                //elProfile.renderAthleteStates(states);
+                if (elProfile) {                                      
+                    elProfile.renderAthleteStates(states);
+                }
+            });
+        }
     }
     common.settingsStore.addEventListener('changed', ev => {
         const changed = ev.data.changed; 
@@ -430,7 +524,8 @@ export async function main() {
                         changed.has('routeProfile') || 
                         changed.has('showElevationMaxLine') ||                         
                         changed.has('fontScale') ||                        
-                        changed.has('singleLapView')                        
+                        changed.has('singleLapView') ||
+                        changed.has('showGroups')
                     )
                 {                    
                     location.reload();
