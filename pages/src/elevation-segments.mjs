@@ -1838,14 +1838,22 @@ export class SauceElevationProfile {
                             let symbolSize = isGroup ? this.em(groupPinSize) : isWatching ? this.em(watchingPinSize) : ((isTeamMate && this.showTeamMembers) || (isMarked && this.showMarkedRiders) || (isBeacon)) ? this.em(teamPinSize) : deemphasize ? this.em(deemphasizePinSize) : this.em(otherPinSize)
                             
                             if (isGroup) {
-                                if (isWatching) {
-                                  //debugger
+                                if (isWatching) {                                  
                                   const myGroup = this.groups.find(x => x.watching)
-                                  state.groupSpeed = myGroup.speed;
-                                  state.groupPower = myGroup.power;
-                                  state.groupWeight = myGroup.weight;
-                                  state.groupGapEst = myGroup.isGapEst;
-                                  state.groupSize = myGroup.athletes.length;
+                                  if (myGroup) {
+                                        state.groupSpeed = myGroup.speed;
+                                        state.groupPower = myGroup.power;
+                                        state.groupWeight = myGroup.weight;
+                                        state.groupGapEst = myGroup.isGapEst;
+                                        state.groupSize = myGroup.athletes.length;
+                                    } else {
+                                        console.log("Missing myGroup data!")
+                                        state.groupSpeed = 0;
+                                        state.groupPower = 0;
+                                        state.groupWeight = 1;
+                                        state.groupGapEst = true;
+                                        state.groupSize = 1;
+                                    }
                                 }
                                 let maxGroupSize = 0;
                                 for (let group of this.groups) {
@@ -1936,7 +1944,8 @@ export class SauceElevationProfile {
                     };
                     }).filter(x => x),
                 },
-            }]});   
+            }]});  
+            //debugger
             if (!this.showGroups) {
                 for (const [athleteId, mark] of this.marks.entries()) {
                     if (now - mark.lastSeen > 15000) {
@@ -1986,17 +1995,30 @@ export class SauceElevationProfile {
         if (!mark) {
             return;
         }
-        //debugger
+        if (typeof(mark.state.groupSpeed) == "undefined") {
+            return;
+        }
         const size = `Riders: ${mark.state.groupSize}`;
         const speed = `${mark.state.groupSpeed.toFixed(1)} kph`;
         const wkg = (mark.state.groupPower / mark.state.groupWeight).toFixed(1)
         const power = `${mark.state.groupPower.toFixed(0)}w (${wkg} w/kg)`;
         //debugger
-        const gapDistance = typeof(mark.state.gapDistance) != "undefined"? `${mark.state.gapDistance?.toFixed(0)}m` : null;
-        const gapTime = `${mark.state.gapTime?.toFixed(0)}s`
+        let gapDistance;
+        let gapTime;
+        let gapMessage;
+        if (typeof(mark.state.gapDistance) != "undefined" && mark.state.gapDistance < 0) {
+            gapDistance = `${mark.state.gapDistance?.toFixed(0) * -1}`;
+            gapTime = `${mark.state.gapTime?.toFixed(0) * -1}`;
+            gapMessage = `${gapDistance}m / ${gapTime}s ahead`
+        } else if (mark.state.gapDistance > 0){
+            gapDistance = `${mark.state.gapDistance?.toFixed(0)}`;
+            gapTime = `${mark.state.gapTime?.toFixed(0)}`;
+            gapMessage = `${gapDistance}m / ${gapTime}s behind`
+        }
+        
         //TODO: Gap distance and time 
         if (gapDistance != null) {
-            return `${size}\n${speed}\n${power}\n${gapDistance}\n${gapTime}`;
+            return `${size}\n${speed}\n${power}\n${gapMessage}`;
         } else {
             return `${size}\n${speed}\n${power}`;
         }
