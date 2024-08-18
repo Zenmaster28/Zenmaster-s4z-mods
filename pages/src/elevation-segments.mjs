@@ -100,7 +100,8 @@ export class SauceElevationProfile {
                     if (this.watchingId && this.showMyPin) {
                     
                     let watchingPin =  this.chart.getOption().series[0].markPoint.data.find(x => x.name == this.watchingId)
-                    const dist = (this.reverse && this._distances) ?
+                    if (typeof(watchingPin) != "undefined") {
+                        const dist = (this.reverse && this._distances) ?
                         this._distances.at(-1) - value[0] : value[0];
                         let toGo = (H.distance((dist) - watchingPin.coord[0], {suffix: true}));                        
                         if (toGo.replace("km","").replace("m","") > 0) {
@@ -113,6 +114,9 @@ export class SauceElevationProfile {
                             `<ms large>landscape</ms>${H.elevation(value[1], {suffix: true})} ` +
                             `<small>(${H.number(value[2] * 100, {suffix: '%'})})</small>`;
                         }
+                    } else {
+                        return;
+                    }
                     } else {
                         const dist = (this.reverse && this._distances) ?
                             this._distances.at(-1) - value[0] : value[0];
@@ -155,6 +159,9 @@ export class SauceElevationProfile {
                     silent: true,
                     lineStyle: {},
                 }
+            },{
+                name: 'WatchingPin',                
+                type: 'custom'
             }]
         });        
         this.courseId = null;
@@ -1024,8 +1031,7 @@ export class SauceElevationProfile {
         
         if (!states[0]) {
             return
-        }
-        //console.log(states)
+        }        
         const watching = states.find(x => x.athleteId === this.watchingId); 
         
         if (!watching && (this.courseId == null || (!this.road && !this.route))) {
@@ -1193,6 +1199,7 @@ export class SauceElevationProfile {
             const markPointLabelSize = 0.4;
             const deltaY = this._yAxisMax - this._yAxisMin;
             const nodes = this.curvePath.nodes; 
+            let watchingPinData = [];
             //debugger   
             this.chart.setOption({series: [{
                 markPoint: {
@@ -1863,12 +1870,12 @@ export class SauceElevationProfile {
                                 }
                                 //console.log("Max group size is ", maxGroupSize)
                                 if (state.groupSize > 1) {
-                                    const proportion = (state.groupSize - 2) / (maxGroupSize - 2)
+                                    const proportion = (state.groupSize - 1) / (maxGroupSize - 1)
                                     const result = 1.5 + proportion * (1)
                                     //console.log("Group size is ",state.groupSize, "proportion is ", result)
                                     symbolSize = symbolSize * result;
                                 }
-                                return {
+                                const pinData = {
                                     name: state.athleteId,
                                     coord: [xCoord, yCoord],                            
                                     //symbol: isBeacon? beaconImage : symbol,
@@ -1878,7 +1885,9 @@ export class SauceElevationProfile {
                                     symbolOffset: [0, -(symbolSize / 2)],                            
                                     itemStyle: {
                                         color: isWatching ? watchingPinColor : '#fff7',
-                                        borderWidth: this.em(isWatching ? 0.04 : 0.02),
+                                        borderWidth: this.em(isWatching ? 0.02 : 0.02),
+                                        borderColor: '#000',
+                                        opacity: 1
                                     },
                                     label: {
                                         show: true,
@@ -1907,7 +1916,15 @@ export class SauceElevationProfile {
                                             formatter: this.groupEmphasisLabel.bind(this),
                                         }
                                     },
+                                
                                 };
+                                if (isWatching) {
+                                    watchingPinData.push(pinData);
+                                    return;
+                                } else {
+                                    return pinData;                                
+                                };
+                                
                             } else {
                                 return {
                                     name: state.athleteId,
@@ -1944,7 +1961,17 @@ export class SauceElevationProfile {
                     };
                     }).filter(x => x),
                 },
-            }]});  
+            }]}); 
+            //console.log(watchingPinData);
+            this.chart.setOption({
+                series: {
+                    name: 'WatchingPin',
+                    markPoint: {
+                        data: watchingPinData
+                    }
+                }
+            });
+            //console.log(this.chart.getOption().series)
             //debugger
             if (!this.showGroups) {
                 for (const [athleteId, mark] of this.marks.entries()) {
@@ -1953,13 +1980,10 @@ export class SauceElevationProfile {
                     }
                 }
             } else {                
-                for (const [athleteId, mark] of this.marks.entries()) {
-                    //debugger
-                    //console.log("Mark: ",athleteId, mark.state.groupTS, "groupTS", this.groupTS)
+                for (const [athleteId, mark] of this.marks.entries()) {                    
                     if (mark.state.groupTS != this.groupTS) {
                         if (athleteId != this.watchingId) {
-                            this.marks.delete(athleteId)
-                            //console.log("Deleting mark for ", athleteId)
+                            this.marks.delete(athleteId) // delete marks that aren't the watching pin and not the current timestamp                            
                         }
                     }
                 }
