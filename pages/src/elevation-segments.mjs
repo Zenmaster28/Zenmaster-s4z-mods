@@ -143,6 +143,7 @@ export class SauceElevationProfile {
                 smooth: 0.5,
                 type: 'line',
                 symbol: 'none',
+                z: 1,
                 emphasis: {
                     disabled: true
                 },
@@ -161,7 +162,8 @@ export class SauceElevationProfile {
                 }
             },{
                 name: 'WatchingPin',                
-                type: 'custom'
+                type: 'custom',
+                z: 2
             }]
         });        
         this.courseId = null;
@@ -1868,17 +1870,19 @@ export class SauceElevationProfile {
                                         maxGroupSize = group.athletes.length;
                                     }
                                 }
-                                //console.log("Max group size is ", maxGroupSize)
                                 if (state.groupSize > 1) {
-                                    const proportion = (state.groupSize - 1) / (maxGroupSize - 1)
-                                    const result = 1.5 + proportion * (1)
-                                    //console.log("Group size is ",state.groupSize, "proportion is ", result)
+                                    let proportion = (state.groupSize - 1) / (maxGroupSize - 1)
+                                    if (isWatching && proportion < 1) {
+                                        proportion = ((1 - proportion) / 2) + proportion // give a little more emphasis to watching group pin size
+                                    }
+                                    const result = 1.5 + proportion
                                     symbolSize = symbolSize * result;
+                                } else {
+                                    symbolSize = isWatching ? symbolSize * 1.5 : symbolSize; // if not in a group, make watching pin 1.5x larger for emphasis
                                 }
                                 const pinData = {
                                     name: state.athleteId,
                                     coord: [xCoord, yCoord],                            
-                                    //symbol: isBeacon? beaconImage : symbol,
                                     symbol: symbol,
                                     symbolKeepAspect: true,                            
                                     symbolSize: symbolSize,                                                        
@@ -1886,8 +1890,7 @@ export class SauceElevationProfile {
                                     itemStyle: {
                                         color: isWatching ? watchingPinColor : '#fff7',
                                         borderWidth: this.em(isWatching ? 0.02 : 0.02),
-                                        borderColor: '#000',
-                                        opacity: 1
+                                        borderColor: '#000'
                                     },
                                     label: {
                                         show: true,
@@ -1907,7 +1910,6 @@ export class SauceElevationProfile {
                                             borderRadius: this.em(0.22 * markPointLabelSize),
                                             borderWidth: 1,
                                             borderColor: '#fff9',
-                                            //align: (xIdx > this._distances.length / 2) ^ this.reverse ? 'right' : 'left',
                                             align: 'left',
                                             padding: [
                                                 this.em(0.2 * markPointLabelSize),
@@ -1919,6 +1921,7 @@ export class SauceElevationProfile {
                                 
                                 };
                                 if (isWatching) {
+                                    pinData.itemStyle.opacity = 1;
                                     watchingPinData.push(pinData);
                                     return;
                                 } else {
@@ -1929,7 +1932,6 @@ export class SauceElevationProfile {
                                 return {
                                     name: state.athleteId,
                                     coord: [xCoord, yCoord],                            
-                                    //symbol: isBeacon? beaconImage : symbol,
                                     symbol: symbol,
                                     symbolKeepAspect: true,                            
                                     symbolSize: symbolSize,                                                        
@@ -1962,7 +1964,6 @@ export class SauceElevationProfile {
                     }).filter(x => x),
                 },
             }]}); 
-            //console.log(watchingPinData);
             this.chart.setOption({
                 series: {
                     name: 'WatchingPin',
@@ -1971,8 +1972,6 @@ export class SauceElevationProfile {
                     }
                 }
             });
-            //console.log(this.chart.getOption().series)
-            //debugger
             if (!this.showGroups) {
                 for (const [athleteId, mark] of this.marks.entries()) {
                     if (now - mark.lastSeen > 15000) {
