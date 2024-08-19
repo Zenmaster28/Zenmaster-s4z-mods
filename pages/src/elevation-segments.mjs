@@ -96,14 +96,14 @@ export class SauceElevationProfile {
                     if (!value) {
                         return '';
                     }
-                    this.hoverPoint = value;                  
+                    this.hoverPoint = value;
                     if (this.watchingId && this.showMyPin) {
-                    
-                    let watchingPin =  this.chart.getOption().series[0].markPoint.data.find(x => x.name == this.watchingId)
+                    const series = this.showGroups ? 1 : 0;
+                    let watchingPin =  this.chart.getOption().series[series].markPoint.data.find(x => x.name == this.watchingId)
                     if (typeof(watchingPin) != "undefined") {
                         const dist = (this.reverse && this._distances) ?
                         this._distances.at(-1) - value[0] : value[0];
-                        let toGo = (H.distance((dist) - watchingPin.coord[0], {suffix: true}));                        
+                        let toGo = (H.distance((dist) - watchingPin.coord[0], {suffix: true}));    
                         if (toGo.replace("km","").replace("m","") > 0) {
                         return `Dist: ${H.distance(dist, {suffix: true})}<br/>` +
                             `To Go: ${toGo}<br/>` +
