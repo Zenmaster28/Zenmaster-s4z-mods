@@ -298,5 +298,30 @@
                 "start": 0.419
             }
         ]
+    },
+    {
+        "id": 226950646,
+        "leadin":
+        [
+            {
+                "end": 0.76,                
+                "reverse": true,
+                "roadId": 36,
+                "start": 0.7018518570810561
+            }
+        ]
+    },
+    {
+        "id": 4280627426,
+        "leadin":
+        [
+            {
+                "end": 0.414,                
+                "reverse": true,
+                "leadin": true,
+                "roadId": 149,
+                "start": 0.2657975578
+            }
+        ]
     }
 ]
