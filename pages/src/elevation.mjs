@@ -422,12 +422,9 @@ export async function main() {
                 }
                 //debugger
                 states = states.filter(x => x.isGroup)
-                //debugger
-                if (states.length > 0)  { 
-                    elProfile.groupTS = ts;               
-                    elProfile.groups = groups;
-                    //debugger
-                    //elProfile.marks.clear();
+                elProfile.groups = groups;
+                elProfile.groupTS = ts;
+                if (states.length > 0)  {                     
                     elProfile.renderAthleteStates(states);
                 }
             });
