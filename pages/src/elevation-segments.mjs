@@ -212,8 +212,15 @@ export class SauceElevationProfile {
                     this.createPOI(ev, self, this.hoverPoint[0]);                    
                 };
             });                
-            rightPanel.addEventListener('click', ev => { 
-                //debugger
+            this.chart.on('click', function (params) {
+                if (params.componentType == 'markPoint') {
+                    //console.log("markpoint clicked",params)
+                    let clickedGroup = self.groups.find(grp => grp.athletes.some(athlete => athlete.athleteId == params.data.name))
+                    console.log("Clicked group:",clickedGroup)
+                    //debugger
+                }
+            })
+            rightPanel.addEventListener('click', ev => {                 
                 if (ev.ctrlKey) {
                     this.createPOI(ev, self, this.hoverPoint[0]);
                     
