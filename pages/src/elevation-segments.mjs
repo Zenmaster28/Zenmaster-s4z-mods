@@ -15,7 +15,7 @@ let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((res
 const allRoutes = await zen.getAllRoutes();
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, refresh=1000}) {
         this.el = el;
         this.worldList = worldList;
         this.preferRoute = preferRoute;
@@ -85,7 +85,11 @@ export class SauceElevationProfile {
         this._lastRender = 0;
         this._refreshTimeout = null; 
         this.customPOI = [];
-        this.editedSegments = [];       
+        this.editedSegments = []; 
+        this.showLineAhead = showLineAhead;
+        this.distanceAhead = distanceAhead;
+        this.aheadLineColor = aheadLineColor;
+        this.aheadLineType = aheadLineType;      
         el.classList.add('sauce-elevation-profile-container');
         this.chart = ec.init(el, 'sauce', {renderer: 'svg'});
         this.chart.setOption({
@@ -1035,7 +1039,8 @@ export class SauceElevationProfile {
             return
         }        
         const watching = states.find(x => x.athleteId === this.watchingId); 
-        
+        //this.preferRoute = false // test to force elevation to road mode
+
         if (!watching && (this.courseId == null || (!this.road && !this.route))) {
             return;
         } else if (watching) {
@@ -1146,6 +1151,7 @@ export class SauceElevationProfile {
                     await this.setRoute(sg.routeId, {laps: sg.laps, eventSubgroupId: sg.id, distance: this.customDistance});
                 }
             }
+            
             if (!this.routeId || !knownRoute && !this.routeOverride) {                
                 if (this.knownRoad) {
                     
@@ -1830,6 +1836,55 @@ export class SauceElevationProfile {
                                     //debugger
                                 }
                             }
+                            if (this.showLineAhead && isWatching) { 
+                                let lineCoord;
+                                //debugger
+                                if (!this.routeId) {
+                                    lineCoord = watching.reverse ? xCoord - parseInt(this.distanceAhead) : xCoord + parseInt(this.distanceAhead)
+                                } else {
+                                    lineCoord = xCoord + parseInt(this.distanceAhead)
+                                }
+                                //let lineCoord = xCoord + parseInt(this.distanceAhead)
+                                let currentMarkLines = this.chart.getOption().series[0].markLine ? this.chart.getOption().series[0].markLine : [];                                  
+                                let currentAheadLine = currentMarkLines.data.find(x => x.name == "aheadLine");
+                                if (currentAheadLine) {                                    
+                                    currentAheadLine.xAxis = lineCoord;
+                                    currentAheadLine.lineStyle.type = this.aheadLineType;
+                                    currentAheadLine.lineStyle.color = this.aheadLineColor;
+                                    currentAheadLine.lineStyle.width = this.lineSize;
+                                    currentAheadLine.label.color = this.aheadLineColor;
+                                    currentAheadLine.label.formatter = `+${this.distanceAhead}m`;
+                                    //console.log("Found an existing ahead line")
+                                } else {
+                                    //console.log("no ahead line found")                                    
+                                    let newAheadLine = {                                        
+                                        xAxis: lineCoord,
+                                        name: "aheadLine",
+                                        lineStyle: {
+                                            width: this.lineSize,
+                                            type: this.aheadLineType,
+                                            color: this.aheadLineColor
+                                        },
+                                        label: {
+                                            show: true,
+                                            position: 'end',
+                                            formatter: `+${this.distanceAhead}m`,
+                                            rotate: 0,
+                                            color: this.aheadLineColor
+                                        }
+                                    }
+                                    currentMarkLines.data.push(newAheadLine)                                    
+                                }
+                                this.chart.setOption({
+                                    series: {
+                                        name: 'Elevation',
+                                        markLine: {
+                                            data: currentMarkLines.data
+                                        }
+                                    }
+                                })
+                                
+                            };
                             let symbol;
                             if (isBeacon) {                            
                                 //beaconImage = "image://../pages/images/pp-" + beaconColour + ".png"                            
@@ -1964,6 +2019,7 @@ export class SauceElevationProfile {
                     }).filter(x => x),
                 },
             }]}); 
+            
             this.chart.setOption({
                 series: {
                     name: 'WatchingPin',

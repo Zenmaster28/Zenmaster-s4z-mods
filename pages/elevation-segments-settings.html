@@ -91,6 +91,25 @@
                     <key data-added="2023-12-30">Show completed laps:</key>
                     <input type="checkbox" name="showCompletedLaps" data-depends-on="showLapMarker">
                 </label>
+                <label title="Display a line ahead of the watched rider at the specified distance">
+                    <key data-added="2024-08-21">Show a line ahead:</key>
+                    <input type="checkbox" name="showLineAhead">
+                </label>
+                <label>
+                    <key>&nbsp;&nbsp;- meters:</key>
+                    <input type="range" name="distanceAhead" min="500" max="5000" step="500" data-depends-on="showLineAhead">
+                    <input type="number" name="distanceAhead" min="500" max="5000" step="500">
+                </label>
+                <label>
+                    <key>&nbsp;&nbsp;- line style:</key>
+                    <select name="aheadLineType" data-depends-on="showLineAhead"/>
+                        <option value="solid">Solid</option>
+                        <option value="dashed">Dashed</option>
+                        <option value="dotted">Dotted</option>
+                    </select>
+                    <input type="color" name="aheadLineColor" data-depends-on="showLineAhead"/>
+                    <input type="text" name="aheadLineColor" data-depends-on="showLineAhead" size="7"/>
+                </label>
                 <label>
                     <key data-added="2024-02-29">Gradient color scheme:</key>
                     <select name="colorScheme">
