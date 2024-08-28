@@ -1639,7 +1639,8 @@ export class SauceElevationProfile {
                                             })
                                         }
                                         //debugger
-                                    } else if (this.zoomFinalKm) {
+                                    } else if (this.zoomFinalKm && !isNaN(xCoord)) {
+                                        console.log("Zoom final km")
                                         let zoomStart = this.routeDistances.at(-1) - 1000;
                                         let zoomFinish = this.routeDistances.at(-1);
                                         let idxStart = common.binarySearchClosest(this.routeDistances, (zoomStart)); 
@@ -1678,6 +1679,7 @@ export class SauceElevationProfile {
                                                 max: segmentMax
                                             }                                                                          
                                         })
+                                        this.zoomedIn = true;
                                     } else if (this.zoomedIn) {
                                         //zoom back out
                                         //console.log("No more segments, zoom back out")
