@@ -16,6 +16,8 @@ const allRoutes = await zen.getAllRoutes();
 
 export class SauceElevationProfile {
     constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, refresh=1000}) {
+        this.debugXcoord = false;
+        this.debugXcoordDistance = null;
         this.el = el;
         this.worldList = worldList;
         this.preferRoute = preferRoute;
@@ -739,6 +741,29 @@ export class SauceElevationProfile {
         //console.log(routeDistances)
         //this.setData(distances, elevations, grades, {markLines, markAreas});        
         this.setData(this.routeDistances, this.routeElevations, this.routeGrades, {markLines, markAreas});
+        /* figuring out axis tickmarks, for possible future use.
+        this.chart.setOption({
+            xAxis: [{
+                show: true,
+                splitLine: {
+                    show: false // Disable grid lines
+                },
+                axisTick: {
+                    show: true,  // Ensure tick marks are enabled
+                    inside: true, // Tick marks outside the graph
+                    interval: 'auto',
+                    length: 25,
+                    lineStyle: {
+                        color: 'black',
+                        width: 5
+                    }
+                },
+                axisLine: {
+                    onZero: false
+                }
+            }]
+        });
+        */
         return this.route;
     });
 
@@ -1418,7 +1443,18 @@ export class SauceElevationProfile {
                             
                             if (isWatching && this.showMyPin)
                             {                       
-                                
+                                if (this.debugXcoord) {
+                                    console.log("Debug xCoord:", this.debugXcoordDistance)
+                                    //xCoord = typeof(xCoord) == "number" ? this.debugXcoordDistance : 0;
+                                    if (typeof(xCoord) == "number") {
+                                        xCoord = this.debugXcoordDistance;                                        
+                                        //debugger
+                                    } else 
+                                    {
+                                        xCoord = 0;                                        
+                                    }
+                                    yCoord = this.routeElevations[common.binarySearchClosest(this.routeDistances, xCoord)]
+                                }
                                 if (this.currentLap != state.laps + 1 && state.eventSubgroupId != 0) {
                                     console.log("Setting current lap to: " + (state.laps + 1))
                                     this.currentLap = state.laps + 1;
@@ -1528,7 +1564,10 @@ export class SauceElevationProfile {
                                     })
                                     //debugger
                                 } else if (this.zoomNextSegment && !this.singleLapView) {
-                                    let nextSegment = zen.getNextSegment(allMarkLines, xCoord)
+                                    let nextSegment = zen.getNextSegment(allMarkLines.filter(x => !x.finishArchOnly), xCoord)
+                                    //let nextSegment = zen.getNextSegment(allMarkLines, xCoord)
+                                    //console.log("next segment", nextSegment)
+                                    //TODO: fix zoom next segment + show final km combo when in the pen
                                     if (nextSegment != -1) {
                                         let segmentMarkLines = allMarkLines.filter(x => x.id == nextSegment.id && x.repeat == nextSegment.repeat)
                                         let segmentStart = segmentMarkLines[0];

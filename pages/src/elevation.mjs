@@ -517,7 +517,9 @@ export async function main() {
             'customPin',
             'distanceAhead',
             'aheadLineType',
-            'aheadLineColor'
+            'aheadLineColor',
+            'debugXcoord',
+            'debugXcoordDistance'
         ]
         //console.log(changed);
         if (changed.has('editedSegments')) {
