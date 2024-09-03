@@ -15,7 +15,7 @@ let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((res
 const allRoutes = await zen.getAllRoutes();
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, refresh=1000}) {
         this.debugXcoord = false;
         this.debugXcoordDistance = null;
         this.el = el;
@@ -30,6 +30,7 @@ export class SauceElevationProfile {
         this.showRobopacers = showRobopacers;
         this.showLeaderSweep = showLeaderSweep;
         this.showGroups = showGroups;
+        this.showNextPowerup = showNextPowerup;
         this.groups = [];
         this.colorScheme = colorScheme;
         this.gradientOpacity = gradientOpacity;
@@ -1104,6 +1105,7 @@ export class SauceElevationProfile {
                             let sg;
                             if (watching.eventSubgroupId) {
                                 sg = await common.rpc.getEventSubgroup(watching.eventSubgroupId);
+                                this.eventPowerups = zen.getEventPowerups(sg)
                             } 
                             
                             // Note sg.routeId is sometimes out of sync with state.routeId; avoid thrash
@@ -1770,7 +1772,8 @@ export class SauceElevationProfile {
                                 }
                                 //console.log(allMarkLines)
                                 let nextSegment = zen.getNextSegment(allMarkLines, xCoord) 
-                                //console.log(nextSegment)                           
+                                //console.log(nextSegment)  
+                                //debugger                         
                                 let distanceToGo;
                                 let distanceToGoUnits;
                                 if (this.showNextSegment && (this.showSegmentStart || this.showAllArches))
@@ -1778,11 +1781,32 @@ export class SauceElevationProfile {
                                     let nextSegmentDiv = document.getElementById('nextSegmentDiv');
                                     
                                     if (nextSegment != -1)
-                                    {
+                                    {                                        
+                                        let puImgs = "";
+                                        if (this._eventSubgroupId && this.showNextPowerup) {
+                                            //debugger
+                                            
+                                            if (this.eventPowerups.type == "powerup_percent") {                                                
+                                                puImgs += "&nbsp;"
+                                                for (let key in this.eventPowerups.powerups) {
+                                                    puImgs += `<img src="./images/${key}.png" class="puImg">`
+                                                }
+                                            } else if (this.eventPowerups.type == "arch_powerup") {
+                                                let nextArchId = nextSegment.archId || 0;
+                                                puImgs += "&nbsp;"                                                
+                                                puImgs += `<img src="./images/${this.eventPowerups.powerups[nextArchId]}.png" class="puImg">`
+                                            } else if (this.eventPowerups.type == "nopowerups") {
+                                                puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
+                                            } else if (this.eventPowerups.type == "standard") {
+                                                puImgs += '&nbsp;<img src="./images/aero.png" class="puImg"><img src="./images/feather.png" class="puImg"><img src="./images/draft.png" class="puImg">'
+                                            } 
+                                            //debugger
+                                        }
                                         nextSegment.markLine - xCoord > 1000 ? distanceToGo = ((nextSegment.markLine - xCoord) / 1000).toFixed(2) : distanceToGo = (nextSegment.markLine - xCoord).toFixed(0);
                                         nextSegment.markLine - xCoord > 1000 ? distanceToGoUnits = "km" : distanceToGoUnits = "m";
                                         nextSegment.markLine - xCoord > 1000 ? this.refresh = 1000 : this.refresh = 200;
-                                        nextSegmentDiv.innerHTML = (nextSegment.displayName ?? nextSegment.name) + ": " + distanceToGo + distanceToGoUnits;
+                                        nextSegmentDiv.innerHTML = (nextSegment.displayName ?? nextSegment.name) + ": " + distanceToGo + distanceToGoUnits + puImgs;
+                                        //debugger
                                         nextSegmentDiv.style.visibility = "";
                                     }
                                     else

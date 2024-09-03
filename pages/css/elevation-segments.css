@@ -6,7 +6,7 @@ form label key {
 div .myField {
   display: flex;
   flex-direction: row;
-  align-items: baseline;
+  align-items: center;
   justify-content: center;
   white-space: nowrap;
   overflow: hidden;
@@ -177,4 +177,8 @@ th:last-child, td:last-child {
 }
 #stats {
   overflow-y: auto;
+}
+.puImg {
+  width: 20px;
+  vertical-align: middle;
 }

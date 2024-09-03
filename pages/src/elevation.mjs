@@ -75,7 +75,8 @@ common.settingsStore.setDefault({
     showLineAhead: false,
     distanceAhead: 1000,
     aheadLineColor: "#ff8000",
-    aheadLineType: "solid"
+    aheadLineType: "solid",
+    showNextPowerup: false
 });
 
 const settings = common.settingsStore.get();
@@ -225,7 +226,9 @@ function createElevationProfile({worldList}) {
     const aheadLineColor = settings.aheadLineColor;
     typeof(settings.aheadLineType) == "undefined" ? common.settingsStore.set("aheadLineType", 'solid') : null;
     const aheadLineType = settings.aheadLineType;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType});
+    typeof(settings.showNextPowerup) == "undefined" ? common.settingsStore.set("showNextPowerup", false) : null;
+    const showNextPowerup = settings.showNextPowerup;
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup});
 }
 
 
@@ -519,7 +522,8 @@ export async function main() {
             'aheadLineType',
             'aheadLineColor',
             'debugXcoord',
-            'debugXcoordDistance'
+            'debugXcoordDistance',
+            'showNextPowerup'
         ]
         //console.log(changed);
         if (changed.has('editedSegments')) {

@@ -352,6 +352,7 @@ function getSegmentMarkline(segment) {
         name: segment.name, 
         markLine: markLineIndex, 
         id: segment.id, 
+        archId: segment.archId,
         repeat: segment.repeat, 
         segLength: segment.distance
     };
@@ -371,11 +372,14 @@ function getSegmentMarkline(segment) {
     const markLineFinish = segment.finishArchOnly ? {
         name: segment.name + " Finish",
         markLine: markLineIndexFinish,
+        id: segment.id,
+        archId: segment.archId,
         finishArchOnly: true
     } : {
         name: segment.name + " Finish", 
         markLine: markLineIndexFinish, 
         id: segment.id, 
+        archId: segment.archId,
         repeat: segment.repeat, 
         segLength: segment.distance,
     };
@@ -1383,6 +1387,19 @@ export function selectObject(obj, ...properties) {
     return selectedObject;
 }
 
+export function selectObject2(array, properties) {
+    return array.map(item => {
+        let selectedItem = {};
+        properties.forEach(prop => {
+            if (item.hasOwnProperty(prop)) {
+                selectedItem[prop] = item[prop];
+            }
+        });
+        return selectedItem;
+    });
+}
+
+
 export function convertWorkoutData(data) {
     const lines = data.split("\n"); // Split the data by line breaks
     const workout = {};
@@ -1475,4 +1492,48 @@ export const formatTime = (milliseconds,timePrecision) => {
     {
         return seconds.toString().padStart(1, "0") + "." + ms;
     }
+}
+
+export function getEventPowerups(sg) {
+    let powerUps = {};
+    const puList = {
+        0: 'feather',
+        1: 'draft',
+        2: 'smallXP',
+        3: 'largeXP',
+        4: 'burrito',
+        5: 'aero',
+        6: 'ghost',
+        7: 'steamroller',
+        8: 'anvil'
+    }
+    const customPowerups = sg.allTags.filter(tag => tag.includes('powerup'))
+    if (customPowerups.length > 0) {
+        let customPU = customPowerups[0].split("=")
+        powerUps.type = customPU[0]
+        const puResult = {};
+        if (powerUps.type == "powerup_percent") { // powerups are randomly selected at each arch according to percentages returned
+            const puPairs = customPU[1].replace(/"/g, '').split(",")
+            for (let i = 0; i < puPairs.length; i += 2) {
+                const puKey = puList[puPairs[i]]
+                const puValue = parseInt(puPairs[i + 1])
+                puResult[puKey] = puValue
+            }
+        } else if (powerUps.type == "arch_powerup") { // powerups are designated at returned arches
+            const puPairs = customPU[1].replace(/"/g, '').split(",")
+            for (let i = 0; i < puPairs.length; i += 2) {
+                const puKey = puPairs[i];
+                const puValue = puList[puPairs[i + 1]]
+                puResult[puKey] = puValue
+            }
+        }
+        powerUps.powerups = puResult        
+    } else if (sg.rulesId & 1 == 1 || sg.eventType == "TIME_TRIAL" || sg.eventType == "TEAM_TIME_TRIAL") { // bitwise rule 1 match or iTT / TTT
+        powerUps.type = "nopowerups"    
+    } else if (sg.eventType == "GROUP_WORKOUT") {
+        powerUps.type = "other"
+    } else {
+        powerUps.type = "standard"        
+    }
+    return powerUps;
 }
