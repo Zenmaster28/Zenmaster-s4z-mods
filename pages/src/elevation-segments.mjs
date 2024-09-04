@@ -1105,11 +1105,26 @@ export class SauceElevationProfile {
                             let sg;
                             if (watching.eventSubgroupId) {
                                 sg = await common.rpc.getEventSubgroup(watching.eventSubgroupId);
+                                console.log(sg) 
                                 this.eventPowerups = zen.getEventPowerups(sg)
+                                /* test dummy data for designated powerups at arches
+                                this.eventPowerups = {
+                                    type: "arch_powerup",
+                                    powerups: {
+                                        1: "aero",
+                                        2: "burrito",
+                                        3: "draft",
+                                        4: "feather",
+                                        0: "ghost"
+                                    }
+                                }
+                                */
+                                console.log(this.eventPowerups)
                             } 
                             
                             // Note sg.routeId is sometimes out of sync with state.routeId; avoid thrash
-                            console.log(sg) 
+                            
+                            
                             this.deltas.length = 0;  // reset the delta averages 
                             this.routeOffset = 0;
                             this.lapCounter = 0;  
