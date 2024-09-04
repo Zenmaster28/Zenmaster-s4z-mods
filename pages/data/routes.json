@@ -358,7 +358,7 @@
     "distanceInMeters": 42551.9296875,
     "eventOnly": true,
     "eventPaddocks": "1,2,3,4",
-    "excludeFromGameDictionary": 1,
+    "excludeFromGameDictionary": 0,
     "freeRideLeadinDistanceInMeters": 19.9053707123,
     "id": 3912793970,
     "leadinAscentInMeters": 0.0340429582,
@@ -478,7 +478,6 @@
     "distanceInMeters": 29621.021484375,
     "eventOnly": true,
     "eventPaddocks": "1,2,3,4",
-    "excludeFromGameDictionary": 1,
     "freeRideLeadinDistanceInMeters": 20.9055309296,
     "id": 1788218813,
     "leadinAscentInMeters": 0,
@@ -580,7 +579,6 @@
     "distanceInMeters": 49442.52734375,
     "eventOnly": true,
     "eventPaddocks": "21,22,23,24,25",
-    "excludeFromGameDictionary": 1,
     "freeRideLeadinAscentInMeters": 149.6534729004,
     "freeRideLeadinDistanceInMeters": 20.4597034454,
     "id": 3330165223,
@@ -951,6 +949,467 @@
     "meetupLeadinDistanceInMeters": 34.5258331299,
     "name": "Shisha Shakedown",
     "sportType": 1,
+    "supportedLaps": true,
+    "useAlternateEventRamp": false,
+    "worldId": 9
+  },
+  {
+    "ascentBetweenFirstLastLrCPsInMeters": 0,
+    "ascentInMeters": 616.249206543,
+    "distanceBetweenFirstLastLrCPsInMeters": 0,
+    "distanceInMeters": 77597.65625,
+    "eventPaddocks": "16,17,18,19,20",
+    "freeRideLeadinAscentInMeters": 3.5946161747,
+    "freeRideLeadinDistanceInMeters": 1070.1313476562,
+    "id": 2927651296,
+    "leadinAscentInMeters": 4.8508200645,
+    "leadinDistanceInMeters": 1123.9239501953,
+    "locKey": "LOC_ROUTE_MAKURIISLANDS_MAKURI_PRETZEL",
+    "manifest": [
+      {
+        "end": 0.8678518728663458,
+        "leadin": true,
+        "reverse": true,
+        "roadId": 4,
+        "start": 0.7275550071687338
+      },
+      {
+        "end": 0.7269605643,
+        "reverse": true,
+        "roadId": 4,
+        "start": 0.5454805587
+      },
+      {
+        "end": 0.9414125,
+        "roadId": 22,
+        "start": 0.08166666666666664
+      },
+      {
+        "end": 0.964844185,
+        "roadId": 8,
+        "start": 0.03754717037081718
+      },
+      {
+        "end": 0.9324333328,
+        "roadId": 26,
+        "start": 0.1270370379835366
+      },
+      {
+        "end": 0.9954531564,
+        "roadId": 6,
+        "start": 0.42054263409227133
+      },
+      {
+        "end": 0.8845833333333323,
+        "reverse": true,
+        "roadId": 87,
+        "start": 0.063075
+      },
+      {
+        "end": 0.7301357782259554,
+        "reverse": true,
+        "roadId": 0,
+        "start": 0.0531671236
+      },
+      {
+        "end": 0.7466666777928664,
+        "reverse": true,
+        "roadId": 90,
+        "start": 0.1416200021
+      },
+      {
+        "end": 0.820000036656856,
+        "reverse": true,
+        "roadId": 17,
+        "start": 0.1668326869
+      },
+      {
+        "end": 0.8214814876019955,
+        "reverse": true,
+        "roadId": 42,
+        "start": 0.059155556
+      },
+      {
+        "end": 0.9901648549,
+        "roadId": 41,
+        "start": 0.8821717434624873
+      },
+      {
+        "end": 0.7669697198271762,
+        "reverse": true,
+        "roadId": 39,
+        "start": 0.4770079378
+      },
+      {
+        "end": 0.9924133159794444,
+        "reverse": true,
+        "roadId": 0,
+        "start": 0.7407428512
+      },
+      {
+        "end": 0.9363799992,
+        "roadId": 88,
+        "start": 0.3013333378235497
+      },
+      {
+        "end": 0.9903100738301873,
+        "reverse": true,
+        "roadId": 6,
+        "start": 0.9472493142
+      },
+      {
+        "end": 0.99,
+        "roadId": 9,
+        "start": 0.17888889422019313
+      },
+      {
+        "end": 0.7548045088,
+        "roadId": 128,
+        "start": 0.012278481321409334
+      },
+      {
+        "end": 0.790000023543835,
+        "reverse": true,
+        "roadId": 140,
+        "start": 0.0100000003
+      },
+      {
+        "end": 0.6053333423535022,
+        "reverse": true,
+        "roadId": 135,
+        "start": 0.1397800021
+      },
+      {
+        "end": 0.9588666654,
+        "roadId": 142,
+        "start": 0.10000000298023222
+      },
+      {
+        "end": 0.8773308132,
+        "roadId": 129,
+        "start": 0.4877777950403601
+      },
+      {
+        "end": 0.7343777699,
+        "roadId": 154,
+        "start": 0.24777778516213086
+      },
+      {
+        "end": 0.867777803639571,
+        "reverse": true,
+        "roadId": 136,
+        "start": 0.077066669
+      },
+      {
+        "end": 0.7400000220537187,
+        "reverse": true,
+        "roadId": 155,
+        "start": 0.0293333342
+      },
+      {
+        "end": 0.06811111466338282,
+        "reverse": true,
+        "roadId": 134,
+        "start": 0
+      },
+      {
+        "end": 1,
+        "reverse": true,
+        "roadId": 134,
+        "start": 0.2904623767
+      },
+      {
+        "end": 0.9845999995,
+        "roadId": 149,
+        "start": 0.19111111680666595
+      },
+      {
+        "end": 0.9205555829902484,
+        "reverse": true,
+        "roadId": 137,
+        "start": 0.0352666677
+      },
+      {
+        "end": 0.9654666659,
+        "roadId": 148,
+        "start": 0.1977777836720148
+      },
+      {
+        "end": 1,
+        "roadId": 131,
+        "start": 0.8290278024847311
+      },
+      {
+        "end": 0.1933417719,
+        "roadId": 131,
+        "start": 0
+      },
+      {
+        "end": 0.7866666901111606,
+        "reverse": true,
+        "roadId": 138,
+        "start": 0.01
+      },
+      {
+        "end": 0.9646406587,
+        "roadId": 133,
+        "start": 0.023095238525420416
+      },
+      {
+        "end": 0.9629361450383239,
+        "roadId": 27,
+        "start": 0.1711111162106195
+      },
+      {
+        "end": 0.9920767962,
+        "roadId": 4,
+        "start": 0.9288889113813558
+      },
+      {
+        "end": 0.9493333474795017,
+        "reverse": true,
+        "roadId": 5,
+        "start": 0.0100000001
+      },
+      {
+        "end": 0.42728889923542934,
+        "reverse": true,
+        "roadId": 4,
+        "start": 0.3382581935
+      },
+      {
+        "end": 0.9508333333333332,
+        "reverse": true,
+        "roadId": 111,
+        "start": 0.1
+      },
+      {
+        "end": 0.3785271304,
+        "roadId": 6,
+        "start": 0.0162790697067976
+      },
+      {
+        "end": 0.99,
+        "roadId": 110,
+        "start": 0.3100000046193599
+      },
+      {
+        "end": 0.9643396370112914,
+        "reverse": true,
+        "roadId": 8,
+        "start": 0.0257773589
+      },
+      {
+        "end": 0.8787499999999991,
+        "reverse": true,
+        "roadId": 22,
+        "start": 0.0092125
+      },
+      {
+        "end": 0.9137311091,
+        "roadId": 4,
+        "start": 0.54647408730661
+      },
+      {
+        "end": 0.8033333572745327,
+        "reverse": true,
+        "roadId": 91,
+        "start": 0.0100000003
+      },
+      {
+        "end": 0.9530952558480194,
+        "reverse": true,
+        "roadId": 133,
+        "start": 0.0053952382
+      },
+      {
+        "end": 0.98,
+        "roadId": 138,
+        "start": 0.2577777854601541
+      },
+      {
+        "end": 0.16916667170822564,
+        "reverse": true,
+        "roadId": 131,
+        "start": 0
+      },
+      {
+        "end": 1,
+        "reverse": true,
+        "roadId": 131,
+        "start": 0.8070838579
+      },
+      {
+        "end": 0.7911111346880598,
+        "reverse": true,
+        "roadId": 148,
+        "start": 0.0460333347
+      },
+      {
+        "end": 0.951356315,
+        "roadId": 137,
+        "start": 0.07333333551883696
+      },
+      {
+        "end": 0.8611111367742222,
+        "reverse": true,
+        "roadId": 149,
+        "start": 0.0167333338
+      },
+      {
+        "end": 1,
+        "roadId": 134,
+        "start": 0.29916668226942456
+      },
+      {
+        "end": 0.0729020671,
+        "roadId": 134,
+        "start": 0
+      },
+      {
+        "end": 0.8315555505,
+        "roadId": 155,
+        "start": 0.1244444481531778
+      },
+      {
+        "end": 0.9679666657,
+        "roadId": 136,
+        "start": 0.1977777836720148
+      },
+      {
+        "end": 0.6811111314098044,
+        "reverse": true,
+        "roadId": 154,
+        "start": 0.0687666687
+      },
+      {
+        "end": 0.8667974162970964,
+        "reverse": true,
+        "roadId": 129,
+        "start": 0.4838102305
+      },
+      {
+        "end": 0.891111137668292,
+        "reverse": true,
+        "roadId": 142,
+        "start": 0.01
+      },
+      {
+        "end": 0.6555603183,
+        "roadId": 135,
+        "start": 0.19400000289082545
+      },
+      {
+        "end": 0.8993666637,
+        "roadId": 140,
+        "start": 0.09333333611488333
+      },
+      {
+        "end": 0.7506751243614921,
+        "reverse": true,
+        "roadId": 128,
+        "start": 0.0063949369
+      },
+      {
+        "end": 0.8355555804570516,
+        "reverse": true,
+        "roadId": 9,
+        "start": 0.0294333342
+      },
+      {
+        "end": 0.9954531564,
+        "roadId": 6,
+        "start": 0.9524806166067716
+      },
+      {
+        "end": 0.8140000121295445,
+        "reverse": true,
+        "roadId": 88,
+        "start": 0.0520000008
+      },
+      {
+        "end": 0.9919033442,
+        "roadId": 0,
+        "start": 0.7454449794922606
+      },
+      {
+        "end": 0.8428473469,
+        "roadId": 39,
+        "start": 0.3900000116229056
+      },
+      {
+        "end": 0.9877273021638452,
+        "reverse": true,
+        "roadId": 41,
+        "start": 0.8703760941
+      },
+      {
+        "end": 0.970330753,
+        "roadId": 42,
+        "start": 0.3414814840257173
+      },
+      {
+        "end": 0.9067483709,
+        "roadId": 17,
+        "start": 0.2519047731657822
+      },
+      {
+        "end": 0.9412399991,
+        "roadId": 90,
+        "start": 0.3040000045299529
+      },
+      {
+        "end": 0.7333940425,
+        "roadId": 0,
+        "start": 0.057481148793982584
+      },
+      {
+        "end": 0.9614309515,
+        "roadId": 87,
+        "start": 0.2691666666666668
+      },
+      {
+        "end": 0.9903100738301873,
+        "reverse": true,
+        "roadId": 6,
+        "start": 0.7927370374
+      },
+      {
+        "end": 0.9936833334,
+        "roadId": 3,
+        "start": 0.23125000000000018
+      },
+      {
+        "end": 0.7328294546343385,
+        "reverse": true,
+        "roadId": 6,
+        "start": 0.0151705426
+      },
+      {
+        "end": 0.9,
+        "roadId": 111,
+        "start": 0.13416666666666657
+      },
+      {
+        "end": 0.4297297136,
+        "roadId": 4,
+        "start": 0.3351407488559691
+      },
+      {
+        "end": 0.99,
+        "roadId": 5,
+        "start": 0.08066666786869367
+      },
+      {
+        "end": 0.9912889128923316,
+        "reverse": true,
+        "roadId": 4,
+        "start": 0.7269605643
+      }
+    ],
+    "meetupLeadinAscentInMeters": 4.0977153778,
+    "meetupLeadinDistanceInMeters": 1084.9682617188,
+    "name": "Makuri Pretzel",
     "supportedLaps": true,
     "useAlternateEventRamp": false,
     "worldId": 9
