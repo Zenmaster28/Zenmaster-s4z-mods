@@ -13,7 +13,7 @@ let zwiftSegmentsRequireStartEnd;
 let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
 let replacementLeadins = await fetch("data/leadinData.json").then((response) => response.json());
 
-export async function processRoute(courseId, routeId, laps, distance, includeLoops, showAllArches) { 
+export async function processRoute(courseId, routeId, laps, distance, includeLoops, showAllArches, disablePenRouting) { 
     distance = parseInt(distance);
     curvePathIndex = 0;   
     routeSegments.length = 0;
@@ -24,7 +24,7 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
     } else {
         includeLoops = false;
     }        
-    routeFullData = await getModifiedRoute(routeId); 
+    routeFullData = await getModifiedRoute(routeId, disablePenRouting); 
     worldSegments = await common.rpc.getSegments(courseId);
     zwiftSegmentsRequireStartEnd = await fetch("data/segRequireStartEnd.json").then((response) => response.json());
     if (showAllArches) {
@@ -400,11 +400,7 @@ export async function getSegmentsOnRoute(courseId, routeId, eventSubgroupId) {
     let sgInfo;
     let leadinIncluded = false;
     let worldSegments = await common.rpc.getSegments(courseId)
-    
-    //routeFullData = await common.getRoute(routeId); 
-    routeFullData = await getModifiedRoute(routeId); 
-    //debugger
-    //console.log(routeFullData) 
+      
     if (eventSubgroupId != 0 && typeof(eventSubgroupId) != "undefined")
     {
         sgInfo = await common.rpc.getEventSubgroup(eventSubgroupId);
@@ -839,8 +835,294 @@ async function getRoadSegmentMarkline(segment, thisRoad) {
     return [markLineStart,markLineFinish];
 }
 
-export async function getModifiedRoute(id) {                   
-        let route = await common.rpc.getRoute(id);
+async function findShortestExitPath(startRoad, startDirection, targetRoad, targetDirection, intersections, allRoads, route) {
+    let maxDepth = 6 // if we make 6 or more total intersection decisions, we are lost
+    let maxNonPaddockRoads = 4; // if we run into 4 or more roads that aren't paddock roads, we are lost
+    let path = [];
+    let allPaths = [];
+    let found = false;
+    function explore(roadId, forward, depth, currentPath, exitTime) { 
+        if (!allRoads.find(x => x.id == roadId)) {
+            console.log("Found a roadId that Sauce doesn't know about, ignoring roadId", roadId)
+            return
+        }
+        if (depth > maxDepth) {
+            return;
+        } 
+        if (roadId === targetRoad && forward != targetDirection) {
+            //we found the target road but going the wrong way, we are lost
+            return;
+        } 
+        let nonPaddockRoads = 0;
+        for (let road of currentPath) {
+            if (!isPaddockRoad(road, intersections)) {
+                //keep track of non paddock roads
+                nonPaddockRoads++
+            }
+        }
+        if (nonPaddockRoads > maxNonPaddockRoads) {
+            //we exceeded the max number of non paddock roads, this isn't a valid path
+            return;
+        }
+        let currentRP = 0
+        if (exitTime == -1) {
+            //this must be the initial starting point, set the roadTime to 0 for a forward road and 1 for a reverse road
+            currentRP = forward ? 0 : 1
+            exitTime = 0
+            
+        } else {
+            //on the new road, find the nearest point to where we exited the last road
+            const rd1 = allRoads.find(x => x.id == currentPath.at(-1).roadId)
+            const rd2 = allRoads.find(x => x.id == roadId)                     
+            currentRP = getNearestPoint(rd1, rd2, exitTime, 25000)            
+        }
+        // Add current road and direction to the path
+        if (currentPath.some(pathEntry => pathEntry.roadId === roadId && pathEntry.forward === forward && pathEntry.exitTime === exitTime)) {
+            //we've already been here, don't record it again
+        } else {
+            if (currentPath.length > 0) {
+                currentPath.at(-1).exitTime = exitTime // set the exitTime for the previous entry
+                currentPath.push({ roadId: roadId, forward: forward, exitTime: exitTime, entryTime: currentRP });
+            } else {
+                currentPath.push({ roadId: roadId, forward: forward, exitTime: exitTime, entryTime: currentRP });
+            }
+            if (roadId === targetRoad && forward === targetDirection) {
+                //we found the target road in the right direction, add the current path as a valid path
+                const validPath = JSON.parse(JSON.stringify(currentPath)) // not sure I need to do this but...
+                allPaths.push(validPath)
+                return;
+            }
+            
+            // Look for intersections on the current road
+            const currentIntersections = intersections.find(int => int.id === roadId);            
+            if (currentIntersections.intersections) {            
+                // Sort intersections by m_roadTime1 to ensure the decisions are made in sequence            
+                currentIntersections.intersections.sort((a, b) => {
+                    return a.m_roadTime1 > b.m_roadTime1;
+                })
+                let validIntersections = []; // filter only the intersections that are after our current roadPercent
+                if (forward) {
+                    validIntersections = currentIntersections.intersections.filter(x => x.m_roadTime2 > currentRP)
+                } else {
+                    validIntersections = currentIntersections.intersections.filter(x => x.m_roadTime1 < currentRP)
+                }
+                for (const intersection of validIntersections) {
+                    // recursively look at intersection options in the direction we are going
+                    if (forward) {
+                        for (const option of intersection.forward) {
+                            if (option.option) {                    
+                                explore(option.option.road, option.option.forward, depth + 1, [...currentPath], option.option.exitTime);
+                            }
+                        }
+                    } else {
+                        for (const option of intersection.reverse) {
+                            if (option.option) {            
+                                explore(option.option.road, option.option.forward, depth + 1, [...currentPath], option.option.exitTime);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    } 
+    
+    if (route.courseId == 13 && (startRoad == 75 || startRoad == 81)) {
+        //sure Zwift, just make **almost** all of the pen roads forward, except for a few...
+        startDirection = false
+    }
+    
+    // Start exploring from the initial road and direction
+    explore(startRoad, startDirection, 0, [], -1);
+
+    
+    let shortestDistance = Infinity;
+    const worldList = await common.getWorldList();
+    const worldMeta = worldList.find(x => x.courseId === route.courseId); 
+    for (let exitPath of allPaths) {
+        //of all the possible exit paths we found, measure the length of the road and pick the shortest one
+        const exitPathDistance = await getExitPathDistance(exitPath, route, worldMeta)
+        if (exitPathDistance.exitDistance < shortestDistance) {
+            shortestDistance = exitPathDistance.exitDistance
+            path = exitPathDistance.exitManifest
+        }
+    }
+    
+    if (path) {
+        found = true
+        path.forEach(road => {
+            road.paddockExitRoadTime = isPenExitRoad(road, intersections)
+            road.isPaddockRoad = isPaddockRoad(road, intersections)
+            road.isTargetRoad = isTargetRoad(road, targetRoad, targetDirection)
+        })
+    }
+    return found ? path : null; // Return the path if found, otherwise null
+  }
+
+async function getExitPathDistance(exitPath, route, worldMeta) {
+    let exitRoute = JSON.parse(JSON.stringify(route))
+    exitRoute.curvePath = new curves.CurvePath();
+    exitRoute.roadSegments = []; 
+    let manifest = []
+    for (let road of exitPath) {
+        let skipRoad = false;
+        if (road.roadId == route.manifest[0].roadId) { // fix the target road manifest entry        
+            if (road.forward) {
+                if (route.courseId == 6 && road.roadId == 0 && (route.manifest[0].end == 1 || route.manifest[1].end == 1)) {
+                    // downtown Watopia leaving the pens left.  If the first manifest on the Zwift route end at 1, remove it to align things properly 
+                    //console.log("Fixing downtown Watopia pen exit...")
+                    route.manifest.shift();
+                    if (route.manifest[0].end == 1 && route.manifest[0].roadId == 0) {
+                        // some routes like downtown titans have two entries at the start of the route that need to go away
+                        route.manifest.shift()
+                    }
+                    route.manifest[0].start = road.entryTime; // align the route with the pen ramp exit
+                    skipRoad = true;
+                    let lastManifestEntry = route.manifest.at(-1)
+                    if (lastManifestEntry.roadId == 0 && !lastManifestEntry.reverse && lastManifestEntry.end < 0.9828947442) {
+                        //move the end of the route to the banner for completeness
+                        lastManifestEntry.end = 0.9828947443
+                    }
+                } else if (road.entryTime > route.manifest[0].start && road.entryTime > route.manifest[0].end) {
+                    //the road time has a 0/1 barrier between it and the first manifest entry, create a new manifest entry to span it
+                    manifest.push({
+                        end: 1,
+                        start: road.entryTime,
+                        reverse: false,
+                        roadId: road.roadId,
+                        leadin: true
+                    },
+                    {
+                        end: route.manifest[0].start,
+                        start: 0,
+                        reverse: false,
+                        roadId: road.roadId,
+                        leadin: true
+                    })
+                    break
+                } else if (road.entryTime > route.manifest[0].start && road.entryTime < route.manifest[0].end) {
+                    // we entered the target road inside of the route manifest entry, push the route manifest entry up.
+                    if (route.id == 2007026433) { // also ignore 2019 Worlds Harrogate because this logic fails, it's the only one and I can't be bothered to fix it since it still works well
+                        skipRoad = true
+                    } else if (route.manifest[0].start < road.entryTime) {
+                        //the Zwift manifest is a behind where we calculated we entered the road, move the Zwift manifest up and then skip this road in the manifest as things are aligned
+                        route.manifest[0].start = road.entryTime
+                        skipRoad = true;
+                    } else {
+                        //move the exitTime for this road up to the start of the Zwift route
+                        road.exitTime = route.manifest[0].start
+                    }
+                } else {
+                    //align the exit time for this road to the start of the Zwift route
+                    road.exitTime = route.manifest[0].start
+                }
+            } else {
+                // note, I don't deal with a case of crossing a 0/1 barrier in reverse as I don't think any routes do that but it could happen in the future
+                if (road.entryTime > route.manifest[0].start && road.entryTime < route.manifest[0].end) {
+                    // we entered the target road inside of the route manifest entry, push the route manifest entry up.
+                    route.manifest[0].end = road.entryTime
+                    skipRoad = true;
+                } else {
+                    road.exitTime = route.manifest[0].end
+                }
+            }
+        }
+
+        if (!skipRoad && ((road.forward && road.entryTime < road.exitTime) || (!road.forward && road.exitTime < road.entryTime))) { // make sure we have a valid manifest entry and aren't skipping this road
+            // add the road entry and exit details to the manifest for processing
+            manifest.push({
+                end: road.forward ? road.exitTime : road.entryTime,
+                start: road.forward ? road.entryTime : road.exitTime,
+                reverse: road.forward ? false : true,
+                roadId: road.roadId,
+                leadin: true
+            })
+        }
+    }
+
+    for (const [i, x] of manifest.entries()) {
+        // road building magic borrowed from Sauce
+        const road = await common.getRoad(exitRoute.courseId, x.roadId);
+        const seg = road.curvePath.subpathAtRoadPercents(x.start, x.end);
+        seg.reverse = x.reverse;
+        seg.leadin = x.leadin;
+        seg.roadId = x.roadId;
+        for (const xx of seg.nodes) {
+            xx.index = i;
+        }
+        exitRoute.roadSegments.push(seg);
+        exitRoute.curvePath.extend(x.reverse ? seg.toReversed() : seg);
+    }
+
+    Object.assign(exitRoute, supplimentPath(worldMeta, exitRoute.curvePath));
+    if (exitRoute.distances.length > 0) {
+        return {
+            exitDistance: exitRoute.distances.at(-1),
+            exitManifest: manifest
+        }
+    } else {
+        return {
+            exitDistance: Infinity,
+            exitManifest: manifest
+        }
+    }    
+}
+
+function isTargetRoad(road, targetRoad, targetDirection) {
+    if (road.roadId == targetRoad && road.reverse != targetDirection) {
+        return true;
+    } else {
+        return false;
+    }
+}
+function isPaddockRoad(road, intersections) {
+    const roadData = intersections.find(x => x.id == road.roadId)
+    if (roadData.roadIsPaddock) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function isPenExitRoad(road, intersections) {
+    const roadData = intersections.find(x => x.id == road.roadId)
+    if (roadData.paddockExitRoadTime) {
+        return roadData.paddockExitRoadTime;
+    } else {
+        return false;
+    }
+}
+
+async function getPenExitRoute(route) {
+    const paddocksData = await fetch("data/paddocks.json").then(response => response.json())
+    const worldPaddocks = paddocksData.find(x => x.worldId == route.worldId)
+    if (route.eventPaddocks) { //some routes don't identify the paddocks, we can't process these
+        const routePaddocks = route.eventPaddocks.toString().split(",").map(Number)
+        const paddockRoads = routePaddocks.map(key => worldPaddocks.paddockRoads[key]);        
+        const intersections = await fetch(`data/worlds/${route.worldId}/roadIntersections.json`).then(response => response.json());
+        const allRoads = await common.getRoads(route.courseId)
+        const iRoads = paddockRoads.map(r => intersections.find(x => x.id == r)).filter(x => x != undefined)
+        //const exitRoads = iRoads.filter(x => x != undefined && x.paddockExitRoadTime)
+        const targetRoad = {
+            roadId: route.manifest[0].roadId,
+            forward: route.manifest[0].reverse ? false : true
+        }
+        let startRoad;
+        //let possiblePaths = [];
+        startRoad = iRoads.filter(x => !x.paddockExitRoadTime)[0] || iRoads[0] // don't start with an exit road unless it's the only one, possible odd results.
+        let exitPath = findShortestExitPath(startRoad.id, true, targetRoad.roadId, targetRoad.forward, intersections, allRoads, route)
+        if (exitPath) {
+            return exitPath;
+        } else {
+            return [];
+        }
+    } else {
+        console.log("Route has no paddocks info!")
+        return [];
+    }
+}
+
+export async function getModifiedRoute(id, disablePenRouting) {                   
+        let route = await common.rpc.getRoute(id);        
         if (!route) {
             console.log("Route not found in Sauce, checking json")
             let newRoutes = await fetch("data/routes.json").then((response) => response.json()); 
@@ -854,22 +1136,129 @@ export async function getModifiedRoute(id) {
             }
             //debugger
         }
-        let missing = missingLeadinRoutes.filter(x => x.id == id)
-                
-        let replacementLeadin =  replacementLeadins.filter(x => 
-            x.eventPaddocks == route.eventPaddocks && x.courseId == route.courseId && (x.roadId == route.manifest.find(m => !m.hasOwnProperty('leadin') || !m.leadin)?.roadId) && (x.reverse == (route.manifest.find(m => !m.hasOwnProperty('leadin') || !m.leadin)?.reverse ?? false))
-        ) 
-        //debugger
-        if (replacementLeadin.length > 0) {
-            console.log("Found a matching replacement leadin!")
-        } else {
-            console.log("No matching replacement leadin")
+        let missing = [];
+        let replacementLeadin =[];
+        let penExitRoute = [];  
+        if (!disablePenRouting) {
+            penExitRoute = await getPenExitRoute(route)        
+            console.log("Pen exit path", penExitRoute)
         }
-        let leadin;        
-        if (missing.length > 0 || replacementLeadin.length > 0) {
+        //debugger       
+        
+        if (penExitRoute.length > 0) {
+            //penExitRoute = penExitRoute.filter((item, index, arr) => index === 0 || item.roadId !== arr[index - 1].roadId); // remove consecutive roadId entries from the pen exit route
+            //debugger
+            const exitRoads = penExitRoute.filter(x => x.paddockExitRoadTime)
+            if (exitRoads.length > 0) {
+                //found an exit road on the path, start the manifest there
+                const lastExitRoad = exitRoads.at(-1)
+                //missing.push({leadin: []});
+                const idxExitRoad = penExitRoute.findIndex(road => road === lastExitRoad)                
+                //missing[0].leadin.push({
+                //    end: penExitRoute[idxExitRoad + 1].exitTime,
+                //    leadin: true,
+                //    roadId: lastExitRoad.roadId,
+                //    start: lastExitRoad.paddockExitRoadTime
+                //});
+                //debugger
+                const manifest = penExitRoute.slice(idxExitRoad - 1)
+                missing.push({leadin: []});
+                //debugger
+                for (let i = 1; i < manifest.length; i++) {
+                    missing[0].leadin.push({
+                        end: manifest[i].end,
+                        leadin: true,
+                        roadId: manifest[i].roadId,
+                        start: manifest[i].paddockExitRoadTime ? manifest[i].paddockExitRoadTime : manifest[i].start,
+                        reverse: manifest[i].reverse
+                    })
+                }
+                //debugger
+                
+            } else {
+                const firstNonPaddockRoad = penExitRoute.find(x => !x.isPaddockRoad)
+                const idxFirstNonPaddockRoad = penExitRoute.findIndex(road => road === firstNonPaddockRoad)
+                const manifest = penExitRoute.slice(idxFirstNonPaddockRoad - 1)
+                missing.push({leadin: []});
+                //debugger
+                for (let i = 1; i < manifest.length; i++) {
+                    //const rd1 = manifest[i - 1].roadId
+                    //const rd2 = manifest[i].roadId
+                    //const rd1exitTime = manifest[i].exitTime
+                    //const rd2startTime = await getRoadsIntersectionRP(route.courseId, rd1, rd2, rd1exitTime, 25000) // the roadPercent of the closest point on the new road
+                    if (false && manifest[i].isTargetRoad) { 
+                        debugger
+                        if (route.manifest[0].reverse) {
+                            route.manifest[0].end = rd2startTime.rp
+                        } else {
+                            if (rd2startTime.rp > route.manifest[0].start && rd2startTime.rp > route.manifest[0].end) {
+
+                            } else {
+                                route.manifest[0].start = rd2startTime.rp
+                            }
+                        }
+                    } else {
+                        //debugger
+                        missing[0].leadin.push({
+                            end: manifest[i].end,
+                            leadin: true,
+                            roadId: manifest[i].roadId,
+                            start: manifest[i].start,
+                            reverse: manifest[i].reverse
+                        })
+                        
+                    }
+                    //debugger
+                }
+                //debugger
+                //deal with pens that don't have paddockExitRoadTime
+            }
+            
+        } else {
+            console.log("No pen exit route found!")            
+        
+            missing = missingLeadinRoutes.filter(x => x.id == id)
+            missing = []; //bypass the missing leadins for now  
+            replacementLeadin =  replacementLeadins.filter(x => 
+                x.eventPaddocks == route.eventPaddocks && x.courseId == route.courseId && (x.roadId == route.manifest.find(m => !m.hasOwnProperty('leadin') || !m.leadin)?.roadId) && (x.reverse == (route.manifest.find(m => !m.hasOwnProperty('leadin') || !m.leadin)?.reverse ?? false))
+            )
+            replacementLeadin = []; //no more of these but fix this properly.
+            if (replacementLeadin.length > 0) {
+                console.log("Found a matching replacement leadin!")
+            } else {
+                console.log("No matching replacement leadin")
+            }
+        }
+        //debugger
+        let leadin = [];        
+        if (missing.length > 0 || replacementLeadin.length > 0 || typeof(penExit) != "undefined") {
             //replacementLeadin = await common.rpc.getRoute(missing[0].replacement)
             //leadin = replacementLeadin.manifest.filter(x => x.leadin);
-            if (replacementLeadin.length > 0) {
+            //debugger
+            if (typeof(penExit) != "undefined") {
+                if (penExit.paddockExitData.roadId == route.manifest[0].roadId && penExit.paddockExitData.reverse == (route.manifest[0].reverse ?? false)) {
+                    if (penExit.paddockExitRoad[0].roadId == route.manifest[0].roadId) {
+                        // remove the first entry in the manifest to account for the odd time that the exit road is in the manifest (Handful of Gravel)
+                        route.manifest.shift()
+                    }
+                    leadin = penExit.paddockExitRoad
+                    if (!penExit.replace) {
+                        if (penExit.paddockExitData.reverse) {
+                            //debugger
+                            if (penExit.paddockExitData.roadTime > route.manifest[0].start) {
+                                route.manifest[0].end = penExit.paddockExitData.roadTime
+                            }
+                        } else {
+                            if (penExit.paddockExitData.roadTime < route.manifest[0].end) {
+                                route.manifest[0].start = penExit.paddockExitData.roadTime
+                            }
+                        }
+                    } else {
+                        route.manifest = route.manifest.filter(x => !x.leadin) // we are replacing the leadin so remove the existing one
+                    }
+                }
+                //debugger
+            } else if (replacementLeadin.length > 0) {
                 leadin = replacementLeadin[0].leadin
                 if (replacementLeadin[0].replace) {
                     route.manifest = route.manifest.filter(x => !x.leadin) // we are replacing the leadin so remove the existing one
@@ -883,10 +1272,11 @@ export async function getModifiedRoute(id) {
             replacementLeadin = [];
             leadin = [];
         }        
-        
+        //debugger
         for (let i = leadin.length; i > 0; i--) {
             route.manifest.unshift(leadin[i - 1]);
         }
+            //debugger
             if (route) {
                 route.curvePath = new curves.CurvePath();
                 route.roadSegments = [];                
@@ -1536,4 +1926,73 @@ export function getEventPowerups(sg) {
         powerUps.type = "standard"        
     }
     return powerUps;
+}
+
+export function calculateDistance(point1, point2) {
+    const dx = point2[0] - point1[0]; // x2 - x1
+    const dy = point2[1] - point1[1]; // y2 - y1
+    const dz = point2[2] - point1[2]; // z2 - z1
+
+    // Use the Euclidean distance formula
+    return Math.sqrt(dx * dx + dy * dy + dz * dz);
+}
+
+function getNearestPoint(road1, road2, road1RP, steps) {
+    let nearestPoint = null;
+    let minDistance = Infinity;
+    let rp = null; 
+    let pt1 = road1.curvePath.pointAtRoadPercent(road1RP)         
+    const points = [];
+    const step = 1 / (steps - 1); // Calculate the step size
+    //debugger
+    for (let i = 0; i < steps; i++) {
+        points.push(i * step);
+    }
+    for (let t of points) {
+        //debugger
+        if (t == undefined) {
+            debugger
+        }
+        const pointOnSecondCurve = road2.curvePath.pointAtRoadPercent(t); // Get a point on the second curve for parameter t
+    
+        const distance = calculateDistance(pt1, pointOnSecondCurve);
+    
+        if (distance < minDistance) {
+            minDistance = distance;
+            nearestPoint = pointOnSecondCurve;
+            rp = t;
+        }
+    }
+    //debugger
+    return rp;
+}
+
+export async function getRoadsIntersectionRP(courseId, road1, road2, road1RP, steps) {
+    let nearestPoint = null;
+    let minDistance = Infinity;
+    let rp = null;        
+    let rd1 = await common.getRoad(courseId, road1)
+    // the point where distance measurements start in game (ie. the "magic line").  This can either come from the paddockExitRoadTime definition on the road or it's the last roadPercent before the game switches to the route road
+    let pt1 = rd1.curvePath.pointAtRoadPercent(road1RP) 
+    //pt1 = rd1.curvePath.pointAtRoadTime(0.99) 
+    let rd2 = await common.getRoad(courseId, road2)
+    const points = [];
+    const step = 1 / (steps - 1); // Calculate the step size
+
+    for (let i = 0; i < steps; i++) {
+        points.push(i * step);
+    }
+    for (let t of points) {
+        const pointOnSecondCurve = rd2.curvePath.pointAtRoadPercent(t); // Get a point on the second curve for parameter t
+    
+        const distance = calculateDistance(pt1, pointOnSecondCurve);
+    
+        if (distance < minDistance) {
+            minDistance = distance;
+            nearestPoint = pointOnSecondCurve;
+            rp = t;
+        }
+    }
+    //debugger
+    return { nearestPoint, minDistance, rp };
 }
