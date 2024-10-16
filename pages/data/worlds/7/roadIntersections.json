@@ -1,0 +1,723 @@
+[
+  {
+    "id": 0,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.9102961911,
+        "m_roadTime2": 0.92676683,
+        "m_markerId": 0,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_YorkStart.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Harrogate Circuit",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_YorkKOM.tga",
+              "forward": true,
+              "exitTime": 0.92676683,
+              "b": "0",
+              "turnText": "Harrogate Springs",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 1,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_YorkSprint.tga",
+              "forward": true,
+              "exitTime": 0.92676683,
+              "b": "0",
+              "turnText": "Millionaires Row",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.9419564182,
+        "m_roadTime2": 0.9532893972,
+        "m_markerId": 1,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 3,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_YorkKOM.tga",
+              "forward": false,
+              "exitTime": 0.9419564182,
+              "b": "0",
+              "turnText": "Harrogate Springs",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 4,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_YorkSprint.tga",
+              "forward": true,
+              "exitTime": 0.9419564182,
+              "b": "0",
+              "turnText": "Millionaires Row",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 0,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_YorkCairn.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Cairn Hotel",
+              "d": false
+            }
+          }
+        ],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.5824194586,
+        "m_roadTime2": 0.595894761,
+        "m_markerId": 2,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_YorkSprint.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Millionaires Row",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_YorkCairn.tga",
+              "forward": false,
+              "exitTime": 0.595894761,
+              "b": "0",
+              "turnText": "Cairn Hotel",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 3,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_YorkStart.tga",
+              "forward": true,
+              "exitTime": 0.595894761,
+              "b": "0",
+              "turnText": "Harrogate Circuit",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.6220582983,
+        "m_roadTime2": 0.6330797997,
+        "m_markerId": 3,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 1,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_YorkCairn.tga",
+              "forward": false,
+              "exitTime": 0.6220582983,
+              "b": "0",
+              "turnText": "Cairn Hotel",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 4,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_YorkStart.tga",
+              "forward": false,
+              "exitTime": 0.6220582983,
+              "b": "0",
+              "turnText": "Harrogate Circuit",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 0,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_YorkKOM.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Harrogate Springs",
+              "d": false
+            }
+          }
+        ],
+        "m_roadId": 0,
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.23485,
+        "m_roadTime2": 0.930625,
+        "m_roadId": 1,
+        "m_markerId": 10000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.930625,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.23485,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.1615666715,
+        "m_roadTime2": 0.941766665,
+        "m_roadId": 2,
+        "m_markerId": 20000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.941766665,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.1615666715,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.11061667,
+        "m_roadTime2": 0.8996166637,
+        "m_roadId": 3,
+        "m_markerId": 30000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.8996166637,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.11061667,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0903600013,
+        "m_roadTime2": 0.8897399985,
+        "m_roadId": 4,
+        "m_markerId": 40000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.8897399985,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.0903600013,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 5
+  },
+  {
+    "id": 6
+  },
+  {
+    "id": 7
+  },
+  {
+    "id": 8
+  },
+  {
+    "id": 9
+  },
+  {
+    "id": 10
+  },
+  {
+    "id": 11
+  },
+  {
+    "id": 12
+  },
+  {
+    "id": 13
+  },
+  {
+    "id": 14
+  },
+  {
+    "id": 15
+  },
+  {
+    "id": 16,
+    "roadIsPaddock": true,
+    "paddockExitRoadTime": 0.49,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.7550162805,
+        "m_roadTime2": 0.9385888095,
+        "m_roadId": 16,
+        "m_markerId": 160000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9385888095,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.137025,
+        "m_roadTime2": 0.480125,
+        "m_roadId": 16,
+        "m_markerId": 160001,
+        "forward": [
+          {
+            "option": {
+              "road": 19,
+              "alt": 263,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.5011878445536119,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 16,
+              "alt": 262,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.4196283321,
+        "m_roadTime2": 0.7262249883,
+        "m_roadId": 17,
+        "m_markerId": 170000,
+        "forward": [
+          {
+            "option": {
+              "road": 16,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.7262249883,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.4074503927,
+        "m_roadTime2": 0.8842629599,
+        "m_roadId": 18,
+        "m_markerId": 180000,
+        "forward": [
+          {
+            "option": {
+              "road": 16,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.8842629599,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.86988662,
+        "m_roadTime2": 0.9591157329,
+        "m_roadId": 19,
+        "m_markerId": 190000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.9591157329,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.2946428703,
+        "m_roadTime2": 0.6463571718,
+        "m_roadId": 19,
+        "m_markerId": 190001,
+        "forward": [
+          {
+            "option": {
+              "road": 16,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.6463571718,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.4067809544,
+        "m_roadTime2": 0.7266463259,
+        "m_roadId": 20,
+        "m_markerId": 200000,
+        "forward": [
+          {
+            "option": {
+              "road": 16,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.7266463259,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 21
+  },
+  {
+    "id": 22
+  },
+  {
+    "id": 23
+  },
+  {
+    "id": 24
+  },
+  {
+    "id": 25
+  },
+  {
+    "id": 26
+  },
+  {
+    "id": 27
+  },
+  {
+    "id": 28
+  },
+  {
+    "id": 29
+  },
+  {
+    "id": 30
+  },
+  {
+    "id": 31
+  },
+  {
+    "id": 32
+  },
+  {
+    "id": 33
+  },
+  {
+    "id": 34
+  },
+  {
+    "id": 35
+  },
+  {
+    "id": 36
+  },
+  {
+    "id": 37
+  },
+  {
+    "id": 38
+  },
+  {
+    "id": 39
+  },
+  {
+    "id": 40
+  },
+  {
+    "id": 41
+  },
+  {
+    "id": 42
+  },
+  {
+    "id": 43
+  },
+  {
+    "id": 44
+  },
+  {
+    "id": 45
+  },
+  {
+    "id": 46
+  },
+  {
+    "id": 47
+  },
+  {
+    "id": 48
+  },
+  {
+    "id": 49
+  },
+  {
+    "id": 50
+  },
+  {
+    "id": 51
+  },
+  {
+    "id": 52
+  },
+  {
+    "id": 53
+  },
+  {
+    "id": 54
+  },
+  {
+    "id": 55
+  }
+]

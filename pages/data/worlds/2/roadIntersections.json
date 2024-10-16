@@ -1,0 +1,631 @@
+[
+  {
+    "id": 0,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.006019217,
+        "m_roadTime2": 0.007979378,
+        "m_markerId": 0,
+        "forward": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 263,
+              "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_LibbyHill.tga",
+              "forward": true,
+              "exitTime": 0.007979378,
+              "b": "0",
+              "turnText": "Forward Climbs",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_Monument.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Main Loop",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3578563845,
+        "m_roadTime2": 0.3655714761,
+        "m_markerId": 1,
+        "forward": [
+          {
+            "option": {
+              "road": 1,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Monument.tga",
+              "forward": true,
+              "exitTime": 0.3655714761,
+              "b": "0",
+              "turnText": "Flat Loop",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_LibbyHill.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Main Loop",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.4099436944,
+        "m_roadTime2": 0.4155104592,
+        "m_markerId": 2,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Monument.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Reverse Loop",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 9,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Monument.tga",
+              "forward": true,
+              "exitTime": 0.40772786866484323,
+              "b": "0",
+              "turnText": "Main Loop",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 2,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_LibbyHill.tga",
+              "forward": false,
+              "exitTime": 0.40885424674688126,
+              "b": "0",
+              "turnText": "Reverse Climbs",
+              "d": false
+            }
+          }
+        ],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0116879743,
+        "m_roadTime2": 0.0142310306,
+        "m_markerId": 3,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_LibbyHill.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Reverse Climbs",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 9,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_LibbyHill.tga",
+              "forward": false,
+              "exitTime": 0.0116879743,
+              "b": "0",
+              "turnText": "Main Loop",
+              "d": false
+            }
+          }
+        ],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0530321085,
+        "m_roadTime2": 0.057908838,
+        "m_markerId": 4,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_LibbyHill.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Reverse Climbs",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 1,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Monument.tga",
+              "forward": false,
+              "exitTime": 0.05037311761781487,
+              "b": "0",
+              "turnText": "Reverse Loop",
+              "d": false
+            }
+          }
+        ],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3729588898,
+        "m_roadTime2": 0.374247395,
+        "m_markerId": 5,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Monument.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Reverse Loop",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 10,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Monument.tga",
+              "forward": true,
+              "exitTime": 0.3715555335010674,
+              "b": "0",
+              "turnText": "Forward Loop",
+              "d": false
+            }
+          }
+        ],
+        "m_roadId": 0,
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.1797000054,
+        "m_roadTime2": 0.805518698,
+        "m_roadId": 1,
+        "m_markerId": 10000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.805518698,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.1797000054,
+              "b": "0",
+              "turnText": "",
+              "d": true
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.057775,
+        "m_roadTime2": 0.9245416679,
+        "m_roadId": 2,
+        "m_markerId": 20000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9245416679,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.057775,
+              "b": "0",
+              "turnText": "",
+              "d": true
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3836068062,
+        "m_roadTime2": 0.8935216765,
+        "m_roadId": 3,
+        "m_markerId": 30000,
+        "forward": [
+          {
+            "option": {
+              "road": 6,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.8935216765,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3125393185,
+        "m_roadTime2": 0.8073066633,
+        "m_roadId": 4,
+        "m_markerId": 40000,
+        "forward": [
+          {
+            "option": {
+              "road": 6,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.8073066633,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3897409803,
+        "m_roadTime2": 0.9143073071,
+        "m_roadId": 5,
+        "m_markerId": 50000,
+        "forward": [
+          {
+            "option": {
+              "road": 6,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9143073071,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "roadIsPaddock": true,
+    "paddockExitRoadTime": 0.4,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.6791233959,
+        "m_roadTime2": 0.8919416673,
+        "m_roadId": 6,
+        "m_markerId": 60000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.8919416673,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3389940009,
+        "m_roadTime2": 0.4248514427,
+        "m_roadId": 6,
+        "m_markerId": 60001,
+        "forward": [
+          {
+            "option": {
+              "road": 11,
+              "alt": 263,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.4248514427,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 6,
+              "alt": 262,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.4587751655,
+        "m_roadTime2": 0.8629892202,
+        "m_roadId": 7,
+        "m_markerId": 70000,
+        "forward": [
+          {
+            "option": {
+              "road": 6,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.8629892202,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 8
+  },
+  {
+    "id": 9,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.1376714347,
+        "m_roadTime2": 0.8120106292,
+        "m_roadId": 9,
+        "m_markerId": 90000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.8120106292,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.1376714347,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.232825592,
+        "m_roadTime2": 0.6319519499,
+        "m_roadId": 10,
+        "m_markerId": 100000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.6319519499,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.232825592,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.6135374929,
+        "m_roadTime2": 0.8006213213,
+        "m_roadId": 11,
+        "m_markerId": 110000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.8006213213,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  }
+]

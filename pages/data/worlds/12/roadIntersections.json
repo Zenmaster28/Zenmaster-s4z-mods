@@ -1,0 +1,253 @@
+[
+  {
+    "id": 0
+  },
+  {
+    "id": 1,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.19925,
+        "m_roadTime2": 0.569375,
+        "m_roadId": 1,
+        "m_markerId": 10000,
+        "forward": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.569375,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.8040666906,
+        "m_roadTime2": 0.9679333324,
+        "m_roadId": 2,
+        "m_markerId": 20000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9679333324,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.43999086,
+        "m_roadTime2": 0.628724199,
+        "m_roadId": 2,
+        "m_markerId": 20001,
+        "forward": [
+          {
+            "option": {
+              "road": 3,
+              "alt": 263,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.628724199,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 2,
+              "alt": 262,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.5125000152,
+        "m_roadTime2": 0.7160666583,
+        "m_roadId": 3,
+        "m_markerId": 30000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.7160666582829673,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.1005333363,
+        "m_roadTime2": 0.1795333387,
+        "m_roadId": 3,
+        "m_markerId": 30001,
+        "forward": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.1795333387,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.312166676,
+        "m_roadTime2": 0.8277666615,
+        "m_roadId": 4,
+        "m_markerId": 40000,
+        "forward": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.8277666615,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3181666761,
+        "m_roadTime2": 0.8140333278,
+        "m_roadId": 5,
+        "m_markerId": 50000,
+        "forward": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.8140333278,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.22045,
+        "m_roadTime2": 0.575925,
+        "m_roadId": 6,
+        "m_markerId": 60000,
+        "forward": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.575925,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  }
+]

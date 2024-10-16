@@ -1,0 +1,1634 @@
+[
+  {
+    "id": 0,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.006,
+        "m_roadTime2": 0.994,
+        "m_markerId": 0,
+        "forward": [
+          {
+            "option": {
+              "road": 3,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.994,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 15,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.006,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "m_roadId": 0,
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.01,
+        "m_roadTime2": 0.99,
+        "m_roadId": 1,
+        "m_markerId": 10000,
+        "forward": [
+          {
+            "option": {
+              "road": 6,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.99,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.01,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.6603215638,
+        "m_roadTime2": 0.6758065222,
+        "m_roadId": 2,
+        "m_markerId": 20000,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_SurrSummit.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "SGURR SUMMIT",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 12,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Glasgow.tga",
+              "forward": false,
+              "exitTime": 0.6603215638,
+              "b": "0",
+              "turnText": "GLASGOW",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.626867879,
+        "m_roadTime2": 0.6450021208,
+        "m_roadId": 2,
+        "m_markerId": 20001,
+        "forward": [
+          {
+            "option": {
+              "road": 14,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Glasgow.tga",
+              "forward": false,
+              "exitTime": 0.6450021208,
+              "b": "0",
+              "turnText": "GLASGOW",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Cliffside.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "CLIFFS",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.8296980806,
+        "m_roadTime2": 0.8423866803,
+        "m_roadId": 2,
+        "m_markerId": 20002,
+        "forward": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Tower.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "TOWER",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 16,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_SurrSummit.tga",
+              "forward": false,
+              "exitTime": 0.8423866803,
+              "b": "0",
+              "turnText": "SGURR SUMMIT",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.8863045604,
+        "m_roadTime2": 0.8931835475,
+        "m_roadId": 2,
+        "m_markerId": 20003,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 18,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_SurrSummit.tga",
+              "forward": false,
+              "exitTime": 0.8863045604,
+              "b": "0",
+              "turnText": "SGURR SUMMIT",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 2,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Cliffside.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "CLIFFS",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3828178453,
+        "m_roadTime2": 0.3993662272,
+        "m_roadId": 2,
+        "m_markerId": 20004,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 5,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Cliffside.tga",
+              "forward": true,
+              "exitTime": 0.3828178453,
+              "b": "0",
+              "turnText": "CLIFFS",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Tower.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "TOWER",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3443445268,
+        "m_roadTime2": 0.3649276465,
+        "m_roadId": 2,
+        "m_markerId": 20005,
+        "forward": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Glasgow.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "GLASGOW",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 7,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Cliffside.tga",
+              "forward": false,
+              "exitTime": 0.3649276465,
+              "b": "0",
+              "turnText": "CLIFFS",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.1504450116,
+        "m_roadTime2": 0.1681165164,
+        "m_roadId": 2,
+        "m_markerId": 20006,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 4,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Glasgow.tga",
+              "forward": true,
+              "exitTime": 0.1504450116,
+              "b": "0",
+              "turnText": "GLASGOW",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Cliffside.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "CLIFFS",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.1142046211,
+        "m_roadTime2": 0.1312270302,
+        "m_roadId": 2,
+        "m_markerId": 20007,
+        "forward": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Tower.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "TOWER",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 1,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Glasgow.tga",
+              "forward": true,
+              "exitTime": 0.1312270302,
+              "b": "0",
+              "turnText": "GLASGOW",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.5195708835,
+        "m_roadTime2": 0.5468335634,
+        "m_roadId": 2,
+        "m_markerId": 20008,
+        "forward": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Glasgow.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "GLASGOW",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 13,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_SurrSummit.tga",
+              "forward": true,
+              "exitTime": 0.5468335634,
+              "b": "0",
+              "turnText": "SGURR SUMMIT",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.5883578968,
+        "m_roadTime2": 0.6149885908,
+        "m_roadId": 2,
+        "m_markerId": 20009,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 17,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_SurrSummit.tga",
+              "forward": true,
+              "exitTime": 0.5883578968,
+              "b": "0",
+              "turnText": "SGURR SUMMIT",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 2,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Tower.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "TOWER",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.9580112052,
+        "m_roadTime2": 0.9919126307,
+        "m_roadId": 3,
+        "m_markerId": 30000,
+        "forward": [
+          {
+            "option": {
+              "road": 13,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Tower.tga",
+              "forward": false,
+              "exitTime": 0.9919126307,
+              "b": "0",
+              "turnText": "TOWER",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 15,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_SurrSummit.tga",
+              "forward": true,
+              "exitTime": 0.9919126307,
+              "b": "0",
+              "turnText": "SGURR SUMMIT",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 17,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Glasgow.tga",
+              "forward": false,
+              "exitTime": 0.9919126307,
+              "b": "0",
+              "turnText": "GLASGOW",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0135086959,
+        "m_roadTime2": 0.0694907688,
+        "m_roadId": 3,
+        "m_markerId": 30001,
+        "m_bIgnoreRoadWidth": "1",
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 16,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Cliffside.tga",
+              "forward": true,
+              "exitTime": 0.0135086959,
+              "b": "0",
+              "turnText": "CLIFFS",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 10,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_SurrSummit.tga",
+              "forward": false,
+              "exitTime": 0.0135086959,
+              "b": "0",
+              "turnText": "SGURR SUMMIT",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 18,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Tower.tga",
+              "forward": true,
+              "exitTime": 0.0135086959,
+              "b": "0",
+              "turnText": "TOWER",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.01,
+        "m_roadTime2": 0.99,
+        "m_roadId": 4,
+        "m_markerId": 40000,
+        "forward": [
+          {
+            "option": {
+              "road": 6,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.99,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.01,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.01,
+        "m_roadTime2": 0.99,
+        "m_roadId": 5,
+        "m_markerId": 50000,
+        "forward": [
+          {
+            "option": {
+              "road": 6,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.99,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.01,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.6021333797,
+        "m_roadTime2": 0.9540888708,
+        "m_roadId": 6,
+        "m_markerId": 60000,
+        "forward": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Tower.tga",
+              "forward": true,
+              "exitTime": 0.9540888708,
+              "b": "0",
+              "turnText": "TOWER",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 5,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Glasgow.tga",
+              "forward": false,
+              "exitTime": 0.9540888708,
+              "b": "0",
+              "turnText": "GLASGOW",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.045936365,
+        "m_roadTime2": 0.378369867,
+        "m_roadId": 6,
+        "m_markerId": 60001,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 1,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Cliffside.tga",
+              "forward": false,
+              "exitTime": 0.045936365,
+              "b": "0",
+              "turnText": "CLIFFS",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 4,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Tower.tga",
+              "forward": false,
+              "exitTime": 0.045936365,
+              "b": "0",
+              "turnText": "TOWER",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.01,
+        "m_roadTime2": 0.99,
+        "m_roadId": 7,
+        "m_markerId": 70000,
+        "forward": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.99,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 6,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.01,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.005,
+        "m_roadTime2": 0.9797833327,
+        "m_roadId": 8,
+        "m_markerId": 80000,
+        "forward": [
+          {
+            "option": {
+              "road": 10,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9797833327,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 3,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.005,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.2492859726,
+        "m_roadTime2": 0.2811194116,
+        "m_roadId": 9,
+        "m_markerId": 90000,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 9,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Glasgow.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "GLASGOW",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 14,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_SurrSummit.tga",
+              "forward": true,
+              "exitTime": 0.2492859726,
+              "b": "0",
+              "turnText": "SGURR SUMMIT",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.1867001715,
+        "m_roadTime2": 0.2165805716,
+        "m_roadId": 9,
+        "m_markerId": 90001,
+        "forward": [
+          {
+            "option": {
+              "road": 12,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Cliffside.tga",
+              "forward": true,
+              "exitTime": 0.2165805716,
+              "b": "0",
+              "turnText": "CLIFFS",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 9,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Scotland_Glasgow.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "GLASGOW",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0618800009,
+        "m_roadTime2": 0.9693487477,
+        "m_roadId": 10,
+        "m_markerId": 100000,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 8,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.0618800009,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.590913267,
+        "m_roadTime2": 0.6609161553,
+        "m_roadId": 11,
+        "m_markerId": 110000,
+        "forward": [
+          {
+            "option": {
+              "road": 11,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 20,
+              "alt": 262,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.6609161553,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.8466531605,
+        "m_roadTime2": 0.9851166662,
+        "m_roadId": 11,
+        "m_markerId": 110001,
+        "forward": [
+          {
+            "option": {
+              "road": 9,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9851166662,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.024575,
+        "m_roadTime2": 0.9784,
+        "m_roadId": 12,
+        "m_markerId": 120000,
+        "forward": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9784,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 9,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.024575,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.00695,
+        "m_roadTime2": 0.981275,
+        "m_roadId": 13,
+        "m_markerId": 130000,
+        "forward": [
+          {
+            "option": {
+              "road": 3,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.981275,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.00695,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0221,
+        "m_roadTime2": 0.9539,
+        "m_roadId": 14,
+        "m_markerId": 140000,
+        "forward": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.9539,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 9,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.0221,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0196000003,
+        "m_roadTime2": 0.9065714584,
+        "m_roadId": 15,
+        "m_markerId": 150000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9065714584,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0075,
+        "m_roadTime2": 0.9925,
+        "m_roadId": 16,
+        "m_markerId": 160000,
+        "forward": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.9925,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 3,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.0075,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0075,
+        "m_roadTime2": 0.96935,
+        "m_roadId": 17,
+        "m_markerId": 170000,
+        "forward": [
+          {
+            "option": {
+              "road": 3,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.96935,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.0075,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0075,
+        "m_roadTime2": 0.9925,
+        "m_roadId": 18,
+        "m_markerId": 180000,
+        "forward": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9925,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 3,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.0075,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3046666757,
+        "m_roadTime2": 0.719633325,
+        "m_roadId": 19,
+        "m_markerId": 190000,
+        "forward": [
+          {
+            "option": {
+              "road": 11,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.719633325,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0128333337,
+        "m_roadTime2": 0.1424333376,
+        "m_roadId": 20,
+        "m_markerId": 200000,
+        "forward": [
+          {
+            "option": {
+              "road": 9,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.4258373348204853,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.6959382316,
+        "m_roadTime2": 0.954933332,
+        "m_roadId": 20,
+        "m_markerId": 200001,
+        "forward": [
+          {
+            "option": {
+              "road": 9,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.954933332,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.2999000089,
+        "m_roadTime2": 0.7045666579,
+        "m_roadId": 21,
+        "m_markerId": 210000,
+        "forward": [
+          {
+            "option": {
+              "road": 11,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.7045666579,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3159666761,
+        "m_roadTime2": 0.7699333563,
+        "m_roadId": 22,
+        "m_markerId": 220000,
+        "forward": [
+          {
+            "option": {
+              "road": 11,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.7699333563,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.1749200026,
+        "m_roadTime2": 0.6253000093,
+        "m_roadId": 23,
+        "m_markerId": 230000,
+        "forward": [
+          {
+            "option": {
+              "road": 25,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.6253000093,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3177666761,
+        "m_roadTime2": 0.8042666906,
+        "m_roadId": 24,
+        "m_markerId": 240000,
+        "forward": [
+          {
+            "option": {
+              "road": 11,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.8042666906,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.8144857117,
+        "m_roadTime2": 0.8638571368,
+        "m_roadId": 25,
+        "m_markerId": 250000,
+        "forward": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.8638571368,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.6557175924,
+        "m_roadTime2": 0.7031268437,
+        "m_roadId": 25,
+        "m_markerId": 250001,
+        "forward": [
+          {
+            "option": {
+              "road": 25,
+              "alt": 263,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 26,
+              "alt": 262,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.7031268437,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.6215838375,
+        "m_roadTime2": 1.0,
+        "m_roadId": 26,
+        "m_markerId": 260000,
+        "forward": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 1.0,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0258000008,
+        "m_roadTime2": 0.7830666602,
+        "m_roadId": 27,
+        "m_markerId": 270000,
+        "forward": [
+          {
+            "option": {
+              "road": 25,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.7830666602,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 28,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0501333348,
+        "m_roadTime2": 0.7665666597,
+        "m_roadId": 28,
+        "m_markerId": 280000,
+        "forward": [
+          {
+            "option": {
+              "road": 25,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.7665666597,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 29
+  }
+]

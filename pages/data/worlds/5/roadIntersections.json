@@ -1,0 +1,906 @@
+[
+  {
+    "id": 0
+  },
+  {
+    "id": 1
+  },
+  {
+    "id": 2,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.1494612221,
+        "m_roadTime2": 0.8788888954,
+        "m_roadId": 2,
+        "m_markerId": 20000,
+        "forward": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.8788888954,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.1494612221,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.143009,
+        "m_roadTime2": 0.891374,
+        "m_roadId": 3,
+        "m_markerId": 30000,
+        "forward": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.891374,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.143009,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0502400007,
+        "m_roadTime2": 0.9523333475,
+        "m_roadId": 4,
+        "m_markerId": 40000,
+        "forward": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.9523333475,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.125911,
+        "m_roadTime2": 0.940511,
+        "m_roadId": 5,
+        "m_markerId": 50000,
+        "forward": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.940511,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.125911,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.200272,
+        "m_roadTime2": 0.87625,
+        "m_roadId": 6,
+        "m_markerId": 60000,
+        "forward": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.87625,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.200272,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.8445936057,
+        "m_roadTime2": 0.847760009,
+        "m_roadId": 7,
+        "m_markerId": 70000,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 2,
+              "alt": 263,
+              "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_AmbrasCastle.tga",
+              "forward": true,
+              "exitTime": 0.8445936057,
+              "b": "0",
+              "turnText": "KOM",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 7,
+              "alt": 262,
+              "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_SwarovskiGiant.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Reverse KOM",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3103365274,
+        "m_roadTime2": 0.3163241233,
+        "m_roadId": 7,
+        "m_markerId": 70001,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 3,
+              "alt": 265,
+              "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_SwarovskiGiant.tga",
+              "forward": false,
+              "exitTime": 0.3103365274,
+              "b": "0",
+              "turnText": "Reverse KOM",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 7,
+              "alt": 262,
+              "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_Trainyard.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Innsbruck",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.819743028,
+        "m_roadTime2": 0.8272236168,
+        "m_roadId": 7,
+        "m_markerId": 70002,
+        "forward": [
+          {
+            "option": {
+              "road": 6,
+              "alt": 263,
+              "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_Trainyard.tga",
+              "forward": true,
+              "exitTime": 0.8272236168,
+              "b": "0",
+              "turnText": "Innsbruck",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 5,
+              "alt": 265,
+              "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_AmbrasCastle.tga",
+              "forward": true,
+              "exitTime": 0.8272236168,
+              "b": "0",
+              "turnText": "KOM",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.8936211552,
+        "m_roadTime2": 0.8939227363,
+        "m_roadId": 7,
+        "m_markerId": 70003,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.243135,
+        "m_roadTime2": 0.252644,
+        "m_roadId": 7,
+        "m_markerId": 70004,
+        "forward": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_SwarovskiGiant.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "KOM",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 14,
+              "alt": 262,
+              "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_Trainyard.tga",
+              "forward": false,
+              "exitTime": 0.252947983898986,
+              "b": "0",
+              "turnText": "Innsbruck",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.888824,
+        "m_roadTime2": 0.901766,
+        "m_roadId": 7,
+        "m_markerId": 70005,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 14,
+              "alt": 263,
+              "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_Jesuitenkirche.tga",
+              "forward": true,
+              "exitTime": 0.888824,
+              "b": "0",
+              "turnText": "Reverse Innsbruck",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_SwarovskiGiant.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "KOM",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.28704649,
+        "m_roadTime2": 0.291992,
+        "m_roadId": 7,
+        "m_markerId": 70006,
+        "forward": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 263,
+              "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_AmbrasCastle.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "KOM",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 15,
+              "alt": 262,
+              "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_SwarovskiGiant.tga",
+              "forward": true,
+              "exitTime": 0.29240997786110573,
+              "b": "0",
+              "turnText": "Reverse KOM",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.2748,
+        "m_roadTime2": 0.2882,
+        "m_roadId": 7,
+        "m_markerId": 70007,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 17,
+              "alt": 263,
+              "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_Trainyard.tga",
+              "forward": true,
+              "exitTime": 0.2728874346355464,
+              "b": "0",
+              "turnText": "Innsbruck",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 16,
+              "alt": 265,
+              "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_Jesuitenkirche.tga",
+              "forward": true,
+              "exitTime": 0.25322980916778476,
+              "b": "0",
+              "turnText": "Reverse Innsbruck",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.85136,
+        "m_roadTime2": 0.86517,
+        "m_roadId": 7,
+        "m_markerId": 70007,
+        "forward": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 263,
+              "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_Trainyard.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Innsbruck",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 16,
+              "alt": 265,
+              "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_Jesuitenkirche.tga",
+              "forward": true,
+              "exitTime": 0.8654233199158217,
+              "b": "0",
+              "turnText": "Reverse Innsbruck",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.033774,
+        "m_roadTime2": 0.764815,
+        "m_roadId": 8,
+        "m_markerId": 80000,
+        "forward": [
+          {
+            "option": {
+              "road": 13,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.764815,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.042224,
+        "m_roadTime2": 0.89029,
+        "m_roadId": 9,
+        "m_markerId": 90000,
+        "forward": [
+          {
+            "option": {
+              "road": 13,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.89029,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.046816,
+        "m_roadTime2": 0.884174,
+        "m_roadId": 10,
+        "m_markerId": 100000,
+        "forward": [
+          {
+            "option": {
+              "road": 13,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.884174,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.046282,
+        "m_roadTime2": 0.73119,
+        "m_roadId": 11,
+        "m_markerId": 110000,
+        "forward": [
+          {
+            "option": {
+              "road": 13,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.73119,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "roadIsPaddock": true,
+    "paddockExitRoadTime": 0.4182249903678894,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.08547,
+        "m_roadTime2": 0.871769,
+        "m_roadId": 12,
+        "m_markerId": 120000,
+        "forward": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.871769,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "roadIsPaddock": true,
+    "paddockExitRoadTime": 0.4182249903678894,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3132571569,
+        "m_roadTime2": 0.4266774085,
+        "m_roadId": 13,
+        "m_markerId": 130000,
+        "forward": [
+          {
+            "option": {
+              "road": 13,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 12,
+              "alt": 262,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.4266774085,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.7512013509,
+        "m_roadTime2": 0.9704714273,
+        "m_roadId": 13,
+        "m_markerId": 130001,
+        "forward": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9704714272514059,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0270615395,
+        "m_roadTime2": 0.8941025974,
+        "m_roadId": 14,
+        "m_markerId": 140000,
+        "forward": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.8941025974,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.0270615395,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.01,
+        "m_roadTime2": 0.99,
+        "m_roadId": 15,
+        "m_markerId": 150000,
+        "forward": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.99,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.01,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0071428575,
+        "m_roadTime2": 0.9942857587,
+        "m_roadId": 16,
+        "m_markerId": 160000,
+        "forward": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.9942857587,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.0071428575,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0045454547,
+        "m_roadTime2": 0.9712121502,
+        "m_roadId": 17,
+        "m_markerId": 170000,
+        "forward": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9712121502,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 7,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.0045454547,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  }
+]
