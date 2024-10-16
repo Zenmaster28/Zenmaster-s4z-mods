@@ -204,7 +204,9 @@ function createElevationProfile() {
     const lineTextColor = settings.lineTextColor;
     typeof(settings.gradientOpacity) == "undefined" ? common.settingsStore.set("gradientOpacity", 0.7) : null;
     const gradientOpacity = settings.gradientOpacity;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, showAllArches});
+    typeof(settings.disablePenRouting) == "undefined" ? common.settingsStore.set("disablePenRouting", false) : null;
+    const disablePenRouting = settings.disablePenRouting;
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, showAllArches, disablePenRouting});
     //return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, colorScheme, showSegmentStart});
 }
 
@@ -313,7 +315,7 @@ async function applyRoute() {
                     ${common.stripHTML((x.ascentInMeters + (x.leadinAscentInMeters ?? 0)).toFixed(0))}m)</option>`);
     }
     if (routeId != null) {        
-        const route = await zen.getModifiedRoute(routeId);
+        const route = await zen.getModifiedRoute(routeId, elProfile.disablePenRouting);
         let path;
         //debugger
         if (zwiftMap.overrideDistance > 0) {
@@ -608,7 +610,8 @@ export async function main() {
                         changed.has('colorScheme') ||
                         changed.has('showMap') ||
                         changed.has('gradientOpacity') ||
-                        changed.has('showAllArches')
+                        changed.has('showAllArches') ||
+                        changed.has('disablePenRouting')
                     )
                 {
                     //console.log(changed);

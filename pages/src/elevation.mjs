@@ -76,7 +76,8 @@ common.settingsStore.setDefault({
     distanceAhead: 1000,
     aheadLineColor: "#ff8000",
     aheadLineType: "solid",
-    showNextPowerup: false
+    showNextPowerup: false,
+    disablePenRouting: false
 });
 
 const settings = common.settingsStore.get();
@@ -228,7 +229,9 @@ function createElevationProfile({worldList}) {
     const aheadLineType = settings.aheadLineType;
     typeof(settings.showNextPowerup) == "undefined" ? common.settingsStore.set("showNextPowerup", false) : null;
     const showNextPowerup = settings.showNextPowerup;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup});
+    typeof(settings.disablePenRouting) == "undefined" ? common.settingsStore.set("disablePenRouting", false) : null;
+    const disablePenRouting = settings.disablePenRouting;
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting});
 }
 
 
@@ -544,7 +547,8 @@ export async function main() {
                         changed.has('showElevationMaxLine') ||                         
                         changed.has('fontScale') ||                        
                         changed.has('singleLapView') ||
-                        changed.has('showGroups')
+                        changed.has('showGroups') ||
+                        changed.has('disblePenRouting')
                     )
                 {                    
                     location.reload();
