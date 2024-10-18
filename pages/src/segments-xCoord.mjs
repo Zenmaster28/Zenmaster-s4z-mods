@@ -10,8 +10,8 @@ let routeFullData = false;
 let worldSegments;
 let curvePathIndex = 0;
 let zwiftSegmentsRequireStartEnd;
-let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
-let replacementLeadins = await fetch("data/leadinData.json").then((response) => response.json());
+//let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
+//let replacementLeadins = await fetch("data/leadinData.json").then((response) => response.json());
 
 export async function processRoute(courseId, routeId, laps, distance, includeLoops, showAllArches, disablePenRouting) { 
     distance = parseInt(distance);
@@ -1141,29 +1141,17 @@ export async function getModifiedRoute(id, disablePenRouting) {
         let penExitRoute = [];  
         if (!disablePenRouting) {
             penExitRoute = await getPenExitRoute(route)        
-            console.log("Pen exit path", penExitRoute)
+            //console.log("Pen exit path", penExitRoute)
         }
-        //debugger       
-        
+
         if (penExitRoute.length > 0) {
-            //penExitRoute = penExitRoute.filter((item, index, arr) => index === 0 || item.roadId !== arr[index - 1].roadId); // remove consecutive roadId entries from the pen exit route
-            //debugger
             const exitRoads = penExitRoute.filter(x => x.paddockExitRoadTime)
             if (exitRoads.length > 0) {
                 //found an exit road on the path, start the manifest there
                 const lastExitRoad = exitRoads.at(-1)
-                //missing.push({leadin: []});
-                const idxExitRoad = penExitRoute.findIndex(road => road === lastExitRoad)                
-                //missing[0].leadin.push({
-                //    end: penExitRoute[idxExitRoad + 1].exitTime,
-                //    leadin: true,
-                //    roadId: lastExitRoad.roadId,
-                //    start: lastExitRoad.paddockExitRoadTime
-                //});
-                //debugger
+                const idxExitRoad = penExitRoute.findIndex(road => road === lastExitRoad)
                 const manifest = penExitRoute.slice(idxExitRoad - 1)
                 missing.push({leadin: []});
-                //debugger
                 for (let i = 1; i < manifest.length; i++) {
                     missing[0].leadin.push({
                         end: manifest[i].end,
@@ -1172,69 +1160,31 @@ export async function getModifiedRoute(id, disablePenRouting) {
                         start: manifest[i].paddockExitRoadTime ? manifest[i].paddockExitRoadTime : manifest[i].start,
                         reverse: manifest[i].reverse
                     })
-                }
-                //debugger
-                
+                }                
             } else {
+                // the pens have no exit point defined.  Instead we get the point on the first non paddock road and that's where the magic line is.
                 const firstNonPaddockRoad = penExitRoute.find(x => !x.isPaddockRoad)
                 const idxFirstNonPaddockRoad = penExitRoute.findIndex(road => road === firstNonPaddockRoad)
                 const manifest = penExitRoute.slice(idxFirstNonPaddockRoad - 1)
                 missing.push({leadin: []});
-                //debugger
                 for (let i = 1; i < manifest.length; i++) {
-                    //const rd1 = manifest[i - 1].roadId
-                    //const rd2 = manifest[i].roadId
-                    //const rd1exitTime = manifest[i].exitTime
-                    //const rd2startTime = await getRoadsIntersectionRP(route.courseId, rd1, rd2, rd1exitTime, 25000) // the roadPercent of the closest point on the new road
-                    if (false && manifest[i].isTargetRoad) { 
-                        debugger
-                        if (route.manifest[0].reverse) {
-                            route.manifest[0].end = rd2startTime.rp
-                        } else {
-                            if (rd2startTime.rp > route.manifest[0].start && rd2startTime.rp > route.manifest[0].end) {
-
-                            } else {
-                                route.manifest[0].start = rd2startTime.rp
-                            }
-                        }
-                    } else {
-                        //debugger
-                        missing[0].leadin.push({
-                            end: manifest[i].end,
-                            leadin: true,
-                            roadId: manifest[i].roadId,
-                            start: manifest[i].start,
-                            reverse: manifest[i].reverse
-                        })
-                        
-                    }
-                    //debugger
+                    
+                    missing[0].leadin.push({
+                        end: manifest[i].end,
+                        leadin: true,
+                        roadId: manifest[i].roadId,
+                        start: manifest[i].start,
+                        reverse: manifest[i].reverse
+                    })
                 }
-                //debugger
-                //deal with pens that don't have paddockExitRoadTime
             }
             
         } else {
             console.log("No pen exit route found!")            
-        
-            missing = missingLeadinRoutes.filter(x => x.id == id)
-            missing = []; //bypass the missing leadins for now  
-            replacementLeadin =  replacementLeadins.filter(x => 
-                x.eventPaddocks == route.eventPaddocks && x.courseId == route.courseId && (x.roadId == route.manifest.find(m => !m.hasOwnProperty('leadin') || !m.leadin)?.roadId) && (x.reverse == (route.manifest.find(m => !m.hasOwnProperty('leadin') || !m.leadin)?.reverse ?? false))
-            )
-            replacementLeadin = []; //no more of these but fix this properly.
-            if (replacementLeadin.length > 0) {
-                console.log("Found a matching replacement leadin!")
-            } else {
-                console.log("No matching replacement leadin")
-            }
+            missing = []; //bypass the missing leadins for routes where the pen exit couldn't be found 
         }
-        //debugger
         let leadin = [];        
-        if (missing.length > 0 || replacementLeadin.length > 0 || typeof(penExit) != "undefined") {
-            //replacementLeadin = await common.rpc.getRoute(missing[0].replacement)
-            //leadin = replacementLeadin.manifest.filter(x => x.leadin);
-            //debugger
+        if (missing.length > 0 || typeof(penExit) != "undefined") {            
             if (typeof(penExit) != "undefined") {
                 if (penExit.paddockExitData.roadId == route.manifest[0].roadId && penExit.paddockExitData.reverse == (route.manifest[0].reverse ?? false)) {
                     if (penExit.paddockExitRoad[0].roadId == route.manifest[0].roadId) {
@@ -1244,7 +1194,6 @@ export async function getModifiedRoute(id, disablePenRouting) {
                     leadin = penExit.paddockExitRoad
                     if (!penExit.replace) {
                         if (penExit.paddockExitData.reverse) {
-                            //debugger
                             if (penExit.paddockExitData.roadTime > route.manifest[0].start) {
                                 route.manifest[0].end = penExit.paddockExitData.roadTime
                             }
@@ -1257,33 +1206,19 @@ export async function getModifiedRoute(id, disablePenRouting) {
                         route.manifest = route.manifest.filter(x => !x.leadin) // we are replacing the leadin so remove the existing one
                     }
                 }
-                //debugger
-            } else if (replacementLeadin.length > 0) {
-                leadin = replacementLeadin[0].leadin
-                if (replacementLeadin[0].replace) {
-                    route.manifest = route.manifest.filter(x => !x.leadin) // we are replacing the leadin so remove the existing one
-                }
-                //debugger                
             } else if (missing.length > 0) {
                 leadin = missing[0].leadin;
             }
-            //debugger
-        } else {
-            replacementLeadin = [];
-            leadin = [];
         }        
-        //debugger
         for (let i = leadin.length; i > 0; i--) {
             route.manifest.unshift(leadin[i - 1]);
         }
-            //debugger
             if (route) {
                 route.curvePath = new curves.CurvePath();
                 route.roadSegments = [];                
                 const worldList = await common.getWorldList();
                 const worldMeta = worldList.find(x => x.courseId === route.courseId);
                 for (const [i, x] of route.manifest.entries()) {
-                    //debugger
                     const road = await common.getRoad(route.courseId, x.roadId);
                     const seg = road.curvePath.subpathAtRoadPercents(x.start, x.end);
                     seg.reverse = x.reverse;
@@ -1295,8 +1230,6 @@ export async function getModifiedRoute(id, disablePenRouting) {
                     route.roadSegments.push(seg);
                     route.curvePath.extend(x.reverse ? seg.toReversed() : seg);
                 }
-                // NOTE: No support for physicsSlopeScaleOverride of portal roads.
-                // But I've not seen portal roads used in a route either.
                 Object.assign(route, supplimentPath(worldMeta, route.curvePath));
             }            
             return route;
