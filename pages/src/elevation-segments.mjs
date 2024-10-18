@@ -11,7 +11,7 @@ ec.registerTheme('sauce', theme.getTheme('dynamic'));
 const H = locale.human;
 let routeSegments = [];
 let allMarkLines = [];
-let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
+//let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
 const allRoutes = await zen.getAllRoutes();
 
 export class SauceElevationProfile {
