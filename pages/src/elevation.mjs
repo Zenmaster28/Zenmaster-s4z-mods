@@ -548,7 +548,7 @@ export async function main() {
                         changed.has('fontScale') ||                        
                         changed.has('singleLapView') ||
                         changed.has('showGroups') ||
-                        changed.has('disblePenRouting')
+                        changed.has('disablePenRouting')
                     )
                 {                    
                     location.reload();
