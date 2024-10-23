@@ -1942,7 +1942,7 @@ function getNearestPoint(road1, road2, road1RP, steps) {
             rp = t;
         }
         if (distance < 100) {
-            //close enough
+            //less than 1m is close enough
             break;
         }
     }
@@ -1981,12 +1981,14 @@ export async function validateManifest(route) {
             //debugger
         }
         let gap = await getManifestGapDistance(routeManifest[i], routeManifest[i+1], courseId)
-        gap = (gap / 100).toFixed(0)
+        //gap = (gap / 100).toFixed(0)
+        gap = Math.trunc(gap / 100)
         if (gap > 0) {
             //console.log("Fixing gap of", gap, "m for manifest entry", i)
             await fixManifestGap(routeManifest[i], routeManifest[i+1], intersections, allRoads, route)
             gap = await getManifestGapDistance(routeManifest[i], routeManifest[i+1], courseId)
-            gap = (gap / 100).toFixed(0)
+            gap = Math.trunc(gap / 100)
+            //gap = (gap / 100).toFixed(0)
             //console.log("Gap post fix:", gap)
         }
         allGaps.push({
