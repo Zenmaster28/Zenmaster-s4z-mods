@@ -160,8 +160,8 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
         markLines: allMarkLines,
         segmentRepeats
     }
+    
     console.log(routeInfo)
-    //debugger
     return routeInfo;
 }
 
@@ -969,12 +969,18 @@ async function getExitPathDistance(exitPath, route, worldMeta) {
             if (road.forward) {
                 if (route.courseId == 6 && road.roadId == 0 && (route.manifest[0].end == 1 || route.manifest[1].end == 1)) {
                     // downtown Watopia leaving the pens left.  If the first manifest on the Zwift route end at 1, remove it to align things properly 
-                    //console.log("Fixing downtown Watopia pen exit...")
+                    //console.log("Fixing downtown Watopia pen exit...")                    
                     route.manifest.shift();
                     if (route.manifest[0].end == 1 && route.manifest[0].roadId == 0) {
                         // some routes like downtown titans have two entries at the start of the route that need to go away
                         route.manifest.shift()
                     }
+                    //debugger
+                    if (route.manifest.length > 1 && route.manifest[1].end == 1 && route.manifest[0].roadId == 0) {
+                        //Three little sisters has WTF route data...
+                        route.manifest.splice(1, 1)
+                    }
+                    //debugger
                     route.manifest[0].start = road.entryTime; // align the route with the pen ramp exit
                     skipRoad = true;
                     let lastManifestEntry = route.manifest.at(-1)
@@ -1095,7 +1101,15 @@ function isPenExitRoad(road, intersections) {
 async function getPenExitRoute(route) {
     const paddocksData = await fetch("data/paddocks.json").then(response => response.json())
     const worldPaddocks = paddocksData.find(x => x.worldId == route.worldId)
-    if (route.eventPaddocks) { //some routes don't identify the paddocks, we can't process these
+    if (!route.eventPaddocks) {
+        // the route doesn't have eventPaddocks listed so go find another route that has the same starting road and use the paddocks data from it
+        const sauceRoutes = await common.rpc.getRoutes(route.courseId);
+        const sameStartRoad = sauceRoutes.find(x => x.eventPaddocks && x.manifest[0].roadId == route.manifest[0].roadId)
+        if (sameStartRoad) {
+            route.eventPaddocks = sameStartRoad.eventPaddocks
+        }
+    }
+    if (route.eventPaddocks) { // if no eventPaddocks, just use the route data from Zwift and forget the pens
         const routePaddocks = route.eventPaddocks.toString().split(",").map(Number)
         const paddockRoads = routePaddocks.map(key => worldPaddocks.paddockRoads[key]);        
         const intersections = await fetch(`data/worlds/${route.worldId}/roadIntersections.json`).then(response => response.json());
@@ -1116,7 +1130,7 @@ async function getPenExitRoute(route) {
             return [];
         }
     } else {
-        console.log("Route has no paddocks info!")
+        //console.log("Route has no paddocks info!")
         return [];
     }
 }
@@ -1124,14 +1138,14 @@ async function getPenExitRoute(route) {
 export async function getModifiedRoute(id, disablePenRouting) {                   
         let route = await common.rpc.getRoute(id);        
         if (!route) {
-            console.log("Route not found in Sauce, checking json")
+            //console.log("Route not found in Sauce, checking json")
             let newRoutes = await fetch("data/routes.json").then((response) => response.json()); 
             route = newRoutes.find(x => x.id == id)
             if (!route) {
-                console.log("No matching route found, switching to road view")
+                //console.log("No matching route found, switching to road view")
                 return -1
             } else {
-                console.log("Found route", route.name, "in json")
+                //console.log("Found route", route.name, "in json")
                 route.courseId = common.worldToCourseIds[route.worldId]
             }
             //debugger
@@ -1214,8 +1228,39 @@ export async function getModifiedRoute(id, disablePenRouting) {
             route.manifest.unshift(leadin[i - 1]);
         }
             if (route) {
+                if (route.courseId == 8) { // New York
+                    //if the route finishes at the Central Park Loop banner, make sure the finish is in the right place
+                    const lastManifestEntry = route.manifest.at(-1);
+                    if (lastManifestEntry.roadId == 4) {
+                        if (lastManifestEntry.reverse && lastManifestEntry.start < 0.8) {
+                            //console.log("Adjusting the finish line to Central Park Loop banner")
+                            lastManifestEntry.start = 0.1687163592
+                        } else if (!lastManifestEntry.reverse && lastManifestEntry.end < 0.8) {
+                            //console.log("Adjusting the finish line to Central Park Loop banner")
+                            lastManifestEntry.end = 0.1687163594
+                        } 
+                    }
+                } else if (route.courseId == 7) { // London
+                    //if the route finishes at the London Loop banner, make sure the finish is in the right place
+                    const lastManifestEntry = route.manifest.at(-1);
+                    if (lastManifestEntry.roadId == 7) {
+                        //debugger
+                        if (lastManifestEntry.reverse && lastManifestEntry.start > 0.8040615123) {
+                            //console.log("Adjusting the finish line to London Loop banner")
+                            lastManifestEntry.start = 0.8040615122
+                        } else if (!lastManifestEntry.reverse && lastManifestEntry.end < 0.8040615123 && lastManifestEntry.end > 0.7) {
+                            //console.log("Adjusting the finish line to London Loop banner")
+                            lastManifestEntry.end = 0.8040615123                            
+                        } 
+                    }
+                }
                 route.curvePath = new curves.CurvePath();
-                route.roadSegments = [];                
+                route.roadSegments = [];  
+                if (!disablePenRouting) {                 
+                    //route.routeGaps = await validateManifest(route.manifest, route.courseId)               
+                    route.routeGaps = await validateManifest(route)               
+                }
+                //console.log(route.manifest)
                 const worldList = await common.getWorldList();
                 const worldMeta = worldList.find(x => x.courseId === route.courseId);
                 for (const [i, x] of route.manifest.entries()) {
@@ -1231,7 +1276,8 @@ export async function getModifiedRoute(id, disablePenRouting) {
                     route.curvePath.extend(x.reverse ? seg.toReversed() : seg);
                 }
                 Object.assign(route, supplimentPath(worldMeta, route.curvePath));
-            }            
+            }
+                       
             return route;
         
 }
@@ -1895,9 +1941,268 @@ function getNearestPoint(road1, road2, road1RP, steps) {
             nearestPoint = pointOnSecondCurve;
             rp = t;
         }
+        if (distance < 100) {
+            //close enough
+            break;
+        }
     }
     //debugger
     return rp;
+}
+
+export async function getManifestGapDistance(first, next, courseId) {
+    const exitPoint = first.reverse ? first.start : first.end
+    const entryPoint = next.reverse ? next.end : next.start
+    let road1 = await common.getRoad(courseId, first.roadId)
+    let road2 = await common.getRoad(courseId, next.roadId)
+    const distanceBetween = calculateDistance(road1.curvePath.pointAtRoadPercent(exitPoint), road2.curvePath.pointAtRoadPercent(entryPoint))
+    return distanceBetween;
+}
+
+//export async function validateManifest(routeManifest, courseId) {
+export async function validateManifest(route) {
+    //debugger
+    let routeManifest = route.manifest;
+    let courseId = route.courseId
+    //let originalManifest = JSON.parse(JSON.stringify(routeManifest))
+    let allGaps = [];
+    const intersections = await fetch(`data/worlds/${common.courseToWorldIds[courseId]}/roadIntersections.json`).then(response => response.json());
+    const allRoads = await common.getRoads(courseId)
+    for (let i = 0; i < routeManifest.length - 1; i++) {
+        let missingManifest = await fixMissingManifest(routeManifest[i], routeManifest[i+1], intersections, route)
+        if (missingManifest.length > 0) {
+            const manifestEntry = {
+                reverse: missingManifest[0].option.forward ? false : true,
+                roadId: missingManifest[0].option.road,
+                end: missingManifest[0].option.forward ? missingManifest[0].option.exitTime : 1,
+                start: missingManifest[0].option.forward ? 0 : missingManifest[0].option.exitTime 
+            }
+            routeManifest.splice(i + 1, 0, manifestEntry)
+            //debugger
+        }
+        let gap = await getManifestGapDistance(routeManifest[i], routeManifest[i+1], courseId)
+        gap = (gap / 100).toFixed(0)
+        if (gap > 0) {
+            //console.log("Fixing gap of", gap, "m for manifest entry", i)
+            await fixManifestGap(routeManifest[i], routeManifest[i+1], intersections, allRoads, route)
+            gap = await getManifestGapDistance(routeManifest[i], routeManifest[i+1], courseId)
+            gap = (gap / 100).toFixed(0)
+            //console.log("Gap post fix:", gap)
+        }
+        allGaps.push({
+            [i]: gap,
+            sameRoad: routeManifest[i].roadId == routeManifest[i+1].roadId ? true : false
+        })
+        if (routeManifest[i].end < routeManifest[i].start) {
+            console.log("This isn't a valid manifest entry", routeManifest[i])
+            routeManifest[i].end = routeManifest[i].start
+            //debugger
+        }
+    }
+    // validate the last entry
+    const lastManifestEntry = routeManifest.at(-1)
+    if (lastManifestEntry.end < lastManifestEntry.start) {
+        //console.log("Trying to fix last manifest entry")
+        lastManifestEntry.end = lastManifestEntry.start
+    }
+    // fix bad manifest entries
+    //debugger
+    return allGaps;
+}
+
+async function fixMissingManifest(first, next, intersections, route) {
+    const roadIntersections = intersections.find(int => int.id === first.roadId) || []; 
+    const direction = first.reverse ? "reverse" : "forward";
+    next.reverse = next.reverse ? true : false; // make sure reverse has a value
+    let validIntersections = [];
+    if (first.roadId == next.roadId && !first.leadin) {
+        
+        //debugger
+        if ((!first.reverse && first.end > 0.99 && next.start < 0.01) || (first.reverse && first.start < 0.01 && next.end > 0.99)) {
+            //console.log("we are just crossing a 0/1 line, this is ok")
+            return [];
+        }
+        //console.log("Why are we going to the same road but not switching from leadin to route?", first, next)
+        if (!route.decisions) {
+            //grab the route decisions if we haven't already done so
+            route.decisions = await fetch(`data/worlds/${route.worldId}/routeDecisions.json`).then(response => response.json()).then(routes => routes.find(x => parseInt(x.id) == route.id));
+        }
+        const roadIntersections = intersections.find(int => int.id === first.roadId); 
+        const direction = first.reverse ? "reverse" : "forward";
+        next.reverse = next.reverse ? true : false; // make sure reverse has a value
+        const manifestIntersections = roadIntersections.intersections.filter(x => x.m_roadTime1 > first.start && x.m_roadTime2 < first.end) // look for an intersection on the most recent manifest
+        if (manifestIntersections.length > 0) {
+            // we found possible intersections, see if any were on the decision list
+            const validDecision = route.decisions.decisions.find(x => {return manifestIntersections.some(m => m.m_markerId == x.markerId.toString())})
+            if (validDecision) {
+                if (validDecision.forward == "1") {
+                    const turn = (() => {
+                        switch (validDecision.turn) {
+                            case "0":
+                                return 262;
+                            case "1":
+                                return 263;
+                            case "3":
+                                return 265;
+                            default:
+                                return null; // or some default value if no match
+                        }
+                    })();
+                    const decisionInt = roadIntersections.intersections.find(x => x.m_markerId == validDecision.markerId)                    
+                    const opt = decisionInt.forward.find(x => x.option.alt == turn)
+                    validIntersections.push(opt)
+                    //debugger
+                }                
+            }
+            //console.log("Ok we found a intersection in the decision that wasn't in the manifest, added", validIntersections)
+            return validIntersections
+        }
+        //return validIntersections;
+    
+    } 
+    if (validIntersections.length == 0 && roadIntersections) {
+        validIntersections = roadIntersections.intersections?.flatMap(i => i[direction]?.map(option => ({ option: option.option, intersection: i }))).filter(o => o.option?.road == next.roadId && o.option?.forward != next.reverse);
+    }
+    if (validIntersections?.length == 0 && !first.leadin) {
+        //console.log("No valid intersections found", first.roadId, "=>", next.roadId)    
+        //debugger    
+        if (!route.decisions) {
+            //grab the route decisions if we haven't already done so
+            route.decisions = await fetch(`data/worlds/${route.worldId}/routeDecisions.json`).then(response => response.json())
+            .then(routes => Array.isArray(routes) ? routes : [routes])
+            .then(routes => routes.find(x => parseInt(x.id) == route.id));
+        }
+        //debugger
+        const matchingIntersections = roadIntersections.intersections.filter(int => {
+            return route.decisions.decisions.some(decision => decision.markerId === int.m_markerId.toString());
+        });
+        for (let int of matchingIntersections) {
+            let intOptions = int[direction]
+            for (let opt of intOptions) {
+                let intIntersections = intersections.find(x => x.id == opt.option?.road)
+                //if (opt.option.road == 41) {
+                    let optionDirection = opt.option?.forward ? "forward" : "reverse"
+                    let pathSearch = intIntersections?.intersections.find(x => x[optionDirection].find(o => o.option?.road == next.roadId && o.option?.forward != next.reverse))
+                    if (pathSearch) {         
+                        validIntersections.push(opt)
+                        //console.log("Found a way to get from", first.roadId, "=>", next.roadId, "via road", opt.option?.road, "option", validIntersections)                          
+                    }
+                //}
+            }
+            //debugger
+        }
+        //debugger
+        return validIntersections;
+    }
+    return [];
+}
+
+async function fixManifestGap(first, next, intersections, allRoads, route) {
+    
+    if (next.start > 1 && next.end > 1) {
+        //bad manifest entry (only seen in Astorla line 8?)
+        console.log("Discarding bad manifest entry", next)
+        const idx = route.manifest.indexOf(next)
+        if (idx != -1) {
+            route.manifest.splice(idx, 1)
+        }
+        return
+    }
+    if (first.roadId == next.roadId) {
+        if (first.leadin) {
+            if (first.reverse) {
+                first.start = next.end;
+            } else {
+                first.end = next.start;
+            }
+        } else {
+            //console.log("Why are we going to the same road but not switching from leadin to route?")
+        }
+    } else {
+        const roadIntersections = intersections.find(int => int.id === first.roadId); 
+        const direction = first.reverse ? "reverse" : "forward";
+        next.reverse = next.reverse ? true : false; // make sure reverse has a value
+        let validIntersections = roadIntersections.intersections?.flatMap(i => i[direction]?.map(option => ({ option: option.option, intersection: i }))).filter(o => o.option?.road == next.roadId && o.option?.forward != next.reverse);
+        if (validIntersections?.length > 1) {
+            //console.log("More than one valid intersection on this road?", first.roadId, "=>", next.roadId, validIntersections) // not sure if this can ever happen
+            if (!route.decisions) {
+                //grab the route decisions if we haven't already done so
+                route.decisions = await fetch(`data/worlds/${route.worldId}/routeDecisions.json`).then(response => response.json()).then(routes => routes.find(x => parseInt(x.id) == route.id));
+            }
+            const matchingIntersections = validIntersections.filter(int => {
+                return route.decisions.decisions.some(decision => decision.markerId === int.intersection.m_markerId.toString());
+            });
+            if (matchingIntersections.length == 1) {
+                // we found only one matching intersection decision in the route, we'll use that
+                validIntersections = matchingIntersections
+            }
+            if (validIntersections.length > 1) {
+                //console.log("We still have more than one valid intersection for this road", first.roadId, "=>", next.roadId, validIntersections)
+            }
+            //debugger
+        }
+
+        if (validIntersections?.length == 0) {
+            //console.log("No valid intersections found", first.roadId, "=>", next.roadId)
+            if (!route.decisions) {
+                //grab the route decisions if we haven't already done so
+                route.decisions = await fetch(`data/worlds/${route.worldId}/routeDecisions.json`).then(response => response.json()).then(routes => routes.find(x => parseInt(x.id) == route.id));
+            }
+            //debugger
+            const matchingIntersections = roadIntersections.intersections.filter(int => {
+                return route.decisions.decisions.some(decision => decision.markerId === int.m_markerId.toString());
+            });
+            for (let int of matchingIntersections) {
+                let intOptions = int[direction]
+                for (let opt of intOptions) {
+                    let intIntersections = intersections.find(x => x.id == opt.option?.road)
+                    //if (opt.option.road == 41) {
+                        let optionDirection = opt.option?.forward ? "forward" : "reverse"
+                        let pathSearch = intIntersections?.intersections.find(x => x[optionDirection].find(o => o.option?.road == next.roadId && o.option?.forward != next.reverse))
+                        if (pathSearch) {         
+                            validIntersections.push(opt)  
+                            //console.log("Found a way to get from", first.roadId, "=>", next.roadId, "via road", opt.option?.road, "option", validIntersections)                          
+                        }
+                    //}
+                }
+                //debugger
+            }
+            //debugger
+        }
+        if (validIntersections?.length == 1) {
+            //debugger
+            const option = validIntersections[0] // not sure if this can ever be > 1 valid intersection or not                
+            if (option) {                
+                direction == "reverse" ? first.start = option.option.exitTime : first.end = option.option.exitTime
+                const road1 = allRoads.find(x => x.id == first.roadId)
+                const road2 = allRoads.find(x => x.id == next.roadId)
+                const road1RP = direction == "reverse" ? first.start : first.end
+                let rd2Entry = getNearestPoint(road1, road2, road1RP, 25000)
+                // deal with next road start or end being 0 or 1
+                if (!next.reverse && (rd2Entry > next.end || route.id == 2007026433)) { // 2019 Harrogate workaround
+                    // the next manifest will be invalid, see if we are close to a 0/1 boundary
+                    if (next.start <= 0.01 && rd2Entry >= 0.99) {
+                        // the next manifest was starting at or close to 0 while the calculated entry was close to 1, just leave it at the original value
+                        rd2Entry = next.start
+                    }
+                } else if (next.reverse && rd2Entry < next.start) {
+                    // the next manifest will be invalid, see if we are close to a 0/1 boundary
+                    if (next.end >= 0.99 && rd2Entry <= 0.01) {
+                        // the next manifest was starting at or close to 1 while the calculated entry was close to 0, just leave it at the original value
+                        rd2Entry = next.end
+                    }
+                }
+                next.reverse ? next.end = rd2Entry : next.start = rd2Entry
+                //debugger
+                
+            }
+        } else {
+            console.log("No valid intersections found", first.roadId, "=>", next.roadId)
+            //debugger
+        }
+            
+    }
+    
 }
 
 export async function getRoadsIntersectionRP(courseId, road1, road2, road1RP, steps) {
@@ -1924,6 +2229,10 @@ export async function getRoadsIntersectionRP(courseId, road1, road2, road1RP, st
             minDistance = distance;
             nearestPoint = pointOnSecondCurve;
             rp = t;
+        }
+        if (distance < 100) {
+            //close enough
+            break;
         }
     }
     //debugger
