@@ -1,0 +1,276 @@
+[
+  {
+    "name": "2019 Worlds Harrogate Circuit",
+    "id": "2007026433",
+    "decisions": [
+      {
+        "markerId": "2",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "0",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Harrogate Circuit Reverse",
+    "id": "620436060",
+    "decisions": [
+      {
+        "markerId": "1",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "3",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Duchy Estate",
+    "id": "1233527301",
+    "decisions": [
+      {
+        "markerId": "1",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "0",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Queen's Highway",
+    "id": "3007266671",
+    "decisions": [
+      {
+        "markerId": "1",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "3",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Tour Of Tewit Well",
+    "id": "1086718516",
+    "decisions": {
+      "markerId": "1",
+      "turn": "1",
+      "forward": "0",
+      "stub": "0"
+    }
+  },
+  {
+    "name": "Royal Pump Room 8",
+    "id": "2905381067",
+    "decisions": [
+      {
+        "markerId": "1",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "3",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "0",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Queen's Highway After Party",
+    "id": "87631443",
+    "decisions": [
+      {
+        "markerId": "1",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "3",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "10000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "3",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "10000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "3",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "10000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "3",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "10000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "3",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "10000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "3",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Queen's Highway Run",
+    "id": "3878295865",
+    "decisions": [
+      {
+        "markerId": "1",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "3",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "10000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Yorkshire Double Loop",
+    "id": "1788218813",
+    "decisions": [
+      {
+        "markerId": "1",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "30000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "3",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "0",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  }
+]

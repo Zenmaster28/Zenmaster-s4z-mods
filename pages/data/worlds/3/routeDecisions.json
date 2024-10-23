@@ -1,0 +1,1820 @@
+[
+  {
+    "name": "Classique",
+    "id": "2694166390",
+    "decisions": [
+      {
+        "markerId": "70002",
+        "turn": "0",
+        "forward": "0"
+      },
+      {
+        "markerId": "30000",
+        "turn": "3",
+        "forward": "1"
+      },
+      {
+        "markerId": "0",
+        "turn": "1",
+        "forward": "0"
+      },
+      {
+        "markerId": "50000",
+        "turn": "3",
+        "forward": "0"
+      },
+      {
+        "markerId": "70003",
+        "turn": "3",
+        "forward": "1"
+      },
+      {
+        "markerId": "90000",
+        "turn": "3",
+        "forward": "1"
+      }
+    ]
+  },
+  {
+    "name": "London Loop",
+    "id": "913172163",
+    "decisions": [
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "1"
+      }
+    ]
+  },
+  {
+    "name": "Triple Loops",
+    "id": "4210048937",
+    "decisions": [
+      {
+        "markerId": "70002",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "200000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70003",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "90000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "0",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "80000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70013",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "320000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "260000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70009",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "290000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "270001",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "340000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70010",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70009",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Surrey Hills",
+    "id": "3707791029",
+    "decisions": [
+      {
+        "markerId": "70008",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70009",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70012",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70007",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "240000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "330000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "260000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "310000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70009",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "290000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "270001",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "340000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70010",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "300000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "330000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70011",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "350000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "270000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "290000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Greatest London Flat",
+    "id": "1880443431",
+    "decisions": [
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "50000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "190000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "210000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70013",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70011",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "350000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "270000",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "280000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "50000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Leith Hill After Party",
+    "id": "1230300449",
+    "decisions": [
+      {
+        "markerId": "70002",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "200000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70001",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "380000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "200000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70001",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "380000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "210000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70013",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "320000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Classique Reverse",
+    "id": "3599973269",
+    "decisions": [
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "50000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "90000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Keith Hill After Party",
+    "id": "3569674525",
+    "decisions": [
+      {
+        "markerId": "70002",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "200000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70001",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "90000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "200000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70008",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70009",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "310000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "London Loop Reverse",
+    "id": "1788889233",
+    "decisions": [
+      {
+        "markerId": "70008",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70009",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70012",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70007",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "240000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70001",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70003",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "London 8 Reverse",
+    "id": "2165880404",
+    "decisions": [
+      {
+        "markerId": "70008",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70009",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70012",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70007",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "240000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70001",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70003",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "90000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "0",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "50000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70003",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Greatest London Loop Reverse",
+    "id": "3976402826",
+    "decisions": [
+      {
+        "markerId": "70008",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70009",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "310000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "320000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "210000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Greater London Loop Reverse",
+    "id": "474781994",
+    "decisions": [
+      {
+        "markerId": "70008",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70009",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70012",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70007",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "240000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "210000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "The PRL Half",
+    "id": "764532081",
+    "decisions": [
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "230000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70001",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70003",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "The PRL Full",
+    "id": "2204461619",
+    "decisions": [
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "230000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70001",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70003",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "London 8",
+    "id": "4012646479",
+    "decisions": [
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "50000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "90000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "1"
+      }
+    ]
+  },
+  {
+    "name": "Greater London 8",
+    "id": "87055383",
+    "decisions": [
+      {
+        "markerId": "70002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "200000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "100000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Greater London Loop",
+    "id": "3276403604",
+    "decisions": [
+      {
+        "markerId": "70002",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "210000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "The London Pretzel",
+    "id": "163688809",
+    "decisions": [
+      {
+        "markerId": "70002",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "200000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70001",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "90000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "200000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70007",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "240000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70001",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70003",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "90000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "0",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "80000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Greater London Flat",
+    "id": "928793662",
+    "decisions": [
+      {
+        "markerId": "70002",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "30000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "0",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "80000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "200000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "380000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Greatest London Loop",
+    "id": "3853654821",
+    "decisions": [
+      {
+        "markerId": "70002",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "210000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70013",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "320000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "260000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "310000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70009",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  }
+]

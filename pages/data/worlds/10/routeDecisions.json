@@ -1,0 +1,564 @@
+[
+  {
+    "name": "R.G.V.",
+    "id": "1776635757",
+    "decisions": [
+      {
+        "markerId": "260000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260002",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20001",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "10001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Douce France",
+    "id": "986252325",
+    "decisions": [
+      {
+        "markerId": "260000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260001",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Casse-Pattes",
+    "id": "3919912289",
+    "decisions": [
+      {
+        "markerId": "260000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260003",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "4",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "30000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Roule Ma Poule",
+    "id": "872351836",
+    "decisions": [
+      {
+        "markerId": "260004",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "30001",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "3",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260001",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Petit Boucle",
+    "id": "2852153296",
+    "decisions": [
+      {
+        "markerId": "260000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260002",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20001",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "0",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260004",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "30001",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "3",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260001",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "4",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "30000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Tire-Bouchon",
+    "id": "2413440572",
+    "decisions": [
+      {
+        "markerId": "260004",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "30001",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "3",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "10001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260003",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "4",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "30000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260001",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Ven-Top",
+    "id": "2573468147",
+    "decisions": {
+      "markerId": "260004",
+      "turn": "3",
+      "forward": "1",
+      "stub": "0"
+    }
+  },
+  {
+    "name": "La Reine",
+    "id": "1433431343",
+    "decisions": [
+      {
+        "markerId": "260000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "4",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "5",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Climb Portal - Mont Saint-Michel",
+    "id": "4149936043",
+    "decisions": [
+      {
+        "markerId": "260008",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "340000",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "France Classic Fondo",
+    "id": "2136907048",
+    "decisions": [
+      {
+        "markerId": "260002",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20001",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "10001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260003",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "4",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "30000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "4",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "30000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260001",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260001",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "260004",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "30001",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "3",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "10001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260003",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "4",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "30000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  }
+]

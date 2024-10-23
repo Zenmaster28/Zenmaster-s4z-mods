@@ -1,0 +1,5588 @@
+[
+  {
+    "name": "Sea to Tree",
+    "id": "3603635554",
+    "decisions": [
+      {
+        "markerId": "11",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "530000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410006",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Kappa Quest",
+    "id": "1562187590",
+    "decisions": [
+      {
+        "markerId": "11",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "530000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410006",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410004",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410002",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "430000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "170000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "900000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "15",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "12",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "550000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "350001",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "510000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "11",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "530000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410006",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Valley to Mountaintop",
+    "id": "1941800093",
+    "decisions": [
+      {
+        "markerId": "17",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "510000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "350000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "550000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "14",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "7",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "900000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "170001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "410003",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Farmland Loop",
+    "id": "2980619755",
+    "decisions": [
+      {
+        "markerId": "3",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "8",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "480000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10005",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10004",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "580000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "600000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Railways and Rooftops",
+    "id": "246712730",
+    "decisions": [
+      {
+        "markerId": "40008",
+        "turn": "Left",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80004",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1140000",
+        "turn": "Right",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "190000",
+        "turn": "Left",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "720000",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "700000",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "710000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "190002",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Rooftop Rendezvous",
+    "id": "3565430790",
+    "decisions": [
+      {
+        "markerId": "40008",
+        "turn": "Left",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80004",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1140000",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "190001",
+        "turn": "Right",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "710000",
+        "turn": "Left",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Neon Flats",
+    "id": "3407362320",
+    "decisions": [
+      {
+        "markerId": "40006",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1090000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60004",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "80001",
+        "turn": "Right",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40009",
+        "turn": "Right",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "250000",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60003",
+        "turn": "Right",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1100000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80001",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "80004",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "80003",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40003",
+        "turn": "Right",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1040000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "180002",
+        "turn": "Left",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1030000",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40011",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "240000",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40004",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "210000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "180002",
+        "turn": "Left",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1030000",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40011",
+        "turn": "Right",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40010",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Sprinter's Playground",
+    "id": "3356878261",
+    "decisions": [
+      {
+        "markerId": "40006",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1090000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60005",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1110000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40015",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1030000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "180001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1040000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40014",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "220000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80005",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1160000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1140000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1020000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "190000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "190002",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1010000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1140001",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1150000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "290000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Neokyo All-Nighter",
+    "id": "1453570384",
+    "decisions": [
+      {
+        "markerId": "40006",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1090000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60004",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "80001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "300000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40009",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40015",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1030000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "180001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "210000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40002",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40012",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "240000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40013",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40003",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1040000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "180002",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1030000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40011",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40010",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1110000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60003",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1100000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "80004",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1150000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1140000",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1010000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "190001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "190003",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "190001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "710000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "700001",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "720000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "190003",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1020000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1140001",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1150000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "290000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Sleepless City",
+    "id": "3302953739",
+    "decisions": [
+      {
+        "markerId": "40008",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40009",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40015",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1030000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "180001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "210000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40002",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40012",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "240000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40013",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1130000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "80005",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80002",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "260000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60002",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1090000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Wandering Flats",
+    "id": "3914529041",
+    "decisions": [
+      {
+        "markerId": "17",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "23",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "21",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "9",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "16",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "870000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60008",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "30000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60005",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1110000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40015",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "50000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40014",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "220000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80005",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "290000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40006",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1000000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60007",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60009",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "880000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "19",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "4",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "390000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "420000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "170000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "900000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "15",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "12",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Temples and Towers",
+    "id": "2896159042",
+    "decisions": [
+      {
+        "markerId": "40006",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60004",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "80001",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "80004",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1150000",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1140000",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1010000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "190001",
+        "turn": "Right",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "710000",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "700001",
+        "turn": "Right",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "720000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "190003",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1020000",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1140001",
+        "turn": "Right",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1150000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80002",
+        "turn": "Right",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60002",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60007",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60000",
+        "turn": "Left",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "870000",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "8",
+        "turn": "Right",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "480000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10005",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10004",
+        "turn": "Left",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10002",
+        "turn": "Left",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "560000",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "12",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10",
+        "turn": "Right",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "520000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410006",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410004",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410002",
+        "turn": "Right",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "430000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "170000",
+        "turn": "Right",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "900000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "15",
+        "turn": "Left",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "570000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10003",
+        "turn": "Right",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "10006",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "10000",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "480000",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "16",
+        "turn": "Right",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "870000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60006",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "30000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Chain Chomper",
+    "id": "3691918883",
+    "decisions": [
+      {
+        "markerId": "9",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "490000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10005",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10004",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10002",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "570000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "7",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "900000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "170001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "410003",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "410005",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "410007",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "530000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "17",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "23",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "21",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Neokyo Crit Course",
+    "id": "1127056801",
+    "decisions": [
+      {
+        "markerId": "40014",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40005",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "230000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "180001",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Twilight Harbor",
+    "id": "1457923570",
+    "decisions": [
+      {
+        "markerId": "40012",
+        "turn": "Left",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40010",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60003",
+        "turn": "Right",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80003",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Castle to Castle",
+    "id": "3742187716",
+    "decisions": [
+      {
+        "markerId": "40006",
+        "turn": "Right",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60007",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60000",
+        "turn": "Right",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "880000",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "19",
+        "turn": "Right",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "4",
+        "turn": "Right",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "390000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410001",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "420000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "170000",
+        "turn": "Right",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "900000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "15",
+        "turn": "Left",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "570000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10003",
+        "turn": "Right",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "10006",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "10000",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "480000",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "16",
+        "turn": "Right",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "870000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60006",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "30000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60001",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60004",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "80001",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "80004",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "80003",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40003",
+        "turn": "Right",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1040000",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "180002",
+        "turn": "Left",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1030000",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40011",
+        "turn": "Right",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40010",
+        "turn": "Left",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1110000",
+        "turn": "Forward",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60003",
+        "turn": "Forward",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Chasing the Sun",
+    "id": "2866480562",
+    "decisions": [
+      {
+        "markerId": "40004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40014",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "220000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80005",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1160000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1140000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1020000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "190000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "720000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "700000",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "710000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "190002",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1010000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1140001",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1150000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "290000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40006",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1000000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60007",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60009",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "870000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "8",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "22",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "11",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "530000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410006",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410004",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410002",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "390000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "18",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "3",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "0",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "880000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60008",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "30000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60005",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1110000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40015",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "50000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Electric Loop",
+    "id": "910684583",
+    "decisions": [
+      {
+        "markerId": "40004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40014",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "220000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80005",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "290000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40006",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1090000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60005",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1110000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40015",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "50000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Mech Isle Loop",
+    "id": "1366943680",
+    "decisions": [
+      {
+        "markerId": "1290000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1290002",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Bridges and Boardwalks",
+    "id": "1760877317",
+    "decisions": [
+      {
+        "markerId": "1290003",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1440000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1360000",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1560000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1340002",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1340000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Island Hopper",
+    "id": "2140131142",
+    "decisions": [
+      {
+        "markerId": "1290003",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1440000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1360000",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1560000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1340002",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1500000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1370001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1470000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1310002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1320000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1330000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1510000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1280002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1390000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1350001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1420000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1290002",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1540000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1360000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1550000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1340003",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1490000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1370001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1480000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1310003",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1380000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1330000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1510000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1280002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1390000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1350001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1410000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Fine and Sandy",
+    "id": "468624015",
+    "decisions": [
+      {
+        "markerId": "1290000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1290002",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1540000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1360000",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1560000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1340002",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1500000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1370001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1480000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1310003",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1380000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1330000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1510000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1280002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1390000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1350001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1420000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1290002",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Island Outskirts",
+    "id": "211138252",
+    "decisions": [
+      {
+        "markerId": "1290003",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1440000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1360000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1550000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1340003",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1490000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1370001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1470000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1310002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1320000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1330000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1510000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1280002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1390000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1350001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1410000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Countryside Tour",
+    "id": "525689100",
+    "decisions": [
+      {
+        "markerId": "3",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "8",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "22",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "11",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "530000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410006",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410004",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410002",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "390000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "18",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Makuri 40",
+    "id": "890800649",
+    "decisions": [
+      {
+        "markerId": "19",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "4",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "24",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "15",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "12",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "17",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "23",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "21",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "9",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "16",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "870000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60008",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "30000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1000000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40008",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "290000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "80004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "80003",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "220000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40003",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1040000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "180002",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1030000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40011",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "240000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "270000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1330001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1330002",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1320000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1310001",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1470000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1370000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1490000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1340000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1550000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1360000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1440000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1290000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1410000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1350000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1280001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "90000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "880000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Country to Coastal",
+    "id": "576953930",
+    "decisions": [
+      {
+        "markerId": "19",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "4",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "24",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "15",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "12",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "17",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "23",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "21",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "9",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "16",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "870000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60008",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "90000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1280000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1400000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1350001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1410000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1290003",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1440000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1360000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1550000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1340003",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1490000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1370001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1470000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1310002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1320000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1330000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1510000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1280002",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1280001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "90000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "880000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Turf N Surf",
+    "id": "4258943387",
+    "decisions": [
+      {
+        "markerId": "40004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40014",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "220000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80005",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "290000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40006",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1000000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60007",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60009",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1060000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1280000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1400000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1350001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1410000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1290003",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1440000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1360000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1550000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1340003",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1490000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1370001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1470000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1310002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1320000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1330000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1330003",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Castle Crit",
+    "id": "3706527503",
+    "decisions": [
+      {
+        "markerId": "19",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "600000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "590000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "10002",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "570000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "7",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "5",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "18",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "610000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Castle Crit Run",
+    "id": "1033940053",
+    "decisions": [
+      {
+        "markerId": "19",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "600000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "590000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "10002",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "570000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "7",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "5",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "18",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "610000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Mech Isle Loop Run",
+    "id": "525587103",
+    "decisions": [
+      {
+        "markerId": "1290000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1290002",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Shisa Shakedown",
+    "id": "3330165223",
+    "decisions": [
+      {
+        "markerId": "1290003",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1440000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1360000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1550000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1340003",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1490000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1370001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1480000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1310003",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1380000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1330000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1330003",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "270000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40012",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "240000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1030000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "180001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1040000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40014",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "220000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80005",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1160000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1140000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1020000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "190000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "720000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "700000",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "710000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "190002",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1010000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1140001",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1150000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80002",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "260000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60002",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60007",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60009",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "870000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "8",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "480000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10005",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10004",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10002",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "560000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "12",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "520000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410006",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410004",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410002",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "390000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "18",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "3",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "0",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "880000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60008",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "90000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1280000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1400000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1350001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1420000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1290002",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1540000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1360000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1550000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Makuri Pretzel",
+    "id": "2927651296",
+    "decisions": [
+      {
+        "markerId": "40004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40014",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "220000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80005",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80002",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "260000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60002",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60007",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60009",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "870000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "8",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "22",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "11",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "13",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "14",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "7",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "900000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "170001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "420000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "410000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "390000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "18",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "3",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "0",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "880000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60008",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "90000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1280000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1400000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1350001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1420000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1290002",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1540000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1360000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1550000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1340003",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1490000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1370001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1480000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1310003",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1380000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1330000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1330003",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "270000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40012",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "50000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40010",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1110000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60003",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1100000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "80001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "80004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "80003",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "220000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40003",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40002",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "910000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1330001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1330002",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1380000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1310000",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1480000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1370000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1490000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1340000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1550000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1360000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1540000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1290001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1420000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1350000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1400000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1280001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "90000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "880000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "19",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "4",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "390000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "420000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "170000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "900000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "15",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "12",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "17",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "23",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "21",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "9",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "16",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "870000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60008",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "30000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60005",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1110000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40015",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "50000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "40001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Flatland Loop",
+    "id": "3282611437",
+    "decisions": [
+      {
+        "markerId": "3",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "8",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "22",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "11",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "13",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "14",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "7",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "5",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "18",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Two Village Loop",
+    "id": "2653858696",
+    "decisions": [
+      {
+        "markerId": "3",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "380000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "120000",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "850000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "490000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "630000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "340002",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "340000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "340002",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "660000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "500000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "350000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "550000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "14",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "7",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "900000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "170001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "420000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "410000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "400000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "24",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "890000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "170001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "420000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "410000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "390000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "18",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Spirit Forest",
+    "id": "3523806426",
+    "decisions": [
+      {
+        "markerId": "11",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "530000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410006",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "470000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "320000",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "450000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "410005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "460000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "320000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "440000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "410002",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "430000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "170000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "900000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "15",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "12",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "520000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410006",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "470000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "320000",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "450000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Three Village Loop",
+    "id": "3379779247",
+    "decisions": [
+      {
+        "markerId": "9",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "490000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10005",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10004",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "580000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "610000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "4",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "390000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "420000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "170000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "900000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "15",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "12",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "17",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "23",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "21",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Kappa Quest Reverse",
+    "id": "1454553567",
+    "decisions": [
+      {
+        "markerId": "17",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "510000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "350000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "550000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "14",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "7",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "900000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "170001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "410003",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "410005",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "410007",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "530000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "17",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "510000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "350000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "550000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "14",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "7",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "900000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "170001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "410003",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Suki's Playground",
+    "id": "3367186349",
+    "decisions": [
+      {
+        "markerId": "3",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "8",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "480000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10005",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10004",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "580000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "610000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "4",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "390000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "410001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "420000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "170000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "900000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "15",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "12",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "17",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "23",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "21",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "9",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "490000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10005",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10004",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "580000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "600000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  }
+]

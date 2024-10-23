@@ -1,0 +1,554 @@
+[
+  {
+    "name": "Rolling Highlands",
+    "id": "46799750",
+    "decisions": [
+      {
+        "markerId": "20003",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20000",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20009",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20006",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "50000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20008",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20001",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20002",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20007",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "City and the Sgurr",
+    "id": "4107749591",
+    "decisions": [
+      {
+        "markerId": "90000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "140000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20009",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "170000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "30001",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "100000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "80000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "30000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "150000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "0",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Glasgow Crit Circuit",
+    "id": "3765339356",
+    "decisions": {
+      "markerId": "90001",
+      "turn": "0",
+      "forward": "1",
+      "stub": "0"
+    }
+  },
+  {
+    "name": "Loch Loop",
+    "id": "742057576",
+    "decisions": [
+      {
+        "markerId": "20003",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20000",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20009",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "The Muckle Yin",
+    "id": "3662705581",
+    "decisions": [
+      {
+        "markerId": "90001",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "120000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20002",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20007",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20005",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20008",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "130000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "30001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "180000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20007",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "60000",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20003",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "180000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "30000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "170000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20001",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "140000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Glasgow Reverse",
+    "id": "1258415487",
+    "decisions": {
+      "markerId": "90000",
+      "turn": "1",
+      "forward": "0",
+      "stub": "0"
+    }
+  },
+  {
+    "name": "Glasgow Crit Circuit Run",
+    "id": "3351665212",
+    "decisions": {
+      "markerId": "90001",
+      "turn": "0",
+      "forward": "1",
+      "stub": "0"
+    }
+  },
+  {
+    "name": "Loch Loop Run",
+    "id": "1384155764",
+    "decisions": [
+      {
+        "markerId": "20003",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20000",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20009",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20004",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "BRAEk-fast Crits and Grits",
+    "id": "377566656",
+    "decisions": [
+      {
+        "markerId": "20003",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "180000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "30000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "170000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20001",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "140000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "90001",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "120000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20002",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20007",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20005",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20005",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20005",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60001",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "40000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20005",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "60001",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "10000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  }
+]

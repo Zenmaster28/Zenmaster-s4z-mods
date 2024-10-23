@@ -1,0 +1,256 @@
+[
+  {
+    "name": "The Fan Flats",
+    "id": "1638640398",
+    "decisions": [
+      {
+        "markerId": "0",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Cobbled Climbs",
+    "id": "1545087483",
+    "decisions": [
+      {
+        "markerId": "0",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "2015 Worlds Course",
+    "id": "2196019512",
+    "decisions": [
+      {
+        "markerId": "0",
+        "turn": "3",
+        "forward": "1"
+      },
+      {
+        "markerId": "1",
+        "turn": "3",
+        "forward": "1"
+      }
+    ]
+  },
+  {
+    "name": "Richmond Rollercoaster",
+    "id": "948831673",
+    "decisions": [
+      {
+        "markerId": "2",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "5",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "4",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Richmond 2015 Worlds Reverse",
+    "id": "1039983620",
+    "decisions": [
+      {
+        "markerId": "2",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "5",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "4",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "3",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Cobbled Climbs Reverse",
+    "id": "4194352271",
+    "decisions": {
+      "markerId": "2",
+      "turn": "0",
+      "forward": "0",
+      "stub": "0"
+    }
+  },
+  {
+    "name": "Libby Hill After Party",
+    "id": "54700404",
+    "decisions": [
+      {
+        "markerId": "0",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "10000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Cobbled Climbs Run",
+    "id": "3166535632",
+    "decisions": [
+      {
+        "markerId": "0",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "20000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "Richmond Loop Around",
+    "id": "3912793970",
+    "decisions": [
+      {
+        "markerId": "2",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "20000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "90000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "1",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  }
+]
