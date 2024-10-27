@@ -1270,7 +1270,47 @@ export async function getModifiedRoute(id, disablePenRouting) {
                             lastManifestEntry.end = 0.8040615123                            
                         } 
                     }
+                } else if (route.courseId == 14) { // France
+                    if (route.id == 986252325) {  // Douce France has extra manifest entries after the finish to allow for multiple laps
+                        route.extraManifest = [];
+                        do {
+                            // put the extra manifest entries aside for later use if more than one lap
+                            route.extraManifest.unshift(route.manifest.at(-1))
+                            route.manifest.pop()
+                        } while (route.manifest.at(-1).roadId != 26) //rewind the manifest to get back to the proper road for the Marina sprint
+                        route.extraManifest.unshift({
+                            end: route.manifest.at(-1).end,
+                            roadId: route.manifest.at(-1).roadId,
+                            start: 0.4821480324
+                        })
+                        route.manifest.at(-1).end = 0.4821480323; // rewind to the end of the sprint banner
+                        //debugger
+                    }
+                    const lastManifestEntry = route.manifest.at(-1);
+                    if (lastManifestEntry.roadId == 26) {
+                        //debugger
+                        if (lastManifestEntry.reverse && lastManifestEntry.start > 0.4821480321) {
+                            //console.log("Adjusting the finish line to Marina sprint banner")
+                            lastManifestEntry.start = 0.4821480321
+                        } else if (!lastManifestEntry.reverse && lastManifestEntry.end < 0.4821480323) {
+                            //console.log("Adjusting the finish line to Marina Sprint banner")
+                            lastManifestEntry.end = 0.4821480323                            
+                        } 
+                    }
+                } else if (route.courseId == 2) { // Richmond
+                    const lastManifestEntry = route.manifest.at(-1);
+                    if (lastManifestEntry.roadId == 0) {
+                        //debugger
+                        if (lastManifestEntry.reverse && lastManifestEntry.start > 0.9) {
+                            //console.log("Adjusting the finish line to Marina sprint banner")
+                            lastManifestEntry.start = 0.9920043687
+                        } else if (!lastManifestEntry.reverse && lastManifestEntry.end > 0.9) {
+                            //console.log("Adjusting the finish line to Marina Sprint banner")
+                            lastManifestEntry.end = 0.9920043689
+                        } 
+                    }
                 }
+
                 route.curvePath = new curves.CurvePath();
                 route.roadSegments = [];
                 route.lapFiller = {}; 
@@ -1978,7 +2018,6 @@ export async function getManifestGapDistance(first, next, courseId) {
     return distanceBetween;
 }
 
-//export async function validateManifest(routeManifest, courseId) {
 export async function validateManifest(route) {
     //debugger
     let routeManifest = route.manifest;
@@ -2037,8 +2076,7 @@ export async function validateManifest(route) {
         if (lapStart.roadId == lapEnd.roadId && lapStart.reverse == lapEnd.reverse) {
             const startTime = lapStart.reverse ? lapStart.end : lapStart.start
             const endTime = lapStart.reverse ? lapEnd.start : lapEnd.end
-            //const lapRoad = allRoads.find(x => x.id == lapStart.roadId)
-            //const gap = await getManifestGapDistance(lapEnd, lapStart, route.courseId)
+            // consider extending the first manifest entry of next lap rather than adding to it
             if (!lapStart.reverse && endTime > startTime) {
                 //need to split lapFiller across 0/1 boundary
                 if (lapEnd.end > lapStart.start && lapEnd.end < lapStart.end) {
@@ -2089,6 +2127,8 @@ export async function validateManifest(route) {
                     }
                 ]
             }
+        } else if (route.extraManifest) {
+            lapFiller = route.extraManifest
         }
         //debugger
         if (lapFiller.length > 0) {
