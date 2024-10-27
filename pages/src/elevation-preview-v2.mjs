@@ -314,9 +314,13 @@ async function applyRoute() {
                     (${common.stripHTML(((x.distanceInMeters + (x.leadinDistanceInMeters ?? 0)) / 1000).toFixed(1))}km / 
                     ${common.stripHTML((x.ascentInMeters + (x.leadinAscentInMeters ?? 0)).toFixed(0))}m)</option>`);
     }
-    if (routeId != null) {        
-        const route = await zen.getModifiedRoute(routeId, elProfile.disablePenRouting);
+    if (routeId != null) { 
+        //const route = await zen.getModifiedRoute(routeId, elProfile.disablePenRouting);
         let path;
+        const distance = parseInt(distanceSelect.value) || 0
+        const fullRoute = await zen.processRoute(courseId, routeId, 1, distance, elProfile.showLoopSegments, elProfile.showAllArches, elProfile.disablePenRouting)
+        const route = fullRoute.routeFullData
+        
         //debugger
         if (zwiftMap.overrideDistance > 0) {
             let idx = common.binarySearchClosest(route.distances, zwiftMap.overrideDistance)
@@ -324,6 +328,10 @@ async function applyRoute() {
             path.nodes = path.nodes.slice(0, idx + 1)
         } else {
             path = route.curvePath;
+            if (parseInt(lapsSelect.value) > 1 && fullRoute.routeFullData.lapFiller.curvePath?.nodes?.length > 0) {
+                //debugger
+                path.extend(fullRoute.routeFullData.lapFiller.curvePath)
+            }
         }
         //debugger
         _routeHighlights.push(

@@ -663,8 +663,20 @@ export class SauceElevationProfile {
         if (distance) {
             laps = this.route.supportedLaps ? Infinity : 1;            
         }
-        for (let lap = 1; lap < laps; lap++) {            
-            this.curvePath.extend(this.route.curvePath.slice(lapStartIdx));
+        for (let lap = 1; lap < laps; lap++) { 
+            //debugger
+            if (this.route.lapFiller.curvePath?.nodes?.length > 0) {
+                this.curvePath.extend(this.route.lapFiller.curvePath)
+                for (let i = 0; i < this.route.lapFiller.distances.length; i++) {
+                    distances.push(distances.at(-1) + (this.route.lapFiller.distances[i] - (this.route.lapFiller.distances[i - 1] || 0)));
+                    elevations.push(this.route.lapFiller.elevations[i]);
+                    grades.push(this.route.lapFiller.grades[i]);
+                };                            
+            }
+            //debugger
+            const lapStartIdxDiff = this.route.lapFiller.curvePath?.nodes?.length || 0;
+            this.curvePath.extend(this.route.curvePath.slice(lapStartIdx, this.curvePath.nodes.length - lapStartIdxDiff));
+            //debugger
             for (let i = lapStartIdx; i < this.route.distances.length; i++) {
                 distances.push(distances.at(-1) +
                     (this.route.distances[i] - (this.route.distances[i - 1] || 0)));
@@ -693,14 +705,14 @@ export class SauceElevationProfile {
                     }
                 });
             }
-            }          
-            if (distance) {
-                while (distances[distances.length - 1] > distance + 200) {
-                    distances.pop();
-                    elevations.pop();
-                    grades.pop();
-                }
+        }          
+        if (distance) {
+            while (distances[distances.length - 1] > distance + 200) {
+                distances.pop();
+                elevations.pop();
+                grades.pop();
             }
+        }
             
         
         if (this.routeOffset)

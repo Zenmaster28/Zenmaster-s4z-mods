@@ -51,9 +51,26 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
     if (laps > 1 && !routeFullData.supportedLaps) {
         laps = 1;
     }
-    for (let lap = 1; lap < laps; lap++) {
-        routeFullData.curvePath.extend(routeFullData.curvePath.slice(lapStartIdx));
+    for (let lap = 1; lap < laps; lap++) {  
+        //debugger      
+        if (routeFullData.lapFiller.curvePath?.nodes?.length > 0) {
+            routeFullData.curvePath.extend(routeFullData.lapFiller.curvePath)
+            for (let i = 0; i < routeFullData.lapFiller.distances.length; i++) {
+                distances.push(distances.at(-1) + (routeFullData.lapFiller.distances[i] - (routeFullData.lapFiller.distances[i - 1] || 0)));
+                elevations.push(routeFullData.lapFiller.elevations[i]);
+                grades.push(routeFullData.lapFiller.grades[i]);
+            }
+            for (let j = 0; j < routeFullData.lapFiller.roadSegments.length; j++) {  
+                let roadSegmentClone = Object.assign(Object.create(Object.getPrototypeOf(routeFullData.lapFiller.roadSegments[j])), routeFullData.lapFiller.roadSegments[j])  
+                roadSegmentClone.lap = lap + 1;        
+                roadSegments.push(roadSegmentClone);            
+                //roadSegments[roadSegments.length - 1].lap = lap + 1;
+            }  
+        }
+        routeFullData.curvePath.extend(routeFullData.curvePath.slice(lapStartIdx, routeFullData.curvePath.nodes.length - routeFullData.lapFiller.curvePath?.nodes?.length));
+        //debugger
         for (let i = lapStartIdx; i < routeFullData.distances.length; i++) {
+            //need to get lapFiller distances, elevations and grades
             distances.push(distances.at(-1) +
                 (routeFullData.distances[i] - (routeFullData.distances[i - 1] || 0)));
             elevations.push(routeFullData.elevations[i]);
@@ -1255,7 +1272,9 @@ export async function getModifiedRoute(id, disablePenRouting) {
                     }
                 }
                 route.curvePath = new curves.CurvePath();
-                route.roadSegments = [];  
+                route.roadSegments = [];
+                route.lapFiller = {}; 
+                route.lapFiller.curvePath = []; 
                 if (!disablePenRouting) {                 
                     //route.routeGaps = await validateManifest(route.manifest, route.courseId)               
                     route.routeGaps = await validateManifest(route)               
@@ -2008,7 +2027,94 @@ export async function validateManifest(route) {
         lastManifestEntry.end = lastManifestEntry.start
     }
     // fix bad manifest entries
-    //debugger
+    if (route.supportedLaps) {
+        //does the end of the lap align with the end of the leadin?        
+        const notLeadin = routeManifest.findIndex(x => !x.leadin); 
+        const lapStart = routeManifest[notLeadin]
+        const lapEnd = routeManifest.at(-1)
+        let lapFiller = [];
+        route.lapFiller = {};
+        if (lapStart.roadId == lapEnd.roadId && lapStart.reverse == lapEnd.reverse) {
+            const startTime = lapStart.reverse ? lapStart.end : lapStart.start
+            const endTime = lapStart.reverse ? lapEnd.start : lapEnd.end
+            //const lapRoad = allRoads.find(x => x.id == lapStart.roadId)
+            //const gap = await getManifestGapDistance(lapEnd, lapStart, route.courseId)
+            if (!lapStart.reverse && endTime > startTime) {
+                //need to split lapFiller across 0/1 boundary
+                if (lapEnd.end > lapStart.start && lapEnd.end < lapStart.end) {
+                    //overlap
+                } else {
+                    lapFiller = [
+                        {
+                            end: 1,
+                            reverse: false,
+                            roadId: lapEnd.roadId,
+                            start: lapEnd.end
+                        },
+                        {
+                            end: lapStart.start,
+                            reverse: false,
+                            roadId: lapStart.roadId,
+                            start: 0
+                        }
+                    ]
+                }
+            } else if (lapStart.reverse && endTime < startTime) {                
+                //debugger
+                if (lapEnd.start < lapStart.end && lapEnd.start > lapStart.start) {
+                    //overlap
+                } else {
+                    lapFiller = [
+                        {
+                            end: lapEnd.start,
+                            reverse: true,
+                            roadId: lapEnd.roadId,
+                            start: 0
+                        },
+                        {
+                            end: 1,
+                            reverse: true,
+                            roadId: lapStart.roadId,
+                            start: lapEnd.end
+                        }
+                    ]
+                }
+            } else if (startTime != endTime) {
+                lapFiller = [
+                    {
+                        end: lapStart.reverse ? lapEnd.start : lapStart.start,
+                        reverse: lapStart.reverse,
+                        roadId: lapStart.roadId,
+                        start: lapStart.reverse ? lapStart.end : lapEnd.end
+                    }
+                ]
+            }
+        }
+        //debugger
+        if (lapFiller.length > 0) {
+            console.log("Lap filler manifest", lapFiller)            
+            route.lapFiller.curvePath = new curves.CurvePath()
+            route.lapFiller.roadSegments = []
+            const worldList = await common.getWorldList();
+            const worldMeta = worldList.find(x => x.courseId === route.courseId);
+            for (const [i, x] of lapFiller.entries()) {
+                // road building magic borrowed from Sauce
+                const road = await common.getRoad(route.courseId, x.roadId);
+                const seg = road.curvePath.subpathAtRoadPercents(x.start, x.end);
+                seg.reverse = x.reverse;
+                seg.leadin = x.leadin;
+                seg.roadId = x.roadId;
+                for (const xx of seg.nodes) {
+                    xx.index = i;
+                }
+                route.lapFiller.roadSegments.push(seg);
+                route.lapFiller.curvePath.extend(x.reverse ? seg.toReversed() : seg);
+            }
+            Object.assign(route.lapFiller, supplimentPath(worldMeta, route.lapFiller.curvePath));
+        }
+        route.lapFiller.manifest = lapFiller;
+        
+    }
     return allGaps;
 }
 
