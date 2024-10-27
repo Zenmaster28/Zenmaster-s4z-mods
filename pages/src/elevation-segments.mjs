@@ -834,7 +834,10 @@ export class SauceElevationProfile {
             const allColors = [green, yellow, orange, red, angryred, lightblue, medblue, darkblue];
             lineWidth = 0;            
             this.routeColorStops = distances.map((x, i) => {
-                const grade = grades[i];                            
+                let grade = grades[i]; 
+                if (grade < -0.17 || grade > 0.25) { // sometimes a grade is an erronous extreme, instead take the average of the two entries on either side and use that
+                    grade = i > 0 && i < distances.length ? (grades[i - 1] + grades[i + 1]) / 2 : grades[i];
+                }
                 let selectedColor = allColors.filter(x => grade >= x.min && grade < x.max)            
                 let color = Color.fromRGB(0,0,0)
                 if (selectedColor.length > 0) {
@@ -864,7 +867,10 @@ export class SauceElevationProfile {
             ];
             lineWidth = 0;            
             this.routeColorStops = distances.map((x, i) => {
-                const grade = grades[i];                 
+                let grade = grades[i]; 
+                if (grade < -0.17 || grade > 0.25) { // sometimes a grade is an erronous extreme, instead take the average of the two entries on either side and use that
+                    grade = i > 0 && i < distances.length ? (grades[i - 1] + grades[i + 1]) / 2 : grades[i];
+                }                 
                 let color = interpolateColor(grade, ranges)
                 //console.log(color.toString())              
                 return {
@@ -889,7 +895,10 @@ export class SauceElevationProfile {
                 
             lineWidth = 0;            
             this.routeColorStops = distances.map((x, i) => {
-                const grade = grades[i];                 
+                let grade = grades[i]; 
+                if (grade < -0.17 || grade > 0.25) { // sometimes a grade is an erronous extreme, instead take the average of the two entries on either side and use that
+                    grade = i > 0 && i < distances.length ? (grades[i - 1] + grades[i + 1]) / 2 : grades[i];
+                }                 
                 let color = interpolateColor(grade, ranges)
                 //console.log(color.toString())              
                 return {
@@ -914,7 +923,10 @@ export class SauceElevationProfile {
                 
             lineWidth = 0;            
             this.routeColorStops = distances.map((x, i) => {
-                const grade = grades[i];                 
+                let grade = grades[i]; 
+                if (grade < -0.17 || grade > 0.25) { // sometimes a grade is an erronous extreme, instead take the average of the two entries on either side and use that
+                    grade = i > 0 && i < distances.length ? (grades[i - 1] + grades[i + 1]) / 2 : grades[i];
+                }                 
                 let color = interpolateColor(grade, ranges)
                 //console.log(color.toString())              
                 return {
