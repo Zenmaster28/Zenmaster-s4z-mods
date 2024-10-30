@@ -355,6 +355,7 @@ async function applyRoute() {
         } else {            
             lapsSelect.disabled = true;
         }
+        distanceSelect.value = parseInt(elProfile.routeDistances.at(-1))
     } else {
         zwiftMap.setVerticalOffset(0);
         zwiftMap.setDragOffset([0, 0]);
@@ -618,8 +619,7 @@ export async function main() {
                         changed.has('colorScheme') ||
                         changed.has('showMap') ||
                         changed.has('gradientOpacity') ||
-                        changed.has('showAllArches') ||
-                        changed.has('disablePenRouting')
+                        changed.has('showAllArches')
                     )
                 {
                     //console.log(changed);
@@ -641,7 +641,10 @@ export async function main() {
         } else if (changed.has('zoomSlider')) {
             elProfile.zoomSlider = changed.get('zoomSlider')
         } else if (changed.has('overrideDistance')) {
-            elProfile.overrideDistance = changed.get('overrideDistnace')
+            elProfile.overrideDistance = changed.get('overrideDistance')
+            applyRoute();
+        }else if (changed.has('disablePenRouting')) {
+            elProfile.disablePenRouting = changed.get('disablePenRouting')
             applyRoute();
         }
     });
