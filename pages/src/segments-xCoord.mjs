@@ -1246,7 +1246,7 @@ export async function getModifiedRoute(id, disablePenRouting) {
         }
             if (route) {
                 //let lastManifestEntry = route.manifest.at(-1);                
-                if (route.courseId == 14) { // France
+                if (route.courseId == 14 && !disablePenRouting) { // France
                     if (route.id == 986252325) {  // Douce France has extra manifest entries after the finish to allow for multiple laps
                         route.extraManifest = [];
                         do {
@@ -1259,33 +1259,23 @@ export async function getModifiedRoute(id, disablePenRouting) {
                             roadId: route.manifest.at(-1).roadId,
                             start: 0.4821480324
                         })
-                        //route.manifest.at(-1).end = 0.4821480323; // rewind to the end of the sprint banner
-                        //debugger
                     }
-                    /*
-                    const lastManifestEntry = route.manifest.at(-1);
-                    if (lastManifestEntry.roadId == 226) {
-                        //debugger
-                        if (lastManifestEntry.reverse && lastManifestEntry.start > 0.4821480321) {
-                            //console.log("Adjusting the finish line to Marina sprint banner")
-                            lastManifestEntry.start = 0.4821480321
-                        } else if (!lastManifestEntry.reverse && lastManifestEntry.end < 0.4821480323) {
-                            //console.log("Adjusting the finish line to Marina Sprint banner")
-                            lastManifestEntry.end = 0.4821480323                            
-                        } 
-                    }
-                    */
+                    
                 }
-                if (route.courseId != 13) { // stupid fake neon banners in Makuri...
+                if (route.courseId != 13 && !disablePenRouting) { // stupid fake neon banners in Makuri...
                     const lastManifestEntry = route.manifest.at(-1);
                     await isBannerNearby(lastManifestEntry, route.courseId);
+                    const leadin = route.manifest.filter(x => x.leadin)
+                    if (leadin.length > 0) {
+                        const lastLeadin = leadin.at(-1)
+                        await isBannerNearby(lastLeadin, route.courseId)
+                    }
                 } 
                 route.curvePath = new curves.CurvePath();
                 route.roadSegments = [];
                 route.lapFiller = {}; 
                 route.lapFiller.curvePath = []; 
-                if (!disablePenRouting) {                 
-                    //route.routeGaps = await validateManifest(route.manifest, route.courseId)               
+                if (!disablePenRouting) {       
                     route.routeGaps = await validateManifest(route)               
                 }
                 //console.log(route.manifest)
@@ -2228,9 +2218,11 @@ async function fixManifestGap(first, next, intersections, allRoads, route) {
     if (first.roadId == next.roadId) {
         if (first.leadin) {
             if (first.reverse) {
-                first.start = next.end;
+                //first.start = next.end;
+                next.end = first.start; // bring next manifest back to the banner
             } else {
-                first.end = next.start;
+                //first.end = next.start;
+                next.start = first.end;
             }
         } else {
             //console.log("Why are we going to the same road but not switching from leadin to route?")
@@ -2352,18 +2344,13 @@ export async function getRoadsIntersectionRP(courseId, road1, road2, road1RP, st
             break;
         }
     }
-    //debugger
     return { nearestPoint, minDistance, rp };
 }
 
 async function isBannerNearby(lastManifestEntry, courseId) {
     const worldSegments = await common.rpc.getSegments(courseId)
-    //console.log(worldSegments)
     const roadSegments = worldSegments.filter(x => x.roadId == lastManifestEntry.roadId && (x.reverse == lastManifestEntry.reverse || (x.reverse == false && lastManifestEntry.reverse == null)));
-    //const roadSegments = worldSegments.filter(x => x.roadId == lastManifestEntry.roadId && (x.reverse == lastManifestEntry.reverse || (x.reverse == false && lastManifestEntry.reverse == null))
     
-    
-    //console.log(roadSegments)
     let nearbySegment;
     if (roadSegments.length > 0) {        
         if (lastManifestEntry.reverse) {
@@ -2373,33 +2360,35 @@ async function isBannerNearby(lastManifestEntry, courseId) {
                 closestSegment = nearbySegment.reduce((closest, segment) => {
                     return Math.abs(segment.roadFinish - lastManifestEntry.start) < Math.abs(closest.roadFinish - lastManifestEntry.start) ? segment : closest;
                 });
-                console.log("Changing last manifest entry to ", closestSegment.name, "banner.  From", lastManifestEntry.start, "to", closestSegment.roadFinish)
-                lastManifestEntry.start = closestSegment.roadFinish
-                //debugger
+                console.log("Changing last manifest entry to ", closestSegment.name, "banner.  From", lastManifestEntry.start, "to", addSmallIncrement(closestSegment.roadFinish, -1))
+                lastManifestEntry.start = addSmallIncrement(closestSegment.roadFinish, -1) // just past the banner to avoid duplicate segment detection
             } else {
                 console.log("Can't find a nearby banner to", lastManifestEntry)
                 // Yorkshire has issues with being close to the 0/1 line
-                //debugger
             }
         } else {
             nearbySegment = roadSegments.filter(x => x.roadFinish + 0.1 > lastManifestEntry.end && x.roadFinish - 0.1 < lastManifestEntry.end)
-            //debugger
             let closestSegment;
             if (nearbySegment.length > 0) {
                 closestSegment = nearbySegment.reduce((closest, segment) => {
                     return Math.abs(segment.roadFinish - lastManifestEntry.end) < Math.abs(closest.roadFinish - lastManifestEntry.end) ? segment : closest;
                 });
-                console.log("Changing last manifest entry to ", closestSegment.name, "banner.  From", lastManifestEntry.end, "to", closestSegment.roadFinish)
-                lastManifestEntry.end = closestSegment.roadFinish
+                console.log("Changing last manifest entry to ", closestSegment.name, "banner.  From", lastManifestEntry.end, "to", addSmallIncrement(closestSegment.roadFinish, 1))
+                lastManifestEntry.end = addSmallIncrement(closestSegment.roadFinish, 1)
                  } else {
                 console.log("Can't find a nearby banner to", lastManifestEntry)
-                //debugger
             }
         }
-        
-        //debugger
     } else {
         console.log("There are no segment banners on the last road in", lastManifestEntry)
     }
-    //debugger
+}
+
+function addSmallIncrement(rp, plusMinus) {    
+    let precision = rp.toString().split('.')[1]?.length || 0;  // Determine the precision based on the number of decimal places in the rp
+    precision = precision <= 10 ? 10 : precision // min precision of 10    
+    const increment = plusMinus / Math.pow(10, precision + 1); // Calculate a small increment scaled to the precision
+    let finalRP = rp + increment;
+    finalRP = (finalRP > 1 || finalRP < 0) ? rp : finalRP // if the increment is above 1 or below 0, just use the original
+    return rp + increment;
 }
