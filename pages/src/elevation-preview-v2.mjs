@@ -345,7 +345,7 @@ async function applyRoute() {
             //await elProfile.setRoute(routeId);
             if (settings.overrideDistance > 0 || settings.overrideLaps > 0) {
                 //console.log("overridedistance: " + settings.overrideDistance + " overridelaps: " + settings.overrideLaps)
-                await elProfile.setRoute(+routeId, {laps: settings.overrideLaps, eventSubgroupId: -1, distance: settings.overrideDistance})
+                await elProfile.setRoute(+routeId, {laps: settings.overrideLaps, eventSubgroupId: -1, distance: settings.overrideDistance})                
             } else {
                 await elProfile.setRoute(+routeId, {eventSubgroupId: -1});
             }
@@ -355,7 +355,6 @@ async function applyRoute() {
         } else {            
             lapsSelect.disabled = true;
         }
-        distanceSelect.value = parseInt(elProfile.routeDistances.at(-1))
     } else {
         zwiftMap.setVerticalOffset(0);
         zwiftMap.setDragOffset([0, 0]);
@@ -619,7 +618,8 @@ export async function main() {
                         changed.has('colorScheme') ||
                         changed.has('showMap') ||
                         changed.has('gradientOpacity') ||
-                        changed.has('showAllArches')
+                        changed.has('showAllArches') ||
+                        changed.has('disablePenRouting')
                     )
                 {
                     //console.log(changed);
@@ -642,9 +642,6 @@ export async function main() {
             elProfile.zoomSlider = changed.get('zoomSlider')
         } else if (changed.has('overrideDistance')) {
             elProfile.overrideDistance = changed.get('overrideDistance')
-            applyRoute();
-        }else if (changed.has('disablePenRouting')) {
-            elProfile.disablePenRouting = changed.get('disablePenRouting')
             applyRoute();
         }
     });
