@@ -1245,32 +1245,8 @@ export async function getModifiedRoute(id, disablePenRouting) {
             route.manifest.unshift(leadin[i - 1]);
         }
             if (route) {
-                if (route.courseId == 8) { // New York
-                    //if the route finishes at the Central Park Loop banner, make sure the finish is in the right place
-                    const lastManifestEntry = route.manifest.at(-1);
-                    if (lastManifestEntry.roadId == 4) {
-                        if (lastManifestEntry.reverse && lastManifestEntry.start < 0.8) {
-                            //console.log("Adjusting the finish line to Central Park Loop banner")
-                            lastManifestEntry.start = 0.1687163592
-                        } else if (!lastManifestEntry.reverse && lastManifestEntry.end < 0.8) {
-                            //console.log("Adjusting the finish line to Central Park Loop banner")
-                            lastManifestEntry.end = 0.1687163594
-                        } 
-                    }
-                } else if (route.courseId == 7) { // London
-                    //if the route finishes at the London Loop banner, make sure the finish is in the right place
-                    const lastManifestEntry = route.manifest.at(-1);
-                    if (lastManifestEntry.roadId == 7) {
-                        //debugger
-                        if (lastManifestEntry.reverse && lastManifestEntry.start > 0.8040615123) {
-                            //console.log("Adjusting the finish line to London Loop banner")
-                            lastManifestEntry.start = 0.8040615122
-                        } else if (!lastManifestEntry.reverse && lastManifestEntry.end < 0.8040615123 && lastManifestEntry.end > 0.7) {
-                            //console.log("Adjusting the finish line to London Loop banner")
-                            lastManifestEntry.end = 0.8040615123                            
-                        } 
-                    }
-                } else if (route.courseId == 14) { // France
+                //let lastManifestEntry = route.manifest.at(-1);                
+                if (route.courseId == 14) { // France
                     if (route.id == 986252325) {  // Douce France has extra manifest entries after the finish to allow for multiple laps
                         route.extraManifest = [];
                         do {
@@ -1283,11 +1259,12 @@ export async function getModifiedRoute(id, disablePenRouting) {
                             roadId: route.manifest.at(-1).roadId,
                             start: 0.4821480324
                         })
-                        route.manifest.at(-1).end = 0.4821480323; // rewind to the end of the sprint banner
+                        //route.manifest.at(-1).end = 0.4821480323; // rewind to the end of the sprint banner
                         //debugger
                     }
+                    /*
                     const lastManifestEntry = route.manifest.at(-1);
-                    if (lastManifestEntry.roadId == 26) {
+                    if (lastManifestEntry.roadId == 226) {
                         //debugger
                         if (lastManifestEntry.reverse && lastManifestEntry.start > 0.4821480321) {
                             //console.log("Adjusting the finish line to Marina sprint banner")
@@ -1297,20 +1274,12 @@ export async function getModifiedRoute(id, disablePenRouting) {
                             lastManifestEntry.end = 0.4821480323                            
                         } 
                     }
-                } else if (route.courseId == 2) { // Richmond
-                    const lastManifestEntry = route.manifest.at(-1);
-                    if (lastManifestEntry.roadId == 0) {
-                        //debugger
-                        if (lastManifestEntry.reverse && lastManifestEntry.start > 0.9) {
-                            //console.log("Adjusting the finish line to Marina sprint banner")
-                            lastManifestEntry.start = 0.9920043687
-                        } else if (!lastManifestEntry.reverse && lastManifestEntry.end > 0.9) {
-                            //console.log("Adjusting the finish line to Marina Sprint banner")
-                            lastManifestEntry.end = 0.9920043689
-                        } 
-                    }
+                    */
                 }
-
+                if (route.courseId != 13) { // stupid fake neon banners in Makuri...
+                    const lastManifestEntry = route.manifest.at(-1);
+                    await isBannerNearby(lastManifestEntry, route.courseId);
+                } 
                 route.curvePath = new curves.CurvePath();
                 route.roadSegments = [];
                 route.lapFiller = {}; 
@@ -2132,7 +2101,7 @@ export async function validateManifest(route) {
         }
         //debugger
         if (lapFiller.length > 0) {
-            console.log("Lap filler manifest", lapFiller)            
+            //console.log("Lap filler manifest", lapFiller)            
             route.lapFiller.curvePath = new curves.CurvePath()
             route.lapFiller.roadSegments = []
             const worldList = await common.getWorldList();
@@ -2345,7 +2314,7 @@ async function fixManifestGap(first, next, intersections, allRoads, route) {
                 
             }
         } else {
-            console.log("No valid intersections found", first.roadId, "=>", next.roadId)
+            //console.log("No valid intersections found", first.roadId, "=>", next.roadId)
             //debugger
         }
             
@@ -2385,4 +2354,52 @@ export async function getRoadsIntersectionRP(courseId, road1, road2, road1RP, st
     }
     //debugger
     return { nearestPoint, minDistance, rp };
+}
+
+async function isBannerNearby(lastManifestEntry, courseId) {
+    const worldSegments = await common.rpc.getSegments(courseId)
+    //console.log(worldSegments)
+    const roadSegments = worldSegments.filter(x => x.roadId == lastManifestEntry.roadId && (x.reverse == lastManifestEntry.reverse || (x.reverse == false && lastManifestEntry.reverse == null)));
+    //const roadSegments = worldSegments.filter(x => x.roadId == lastManifestEntry.roadId && (x.reverse == lastManifestEntry.reverse || (x.reverse == false && lastManifestEntry.reverse == null))
+    
+    
+    //console.log(roadSegments)
+    let nearbySegment;
+    if (roadSegments.length > 0) {        
+        if (lastManifestEntry.reverse) {
+            nearbySegment = roadSegments.filter(x => x.roadFinish + 0.1 > lastManifestEntry.start && x.roadFinish - 0.1 < lastManifestEntry.start )
+            let closestSegment;
+            if (nearbySegment.length > 0) {
+                closestSegment = nearbySegment.reduce((closest, segment) => {
+                    return Math.abs(segment.roadFinish - lastManifestEntry.start) < Math.abs(closest.roadFinish - lastManifestEntry.start) ? segment : closest;
+                });
+                console.log("Changing last manifest entry to ", closestSegment.name, "banner.  From", lastManifestEntry.start, "to", closestSegment.roadFinish)
+                lastManifestEntry.start = closestSegment.roadFinish
+                //debugger
+            } else {
+                console.log("Can't find a nearby banner to", lastManifestEntry)
+                // Yorkshire has issues with being close to the 0/1 line
+                //debugger
+            }
+        } else {
+            nearbySegment = roadSegments.filter(x => x.roadFinish + 0.1 > lastManifestEntry.end && x.roadFinish - 0.1 < lastManifestEntry.end)
+            //debugger
+            let closestSegment;
+            if (nearbySegment.length > 0) {
+                closestSegment = nearbySegment.reduce((closest, segment) => {
+                    return Math.abs(segment.roadFinish - lastManifestEntry.end) < Math.abs(closest.roadFinish - lastManifestEntry.end) ? segment : closest;
+                });
+                console.log("Changing last manifest entry to ", closestSegment.name, "banner.  From", lastManifestEntry.end, "to", closestSegment.roadFinish)
+                lastManifestEntry.end = closestSegment.roadFinish
+                 } else {
+                console.log("Can't find a nearby banner to", lastManifestEntry)
+                //debugger
+            }
+        }
+        
+        //debugger
+    } else {
+        console.log("There are no segment banners on the last road in", lastManifestEntry)
+    }
+    //debugger
 }
