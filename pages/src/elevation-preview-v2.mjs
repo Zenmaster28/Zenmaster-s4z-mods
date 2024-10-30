@@ -345,9 +345,9 @@ async function applyRoute() {
             //await elProfile.setRoute(routeId);
             if (settings.overrideDistance > 0 || settings.overrideLaps > 0) {
                 //console.log("overridedistance: " + settings.overrideDistance + " overridelaps: " + settings.overrideLaps)
-                await elProfile.setRoute(+routeId, {laps: settings.overrideLaps, eventSubgroupId: 0, distance: settings.overrideDistance})
+                await elProfile.setRoute(+routeId, {laps: settings.overrideLaps, eventSubgroupId: -1, distance: settings.overrideDistance})
             } else {
-                await elProfile.setRoute(+routeId);
+                await elProfile.setRoute(+routeId, {eventSubgroupId: -1});
             }
         }
         if (route.supportedLaps) {

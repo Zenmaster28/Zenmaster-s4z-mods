@@ -518,7 +518,14 @@ export class SauceElevationProfile {
         //let routeDistances;
         //let routeElevations;
         //let routeGrades;
-        let segmentsOnRoute = await zen.processRoute(this.courseId, this.routeId, laps, distance, this.showLoopSegments, this.showAllArches, this.disablePenRouting)
+        //console.log("eventSubgroupId", eventSubgroupId)
+        let disableAdvancedRouting = true
+        if (eventSubgroupId && eventSubgroupId != 0) { // don't do advanced routing outside of events
+            disableAdvancedRouting = this.disablePenRouting
+        }
+        //debugger
+        //let segmentsOnRoute = await zen.processRoute(this.courseId, this.routeId, laps, distance, this.showLoopSegments, this.showAllArches, this.disablePenRouting)
+        let segmentsOnRoute = await zen.processRoute(this.courseId, this.routeId, laps, distance, this.showLoopSegments, this.showAllArches, disableAdvancedRouting)
         this.routeInfo = segmentsOnRoute;
         this.routeDistances = Array.from(segmentsOnRoute.routeFullData.distances);                    
         this.routeElevations = Array.from(segmentsOnRoute.routeFullData.elevations);        
