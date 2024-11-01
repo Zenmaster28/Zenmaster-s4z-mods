@@ -842,6 +842,17 @@ export class SauceElevationProfile {
             lineWidth = 0;            
             this.routeColorStops = distances.map((x, i) => {
                 let grade = grades[i]; 
+                if (Math.abs(grade) > 0.12) {
+                    let previousGrade = i > 0 ? grades[i - 1] : null;
+                    let nextGrade = i < grades.length - 1 ? grades[i + 1] : null;
+                    //console.log(grade, previousGrade, nextGrade)
+                    if (previousGrade !== null && nextGrade !== null) {
+                        if ((grade > 0 && previousGrade < 0 && nextGrade < 0) || (grade < 0 && previousGrade > 0 && nextGrade > 0)) {
+                            console.log("Discarding erronous grade entry, opposing polarity",i, grade, previousGrade, nextGrade)
+                            grade = (grades[i - 1] + grades[i + 1]) / 2 // we have a grade >10% and the grade before and after are opposite polarity, it's probably an anomoly
+                        }
+                    }
+                }
                 if (grade < -0.17 || grade > 0.25) { // sometimes a grade is an erronous extreme, instead take the average of the two entries on either side and use that
                     grade = i > 0 && i < distances.length ? (grades[i - 1] + grades[i + 1]) / 2 : grades[i];
                 }
