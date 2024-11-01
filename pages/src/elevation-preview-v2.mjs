@@ -316,11 +316,20 @@ async function applyRoute() {
     }
     if (routeId != null) { 
         //const route = await zen.getModifiedRoute(routeId, elProfile.disablePenRouting);
+        if (elProfile) {
+            //await elProfile.setRoute(routeId);
+            if (settings.overrideDistance > 0 || settings.overrideLaps > 0) {
+                //console.log("overridedistance: " + settings.overrideDistance + " overridelaps: " + settings.overrideLaps)
+                await elProfile.setRoute(+routeId, {laps: settings.overrideLaps, eventSubgroupId: -1, distance: settings.overrideDistance})                
+            } else {
+                await elProfile.setRoute(+routeId, {eventSubgroupId: -1});
+            }
+        }
         let path;
         const distance = parseInt(distanceSelect.value) || 0
-        const fullRoute = await zen.processRoute(courseId, routeId, 1, distance, elProfile.showLoopSegments, elProfile.showAllArches, elProfile.disablePenRouting)
-        const route = fullRoute.routeFullData
-        
+        //const fullRoute = await zen.processRoute(courseId, routeId, 1, distance, elProfile.showLoopSegments, elProfile.showAllArches, elProfile.disablePenRouting)
+        //const route = fullRoute.routeFullData
+        const route = elProfile.route
         //debugger
         if (zwiftMap.overrideDistance > 0) {
             let idx = common.binarySearchClosest(route.distances, zwiftMap.overrideDistance)
@@ -328,9 +337,9 @@ async function applyRoute() {
             path.nodes = path.nodes.slice(0, idx + 1)
         } else {
             path = route.curvePath;
-            if (parseInt(lapsSelect.value) > 1 && fullRoute.routeFullData.lapFiller.curvePath?.nodes?.length > 0) {
+            if (parseInt(lapsSelect.value) > 1 && route.lapFiller.curvePath?.nodes?.length > 0) {
                 //debugger
-                path.extend(fullRoute.routeFullData.lapFiller.curvePath)
+                path.extend(route.lapFiller.curvePath)
             }
         }
         //debugger
@@ -341,15 +350,7 @@ async function applyRoute() {
         );
         centerMap(route.curvePath.flatten(1/3));
         //debugger
-        if (elProfile) {
-            //await elProfile.setRoute(routeId);
-            if (settings.overrideDistance > 0 || settings.overrideLaps > 0) {
-                //console.log("overridedistance: " + settings.overrideDistance + " overridelaps: " + settings.overrideLaps)
-                await elProfile.setRoute(+routeId, {laps: settings.overrideLaps, eventSubgroupId: -1, distance: settings.overrideDistance})                
-            } else {
-                await elProfile.setRoute(+routeId, {eventSubgroupId: -1});
-            }
-        }
+        
         if (route.supportedLaps) {
             lapsSelect.disabled = false;
         } else {            
