@@ -192,6 +192,9 @@ function findSegmentsOnRoadSection(thisRoad, cpIndex, rsIdx, showAllArches) {
         // there are segments on this road, check if they match this roadSection
         //console.log("Found " + segmentsOnRoad.length + " possible segments on this road")
         for (let segment of segmentsOnRoad) {
+            if (!segment.givesPowerUp) {
+                continue; // hide banners with no Powerup (hidden Pier_RouteStart)
+            }
             if ((segment.roadStart == null || segment.reverse != thisRoad.reverse) && (!showAllArches)) {
                 // skip segments with no roadStart value and the segment and road direction must match
                 continue;
@@ -860,7 +863,7 @@ async function findShortestExitPath(startRoad, startDirection, targetRoad, targe
     let found = false;
     function explore(roadId, forward, depth, currentPath, exitTime) { 
         if (!allRoads.find(x => x.id == roadId)) {
-            console.log("Found a roadId that Sauce doesn't know about, ignoring roadId", roadId)
+            //console.log("Found a roadId that Sauce doesn't know about, ignoring roadId", roadId)
             return
         }
         if (depth > maxDepth) {
@@ -1264,11 +1267,15 @@ export async function getModifiedRoute(id, disablePenRouting) {
                 }
                 if (route.courseId != 13 && !disablePenRouting) { // stupid fake neon banners in Makuri...
                     const lastManifestEntry = route.manifest.at(-1);
-                    await isBannerNearby(lastManifestEntry, route.courseId);
+                    await isBannerNearby(lastManifestEntry, route.courseId, "last");
                     const leadin = route.manifest.filter(x => x.leadin)
                     if (leadin.length > 0) {
                         const lastLeadin = leadin.at(-1)
-                        await isBannerNearby(lastLeadin, route.courseId)
+                        await isBannerNearby(lastLeadin, route.courseId, "leadin")
+                        const idxLastLeadin = route.manifest.indexOf(lastLeadin)
+                        if (route.manifest[idxLastLeadin + 1].roadId == lastLeadin.roadId) {
+                            lastLeadin.reverse ? route.manifest[idxLastLeadin + 1].end = lastLeadin.start : route.manifest[idxLastLeadin + 1].start = lastLeadin.end // align the leadin and route start
+                        }
                     }
                 } 
                 route.curvePath = new curves.CurvePath();
@@ -1997,23 +2004,23 @@ export async function validateManifest(route) {
             routeManifest.splice(i + 1, 0, manifestEntry)
             //debugger
         }
-        let gap = await getManifestGapDistance(routeManifest[i], routeManifest[i+1], courseId)
-        //gap = (gap / 100).toFixed(0)
-        gap = Math.trunc(gap / 100)
+        let gapAfter;
+        let gapBefore = await getManifestGapDistance(routeManifest[i], routeManifest[i+1], courseId)        
+        let gap = Math.trunc(gapBefore / 100)
         if (gap > 0) {
             //console.log("Fixing gap of", gap, "m for manifest entry", i)
             await fixManifestGap(routeManifest[i], routeManifest[i+1], intersections, allRoads, route)
-            gap = await getManifestGapDistance(routeManifest[i], routeManifest[i+1], courseId)
-            gap = Math.trunc(gap / 100)
-            //gap = (gap / 100).toFixed(0)
-            //console.log("Gap post fix:", gap)
+            let fixedGap = await getManifestGapDistance(routeManifest[i], routeManifest[i+1], courseId)
+            gapAfter = Math.trunc(fixedGap / 100)
+            //console.log("Gap post fix:", gapAfter)
         }
         allGaps.push({
-            [i]: gap,
+            [i]: gapAfter !== undefined ? gapAfter : gap,
+            gapBefore: Math.trunc(gapBefore / 100),
             sameRoad: routeManifest[i].roadId == routeManifest[i+1].roadId ? true : false
         })
         if (routeManifest[i].end < routeManifest[i].start) {
-            console.log("This isn't a valid manifest entry", routeManifest[i])
+            //console.log("This isn't a valid manifest entry", routeManifest[i])
             routeManifest[i].end = routeManifest[i].start
             //debugger
         }
@@ -2181,7 +2188,7 @@ async function fixMissingManifest(first, next, intersections, route) {
         }
         //debugger
         const matchingIntersections = roadIntersections.intersections.filter(int => {
-            return route.decisions.decisions.some(decision => decision.markerId === int.m_markerId.toString());
+            return route.decisions?.decisions.some(decision => decision.markerId === int.m_markerId.toString());
         });
         for (let int of matchingIntersections) {
             let intOptions = int[direction]
@@ -2208,7 +2215,7 @@ async function fixManifestGap(first, next, intersections, allRoads, route) {
     
     if (next.start > 1 && next.end > 1) {
         //bad manifest entry (only seen in Astorla line 8?)
-        console.log("Discarding bad manifest entry", next)
+        //console.log("Discarding bad manifest entry", next)
         const idx = route.manifest.indexOf(next)
         if (idx != -1) {
             route.manifest.splice(idx, 1)
@@ -2347,9 +2354,10 @@ export async function getRoadsIntersectionRP(courseId, road1, road2, road1RP, st
     return { nearestPoint, minDistance, rp };
 }
 
-async function isBannerNearby(lastManifestEntry, courseId) {
+async function isBannerNearby(lastManifestEntry, courseId, type) {
     const worldSegments = await common.rpc.getSegments(courseId)
-    const roadSegments = worldSegments.filter(x => x.roadId == lastManifestEntry.roadId && (x.reverse == lastManifestEntry.reverse || (x.reverse == false && lastManifestEntry.reverse == null)));
+    //const roadSegments = worldSegments.filter(x => x.roadId == lastManifestEntry.roadId && (x.reverse == lastManifestEntry.reverse || (x.reverse == false && lastManifestEntry.reverse == null)));
+    const roadSegments = worldSegments.filter(x => x.roadId == lastManifestEntry.roadId);
     
     let nearbySegment;
     if (roadSegments.length > 0) {        
@@ -2360,11 +2368,13 @@ async function isBannerNearby(lastManifestEntry, courseId) {
                 closestSegment = nearbySegment.reduce((closest, segment) => {
                     return Math.abs(segment.roadFinish - lastManifestEntry.start) < Math.abs(closest.roadFinish - lastManifestEntry.start) ? segment : closest;
                 });
-                console.log("Changing last manifest entry to ", closestSegment.name, "banner.  From", lastManifestEntry.start, "to", addSmallIncrement(closestSegment.roadFinish, -1))
+                //debugger
+                //console.log("Changing", type, " manifest entry to ", closestSegment.name, "banner.  From", lastManifestEntry.start, "to", addSmallIncrement(closestSegment.roadFinish, -1))
                 lastManifestEntry.start = addSmallIncrement(closestSegment.roadFinish, -1) // just past the banner to avoid duplicate segment detection
-            } else {
-                console.log("Can't find a nearby banner to", lastManifestEntry)
-                // Yorkshire has issues with being close to the 0/1 line
+            } else {                
+                //console.log("Can't find a nearby banner to", lastManifestEntry)
+                //debugger
+                // Yorkshire has issues with being close to the 0/1 line but I don't think I care because it's pretty good already
             }
         } else {
             nearbySegment = roadSegments.filter(x => x.roadFinish + 0.1 > lastManifestEntry.end && x.roadFinish - 0.1 < lastManifestEntry.end)
@@ -2373,14 +2383,14 @@ async function isBannerNearby(lastManifestEntry, courseId) {
                 closestSegment = nearbySegment.reduce((closest, segment) => {
                     return Math.abs(segment.roadFinish - lastManifestEntry.end) < Math.abs(closest.roadFinish - lastManifestEntry.end) ? segment : closest;
                 });
-                console.log("Changing last manifest entry to ", closestSegment.name, "banner.  From", lastManifestEntry.end, "to", addSmallIncrement(closestSegment.roadFinish, 1))
+                //console.log("Changing", type, "manifest entry to ", closestSegment.name, "banner.  From", lastManifestEntry.end, "to", addSmallIncrement(closestSegment.roadFinish, 1))
                 lastManifestEntry.end = addSmallIncrement(closestSegment.roadFinish, 1)
                  } else {
-                console.log("Can't find a nearby banner to", lastManifestEntry)
+                //console.log("Can't find a nearby banner to", lastManifestEntry)
             }
         }
     } else {
-        console.log("There are no segment banners on the last road in", lastManifestEntry)
+        //console.log("There are no segment banners on the final road in the ", type , lastManifestEntry)
     }
 }
 
