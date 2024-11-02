@@ -848,7 +848,7 @@ export class SauceElevationProfile {
                     //console.log(grade, previousGrade, nextGrade)
                     if (previousGrade !== null && nextGrade !== null) {
                         if ((grade > 0 && previousGrade < 0 && nextGrade < 0) || (grade < 0 && previousGrade > 0 && nextGrade > 0)) {
-                            console.log("Discarding erronous grade entry, opposing polarity",i, grade, previousGrade, nextGrade)
+                            //console.log("Discarding erronous grade entry, opposing polarity",i, grade, previousGrade, nextGrade)
                             grade = (grades[i - 1] + grades[i + 1]) / 2 // we have a grade >10% and the grade before and after are opposite polarity, it's probably an anomoly
                         }
                     }

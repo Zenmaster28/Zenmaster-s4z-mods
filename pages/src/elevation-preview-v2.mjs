@@ -486,7 +486,7 @@ export async function main() {
         const exists = routesList.some(route => route.id === newRoute.id);
         if (!exists) {
             newRoute.courseId = common.worldToCourseIds[newRoute.worldId]
-            console.log("Adding route: " + newRoute.name + " to " + common.worldToNames[newRoute.worldId])            
+            //console.log("Adding route: " + newRoute.name + " to " + common.worldToNames[newRoute.worldId])            
             routesList.push(newRoute);
         }
     });
