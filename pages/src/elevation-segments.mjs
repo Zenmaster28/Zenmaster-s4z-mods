@@ -18,6 +18,10 @@ export class SauceElevationProfile {
     constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, refresh=1000}) {
         this.debugXcoord = false;
         this.debugXcoordDistance = null;
+        this.debugPinPlacement = false;
+        this.debugPinRoad = null;
+        this.debugPinRP = null;
+        this.debugPinDistance = null;
         this.el = el;
         this.worldList = worldList;
         this.preferRoute = preferRoute;
@@ -695,9 +699,10 @@ export class SauceElevationProfile {
                 break;
             }
             if (this.showLapMarker)
-            {                
+            {    
                 markLines.push({
-                    xAxis: this._routeLeadinDistance + lapDistance * lap,
+                    //xAxis: this._routeLeadinDistance + lapDistance * lap,
+                    xAxis: this.routeInfo.routeFullData.distances.at(this.routeInfo.routeFullData.lapNodes[lap]),
                     lineStyle: {
                         width: this.lineSize, 
                         type: this.lineType,
@@ -1149,6 +1154,7 @@ export class SauceElevationProfile {
                             if (watching.eventSubgroupId) {
                                 sg = await common.rpc.getEventSubgroup(watching.eventSubgroupId);
                                 console.log(sg) 
+                                //debugger
                                 this.eventPowerups = zen.getEventPowerups(sg)
                                 /* test dummy data for designated powerups at arches
                                 this.eventPowerups = {
@@ -1162,7 +1168,7 @@ export class SauceElevationProfile {
                                     }
                                 }
                                 */
-                                console.log(this.eventPowerups)
+                                //console.log(this.eventPowerups)
                             } 
                             
                             // Note sg.routeId is sometimes out of sync with state.routeId; avoid thrash
@@ -1362,7 +1368,14 @@ export class SauceElevationProfile {
                                     let distance;
                                     if (this._eventSubgroupId != null) {
                                         deemphasize = state.eventSubgroupId !== this._eventSubgroupId;
-                                        distance = state.eventDistance;
+                                        if (this.routeInfo.routeFullData.paddockExitOffset) {
+                                            //route has an offset due to a paddock exit road not included in eventDistance
+                                            distance = state.eventDistance + this.routeInfo.routeFullData.paddockExitOffset
+                                            //distance = state.eventDistance;
+                                        } else {
+                                            distance = state.eventDistance;
+                                        }
+                                    
                                     } else {
                                         // Outside of events state.progress represents the progress of single lap.
                                         // However, if the lap counter is > 0 then the progress % does not include
@@ -1370,12 +1383,18 @@ export class SauceElevationProfile {
                                         const floor = state.laps ? this._routeLeadinDistance : 0;
                                         const totDist = this._distances[this._distances.length - 1];
                                         distance = state.progress * (totDist - floor) + floor;
+                                    }                                    
+                                    let nearIdx = common.binarySearchClosest(this._distances, distance);
+                                    //debugger
+                                    if (this._eventSubgroupId != null && nearIdx < this.routeInfo.routeFullData.lapNodes[state.laps]) {
+                                        console.log("Bumping idx",nearIdx," to next lap", this.routeInfo.routeFullData.lapNodes[state.laps])
+                                        //debugger
+                                        nearIdx = this.routeInfo.routeFullData.lapNodes[state.laps]
                                     }
-                                    const nearIdx = common.binarySearchClosest(this._distances, distance);
                                     const nearRoadSegIdx = nodes[nearIdx].index;
+                                    //debugger
                                     // NOTE: This technique does not work for bots or people who joined a bot.
                                     // I don't know why but progress and eventDistance are completely wrong.
-                                    
                                     roadSearch:
                                     for (let offt = 0; offt < 12; offt++) {
                                         for (const dir of [1, -1]) {
@@ -1516,7 +1535,7 @@ export class SauceElevationProfile {
                                     yCoord = this.routeElevations[common.binarySearchClosest(this.routeDistances, xCoord)]
                                 }
                                 if (this.currentLap != state.laps + 1 && state.eventSubgroupId != 0) {
-                                    console.log("Setting current lap to: " + (state.laps + 1))
+                                    //console.log("Setting current lap to: " + (state.laps + 1))
                                     this.currentLap = state.laps + 1;
                                     let leadinNodesCount = 0;
                                     let leadin = this.routeInfo.routeFullData.roadSegments.filter(x => x.leadin)
