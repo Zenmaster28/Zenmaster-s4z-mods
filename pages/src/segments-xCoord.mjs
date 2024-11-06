@@ -102,6 +102,7 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
     for (let roadSegment of routeFullData.roadSegments)
     {
         let segments = findSegmentsOnRoadSection(roadSegment, curvePathIndex, rsIdx, showAllArches);
+        //debugger
         //console.log(rsIdx, roadSegment.reverse, roadSegment.roadId, segments)
         if (segments.length > 0 && routeSegments.length > 0) {
             //debugger
@@ -177,8 +178,21 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
         markLines: allMarkLines,
         segmentRepeats
     }
-    
+    const maxLaps = routeInfo.routeFullData.roadSegments.at(-1).lap
+    let lapNodes = {};
+    let minNodeCounter = 0;
+    for (let lap = 1; lap <= maxLaps; lap++) {
+        lapNodes[lap - 1] = lap == 1 ? 0 : minNodeCounter;
+        const thisLap = routeInfo.routeFullData.roadSegments.filter(x => x.lap == lap);
+        let nodeCounter = 0;
+        for (let r of thisLap) {
+            nodeCounter += r.nodes.length;
+        }
+        minNodeCounter += nodeCounter;
+    }
+    routeInfo.routeFullData.lapNodes = lapNodes;
     console.log(routeInfo)
+    //debugger
     return routeInfo;
 }
 
@@ -192,7 +206,7 @@ function findSegmentsOnRoadSection(thisRoad, cpIndex, rsIdx, showAllArches) {
         // there are segments on this road, check if they match this roadSection
         //console.log("Found " + segmentsOnRoad.length + " possible segments on this road")
         for (let segment of segmentsOnRoad) {
-            if (!segment.givesPowerUp) {
+            if (!segment.givesPowerUp && segment.worldId !== 8) {
                 continue; // hide banners with no Powerup (hidden Pier_RouteStart)
             }
             if ((segment.roadStart == null || segment.reverse != thisRoad.reverse) && (!showAllArches)) {
@@ -1093,6 +1107,19 @@ async function getExitPathDistance(exitPath, route, worldMeta) {
     }    
 }
 
+async function measureRoadLength(manifestEntry, courseId) {
+    let tempCurvepath = new curves.CurvePath()
+    const road = await common.getRoad(courseId, manifestEntry.roadId)
+    const seg = road.curvePath.subpathAtRoadPercents(manifestEntry.start, manifestEntry.end)
+    seg.reverse = manifestEntry.reverse ? manifestEntry.reverse : false
+    seg.roadId = manifestEntry.roadId
+    tempCurvepath.extend(seg)
+    const worldList = await common.getWorldList();
+    const worldMeta = worldList.find(x => x.courseId === courseId);
+    const manifestData = supplimentPath(worldMeta, seg)
+    return manifestData.distances.at(-1);
+}
+
 function isTargetRoad(road, targetRoad, targetDirection) {
     if (road.roadId == targetRoad && road.reverse != targetDirection) {
         return true;
@@ -1185,6 +1212,20 @@ export async function getModifiedRoute(id, disablePenRouting) {
                 const lastExitRoad = exitRoads.at(-1)
                 const idxExitRoad = penExitRoute.findIndex(road => road === lastExitRoad)
                 const manifest = penExitRoute.slice(idxExitRoad - 1)
+                let routeStarted = false;
+                for (let rd of manifest) {
+                    if (rd.isPaddockRoad && rd.paddockExitRoadTime) {
+                        routeStarted = true
+                        continue;
+                    }
+                    if (routeStarted && rd.isPaddockRoad) {
+                        //the route started but we hit a paddockRoad, eventDistance will not be used on this road so get it's distance to offset the route
+                        const rdLength = await measureRoadLength(rd, route.courseId)
+                        route.paddockExitOffset = parseInt(rdLength.toFixed(0))
+                        console.log("Adding a paddockExitOffset of ", route.paddockExitOffset, "to the route ")
+                        //debugger
+                    }
+                }
                 missing.push({leadin: []});
                 for (let i = 1; i < manifest.length; i++) {
                     missing[0].leadin.push({
@@ -1194,7 +1235,8 @@ export async function getModifiedRoute(id, disablePenRouting) {
                         start: manifest[i].paddockExitRoadTime ? manifest[i].paddockExitRoadTime : manifest[i].start,
                         reverse: manifest[i].reverse
                     })
-                }                
+                }   
+                //debugger             
             } else {
                 // the pens have no exit point defined.  Instead we get the point on the first non paddock road and that's where the magic line is.
                 const firstNonPaddockRoad = penExitRoute.find(x => !x.isPaddockRoad)
@@ -1901,8 +1943,8 @@ export function getEventPowerups(sg) {
         7: 'steamroller',
         8: 'anvil'
     }
-    const customPowerups = sg.allTags.filter(tag => tag.includes('powerup'))
-    if (customPowerups.length > 0) {
+    const customPowerups = sg?.allTags.filter(tag => tag.includes('powerup'))
+    if (customPowerups?.length > 0) {
         let customPU = customPowerups[0].split("=")
         powerUps.type = customPU[0]
         const puResult = {};
@@ -1922,9 +1964,9 @@ export function getEventPowerups(sg) {
             }
         }
         powerUps.powerups = puResult        
-    } else if (sg.rulesId & 1 == 1 || sg.eventType == "TIME_TRIAL" || sg.eventType == "TEAM_TIME_TRIAL") { // bitwise rule 1 match or iTT / TTT
+    } else if (sg?.rulesId & 1 == 1 || sg?.eventType == "TIME_TRIAL" || sg?.eventType == "TEAM_TIME_TRIAL") { // bitwise rule 1 match or iTT / TTT
         powerUps.type = "nopowerups"    
-    } else if (sg.eventType == "GROUP_WORKOUT") {
+    } else if (sg?.eventType == "GROUP_WORKOUT") {
         powerUps.type = "other"
     } else {
         powerUps.type = "standard"        
@@ -1941,11 +1983,25 @@ export function calculateDistance(point1, point2) {
     return Math.sqrt(dx * dx + dy * dy + dz * dz);
 }
 
+function calculateTangent(road, roadPercent) {
+    const epsilon = 0.001; // A small step to approximate the derivative
+    const p1 = road.curvePath.pointAtRoadPercent(roadPercent);
+    const p2 = road.curvePath.pointAtRoadPercent(Math.min(roadPercent + epsilon, 1)); // Ensure we stay within bounds
+
+    return [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]]; // Approximate tangent vector
+}
+
+function dotProduct(v1, v2) {
+    return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
+}
+
+
 function getNearestPoint(road1, road2, road1RP, steps) {
     let nearestPoint = null;
     let minDistance = Infinity;
     let rp = null; 
-    let pt1 = road1.curvePath.pointAtRoadPercent(road1RP)         
+    let pt1 = road1.curvePath.pointAtRoadPercent(road1RP)   
+    const tangent1 = calculateTangent(road1, road1RP); //pure ChatGPT, I don't actually know if this works
     const points = [];
     const step = 1 / (steps - 1); // Calculate the step size
     //debugger
@@ -1957,19 +2013,25 @@ function getNearestPoint(road1, road2, road1RP, steps) {
         if (t == undefined) {
             debugger
         }
-        const pointOnSecondCurve = road2.curvePath.pointAtRoadPercent(t); // Get a point on the second curve for parameter t
-    
+        const pointOnSecondCurve = road2.curvePath.pointAtRoadPercent(t);    
         const distance = calculateDistance(pt1, pointOnSecondCurve);
-    
-        if (distance < minDistance) {
+        const directionVector = [
+            pointOnSecondCurve[0] - pt1[0],
+            pointOnSecondCurve[1] - pt1[1],
+            pointOnSecondCurve[2] - pt1[2]
+        ]; //pure ChatGPT, I don't actually know if this works
+        let dotP = dotProduct(tangent1, directionVector); //pure ChatGPT, I don't actually know if this works
+        if (dotP > 0 && distance < minDistance) {
             minDistance = distance;
             nearestPoint = pointOnSecondCurve;
             rp = t;
+        } else if (distance < minDistance) {
+            //console.log("Found a closer point but going the wrong direction from the first road")
         }
-        if (distance < 100) {
+        if (dotP > 0 && distance < 50) {
             //less than 1m is close enough
             break;
-        }
+        } 
     }
     //debugger
     return rp;
@@ -2355,6 +2417,10 @@ export async function getRoadsIntersectionRP(courseId, road1, road2, road1RP, st
 }
 
 async function isBannerNearby(lastManifestEntry, courseId, type) {
+    if (lastManifestEntry.roadId == 7 && lastManifestEntry.reverse && type == "leadin") {
+        // ignore the leadin for InnsbruckConti
+        return;
+    }
     const worldSegments = await common.rpc.getSegments(courseId)
     //const roadSegments = worldSegments.filter(x => x.roadId == lastManifestEntry.roadId && (x.reverse == lastManifestEntry.reverse || (x.reverse == false && lastManifestEntry.reverse == null)));
     const roadSegments = worldSegments.filter(x => x.roadId == lastManifestEntry.roadId);
