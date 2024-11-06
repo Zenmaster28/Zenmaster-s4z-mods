@@ -526,6 +526,10 @@ export async function main() {
             'aheadLineColor',
             'debugXcoord',
             'debugXcoordDistance',
+            'debugPinPlacement',
+            'debugPinRoad',
+            'debugPinRP',
+            'debugPinDistance',
             'showNextPowerup'
         ]
         //console.log(changed);
