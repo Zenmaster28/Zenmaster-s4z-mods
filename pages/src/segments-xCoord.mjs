@@ -1293,6 +1293,7 @@ export async function getModifiedRoute(id, disablePenRouting) {
                 //let lastManifestEntry = route.manifest.at(-1);                
                 if (route.courseId == 14 && !disablePenRouting) { // France
                     if (route.id == 986252325) {  // Douce France has extra manifest entries after the finish to allow for multiple laps
+                        //debugger
                         route.extraManifest = [];
                         do {
                             // put the extra manifest entries aside for later use if more than one lap
@@ -1304,8 +1305,9 @@ export async function getModifiedRoute(id, disablePenRouting) {
                             roadId: route.manifest.at(-1).roadId,
                             start: 0.4821480324
                         })
+                        route.manifest.at(-1).end = 0.4821480324
                     }
-                    
+                    //debugger
                 }
                 if (route.courseId != 13 && !disablePenRouting) { // stupid fake neon banners in Makuri...
                     const lastManifestEntry = route.manifest.at(-1);
@@ -1330,6 +1332,7 @@ export async function getModifiedRoute(id, disablePenRouting) {
                 //console.log(route.manifest)
                 const worldList = await common.getWorldList();
                 const worldMeta = worldList.find(x => x.courseId === route.courseId);
+                //debugger
                 for (const [i, x] of route.manifest.entries()) {
                     const road = await common.getRoad(route.courseId, x.roadId);
                     const seg = road.curvePath.subpathAtRoadPercents(x.start, x.end);
@@ -1343,6 +1346,7 @@ export async function getModifiedRoute(id, disablePenRouting) {
                     route.curvePath.extend(x.reverse ? seg.toReversed() : seg);
                 }
                 Object.assign(route, supplimentPath(worldMeta, route.curvePath));
+                //debugger
             }
                        
             return route;
@@ -2001,13 +2005,15 @@ function getNearestPoint(road1, road2, road1RP, steps) {
     let minDistance = Infinity;
     let rp = null; 
     let pt1 = road1.curvePath.pointAtRoadPercent(road1RP)   
-    const tangent1 = calculateTangent(road1, road1RP); //pure ChatGPT, I don't actually know if this works
+    //const tangent1 = calculateTangent(road1, road1RP); //pure ChatGPT, I don't actually know if this works
     const points = [];
     const step = 1 / (steps - 1); // Calculate the step size
+    //const allClosePoints = [];
     //debugger
     for (let i = 0; i < steps; i++) {
         points.push(i * step);
     }
+    
     for (let t of points) {
         //debugger
         if (t == undefined) {
@@ -2015,24 +2021,28 @@ function getNearestPoint(road1, road2, road1RP, steps) {
         }
         const pointOnSecondCurve = road2.curvePath.pointAtRoadPercent(t);    
         const distance = calculateDistance(pt1, pointOnSecondCurve);
-        const directionVector = [
-            pointOnSecondCurve[0] - pt1[0],
-            pointOnSecondCurve[1] - pt1[1],
-            pointOnSecondCurve[2] - pt1[2]
-        ]; //pure ChatGPT, I don't actually know if this works
-        let dotP = dotProduct(tangent1, directionVector); //pure ChatGPT, I don't actually know if this works
-        if (dotP > 0 && distance < minDistance) {
+        //const directionVector = [
+        //    pointOnSecondCurve[0] - pt1[0],
+        //    pointOnSecondCurve[1] - pt1[1],
+        //    pointOnSecondCurve[2] - pt1[2]
+        //]; //pure ChatGPT, I don't actually know if this works
+        //let dotP = dotProduct(tangent1, directionVector); //pure ChatGPT, I don't actually know if this works
+        if (distance < minDistance) {            
             minDistance = distance;
             nearestPoint = pointOnSecondCurve;
             rp = t;
-        } else if (distance < minDistance) {
-            //console.log("Found a closer point but going the wrong direction from the first road")
-        }
-        if (dotP > 0 && distance < 50) {
+            //allClosePoints.push({
+            //    distance: distance,
+            //    nearestPoint: pointOnSecondCurve,
+            //    rp: t
+            //})
+        } 
+        if (distance < 50) {
             //less than 1m is close enough
             break;
         } 
     }
+    //console.log(rp)
     //debugger
     return rp;
 }
@@ -2055,6 +2065,7 @@ export async function validateManifest(route) {
     const intersections = await fetch(`data/worlds/${common.courseToWorldIds[courseId]}/roadIntersections.json`).then(response => response.json());
     const allRoads = await common.getRoads(courseId)
     for (let i = 0; i < routeManifest.length - 1; i++) {
+        
         let missingManifest = await fixMissingManifest(routeManifest[i], routeManifest[i+1], intersections, route)
         if (missingManifest.length > 0) {
             const manifestEntry = {
@@ -2349,14 +2360,24 @@ async function fixManifestGap(first, next, intersections, allRoads, route) {
         }
         if (validIntersections?.length == 1) {
             //debugger
+            //const epsilon = 0.00
+            //const rdLength = await measureRoadLength(next, route.courseId)
+            //const diff = next.end - next.start;
+            //const rdRatio = diff / rdLength
+            //const epsilon = rdRatio
+            
+            //console.log("Next road", next, "length", rdLength, "episilon", epsilon)
+            //debugger
             const option = validIntersections[0] // not sure if this can ever be > 1 valid intersection or not                
-            if (option) {                
-                direction == "reverse" ? first.start = option.option.exitTime : first.end = option.option.exitTime
+            if (option) {               
+                //direction == "reverse" ? first.start = option.option.exitTime + epsilon : first.end = option.option.exitTime - epsilon;
+                direction == "reverse" ? first.start = option.option.exitTime : first.end = option.option.exitTime;
                 const road1 = allRoads.find(x => x.id == first.roadId)
                 const road2 = allRoads.find(x => x.id == next.roadId)
                 const road1RP = direction == "reverse" ? first.start : first.end
+                
                 let rd2Entry = getNearestPoint(road1, road2, road1RP, 25000)
-                // deal with next road start or end being 0 or 1
+                // deal with next road start or end being 0 or 1                
                 if (!next.reverse && (rd2Entry > next.end || route.id == 2007026433)) { // 2019 Harrogate workaround
                     // the next manifest will be invalid, see if we are close to a 0/1 boundary
                     if (next.start <= 0.01 && rd2Entry >= 0.99) {
@@ -2370,7 +2391,26 @@ async function fixManifestGap(first, next, intersections, allRoads, route) {
                         rd2Entry = next.end
                     }
                 }
-                next.reverse ? next.end = rd2Entry : next.start = rd2Entry
+                //debugger
+                if (rd2Entry != null) {
+                    //console.log("rd2entry is ", rd2Entry)
+                    if (next.reverse) {
+                        if (rd2Entry > next.start) {
+                            //next.end = rd2Entry - epsilon
+                            next.end = rd2Entry
+                        } else {
+                            next.end = rd2Entry
+                        }
+                    } else {
+                        if (rd2Entry < next.end) {
+                            //next.start = rd2Entry + epsilon
+                            next.start = rd2Entry
+                        } else {
+                            next.start = rd2Entry
+                        }
+                    }
+                    //next.reverse ? next.end = rd2Entry - epsilon : next.start = rd2Entry + epsilon;
+                }
                 //debugger
                 
             }
@@ -2380,7 +2420,7 @@ async function fixManifestGap(first, next, intersections, allRoads, route) {
         }
             
     }
-    
+    //console.log("After next is", next)
 }
 
 export async function getRoadsIntersectionRP(courseId, road1, road2, road1RP, steps) {
@@ -2417,16 +2457,16 @@ export async function getRoadsIntersectionRP(courseId, road1, road2, road1RP, st
 }
 
 async function isBannerNearby(lastManifestEntry, courseId, type) {
-    if (lastManifestEntry.roadId == 7 && lastManifestEntry.reverse && type == "leadin") {
+    //if (lastManifestEntry.roadId == 77 && lastManifestEntry.reverse && type == "leadin") {
         // ignore the leadin for InnsbruckConti
-        return;
-    }
+    //    return;
+    //}
     const worldSegments = await common.rpc.getSegments(courseId)
     //const roadSegments = worldSegments.filter(x => x.roadId == lastManifestEntry.roadId && (x.reverse == lastManifestEntry.reverse || (x.reverse == false && lastManifestEntry.reverse == null)));
     const roadSegments = worldSegments.filter(x => x.roadId == lastManifestEntry.roadId);
     
     let nearbySegment;
-    if (roadSegments.length > 0) {        
+    if (roadSegments.length > 0) {  
         if (lastManifestEntry.reverse) {
             nearbySegment = roadSegments.filter(x => x.roadFinish + 0.1 > lastManifestEntry.start && x.roadFinish - 0.1 < lastManifestEntry.start )
             let closestSegment;
@@ -2436,7 +2476,9 @@ async function isBannerNearby(lastManifestEntry, courseId, type) {
                 });
                 //debugger
                 //console.log("Changing", type, " manifest entry to ", closestSegment.name, "banner.  From", lastManifestEntry.start, "to", addSmallIncrement(closestSegment.roadFinish, -1))
-                lastManifestEntry.start = addSmallIncrement(closestSegment.roadFinish, -1) // just past the banner to avoid duplicate segment detection
+                if (closestSegment.roadFinish < lastManifestEntry.end) { // make sure the segment isn't behind the pen
+                    lastManifestEntry.start = addSmallIncrement(closestSegment.roadFinish, -1) // just past the banner to avoid duplicate segment detection
+                }
             } else {                
                 //console.log("Can't find a nearby banner to", lastManifestEntry)
                 //debugger
@@ -2449,9 +2491,12 @@ async function isBannerNearby(lastManifestEntry, courseId, type) {
                 closestSegment = nearbySegment.reduce((closest, segment) => {
                     return Math.abs(segment.roadFinish - lastManifestEntry.end) < Math.abs(closest.roadFinish - lastManifestEntry.end) ? segment : closest;
                 });
+                //debugger
                 //console.log("Changing", type, "manifest entry to ", closestSegment.name, "banner.  From", lastManifestEntry.end, "to", addSmallIncrement(closestSegment.roadFinish, 1))
-                lastManifestEntry.end = addSmallIncrement(closestSegment.roadFinish, 1)
-                 } else {
+                if (closestSegment.roadFinish > lastManifestEntry.start) { // make sure the segment isn't behind the pen
+                    lastManifestEntry.end = addSmallIncrement(closestSegment.roadFinish, 1)
+                }
+            } else {
                 //console.log("Can't find a nearby banner to", lastManifestEntry)
             }
         }
