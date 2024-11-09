@@ -1366,7 +1366,7 @@
               "alt": 262,
               "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_Station.tga",
               "forward": true,
-              "exitTime": 0.5985619034400821,
+              "exitTime": 0.598427581779161,
               "b": "0",
               "turnText": "Bonus Climb",
               "d": false
@@ -2054,7 +2054,7 @@
       {
         "type": "ENTITY_TYPE_INTERSECTIONMARKER",
         "m_roadTime1": 0.0481052635,
-        "m_roadTime2": 0.4819174386,
+        "m_roadTime2": 0.1729437521,
         "m_roadId": 15,
         "m_markerId": 150000,
         "forward": [
@@ -2145,7 +2145,7 @@
               "alt": 265,
               "turnFilePath": "",
               "forward": false,
-              "exitTime": 0.1440251092873787,
+              "exitTime": 0.15504260308357556,
               "b": "0",
               "turnText": "",
               "d": false
@@ -2656,7 +2656,7 @@
       },
       {
         "type": "ENTITY_TYPE_INTERSECTIONMARKER",
-        "m_roadTime1": 0.0878882052,
+        "m_roadTime1": 0.1021112821,
         "m_roadTime2": 0.1460075484,
         "m_roadId": 23,
         "m_markerId": 230004,
@@ -2799,6 +2799,80 @@
         ],
         "reverse": [
           {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0248002123,
+        "m_roadTime2": 0.044018782,
+        "m_roadId": 23,
+        "m_markerId": 230007,
+        "forward": [
+          {
+            "option": {
+              "road": 188,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Island_Loop.tga",
+              "forward": false,
+              "exitTime": 0.04401878195562858,
+              "b": "0",
+              "turnText": "Jarvis Island",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 23,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_VolcanoTop.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Volcano KOM",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0621072881,
+        "m_roadTime2": 0.08504552,
+        "m_roadId": 23,
+        "m_markerId": 230008,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 23,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Volcano.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Volcano Circuit",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 189,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Island_Loop.tga",
+              "forward": true,
+              "exitTime": 0.06210728814050981,
+              "b": "0",
+              "turnText": "Jarvis Island",
+              "d": false
+            }
+          }
         ],
         "b": 0
       }
@@ -9682,43 +9756,6 @@
           {}
         ],
         "b": 0
-      },
-      {
-        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
-        "m_roadTime1": 0.9085701054,
-        "m_roadTime2": 0.9118978998,
-        "m_roadId": 149,
-        "m_markerId": 1490007,
-        "forward": [
-          {
-            "option": {
-              "road": 200,
-              "alt": 263,
-              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Key_Left.tga",
-              "forward": true,
-              "exitTime": 0.9118978998,
-              "b": "0",
-              "turnText": "Left",
-              "d": false
-            }
-          },
-          {
-            "option": {
-              "road": 149,
-              "alt": 265,
-              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Desert.tga",
-              "forward": true,
-              "exitTime": 1000000.0,
-              "b": "0",
-              "turnText": "Fuego Flats",
-              "d": false
-            }
-          }
-        ],
-        "reverse": [
-          {}
-        ],
-        "b": 0
       }
     ]
   },
@@ -10723,6 +10760,314 @@
     ]
   },
   {
+    "id": 185,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.2640333412,
+        "m_roadTime2": 0.99,
+        "m_roadId": 185,
+        "m_markerId": 1850000,
+        "forward": [
+          {
+            "option": {
+              "road": 192,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.99,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 191,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.26403334120214017,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 187,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.2734666748,
+        "m_roadTime2": 0.99,
+        "m_roadId": 187,
+        "m_markerId": 1870000,
+        "forward": [
+          {
+            "option": {
+              "road": 192,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.99,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 191,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.27346667481660847,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 188,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.2230666733,
+        "m_roadTime2": 0.99,
+        "m_roadId": 188,
+        "m_markerId": 1880000,
+        "forward": [
+          {
+            "option": {
+              "road": 23,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.99,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 191,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.22306667331457153,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 189,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.01,
+        "m_roadTime2": 0.7827999938,
+        "m_roadId": 189,
+        "m_markerId": 1890000,
+        "forward": [
+          {
+            "option": {
+              "road": 191,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.7827999938249868,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 23,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.01,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 191,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0308333343,
+        "m_roadTime2": 0.9509333319,
+        "m_roadId": 191,
+        "m_markerId": 1910000,
+        "forward": [
+          {
+            "option": {
+              "road": 189,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_VolcanoTop.tga",
+              "forward": false,
+              "exitTime": 0.9509333318710498,
+              "b": "0",
+              "turnText": "Volcan KOM",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 188,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Volcano.tga",
+              "forward": true,
+              "exitTime": 0.9509333318710498,
+              "b": "0",
+              "turnText": "Volcano Circuit",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 185,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Island_Loop.tga",
+              "forward": true,
+              "exitTime": 0.030833334252238265,
+              "b": "0",
+              "turnText": "Jarvis Island Clockwise",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 187,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Island_Loop.tga",
+              "forward": true,
+              "exitTime": 0.030833334252238265,
+              "b": "0",
+              "turnText": "Jarvis Island Counter",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 192,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.8263845272,
+        "m_roadTime2": 0.8546692378,
+        "m_roadId": 192,
+        "m_markerId": 1920000,
+        "forward": [
+          {}
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 187,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Volcano.tga",
+              "forward": false,
+              "exitTime": 0.8263845271707169,
+              "b": "0",
+              "turnText": "Volcano Circuit",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 192,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Island_Loop.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Jarvis Island",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.7695441089,
+        "m_roadTime2": 0.7947140951,
+        "m_roadId": 192,
+        "m_markerId": 1920001,
+        "forward": [
+          {
+            "option": {
+              "road": 192,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Island_Loop.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Jarvis Island",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 185,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Volcano.tga",
+              "forward": false,
+              "exitTime": 0.7947140951047231,
+              "b": "0",
+              "turnText": "Volcano Circuit",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {}
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
     "id": 132
   },
   {
@@ -10753,6 +11098,9 @@
     "id": 186
   },
   {
+    "id": 190
+  },
+  {
     "id": 175
   },
   {
@@ -10766,117 +11114,5 @@
   },
   {
     "id": 179
-  },
-  {
-    "id": 200,
-    "intersections": [
-      {
-        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
-        "m_roadTime1": 0.105425,
-        "m_roadTime2": 0.9925,
-        "m_roadId": 200,
-        "m_markerId": 1870000,
-        "forward": [
-          {
-            "option": {
-              "road": 203,
-              "alt": 265,
-              "turnFilePath": "",
-              "forward": false,
-              "exitTime": 0.9924999999999999,
-              "b": "0",
-              "turnText": "",
-              "d": false
-            }
-          }
-        ],
-        "reverse": [
-          {
-            "option": {
-              "road": 149,
-              "alt": 265,
-              "turnFilePath": "",
-              "forward": false,
-              "exitTime": 0.10542500000000002,
-              "b": "0",
-              "turnText": "",
-              "d": false
-            }
-          }
-        ],
-        "b": 0
-      }
-    ]
-  },
-  {
-    "id": 201,
-    "intersections": [
-      {
-        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
-        "m_roadTime1": 0.2963000088,
-        "m_roadTime2": 0.9644333323,
-        "m_roadId": 201,
-        "m_markerId": 1850000,
-        "forward": [
-          {
-            "option": {
-              "road": 203,
-              "alt": 265,
-              "turnFilePath": "",
-              "forward": true,
-              "exitTime": 0.9644333322733695,
-              "b": "0",
-              "turnText": "",
-              "d": false
-            }
-          }
-        ],
-        "reverse": [
-          {
-            "option": {
-              "road": 149,
-              "alt": 265,
-              "turnFilePath": "",
-              "forward": true,
-              "exitTime": 0.29630000883042823,
-              "b": "0",
-              "turnText": "",
-              "d": false
-            }
-          }
-        ],
-        "b": 0
-      }
-    ]
-  },
-  {
-    "id": 203,
-    "intersections": [
-      {
-        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
-        "m_roadTime1": 0.6258166667,
-        "m_roadTime2": 0.9161166667,
-        "m_roadId": 203,
-        "m_markerId": -10000,
-        "forward": [
-          {}
-        ],
-        "reverse": [
-          {
-            "option": {
-              "road": 201,
-              "alt": 265,
-              "turnFilePath": "",
-              "forward": false,
-              "exitTime": 0.6258166666665375,
-              "b": "0",
-              "turnText": "",
-              "d": false
-            }
-          }
-        ],
-        "b": 0
-      }
-    ]
   }
 ]

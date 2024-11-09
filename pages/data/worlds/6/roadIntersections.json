@@ -2,7 +2,7 @@
   {
     "id": 0,
     "roadIsPaddock": true,
-    "paddockExitRoadTime": 0.0332,
+    "paddockExitRoadTime": 0.03319999948143959,
     "intersections": [
       {
         "type": "ENTITY_TYPE_INTERSECTIONMARKER",
@@ -21,8 +21,8 @@
               "forward": true,
               "exitTime": 0.0092056682,
               "b": "0",
-              "turnText": null,
-              "d": null
+              "turnText": "",
+              "d": false
             }
           }
         ],
@@ -43,8 +43,8 @@
               "forward": true,
               "exitTime": 0.987232292,
               "b": "0",
-              "turnText": null,
-              "d": null
+              "turnText": "",
+              "d": false
             }
           }
         ],
@@ -87,8 +87,8 @@
               "forward": true,
               "exitTime": 0.7468733341,
               "b": "0",
-              "turnText": null,
-              "d": null
+              "turnText": "",
+              "d": false
             }
           }
         ],
@@ -118,8 +118,8 @@
               "forward": true,
               "exitTime": 0.7747880025,
               "b": "0",
-              "turnText": null,
-              "d": null
+              "turnText": "",
+              "d": false
             }
           }
         ],
@@ -149,8 +149,8 @@
               "forward": true,
               "exitTime": 0.8886186677,
               "b": "0",
-              "turnText": null,
-              "d": null
+              "turnText": "",
+              "d": false
             }
           }
         ],
@@ -180,8 +180,8 @@
               "forward": true,
               "exitTime": 0.8853266677,
               "b": "0",
-              "turnText": null,
-              "d": null
+              "turnText": "",
+              "d": false
             }
           }
         ],
@@ -211,8 +211,8 @@
               "forward": true,
               "exitTime": 0.7893190024,
               "b": "0",
-              "turnText": null,
-              "d": null
+              "turnText": "",
+              "d": false
             }
           }
         ],
@@ -241,8 +241,8 @@
               "forward": true,
               "exitTime": 0.9679208764,
               "b": "0",
-              "turnText": null,
-              "d": null
+              "turnText": "",
+              "d": false
             }
           }
         ],
@@ -271,8 +271,8 @@
               "forward": false,
               "exitTime": 0.873132004,
               "b": "0",
-              "turnText": null,
-              "d": null
+              "turnText": "",
+              "d": false
             }
           }
         ],
