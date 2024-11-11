@@ -2080,7 +2080,7 @@ export async function validateManifest(route) {
         let gapAfter;
         let gapBefore = await getManifestGapDistance(routeManifest[i], routeManifest[i+1], courseId)        
         let gap = Math.trunc(gapBefore / 100)
-        if (gap > 0) {
+        if (gap > 10) {
             //console.log("Fixing gap of", gap, "m for manifest entry", i)
             await fixManifestGap(routeManifest[i], routeManifest[i+1], intersections, allRoads, route)
             let fixedGap = await getManifestGapDistance(routeManifest[i], routeManifest[i+1], courseId)
