@@ -638,7 +638,8 @@ export class SauceElevationProfile {
         this._eventSubgroupId = eventSubgroupId;
         this._roadSigs = new Set();
         this.curvePath = null;  
-        this.route = await zen.getModifiedRoute(id, disableRouteOptimization);
+        //this.route = await zen.getModifiedRoute(id, disableRouteOptimization);
+        this.route = this.routeInfo.routeFullData
         for (const {roadId, reverse} of this.route.manifest) {
             this._roadSigs.add(`${roadId}-${!!reverse}`);
         }        
