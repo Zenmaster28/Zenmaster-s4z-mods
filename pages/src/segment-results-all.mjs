@@ -383,7 +383,7 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching) {
         } else {
             segNameDiv.innerHTML = segmentName + segRepeat + ' \u21E2';
         }
-        buildTable(eventResults,watching);
+        await buildTable(eventResults,watching);
         
         approachingRefresh = Date.now();                            
     }
@@ -495,7 +495,7 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching) {
         } else {
             segNameDiv.innerHTML = '\u21e0 ' + segmentName + segRepeat + ' \u21E2';
         }
-        buildTable(eventResults,watching);
+        await buildTable(eventResults,watching);
         
         inSegmentRefresh = Date.now();                            
     }
@@ -642,12 +642,12 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching) {
             infoRightDiv.innerHTML = "";
         }   
         
-        buildTable(eventResults,watching);
+        await buildTable(eventResults,watching);
        
     }
 }
 
-function buildTable(eventResults,watching) {    
+async function buildTable(eventResults,watching) {    
     if (settings.femaleOnly) {
         eventResults = eventResults.filter(x => x.gender == "female")
     }
@@ -693,6 +693,7 @@ function buildTable(eventResults,watching) {
         td = document.createElement('td');
         let nameTeam = splitNameAndTeam(eventResults[rank].lastName);
         let lastName;
+        let firstName;
         settings.nameFormat == "O101" ? lastName = fmtLastName(eventResults[rank]) : lastName = nameTeam[0];        
         let teamBadge = "";
         if (nameTeam[1] && settings.showTeamBadge)
@@ -701,8 +702,15 @@ function buildTable(eventResults,watching) {
             //console.log("Getting team badge for " + nameTeam[1])
             o101enabled ? teamBadge = zen.fmtTeamBadgeV2(nameTeam[1]) : teamBadge = common.teamBadge(nameTeam[1]);
             //debugger
-        }        
-        td.innerHTML = eventResults[rank].firstName.charAt(0) + "." + lastName + " " + teamBadge;                        
+        }    
+        if (settings.nameFormat == "FirstLast") {
+            const athlete = await common.rpc.getAthlete(eventResults[rank].athleteId)
+            firstName = athlete.firstName
+            //debugger
+        } else {
+            firstName = eventResults[rank].firstName.charAt(0) + "."
+        }
+        td.innerHTML = firstName + "&nbsp;" + lastName + "&nbsp;" + teamBadge;                        
         tr.appendChild(td);
         td = document.createElement('td');
         if (settings.FTSorFAL == "FAL")
