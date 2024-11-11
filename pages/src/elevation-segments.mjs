@@ -523,13 +523,13 @@ export class SauceElevationProfile {
         //let routeElevations;
         //let routeGrades;
         //console.log("eventSubgroupId", eventSubgroupId)
-        let disableAdvancedRouting = true
+        let disableRouteOptimization = true
         if (eventSubgroupId && eventSubgroupId != 0) { // don't do advanced routing outside of events
-            disableAdvancedRouting = this.disablePenRouting
+            disableRouteOptimization = this.disablePenRouting
         }
         //debugger
         //let segmentsOnRoute = await zen.processRoute(this.courseId, this.routeId, laps, distance, this.showLoopSegments, this.showAllArches, this.disablePenRouting)
-        let segmentsOnRoute = await zen.processRoute(this.courseId, this.routeId, laps, distance, this.showLoopSegments, this.showAllArches, disableAdvancedRouting)
+        let segmentsOnRoute = await zen.processRoute(this.courseId, this.routeId, laps, distance, this.showLoopSegments, this.showAllArches, disableRouteOptimization)
         this.routeInfo = segmentsOnRoute;
         this.routeDistances = Array.from(segmentsOnRoute.routeFullData.distances);                    
         this.routeElevations = Array.from(segmentsOnRoute.routeFullData.elevations);        
@@ -637,8 +637,8 @@ export class SauceElevationProfile {
         }
         this._eventSubgroupId = eventSubgroupId;
         this._roadSigs = new Set();
-        this.curvePath = null;        
-        this.route = await zen.getModifiedRoute(id, this.disablePenRouting);
+        this.curvePath = null;  
+        this.route = await zen.getModifiedRoute(id, disableRouteOptimization);
         for (const {roadId, reverse} of this.route.manifest) {
             this._roadSigs.add(`${roadId}-${!!reverse}`);
         }        
