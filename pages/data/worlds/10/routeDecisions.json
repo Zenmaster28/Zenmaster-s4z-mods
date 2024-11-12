@@ -58,27 +58,57 @@
         "stub": "0"
       },
       {
+        "markerId": "260007",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
         "markerId": "260001",
         "turn": "1",
         "forward": "1",
         "stub": "0"
-      },
+      }
+    ]
+  },
+  {
+    "name": "Petite Douleur",
+    "id": "4159356920",
+    "decisions": [
       {
-        "markerId": "10000",
-        "turn": "3",
-        "forward": "1",
+        "markerId": "260000",
+        "turn": "0",
+        "forward": "0",
         "stub": "0"
       },
       {
         "markerId": "2",
-        "turn": "3",
+        "turn": "0",
         "forward": "1",
         "stub": "0"
       },
       {
-        "markerId": "20000",
+        "markerId": "4",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "30000",
         "turn": "3",
         "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "260000",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "2",
+        "turn": "0",
+        "forward": "1",
         "stub": "0"
       }
     ]
