@@ -2,7 +2,6 @@ import * as locale from '/shared/sauce/locale.mjs';
 import * as common from '/pages/src/common.mjs';
 import {Color} from '/pages/src/color.mjs';
 import * as ec from '/pages/deps/src/echarts.mjs';
-//import * as ec from './deps/echarts.mjs';
 import * as theme from '/pages/src/echarts-sauce-theme.mjs';
 import * as zen from './segments-xCoord.mjs';
 
