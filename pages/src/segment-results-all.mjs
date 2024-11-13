@@ -705,7 +705,7 @@ async function buildTable(eventResults,watching) {
         }    
         if (settings.nameFormat == "FirstLast") {
             const athlete = await common.rpc.getAthlete(eventResults[rank].athleteId)
-            firstName = athlete.firstName
+            firstName = athlete ? athlete.firstName : eventResults[rank].firstName.charAt(0) + "."
             //debugger
         } else {
             firstName = eventResults[rank].firstName.charAt(0) + "."
