@@ -1499,10 +1499,14 @@ export async function geto101() {
     let availableMods = await common.rpc.getAvailableMods();
     let o101Mod = availableMods.find(x => x.id == "o101_s4z_mods");
     if (o101Mod && (o101Mod.enabled && checkVersion("1.1.4",o101Mod.manifest.version)) <= 0) {
-        let modPath = o101Mod.modPath.split("\\").at(-1)
-        //o101common = await import("/mods/" + modPath + "/pages/src/o101/common.mjs")
+        const sauceVersion = await common.rpc.getVersion()
+        let modPath;
+        if (sauceVersion.startsWith("1.1")) {
+            modPath = o101Mod.modPath.split("\\").at(-1)
+        } else {
+            modPath = o101Mod.id
+        }
         return modPath;
-        //debugger
     } else {
         return null;
     }

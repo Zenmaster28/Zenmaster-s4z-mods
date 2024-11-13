@@ -14,7 +14,8 @@ async function geto101() {
         //debugger
     }
 }
-await geto101();
+//await geto101();
+modPath = await zen.geto101();
 
 
 let routeInfo = false;
