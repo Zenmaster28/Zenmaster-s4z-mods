@@ -439,7 +439,8 @@ export class SauceElevationProfile {
                             distance: 7,
                             position: 'insideEndTop',                    
                             formatter: markline.name,
-                            color: this.lineTextColor
+                            color: this.lineTextColor,
+                            rotate: 90
                         }
                     });
                 } else if (this.showSegmentFinish && markline.name.includes("Finish")) {
@@ -453,7 +454,8 @@ export class SauceElevationProfile {
                         label: {
                             show: true,                            
                             formatter: '|||',
-                            color: this.lineTextColor
+                            color: this.lineTextColor,
+                            rotate: 0
                         }
                     });
                 }
