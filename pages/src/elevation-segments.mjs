@@ -1873,8 +1873,12 @@ export class SauceElevationProfile {
                                                 }
                                             } else if (this.eventPowerups.type == "arch_powerup") {
                                                 let nextArchId = nextSegment.archId || 0;
-                                                puImgs += "&nbsp;"                                                
-                                                puImgs += `<img src="./images/${this.eventPowerups.powerups[nextArchId]}.png" class="puImg">`
+                                                puImgs += "&nbsp;"  
+                                                if (this.eventPowerups.powerups[nextArchId]) {
+                                                    puImgs += `<img src="./images/${this.eventPowerups.powerups[nextArchId]}.png" class="puImg">`
+                                                } else {
+                                                    puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
+                                                }
                                             } else if (this.eventPowerups.type == "nopowerups") {
                                                 puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
                                             } else if (this.eventPowerups.type == "standard") {

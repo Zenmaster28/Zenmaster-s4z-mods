@@ -1951,8 +1951,9 @@ export function getEventPowerups(sg) {
         7: 'steamroller',
         8: 'anvil'
     }
-    const customPowerups = sg?.allTags.filter(tag => tag.includes('powerup'))
+    const customPowerups = sg?.allTags.filter(tag => tag.includes('powerup'))    
     if (customPowerups?.length > 0) {
+        customPowerups.sort(); // if there are arch powerups, we want this first in the array as they take precedence over powerup_percent
         let customPU = customPowerups[0].split("=")
         powerUps.type = customPU[0]
         const puResult = {};
@@ -2517,3 +2518,18 @@ function addSmallIncrement(rp, plusMinus) {
     finalRP = (finalRP > 1 || finalRP < 0) ? rp : finalRP // if the increment is above 1 or below 0, just use the original
     return rp + increment;
 }
+
+
+export function getUniqueValues(arr, property) {
+    const uniqueValues = [];
+    const map = new Map();
+  
+    for (const item of arr) {
+      if (!map.has(item[property])) {
+        map.set(item[property], true);   
+        uniqueValues.push(item[property]);
+      }
+    }
+  
+    return uniqueValues;
+  }
