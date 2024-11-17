@@ -1,7 +1,6 @@
 import * as sauce from '/shared/sauce/index.mjs';
 import * as common from '/pages/src/common.mjs';
 import * as zen from './segments-xCoord.mjs';
-const doc = document.documentElement;
 let allKnownRacers = [];
 let segmentResults = [];
 let raceResults = [];
@@ -11,6 +10,8 @@ let lastKnownSG = {
 };
 let lastKnownSegmentData;
 let refresh = Date.now() - 30000;
+const doc = document.documentElement;
+doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  
 
 function setBackground() {
     const {solidBackground, backgroundColor} = common.settingsStore.get();
@@ -23,14 +24,14 @@ function setBackground() {
 }
 
 common.settingsStore.setDefault({
-    
+    FTSorFAL: "fts"
 });
-
+/*
 common.settingsStore.addEventListener('changed', ev => {
     const changed = ev.data.changed;     
     settings = common.settingsStore.get();
 });
-
+*/
 let settings = common.settingsStore.get();
 if (settings.transparentNoData) {document.body.classList = "transparent-bg"};
 
@@ -223,12 +224,17 @@ function processResults(watching) {
 
 function scoreResults(eventResults) {
     let racerScores = [];
-    let scoreFormat = "fts";
+    //let scoreFormat = "fts";
+    let scoreFormat = settings.FTSorFAL;
+    //debugger
     for (let segRes of eventResults) {
         
-        let points = 10;
-        //let scoreFormat = [120, 114, 108, 102, 101, 100, 98, 97, 96, 95, 89, 88, 86]
-        for (let i = 0; i < 10; i++) {
+        //let points = 10;        
+        let scorePoints = getScoreFormat();        
+        let pointsCounter = scorePoints.length
+        //debugger
+        //console.log("Scoring ", pointsCounter, "racers as", scorePoints)
+        for (let i = 0; i < pointsCounter; i++) {
             if (racerScores.length > 0) {
                 //debugger
             }
@@ -240,13 +246,13 @@ function scoreResults(eventResults) {
                 let score = {
                     athleteId: segRes[scoreFormat][i].athleteId,
                     name: segRes[scoreFormat][i].firstName + " " + segRes[scoreFormat][i].lastName,
-                    pointTotal: points
+                    pointTotal: scorePoints[i]
                 }
                 racerScores.push(score)
             } else {
-                prevScore.pointTotal += points
+                prevScore.pointTotal += scorePoints[i]
             }
-            points--;
+            //points--;
         }
         }
     }
@@ -254,9 +260,11 @@ function scoreResults(eventResults) {
 }
 
 function displayResults(racerScores) {
+
+    let scoreFormat = settings.FTSorFAL;
     const pointsResultsDiv = document.getElementById("pointsResults")
     pointsResultsDiv.innerHTML = "";
-    let tableOutput = "<table><thead><th>Rank</th><th>Name</th><th>Points</th></thead><tbody>";
+    let tableOutput = "<table><thead><th>Rank</th><th>Name</th><th>Points (" + scoreFormat + ")</th></thead><tbody>";
     let rank = 1;
     for (let racer of racerScores) {
         tableOutput += `<tr><td>${rank}</td><td>${racer.name}</td><td>${racer.pointTotal}</td></tr>`
@@ -302,7 +310,35 @@ async function getLeaderboard(watching) {
         
     }
 };
-
+function getScoreFormat() {
+    let scoreFormat = settings.scoreFormat;
+    let scoreList = [];
+    if (scoreFormat != null)
+    {
+        let scores = scoreFormat.split(',');        
+        for (let score of scores)
+        {
+            if (score.includes(".."))
+            {
+                let scoreSeq = score.split("..")
+                for (let i = scoreSeq[0]; i > scoreSeq[1] - 1 ; i--)
+                {
+                    scoreList.push(parseInt(i));
+                }
+            }
+            else
+            {
+                scoreList.push(parseInt(score));
+            }
+        }
+        return scoreList;
+    }
+    return [10,9,8,7,6,5,4,3,2,1];
+}
+function changeFontScale() {
+    const doc = document.documentElement;
+    doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  
+}
 
 export async function main() {
     common.initInteractionListeners();  
@@ -315,8 +351,11 @@ export async function main() {
         const changed = ev.data.changed; 
         if (changed.has('solidBackground') || changed.has('backgroundColor')) {            
             setBackground();
+        } 
+        if (changed.has('fontScale')) {
+            changeFontScale();
         }
-        
+        settings = common.settingsStore.get();
     });
 }
 
