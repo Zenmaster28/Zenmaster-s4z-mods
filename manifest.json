@@ -4,7 +4,7 @@
     "description": "Arend's Mod Collection for S4Z",
     "author": "Arend teRaa",
     "website_url": "https://saucellc.io",
-    "version": "1.5.3",
+    "version": "1.5.4",
     "content_js": [
         "pages/src/data-fields.js"
     ],
@@ -183,6 +183,21 @@
             "id": "Segment results multilap",
             "name": "Segment results Multilap",
             "description": "Show FTS or FAL results for the segments on a route.",
+            "always_visible": true,
+            "overlay": true,
+            "frame": false,
+            "default_bounds": {
+                "width": 300,
+                "height": 500,
+                "x": -300,
+                "y": 100
+            }
+        },        
+        {
+            "file": "pages/points-leaderboard.html",
+            "id": "points-leaderboard",
+            "name": "Points leaderboard (experimental)",
+            "description": "Show FTS or FAL point totals for a race.",
             "always_visible": true,
             "overlay": true,
             "frame": false,
