@@ -39,6 +39,8 @@ let routeInfo = false;
 let inProgress = false;
 let allRacerRefresh = Date.now() - 25000;
 let teamColors;
+let eventJoined= [];
+let eventJoinedRefresh = Date.now() - 60000;
 async function getTeamColors() {
     try {
         teamColors = await fetch("/mods/o101_s4z_mods/pages/src/o101/teamcolors.json").then((response) => response.json());
@@ -776,14 +778,19 @@ async function getKnownRacers(eventId) {
             var knownRacers = new Set(eventRes.map(d => d.athleteId))
             for (let racer of knownRacers)
             {
+                //debugger
                 if (!allKnownRacers.includes(racer))
                 {
-                    allKnownRacers.push(racer);
+                    if (eventJoined.find(x => x.id == racer)) {
+                        allKnownRacers.push(racer);
+                    } else {
+                        //console.log("Found a racer in results that isn't on the eventJoined list!", racer)
+                    }
                 }
             }        
         }
     }
-   //("Known racer count: " + allKnownRacers.length)
+   console.log("Known racer count from segment results: ",allKnownRacers.length)
 }
 
 async function getSegmentResults(watching) {    
@@ -863,6 +870,20 @@ async function getSegmentResults(watching) {
             routeSegments = routeInfo.markLines;
         }
         //debugger
+        if (Date.now() - eventJoinedRefresh > 60000 && watching.state.eventSubgroupId != 0) {
+            eventJoinedRefresh = Date.now();
+            //console.log("Refreshing the event joined list")
+            eventJoined = await common.rpc.getEventSubgroupEntrants(watching.state.eventSubgroupId, {joined: true});
+            //console.log("Found", eventJoined.length,"racers", eventJoined)
+            allKnownRacers = allKnownRacers.filter(racer => {
+                if (!eventJoined.find(x => x.id === racer)) {
+                    //console.log("Found a known racer that isn't on the eventJoined list, removing", racer);
+                    return false; // Exclude this racer from the new array
+                }
+                return true; // Keep this racer in the new array
+            });
+            
+        }
         if (Date.now() - allRacerRefresh > 30000) {
             getKnownRacers(watching.state.eventSubgroupId);
         }
@@ -962,6 +983,8 @@ export async function main() {
         segmentBests = [];
         approachingRefresh = null;
         inSegmentRefresh = null;
+        eventJoinedRefresh = Date.now() - 100000; // force an event participant refresh
+        allRacerRefresh = Date.now() - 100000;
     });
     common.settingsStore.addEventListener('changed', ev => {
         const changed = ev.data.changed; 
