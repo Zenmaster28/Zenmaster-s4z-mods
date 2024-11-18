@@ -490,7 +490,8 @@ export async function main() {
             routesList.push(newRoute);
         }
     });
-    routesList.sort((a, b) => a.name < b.name ? -1 : 1);    
+    routesList.sort((a, b) => a.name < b.name ? -1 : 1);  
+    worldList = worldList.filter(x => x.name)
     zwiftMap = createZwiftMap();
     window.zwiftMap = zwiftMap;  // DEBUG
     window.MapEntity = map.MapEntity;
