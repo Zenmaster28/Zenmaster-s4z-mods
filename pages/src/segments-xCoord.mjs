@@ -1958,7 +1958,8 @@ export function getEventPowerups(sg) {
         powerUps.type = customPU[0]
         const puResult = {};
         if (powerUps.type == "powerup_percent") { // powerups are randomly selected at each arch according to percentages returned
-            const puPairs = customPU[1].replace(/"/g, '').split(",")
+            const puParts = customPU[1].split(',')
+            const puPairs = puParts.map(part => part.replace(/[^0-9]/g, '')).filter(part => part !== ''); // strip out anything that isn't a number
             for (let i = 0; i < puPairs.length; i += 2) {
                 const puKey = puList[puPairs[i]]
                 const puValue = parseInt(puPairs[i + 1])
