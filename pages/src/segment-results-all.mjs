@@ -674,6 +674,7 @@ async function buildTable(eventResults,watching) {
         {
             continue;
         }  
+        const athlete = await common.rpc.getAthlete(eventResults[rank].athleteId)
         let tr = document.createElement('tr');            
         let td = document.createElement('td');  
         if (scoreFormat != -1) 
@@ -706,7 +707,6 @@ async function buildTable(eventResults,watching) {
             //debugger
         }    
         if (settings.nameFormat == "FirstLast") {
-            const athlete = await common.rpc.getAthlete(eventResults[rank].athleteId)
             firstName = athlete ? athlete.firstName : eventResults[rank].firstName.charAt(0) + "."
             //debugger
         } else {
@@ -732,6 +732,10 @@ async function buildTable(eventResults,watching) {
         if (watching.athleteId === eventResults[rank].athleteId)
         {            
             tr.className = "watching";
+        } else if (settings.highlightTeammate && athlete?.team?.trim() == watching.athlete.team?.trim()) {
+            tr.className = "teammate"
+        } else if (settings.highlightMarked && athlete?.marked) {
+            tr.className = "marked"
         }
         
         resultsTable.appendChild(tr);                    
