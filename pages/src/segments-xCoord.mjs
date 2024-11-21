@@ -1292,8 +1292,25 @@ export async function getModifiedRoute(id, disablePenRouting) {
             if (route) {
                 //let lastManifestEntry = route.manifest.at(-1);                
                 if (route.courseId == 14 && !disablePenRouting) { // France
-                    if (route.id == 986252325) {  // Douce France has extra manifest entries after the finish to allow for multiple laps
-                        //debugger
+                    if (route.id == 986252325) {  // Douce France needs extra manifest entries after the finish to allow for multiple laps
+                        route.extraManifest = [{
+                            end: 0.49016710144219455,
+                            roadId: 26,
+                            start: 0.4821480325
+                        },
+                        {
+                            end: 0.778745099242397,
+                            roadId: 1,
+                            start: 0.24767863682868888
+                        },
+                        {
+                            end: 0.03494393677166804,
+                            roadId: 0,
+                            start: 0.018091671029747677
+                        }];
+
+                        /*
+                        debugger
                         route.extraManifest = [];
                         do {
                             // put the extra manifest entries aside for later use if more than one lap
@@ -1306,6 +1323,7 @@ export async function getModifiedRoute(id, disablePenRouting) {
                             start: 0.4821480324
                         })
                         route.manifest.at(-1).end = 0.4821480324
+                        */
                     }
                     //debugger
                 }
@@ -1313,7 +1331,7 @@ export async function getModifiedRoute(id, disablePenRouting) {
                     const lastManifestEntry = route.manifest.at(-1);
                     await isBannerNearby(lastManifestEntry, route.courseId, "last");
                     const leadin = route.manifest.filter(x => x.leadin)
-                    if (leadin.length > 0) {
+                    if (leadin.length > 0 && route.id != 1433431343) {
                         const lastLeadin = leadin.at(-1)
                         await isBannerNearby(lastLeadin, route.courseId, "leadin")
                         const idxLastLeadin = route.manifest.indexOf(lastLeadin)
