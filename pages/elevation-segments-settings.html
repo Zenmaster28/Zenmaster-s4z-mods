@@ -220,9 +220,13 @@
                     <key data-added="2024-02-06">Profile zoom </key>
                     <input type="checkbox" name="profileZoom" data-depends-on="overrideDistance==0">                    
                 </label>
+                <label>
+                    <key data-added="2024-11-21">&nbsp;&nbsp;- remaining route</key>
+                    <input type="checkbox" name="zoomRemainingRoute" data-depends-on="profileZoom">
+                </label>
                 <label>    
                     <key data-added="2024-02-06">&nbsp;&nbsp;- Show the next </key>                
-                    <input type="range" name="forwardDistance" min="1000" max="50000" step="500" data-depends-on="profileZoom"/>
+                    <input type="range" name="forwardDistance" min="1000" max="50000" step="500" data-depends-on="!zoomRemainingRoute"/>
                     <input type="number" name="forwardDistance" min="1000" max="50000" step="500" style="--size: 7" data-depends-on="profileZoom"/> meters
                 </label>
                 <label>

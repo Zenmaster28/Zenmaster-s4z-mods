@@ -15,7 +15,7 @@ let allMarkLines = [];
 const allRoutes = await zen.getAllRoutes();
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, refresh=1000}) {
         this.debugXcoord = false;
         this.debugXcoordDistance = null;
         this.debugPinPlacement = false;
@@ -88,6 +88,7 @@ export class SauceElevationProfile {
         this.zoomNextSegmentApproach = zoomNextSegmentApproach;
         this.zoomFinalKm = zoomFinalKm;
         this.zoomSlider = zoomSlider;
+        this.zoomRemainingRoute = zoomRemainingRoute;
         this.forwardDistance = forwardDistance;
         this.refresh = refresh;
         this._lastRender = 0;
@@ -1390,7 +1391,7 @@ export class SauceElevationProfile {
                                     let nearIdx = common.binarySearchClosest(this._distances, distance);
                                     //debugger
                                     if (this._eventSubgroupId != null && nearIdx < this.routeInfo.routeFullData.lapNodes[state.laps]) {
-                                        console.log("Bumping idx",nearIdx," to next lap", this.routeInfo.routeFullData.lapNodes[state.laps])
+                                        //console.log("Bumping idx",nearIdx," to next lap", this.routeInfo.routeFullData.lapNodes[state.laps])
                                         //debugger
                                         nearIdx = this.routeInfo.routeFullData.lapNodes[state.laps]
                                     }
@@ -1589,10 +1590,19 @@ export class SauceElevationProfile {
                                     }
                                     //debugger
                                 }
-                                if (this.profileZoom && !this.singleLapView && (this.forwardDistance < this.routeDistances.at(-1))) {
+                                if (this.profileZoom && !this.singleLapView && ((this.forwardDistance < this.routeDistances.at(-1)) || this.zoomRemainingRoute)) {
                                     //console.log(xCoord)
                                     let offsetBack = 500
-                                    const distance = this.forwardDistance; 
+                                    let distance;
+                                    if (this.zoomRemainingRoute) {
+                                        if (this.routeDistances.at(-1) - xCoord > 1000) {
+                                            distance = this.routeDistances.at(-1) - xCoord;
+                                        } else {
+                                            distance = 1000;
+                                        }
+                                    } else {
+                                        distance = this.forwardDistance; 
+                                    }
                                     let zoomStart;
                                     let zoomFinish;
                                     let approachingFinish = false
