@@ -1,0 +1,94 @@
+html.solid-background {
+  background: var(--background-color);
+}
+html.solid-background body {
+  background: transparent !important;
+}
+#content {
+  scroll-behavior: smooth;
+  padding: 0;
+  overflow: auto;
+  position: relative;  
+}
+div .segmentInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  justify-content: left;
+  white-space: nowrap;  
+  width: 100%;    
+  font-variant: small-caps tabular-nums;
+  font-size: calc(var(--font-scale) * 0.9em);
+}
+table td.info {
+  text-align: left;
+  width: 50%;
+}
+
+div .segmentData {
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  justify-content: left;
+  white-space: nowrap;
+  overflow-x: hidden;  
+  width: 100%;  
+  font-variant: small-caps tabular-nums;
+  font-size: calc(var(--font-scale) * 0.8em);
+}
+div .segmentData .data {
+  width: 100%
+}
+
+.container {
+  width: 100%;  
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: calc(var(--font-scale) * 0.8em);
+}
+
+th, td {  
+  text-align: left;
+  white-space: nowrap; 
+  
+}
+
+th:not(:nth-child(2)), td:not(:nth-child(2)) {
+  width: 1%; 
+  padding-right: 10px;
+  text-align: right;
+}
+
+th:nth-child(2), td:nth-child(2) {
+  width: auto; 
+  max-width: 0;
+  overflow: hidden;  
+}
+table tr.watching {
+  background-image: linear-gradient(135deg, hsl(var(--theme-primary-hue) var(--theme-primary-sat) var(--theme-primary-light)/85%), hsl(var(--theme-primary-hue) var(--theme-primary-sat) calc(var(--theme-primary-light) + -10% * var(--theme-primary-shade-dir))/80%));
+  color: hsl(var(--theme-primary-hue) var(--theme-primary-sat) calc(var(--theme-primary-light) + 100% * var(--theme-primary-shade-dir))/100%);
+}
+table tr.marked {
+  background-image: linear-gradient(135deg, hsl(var(--theme-marked-hue) var(--theme-marked-sat) var(--theme-marked-light)/75%), hsl(var(--theme-marked-hue) var(--theme-marked-sat) calc(var(--theme-marked-light) + -10% * var(--theme-marked-shade-dir))/80%));
+  color: hsl(var(--theme-marked-hue) var(--theme-marked-sat) calc(var(--theme-marked-light) + 100% * var(--theme-marked-shade-dir))/100%);
+}
+table tr.teammate {
+  background-image: linear-gradient(135deg, hsl(var(--theme-following-hue) var(--theme-following-sat) var(--theme-following-light)/80%), hsl(var(--theme-following-hue) var(--theme-following-sat) calc(var(--theme-following-light) + -10% * var(--theme-following-shade-dir))/80%));
+  color: hsl(var(--theme-following-hue) var(--theme-following-sat) calc(var(--theme-following-light) + 100% * var(--theme-following-shade-dir))/100%);
+}
+div .info-item-team {
+  margin-top: -0.03em;
+  display: inline-table;
+}
+div .info-item-team span {
+  background-image: linear-gradient(var(--o101lg1), var(--o101lg2));
+  border-radius: 4px;
+  font-weight: var(--weight);
+  padding: 0 0.4em 0 0.4em;
+  color: var(--o101c);
+  zoom: 0.6;
+}
+

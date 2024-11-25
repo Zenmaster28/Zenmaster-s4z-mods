@@ -50,11 +50,15 @@
                 margin-bottom: 0;
                 justify-content: space-between;
             }
-
+            .scoreLabel {
+                display: inline-block;
+                margin-right: 0.4em;
+                min-width: 20ch;
+            }
             form label key {
                 display: inline-block;
                 margin-right: 0.4em;
-                min-width: 25ch;
+                min-width: 20ch;
             }
             .col-adj {
                 flex: 0 0 auto;
@@ -86,17 +90,223 @@
                 min-width: 2ch;
                 text-align: center;
             }
+            .segmentsContainer {
+                display: flex;
+                max-width: 100%;
+                overflow: hidden;
+            }
+            .segmentsList {
+                white-space: nowrap;
+                padding-right: 2ch;
+            }
+            .segmentsSave {
+                flex: 1;
+                padding-top: 3px;
+            }
+            .segmentsSave button {
+                font-family: inherit;
+                font-size: inherit;
+                font-weight: inherit;
+                padding: 1;
+                line-height: 1;
+            }
         </style>
 
         <script type="module">         
             import * as common from '/pages/src/common.mjs';
             import * as zen from './src/segments-xCoord.mjs';
             //zen.buildPointsForm();
-            //zen.buildsegmentsTable()
+            //zen.buildSegmentsTable()
+            let dbSegmentConfig = await zen.openSegmentConfigDB();
             import {settingsMain} from './src/points-leaderboard.mjs';
             settingsMain();
             document.body.classList.remove("transparent-bg");
-            debugger
+            const scoreFormatDiv = document.getElementById("scoreFormats");
+            scoreFormatDiv.innerHTML += `
+                <b>Score Formats</b></br>
+                <span class="scoreLabel">FTS:</span> <input type="text" id="ftsScoreFormat" size="20"><br>
+                <span class="scoreLabel">FAL:</span> <input type="text" id="falScoreFormat" size="20"><br>
+                <span class="scoreLabel">FIN:</span> <input type="text" id="finScoreFormat" size="20"><br>
+                <hr>
+            `
+
+
+            const eventsListDiv = document.getElementById("eventsList");
+            const allEvents = await common.rpc.getCachedEvents();
+            const eventsSelect = document.createElement('select')
+            eventsSelect.id = "eventsSelect"
+            const optChoose = document.createElement('option')
+            optChoose.textContent = "Click to select an event to configure";
+            optChoose.value = -1;
+            eventsSelect.appendChild(optChoose);
+            let eventInfo;
+            for (let event of allEvents) {
+                const eventStartTime = new Date(event.eventStart)
+                const opt = document.createElement('option')
+                opt.textContent = eventStartTime.toLocaleTimeString(undefined, {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                }) + " - " + event.name;
+                opt.value = event.id
+                eventsSelect.appendChild(opt)
+            }
+            eventsListDiv.appendChild(eventsSelect)
+            const watching = await common.rpc.getAthleteData("watching")
+            
+            const penListDiv = document.getElementById('penList');
+            const segmentsSaveDiv = document.getElementById('segmentsSave')
+            const segmentsTableDiv = document.getElementById('segmentsList')
+            const segmentsHeaderDiv = document.getElementById('segmentsHeader')
+            const ftsScoreFormatDiv = document.getElementById('ftsScoreFormat')
+            const falScoreFormatDiv = document.getElementById('falScoreFormat')
+            const finScoreFormatDiv = document.getElementById('finScoreFormat')
+            eventsSelect.addEventListener('change', async function() {
+                segmentsTableDiv.innerHTML = "";
+                penListDiv.innerHTML = "";
+                segmentsSaveDiv.innerHTML = "";
+                segmentsHeaderDiv.innerHTML = "";
+                ftsScoreFormatDiv.value = "";
+                falScoreFormatDiv.value = "";
+                finScoreFormatDiv.value = "";
+                if (this.value != -1) {
+                    eventInfo = await common.rpc.getEvent(parseInt(this.value))
+                    eventInfo.eventSubgroups.sort((a,b) => {
+                        if (a.subgroupLabel > b.subgroupLabel) return 1;
+                        if (a.subgroupLabel < b.subgroupLabel) return -1;
+                        return 0;
+                    })
+                    //debugger
+                    const penSelect = document.createElement('select');
+                    penSelect.id = "penSelect"
+                    if (eventInfo) {
+                        console.log(eventInfo)
+                        
+                        const optText = document.createElement('option');
+                        optText.textContent = "Select a pen"
+                        optText.value = -1
+                        penSelect.appendChild(optText)
+                        for (let sg of eventInfo.eventSubgroups) {
+                            const optPen = document.createElement('option')
+                            optPen.value = sg.id;
+                            optPen.textContent = sg.subgroupLabel;
+                            penSelect.appendChild(optPen)
+                        }
+                        penListDiv.appendChild(penSelect)
+                    }
+                    penSelect.addEventListener('change', async function() {
+                        const sg = eventInfo.eventSubgroups.find(x => x.id == this.value)
+                        if (sg) {
+                            const currentEventConfig = await zen.getEventConfig(dbSegmentConfig, sg.id)
+                            console.log(currentEventConfig)
+                            if (currentEventConfig) {
+                                ftsScoreFormatDiv.value = currentEventConfig.ftsScoreFormat;
+                                falScoreFormatDiv.value = currentEventConfig.falScoreFormat;
+                                finScoreFormatDiv.value = currentEventConfig.finScoreFormat;
+                            } else {
+                                ftsScoreFormatDiv.value = "";
+                                falScoreFormatDiv.value = "";
+                                finScoreFormatDiv.value = "";
+                            }
+                            const routeData = await zen.processRoute(sg.courseId, sg.routeId, sg.laps, sg.distanceInMeters, false, false, false)
+                            let segmentData = routeData.markLines
+                            segmentData = segmentData.filter(x => x.type != "custom" && !x.name.includes("Finish"));
+                            const segmentsTable = await zen.buildPointsTable(segmentData, currentEventConfig)                    
+                            segmentsTableDiv.innerHTML = "";
+                            segmentsSaveDiv.innerHTML = "";
+                            segmentsHeaderDiv.innerHTML = "<h2>" + routeData.routeFullData.name + " in " + common.courseToNames[routeData.routeFullData.courseId]
+                            segmentsTableDiv.appendChild(segmentsTable)
+                            const saveButtonDiv = document.getElementById("segmentsSave")
+                            const saveButton = document.createElement('button')
+                            saveButton.textContent = "Save"
+                            saveButton.addEventListener('click', saveConfig);
+                            saveButtonDiv.appendChild(saveButton)
+
+                        }
+                        //debugger
+                    })
+                    if (watching) {
+                        const eventSubgroupId = watching.state.eventSubgroupId;
+                        if (eventSubgroupId > 0) {
+                            const validOption = Array.from(penSelect.options).some(option => option.value == eventSubgroupId)
+                            if (validOption) {
+                                penSelect.value = eventSubgroupId
+                                const event = new Event('change')
+                                penSelect.dispatchEvent(event)
+                            }
+                        } else {
+                            const signedUp = allEvents.filter(x => x.eventSubgroups.some(sg => sg.signedUp))
+                            if (signedUp.length > 0) {
+                                //debugger
+                                //console.log("Selecting pen")
+                                const sg = signedUp[0].eventSubgroups.find(x => x.signedUp)
+                                console.log(sg)
+                                const validOption = Array.from(penSelect.options).some(option => option.value == sg.id)
+                                if (validOption) {
+                                    penSelect.value = sg.id
+                                    const event = new Event('change')
+                                    penSelect.dispatchEvent(event)
+                                }
+                            }
+                        }
+                        //debugger
+                    }
+                }
+            });
+            if (watching) {
+                const eventSubgroupId = watching.state.eventSubgroupId;
+                if (eventSubgroupId > 0) {
+                    const sg = await common.rpc.getEventSubgroup(eventSubgroupId)
+                    eventsSelect.value = sg.eventId
+                    const event = new Event('change')
+                    eventsSelect.dispatchEvent(event)
+                } else {
+                    const signedUp = allEvents.filter(x => x.eventSubgroups.some(sg => sg.signedUp))
+                    if (signedUp.length > 0) {
+                        const sg = signedUp[0].eventSubgroups.find(x => x.signedUp)
+                        eventsSelect.value = sg.eventId
+                        const event = new Event('change')
+                        eventsSelect.dispatchEvent(event)
+                    }
+                    //debugger
+                }
+                //debugger
+            }
+            function saveConfig() {
+                //console.log("Save clicked")
+                const segmentsTable = document.getElementById('segmentsTable')
+                const tableRows = segmentsTable.querySelectorAll('tr')
+                const segData = [];
+                for (let row of tableRows) {
+                    const segConfig = {
+                        name: row.cells[0].textContent.replace(/\s\[\d+\]$/, ""),
+                        segmentId: row.cells[1].textContent,
+                        repeat: parseInt(row.cells[2].textContent),
+                        enabled: row.cells[3].querySelector('input').checked,
+                        scoreFormat: row.cells[4].querySelector('select').value
+                    }
+                    segData.push(segConfig);
+                }
+                const eventConfig = {
+                    ftsScoreFormat: document.getElementById('ftsScoreFormat').value,
+                    falScoreFormat: document.getElementById('falScoreFormat').value,
+                    finScoreFormat: document.getElementById('finScoreFormat').value,
+                    eventId: parseInt(document.getElementById('eventsSelect').value),
+                    eventSubgroupId: parseInt(document.getElementById('penSelect').value),
+                    segments: segData
+                }
+                const transaction = dbSegmentConfig.transaction("segmentConfig", "readwrite");
+                const store = transaction.objectStore("segmentConfig")
+                const request = store.put(eventConfig);
+                request.onsuccess = function () {                    
+                    console.log("Event config saved:", eventConfig.eventSubgroupId);
+                };
+                request.onerror = function (event) {
+                    console.error("Failed to save event config:", event.target.error);
+                };
+                //debugger
+            }
+            //debugger
         </script>
     </head>
     <body>
@@ -112,7 +322,8 @@
         </div>
         <div id="settings">
             <div class="title" id="formTitle"></div>
-            <form id="options" class="section">                
+            <form id="options" class="section">    
+                <!--           
                 <label>
                     <key>Scoring type:</key>
                     <select name="FTSorFAL">Result format: 
@@ -125,6 +336,7 @@
                     <input type="text" name="scoreFormat">
                 </label>
                 <hr>
+            -->
                 <label>
                     <key>Theme override:</key>
                     <select is="sauce-theme" override></select>
@@ -134,7 +346,30 @@
                     <input type="range" name="fontScale" min="0.1" max="2" step="0.05"/>
                     <input type="number" name="fontScale" min="0.1" max="2" step="0.05" style="--size: 5"/>
                 </label> 
+                <label title="Don't show the breakdown of FTS, FAL and FIN points, just the combined total.">
+                    <key>Only show total points:</key>
+                    <input type="checkbox" name="onlyTotalPoints">
+                </label>
+                <hr>
+                <div class="title">Highlight</div>
+                <label>
+                    <key>&nbsp;&nbsp;- teammates</key>
+                    <input type="checkbox" name="highlightTeammate">
+                </label>
+                <label>
+                    <key>&nbsp;&nbsp;- marked riders</key>
+                    <input type="checkbox" name="highlightMarked">
+                </label>                
+                <hr>
             </form>
+            <div id="scoreFormats"></div>
+            <div id="eventsList"></div>
+            <div id="penList"></div>
+            <div id="segmentsHeader"></div>
+            <div class="segmentsContainer">
+                <div id="segmentsList" class="segmentsList"></div>
+                <div id="segmentsSave" class="segmentsSave"></div>
+            </div>
             <form id="fields" class="section">
                 
             </form>

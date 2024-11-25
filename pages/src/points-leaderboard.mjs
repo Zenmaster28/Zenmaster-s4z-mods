@@ -1,14 +1,19 @@
 import * as sauce from '/shared/sauce/index.mjs';
 import * as common from '/pages/src/common.mjs';
 import * as zen from './segments-xCoord.mjs';
+let dbSegments = await zen.openSegmentsDB();
+let dbSegmentConfig = await zen.openSegmentConfigDB();
+await zen.cleanupSegmentsDB(dbSegments);
 let allKnownRacers = [];
-let segmentResults = [];
+//let segmentResults = [];
 let raceResults = [];
 let lastKnownSG = {
     eventSubgroupId: 0,
     eventSubgroupStart: 0
 };
 let lastKnownSegmentData;
+let currentEventConfig;
+let watchingTeam;
 let refresh = Date.now() - 30000;
 const doc = document.documentElement;
 doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  
@@ -24,7 +29,7 @@ function setBackground() {
 }
 
 common.settingsStore.setDefault({
-    FTSorFAL: "fts"
+    onlyTotalPoints: false
 });
 /*
 common.settingsStore.addEventListener('changed', ev => {
@@ -104,14 +109,15 @@ async function getKnownRacers(watching) {
             }        
         }
     }
-   console.log("Known racer count: " + allKnownRacers.length, allKnownRacers)
+    const savedKnownRacers = await zen.storeKnownRacers(dbSegments, allKnownRacers)
+    //console.log("Known racer count: " + allKnownRacers.length, allKnownRacers)
    //debugger
 }
 
 async function getAllSegmentResults(watching) {
     // todo - save last known route segments before sg -> 0
     let eventSubgroupId;
-    let segmentData;
+    let segmentData;    
     if (watching.state.eventSubgroupId == 0 && lastKnownSG.eventSubgroupId > 0) {
         eventSubgroupId = lastKnownSG.eventSubgroupId;
         segmentData = lastKnownSegmentData;
@@ -119,7 +125,9 @@ async function getAllSegmentResults(watching) {
         eventSubgroupId = watching.state.eventSubgroupId;
         segmentData = watching.segmentData;
     }
-    let eventRacers = allKnownRacers.filter(x => x.eventSubgroupId === eventSubgroupId).map(x => x.athleteId); // make sure we only get racers from this eventsubgroup
+    //let eventRacers = allKnownRacers.filter(x => x.eventSubgroupId === eventSubgroupId).map(x => x.athleteId); // make sure we only get racers from this eventsubgroup
+    let eventRacers = (await zen.getKnownRacers(dbSegments, eventSubgroupId)).map(x => x.athleteId)
+    console.log("Known racer count: " + eventRacers.length, eventRacers)
     //debugger
     let sg = await common.rpc.getEventSubgroup(eventSubgroupId)    
     let eventStartTime;
@@ -128,12 +136,13 @@ async function getAllSegmentResults(watching) {
         lastKnownSG.eventSubgroupStart = eventStartTime
         if (watching.state.eventSubgroupId) {
             lastKnownSegmentData = watching.segmentData;
-            console.log("Setting last known segment data", lastKnownSegmentData)
+            //console.log("Setting last known segment data", lastKnownSegmentData)
         }
     } else {
         eventStartTime = lastKnownSG.eventSubgroupStart
     }
     const uniqueSegmentIds = getUniqueValues(segmentData.routeSegments, "id")
+    let resultsToStore = [];
     for (let segId of uniqueSegmentIds) {
         const resultsFull = await common.rpc.getSegmentResults(segId);    
         var eventRes = resultsFull.filter(x => x.ts > eventStartTime);           
@@ -143,19 +152,29 @@ async function getAllSegmentResults(watching) {
             //const filteredEventRes = eventRes.filter(event => allKnownRacers.includes(event.athleteId));
             const filteredEventRes = eventRes.filter(event => eventRacers.includes(event.athleteId)); 
             //console.log(filteredEventRes)
-            filteredEventRes.forEach(result => {                
+            filteredEventRes.forEach(result => {   
+                result.eventSubgroupId = eventSubgroupId;
+                result.segmentId = segId;
+                resultsToStore.push(result)   
+                /*          
                 const exists = segmentResults.some(r => r.id === result.id);
                 if (!exists) {
                     result.eventSubgroupId = eventSubgroupId;
                     result.segmentId = segId;
                     //console.log("Adding new result for ", result)
                     segmentResults.push(result)
-                }
+                    
+                }  
+                */          
             })
             //debugger     
         }
     }
-    //console.log(segmentResults)
+    //debugger
+    const savedResultsCount = await zen.storeSegmentResults(dbSegments, resultsToStore);    
+    //console.log("New saved results:", savedResultsCount)
+    //console.log("segment results:",segmentResults)
+    console.log("results to store:", resultsToStore)
 }
 
 async function getRaceResults(watching) {
@@ -176,7 +195,7 @@ async function getRaceResults(watching) {
     })
 }
 
-function processResults(watching) {
+async function processResults(watching, dbResults) {
     let eventResults = [];
     //let eventSubgroupId = watching.state.eventSubgroupId;
     let eventSubgroupId;
@@ -190,11 +209,14 @@ function processResults(watching) {
         segmentData = watching.segmentData;
         console.log("Using watching segment data")
     }
-    console.log("Segment data is", segmentData)
+    //console.log("Segment data is", segmentData)
     let eventRacers = allKnownRacers.filter(x => x.eventSubgroupId === eventSubgroupId).map(x => x.athleteId); // make sure we only get racers from this eventsubgroup
     segmentData = segmentData.routeSegments.filter(x => x.type != "custom" && !x.name.includes("Finish"));
     for (let segment of segmentData) {
-        let segRes = segmentResults.filter(x => x.segmentId == segment.id).sort((a, b) => {return a.worldTime - b.worldTime})
+        //let segRes = segmentResults.filter(x => x.segmentId == segment.id).sort((a, b) => {return a.worldTime - b.worldTime})
+        let segRes = dbResults.filter(x => x.segmentId == segment.id).sort((a, b) => {return a.worldTime - b.worldTime})
+        //console.log(segRes)
+        //debugger
         let repeatResults = [];
         //for (let racer of allKnownRacers) {
         for (let racer of eventRacers) {
@@ -222,56 +244,160 @@ function processResults(watching) {
     return eventResults;    
 }
 
-function scoreResults(eventResults) {
+async function scoreResults(eventResults, currentEventConfig) {
     let racerScores = [];
     //let scoreFormat = "fts";
-    let scoreFormat = settings.FTSorFAL;
+    //let scoreFormat = settings.FTSorFAL;
+    let scoreFormats = ["FTS"];
+    let segmentRepeat;
+    console.log("Event config", currentEventConfig)
     //debugger
     for (let segRes of eventResults) {
         
-        //let points = 10;        
-        let scorePoints = getScoreFormat();        
-        let pointsCounter = scorePoints.length
-        //debugger
-        //console.log("Scoring ", pointsCounter, "racers as", scorePoints)
-        for (let i = 0; i < pointsCounter; i++) {
-            if (racerScores.length > 0) {
-                //debugger
+        //let points = 10;  
+        //debugger 
+        if (currentEventConfig) {
+            segmentRepeat = currentEventConfig.segments.find(x => x.segmentId == segRes.segmentId && x.repeat == segRes.repeat)
+            if (!segmentRepeat.enabled) {
+                console.log("NOT scoring", segmentRepeat.name, "repeat", segmentRepeat.repeat)
+                continue; 
             }
-            if (segRes[scoreFormat].length > 0 && segRes[scoreFormat][i]) {
-            let prevScore = racerScores.find(x => x.athleteId == segRes[scoreFormat][i].athleteId)
-
-            if (!prevScore) {
-                //debugger
-                let score = {
-                    athleteId: segRes[scoreFormat][i].athleteId,
-                    name: segRes[scoreFormat][i].firstName + " " + segRes[scoreFormat][i].lastName,
-                    pointTotal: scorePoints[i]
-                }
-                racerScores.push(score)
-            } else {
-                prevScore.pointTotal += scorePoints[i]
-            }
-            //points--;
+            scoreFormats = segmentRepeat.scoreFormat.split(",");
         }
+        for (let scoreFormat of scoreFormats) {
+            //console.log("Scoring",scoreFormat)
+            scoreFormat = scoreFormat.toLowerCase();
+            let scores;
+            if (scoreFormat == "fts") {
+                scores = currentEventConfig.ftsScoreFormat;
+            } else if (scoreFormat == "fal") {
+                scores = currentEventConfig.falScoreFormat;
+            }
+            let scorePoints = getScoreFormat(scores);        
+            let pointsCounter = scorePoints.length
+            //debugger
+            //console.log("Scoring ", pointsCounter, "racers as", scorePoints)
+            for (let i = 0; i < pointsCounter; i++) {
+                if (racerScores.length > 0) {
+                    //debugger
+                }
+                if (segRes[scoreFormat].length > 0 && segRes[scoreFormat][i]) {
+                let prevScore = racerScores.find(x => x.athleteId == segRes[scoreFormat][i].athleteId)
+
+                if (!prevScore) {
+                    //debugger
+                    let score = scoreFormat == "fts" ? {
+                        athleteId: segRes[scoreFormat][i].athleteId,
+                        name: segRes[scoreFormat][i].firstName + " " + segRes[scoreFormat][i].lastName,
+                        ftsPointTotal: scorePoints[i],
+                        falPointTotal: 0
+                    } : {
+                        athleteId: segRes[scoreFormat][i].athleteId,
+                        name: segRes[scoreFormat][i].firstName + " " + segRes[scoreFormat][i].lastName,
+                        ftsPointTotal: 0,
+                        falPointTotal: scorePoints[i]
+                    }
+                    score.pointTotal = score.ftsPointTotal + score.falPointTotal;
+                    racerScores.push(score);
+                } else {
+                    if (scoreFormat == "fts") {
+                        prevScore.ftsPointTotal += scorePoints[i];
+                        prevScore.pointTotal = prevScore.ftsPointTotal + prevScore.falPointTotal;
+                    } else {
+                        prevScore.falPointTotal += scorePoints[i];
+                        prevScore.pointTotal = prevScore.ftsPointTotal + prevScore.falPointTotal;
+                    }
+                }
+                //points--;
+            }
+            }
         }
     }
+    const finScores = currentEventConfig.finScoreFormat;
+    let scorePoints =[];
+    if (finScores) {
+        scorePoints = getScoreFormat(finScores);  
+        console.log("FIN score points",scorePoints)
+    }
+    for (let racer of racerScores) {
+        if (raceResults.length > 0) {            
+            const racerResult = raceResults.find(x => x.profileId == racer.athleteId)
+            //debugger
+            let pointsCounter = scorePoints.length            
+            if (racerResult) {
+                if (racerResult.rank < pointsCounter) {
+                    racer.finPoints = scorePoints[racerResult.rank - 1];
+                } else {
+                    racer.finPoints = 0;
+                }
+                //debugger
+            } else {
+                racer.finPoints = 0;
+            }
+                //racer.finPoints = scorePoints[i];
+            
+            //debugger
+        } else {
+            racer.finPoints = 0;
+        }
+        racer.pointTotal = racer.ftsPointTotal + racer.falPointTotal + racer.finPoints;
+    }
+    //debugger
+    
     return racerScores;
 }
 
-function displayResults(racerScores) {
+function evaluateVisibility(scoreType) {
+    if (settings.onlyTotalPoints) {
+        return "style=display:none";
+    }
+    if (!currentEventConfig.segments.some(segment => segment.scoreFormat.includes(scoreType)) && scoreType != "FIN") {
+        //console.log("No segments with a score of type",scoreType)
+        return "style=display:none";
+    }
+    if (scoreType == "FIN" && (currentEventConfig.finScoreFormat == "" || raceResults.length == 0)) {
+        //console.log("No score format for FIN")
+        return "style=display:none";
+    }
+    if (scoreType == "FTS" && currentEventConfig.ftsScoreFormat == "") {
+        //console.log("No score format for FTS")
+        return "style=display:none";
+    }
+    if (scoreType == "FAL" && currentEventConfig.falScoreFormat == "") {
+        //console.log("No score format for FAL")
+        return "style=display:none";
+    }
+    //debugger
+}
 
-    let scoreFormat = settings.FTSorFAL;
+async function displayResults(racerScores) {
+    //console.log("Scores to process:", racerScores)
+    //let scoreFormat = settings.FTSorFAL;
     const pointsResultsDiv = document.getElementById("pointsResults")
-    pointsResultsDiv.innerHTML = "";
-    let tableOutput = "<table><thead><th>Rank</th><th>Name</th><th>Points (" + scoreFormat + ")</th></thead><tbody>";
+    //pointsResultsDiv.innerHTML = "";
+    let tableOutput = `<table id='pointsTable'><thead><th>Rank</th><th>Name</th><th ${evaluateVisibility('FTS')}>FTS</th><th ${evaluateVisibility('FAL')}>FAL</th><th ${evaluateVisibility('FIN')}>FIN</th><th>Total</th></thead><tbody>`;
     let rank = 1;
     for (let racer of racerScores) {
-        tableOutput += `<tr><td>${rank}</td><td>${racer.name}</td><td>${racer.pointTotal}</td></tr>`
+        const athlete = await common.rpc.getAthleteData(racer.athleteId)
+        let isWatching = false;
+        let isMarked = false;
+        let isTeamMate = false;
+        if (athlete?.watching) {
+            isWatching = true;
+        } else if (settings.highlightTeammate && athlete?.athlete.team?.trim() == watchingTeam.trim()) {
+            isTeamMate = true;
+        } else if (settings.highlightMarked && athlete?.athlete.marked) {
+            isMarked = true;
+        }
+        tableOutput += isWatching ? "<tr class=watching>" : isMarked ? "<tr class=marked>" : isTeamMate ? "<tr class=teammate>" : "<tr>"
+        tableOutput += `<td>${rank}</td><td>${racer.name}</td><td ${evaluateVisibility('FTS')}>${racer.ftsPointTotal}</td><td ${evaluateVisibility('FAL')}>${racer.falPointTotal}</td><td ${evaluateVisibility('FIN')}>${racer.finPoints}</td><td>${racer.pointTotal}</td></tr>`
         rank++;
     }
-    tableOutput += "</table>"
+    tableOutput += "</table>"    
+
+    
     pointsResultsDiv.innerHTML = tableOutput;
+    
 }
 
 async function getLeaderboard(watching) {
@@ -279,6 +405,12 @@ async function getLeaderboard(watching) {
         if ((Date.now() - refresh) > 20000) {
             //console.log("not in an event")
             refresh = Date.now();
+            if (watching.athlete.team) {
+                watchingTeam = watching.athlete.team;
+                console.log("Watching team is",watchingTeam)
+            } else {
+                watchingTeam = "";
+            }
             if (watching.state.eventSubgroupId == 0) {
                 console.log("We were in an event but no longer are...")
                 if (raceResults.find(x => x.profileId == watching.athleteId)) {
@@ -290,17 +422,27 @@ async function getLeaderboard(watching) {
             }
             await getKnownRacers(watching)
             await getAllSegmentResults(watching)
-            await getRaceResults(watching)
-            let eventResults = processResults(watching);
-            console.log(eventResults)
-            let racerScores = scoreResults(eventResults);
-            console.log(racerScores.sort((a, b) => {
+            await getRaceResults(watching)            
+            let eventSubgroupId;
+            if (watching.state.eventSubgroupId == 0 && lastKnownSG.eventSubgroupId > 0) {
+                eventSubgroupId = lastKnownSG.eventSubgroupId;
+            } else {
+                eventSubgroupId = watching.state.eventSubgroupId;
+            }
+            currentEventConfig = await zen.getEventConfig(dbSegmentConfig, eventSubgroupId)
+            let dbResults = await zen.getSegmentResults(dbSegments, eventSubgroupId)
+            console.log("DB results:",dbResults)
+            let eventResults = await processResults(watching, dbResults);
+            console.log("event segment results",eventResults)
+            let racerScores = await scoreResults(eventResults, currentEventConfig);
+            //debugger
+            racerScores.sort((a, b) => {
                 return b.pointTotal - a.pointTotal;
-            }))
-            displayResults(racerScores)
+            });
+            await displayResults(racerScores)
             if (raceResults.length > 0) {
                 console.log("Race results", raceResults)
-            }   
+            } 
             if (watching.state.eventSubgroupId > 0) {
                 lastKnownSG.eventSubgroupId = watching.state.eventSubgroupId
             }
@@ -310,11 +452,13 @@ async function getLeaderboard(watching) {
         
     }
 };
-function getScoreFormat() {
-    let scoreFormat = settings.scoreFormat;
+function getScoreFormat(scoreFormat) {
+    //let scoreFormat = settings.scoreFormat;
     let scoreList = [];
-    if (scoreFormat != null)
+    //if (scoreFormat != null)
+    if (scoreFormat)
     {
+        //debugger
         let scores = scoreFormat.split(',');        
         for (let score of scores)
         {
@@ -333,7 +477,8 @@ function getScoreFormat() {
         }
         return scoreList;
     }
-    return [10,9,8,7,6,5,4,3,2,1];
+    //return [10,9,8,7,6,5,4,3,2,1];
+    return [0];
 }
 function changeFontScale() {
     const doc = document.documentElement;
@@ -345,7 +490,9 @@ export async function main() {
     common.subscribe('athlete/watching', getLeaderboard);    
     common.subscribe('watching-athlete-change', async athleteId => {
         console.log("Watching athlete changed")        
-        
+        if (raceResults.length > 0) {
+            raceResults = [];
+        }
     });
     common.settingsStore.addEventListener('changed', ev => {
         const changed = ev.data.changed; 

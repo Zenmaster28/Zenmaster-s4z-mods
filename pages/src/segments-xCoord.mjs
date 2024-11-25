@@ -1585,23 +1585,28 @@ export function buildEventForm() {
     //debugger
 }
 export async function buildPointsForm() {    
-    const localRouteInfo = localStorage.getItem("routeInfo")
+    //const localRouteInfo = localStorage.getItem("routeInfo")
     let routeInfo;
     let segmentData;
-    if (localRouteInfo) {
-        routeInfo = JSON.parse(localRouteInfo);
-    } else {
+    //if (localRouteInfo) {
+    //    routeInfo = JSON.parse(localRouteInfo);
+    //} else {
         segmentData = (await common.rpc.getAthleteData("watching")).segmentData
         segmentData = segmentData.routeSegments.filter(x => x.type != "custom" && !x.name.includes("Finish"));
-    }
+        console.log(segmentData)
+        const segmentsTable = document.getElementById("segmentsTable")
+        const tableData = buildPointsTable(segmentData)
+        segmentsTable.appendChild(tableData)
+    //}
     //debugger
     //const routeInfo = common.settingsStore.get("routeInfo")
+    /*
     const segmentsForm = document.getElementById("options") 
     const formTitle = document.getElementById("formTitle") 
     const settings = common.settingsStore.get();
     formTitle.innerHTML = "Segments to include (" + settings.FTSorFAL + ")"  
     let i = 1;
-    console.log(routeInfo)
+    //console.log(routeInfo)
     for (let segment of segmentData) {
         
             let label = document.createElement('label');
@@ -1610,15 +1615,93 @@ export async function buildPointsForm() {
             input.type = "checkbox";
             input.checked = true;
             //input.name = "eventSegData" + "|" + routeInfo.sg + "|" + segment.id + "|" + segment.repeat;
-            key.innerHTML = segment.name.replace("Finish","[" + segment.repeat + "]") + ":";
+            if (segment.repeat > 1) {
+                key.innerHTML = segment.name + " [" + segment.repeat + "]" + ":";
+            } else {
+                key.innerHTML = segment.name + ":";
+            }
             label.appendChild(key);
             label.appendChild(input);
             segmentsForm.appendChild(label);
             i++;
         
     }
+    */
     //debugger
 }
+
+export async function buildPointsTable(segmentData, currentEventConfig) {
+    // Create the table element
+    const table = document.createElement('table'); 
+    table.id = "segmentsTable"
+    let existingConfig = currentEventConfig ? true : false;    
+    // Loop through each segment to create rows
+    segmentData.forEach(segment => {
+        //debugger
+        let existingSegment;
+        if (existingConfig) {
+            existingSegment = currentEventConfig.segments.find(x => x.segmentId == segment.id && x.repeat == segment.repeat)
+        }
+        const row = document.createElement('tr');        
+        const nameCell = document.createElement('td');
+        nameCell.textContent = `${segment.name} [${segment.repeat}]`;
+        row.appendChild(nameCell);
+
+        const segidCell = document.createElement('td');
+        segidCell.innerText = segment.id;
+        segidCell.hidden = true;
+        row.appendChild(segidCell);
+
+        const segRepeatCell = document.createElement('td');
+        segRepeatCell.innerText = segment.repeat;
+        segRepeatCell.hidden = true;
+        row.appendChild(segRepeatCell);
+
+        const cbCell = document.createElement('td')
+        const checkbox = document.createElement('input')
+        checkbox.type = 'checkbox'
+        checkbox.checked = existingConfig ? existingSegment.enabled : true;
+        cbCell.appendChild(checkbox)
+        row.appendChild(cbCell)
+        
+        const selectCell = document.createElement('td');
+        const select = document.createElement('select');
+        ["FTS + FAL", "FTS", "FAL"].forEach(optionValue => {
+        const option = document.createElement('option');
+        option.value = optionValue.replace(" + ", ",");
+        option.textContent = optionValue;
+        select.appendChild(option);
+        });
+        if (existingConfig) {
+            select.value = existingSegment.scoreFormat;
+            select.disabled = !existingSegment.enabled;
+        }
+        selectCell.appendChild(select);
+        row.appendChild(selectCell);
+        
+        table.appendChild(row);
+    });
+    
+    
+    table.addEventListener('change', function(event) {
+        // Check if the event target is a checkbox
+        if (event.target.type === 'checkbox') {
+          // Find the row containing the checkbox
+          const row = event.target.closest('tr');
+          
+          // Get the select and text inputs in the same row
+          const select = row.querySelector('select');
+          //const textInput = row.querySelector('input[type="text"]');
+          
+          // Enable or disable the inputs based on the checkbox state
+          const isChecked = event.target.checked;
+          select.disabled = !isChecked;
+          //textInput.disabled = !isChecked;
+        }
+    });
+    return table;
+  }
+  
 
 export function fillArrayWithInterpolatedValues(arr, inc) {
     return arr.flatMap((value, index, array) => {
@@ -2552,3 +2635,314 @@ export function getUniqueValues(arr, property) {
   
     return uniqueValues;
   }
+
+export async function openSegmentConfigDB() {
+    return new Promise((resolve, reject) => {
+        const segmentConfigDB = indexedDB.open("segmentResultsDatabase", 3)
+        segmentConfigDB.onupgradeneeded = function(event) {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains("segmentResults")) {
+                console.log("Creating segmentResults store")
+                const store = db.createObjectStore("segmentResults", {keyPath: "id"});
+                store.createIndex("eventSubgroupId", "eventSubgroupId", {unique: false})
+                store.createIndex("athleteId", "athleteId", {unique: false})
+                store.createIndex("segmentId", "segmentId", {unique: false})
+                store.createIndex("ts", "ts", {unique: false})
+            }
+            if (!db.objectStoreNames.contains("segmentConfig")) {
+                console.log("Creating segmentConfig store")
+                const store = db.createObjectStore("segmentConfig", {keyPath: "eventSubgroupId"});                
+                store.createIndex("ts", "ts", {unique: false})
+            }
+            if (!db.objectStoreNames.contains("knownRacers")) {
+                console.log("Creating knownRacers store");
+                const store = db.createObjectStore("knownRacers", {keyPath: ["eventSubgroupId", "athleteId"]});  
+                store.createIndex("eventSubgroupId", "eventSubgroupId", {unique: false});              
+            }
+        };
+        segmentConfigDB.onsuccess = async function(event) {
+            const dbSegmentConfig = event.target.result;
+            console.log("Config Database initialized");
+            resolve(dbSegmentConfig);
+        };
+        segmentConfigDB.onerror = function(event) {
+            console.log("Config Database failed to open:", event.target.error);
+            reject(event.target.error)
+        };
+    });
+}
+
+export async function openSegmentsDB() {
+    return new Promise((resolve, reject) => {
+        const segmentResultsDB = indexedDB.open("segmentResultsDatabase", 3)
+        segmentResultsDB.onupgradeneeded = function(event) {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains("segmentResults")) {
+                console.log("Creating segmentResults store")
+                const store = db.createObjectStore("segmentResults", {keyPath: "id"});
+                store.createIndex("eventSubgroupId", "eventSubgroupId", {unique: false})
+                store.createIndex("athleteId", "athleteId", {unique: false})
+                store.createIndex("segmentId", "segmentId", {unique: false})
+                store.createIndex("ts", "ts", {unique: false})
+            }            
+            if (!db.objectStoreNames.contains("segmentConfig")) {
+                console.log("Creating segmentConfig store")
+                const store = db.createObjectStore("segmentConfig", {keyPath: "eventSubgroupId"});                
+                store.createIndex("ts", "ts", {unique: false})
+            }
+            if (!db.objectStoreNames.contains("knownRacers")) {
+                console.log("Creating knownRacers store");
+                const store = db.createObjectStore("knownRacers", {keyPath: ["eventSubgroupId", "athleteId"]});   
+                store.createIndex("eventSubgroupId", "eventSubgroupId", {unique: false});
+            }
+        };
+        segmentResultsDB.onsuccess = async function(event) {
+            const dbSegments = event.target.result;
+            console.log("Database initialized");
+            resolve(dbSegments);
+        };
+        segmentResultsDB.onerror = function(event) {
+            console.log("Database failed to open:", event.target.error);
+            reject(event.target.error)
+        };
+    });
+}
+
+export async function cleanupSegmentsDB(dbSegments) {
+    return new Promise((resolve, reject) => {
+        const transaction = dbSegments.transaction("segmentResults", "readwrite");
+        const store = transaction.objectStore("segmentResults");
+        const index = store.index("ts");
+
+        const now = Date.now();
+        const cutoff = now - 24 * 60 * 60 * 1000; 
+
+        const request = index.openCursor(IDBKeyRange.upperBound(cutoff));
+
+        let deletedCount = 0;
+
+        request.onsuccess = function (event) {
+            const cursor = event.target.result;
+            if (cursor) {
+                cursor.delete(); 
+                deletedCount++;
+                cursor.continue(); 
+            }
+        };
+
+        request.onerror = function (event) {
+            console.error("Error cleaning up old entries:", event.target.error);
+            reject(event.target.error);
+        };
+
+        transaction.oncomplete = function () {
+            console.log(`Cleanup complete. Deleted ${deletedCount} old entries.`);
+            resolve(deletedCount);
+        };
+
+        transaction.onerror = function (event) {
+            console.error("Transaction failed during cleanup:", event.target.error);
+            reject(event.target.error);
+        };
+    });
+}
+
+export async function storeSegmentResults(dbSegments, resultsToStore) {
+    return new Promise((resolve, reject) => {
+        const transaction = dbSegments.transaction("segmentResults", "readwrite");
+        const store = transaction.objectStore("segmentResults")
+        let resultsCount = 0;
+        resultsToStore.forEach(result => {
+            const request = store.put(result);
+            request.onsuccess = function () {
+                resultsCount++;
+                //console.log("Segment result saved:", result.id);
+            };
+            request.onerror = function (event) {
+                console.error("Failed to save segment result:", event.target.error);
+            };
+        });
+        transaction.oncomplete = function () {
+            //console.log("All segment results processed.");
+            resolve(resultsCount);
+        };
+
+        transaction.onerror = function (event) {
+            console.error("Transaction error:", event.target.error);
+            reject(event.target.error);
+        };
+    });
+}
+
+export async function storeKnownRacers(dbSegments, knownRacers) {
+    return new Promise((resolve, reject) => {
+        const transaction = dbSegments.transaction("knownRacers", "readwrite");
+        const store = transaction.objectStore("knownRacers")
+        let racerCount = 0;
+        knownRacers.forEach(racer => {
+            const request = store.put(racer);
+            request.onsuccess = function () {
+                racerCount++;
+                //console.log("Segment result saved:", result.id);
+            };
+            request.onerror = function (event) {
+                console.error("Failed to save segment result:", event.target.error);
+            };
+        });
+        transaction.oncomplete = function () {
+            //console.log("All segment results processed.");
+            resolve(racerCount);
+        };
+
+        transaction.onerror = function (event) {
+            console.error("Transaction error:", event.target.error);
+            reject(event.target.error);
+        };
+    });
+}
+
+export async function getKnownRacers(dbSegments, eventSubgroupId) {
+    //console.log("Getting results for sg", eventSubgroupId, "from", dbSegments);
+    if (!dbSegments) {
+        console.error("Database connection is invalid!");
+        return [];
+    }
+    return new Promise((resolve, reject) => {
+        try {
+            
+            const transaction = dbSegments.transaction("knownRacers", "readonly");
+            const store = transaction.objectStore("knownRacers");
+            const index = store.index("eventSubgroupId");
+            //console.log("Starting query for eventSubgroupId:", eventSubgroupId);
+
+            const request = index.getAll(eventSubgroupId);
+            /*
+            const transaction = dbSegments.transaction("segmentResults", "readonly");
+            const store = transaction.objectStore("segmentResults");
+            const index = store.index("eventSubgroupId");
+            //console.log("Starting query for eventSubgroupId:", eventSubgroupId);
+
+            const request = index.getAll(eventSubgroupId);
+            */
+            request.onsuccess = function () {                
+                //console.log("Query success. Retrieved", request.result.length, "entries");
+                //debugger
+                if (request.result.length > 0) {
+                    //debugger
+                }
+                resolve(request.result);
+            };
+
+            request.onerror = function (event) {
+                console.error("Error fetching known racers by eventSubgroupId:", event.target.error);
+                reject(event.target.error);
+            };
+
+            transaction.oncomplete = function () {
+                //console.log("Transaction completed successfully.");
+            };
+
+            transaction.onerror = function (event) {
+                console.error("Transaction error:", event.target.error);
+                reject(event.target.error);
+            };
+        } catch (error) {
+            console.error("Unexpected error in getKnownRacers:", error);
+            reject(error);
+        }
+    });
+}
+
+export async function getSegmentResults(dbSegments, eventSubgroupId) {
+    //console.log("Getting results for sg", eventSubgroupId, "from", dbSegments);
+    if (!dbSegments) {
+        console.error("Database connection is invalid!");
+        return [];
+    }
+    return new Promise((resolve, reject) => {
+        try {
+            const transaction = dbSegments.transaction("segmentResults", "readonly");
+            const store = transaction.objectStore("segmentResults");
+            const index = store.index("eventSubgroupId");
+            //console.log("Starting query for eventSubgroupId:", eventSubgroupId);
+
+            const request = index.getAll(eventSubgroupId);
+            request.onsuccess = function () {                
+                //console.log("Query success. Retrieved", request.result.length, "entries");
+                resolve(request.result);
+            };
+
+            request.onerror = function (event) {
+                console.error("Error fetching entries by eventSubgroupId:", event.target.error);
+                reject(event.target.error);
+            };
+
+            transaction.oncomplete = function () {
+                //console.log("Transaction completed successfully.");
+            };
+
+            transaction.onerror = function (event) {
+                console.error("Transaction error:", event.target.error);
+                reject(event.target.error);
+            };
+        } catch (error) {
+            console.error("Unexpected error in getSegmentResults:", error);
+            reject(error);
+        }
+    });
+}
+
+export function getEventConfig(dbSegmentConfig, eventSubgroupId) {
+    if (!dbSegmentConfig) {
+        console.error("Database connection is invalid!");
+        return [];
+    }
+    return new Promise((resolve, reject) => {
+        try {
+            const transaction = dbSegmentConfig.transaction("segmentConfig", "readonly");
+            const store = transaction.objectStore("segmentConfig");
+            const request = store.get(eventSubgroupId);
+
+            request.onsuccess = function () {                
+                //console.log("Query success. Retrieved", request.result.length, "entries");
+                resolve(request.result);
+            };
+
+            request.onerror = function (event) {
+                console.error("Error fetching entries by eventSubgroupId:", event.target.error);
+                reject(event.target.error);
+            };
+
+            transaction.oncomplete = function () {
+                //console.log("Transaction completed successfully.");
+            };
+
+            transaction.onerror = function (event) {
+                console.error("Transaction error:", event.target.error);
+                reject(event.target.error);
+            };
+        } catch (error) {
+            console.error("Unexpected error in getEventConfig:", error);
+            reject(error);
+        }
+    });
+}
+
+export async function OLDgetSegmentResults(dbSegments, eventSubgroupId) {
+    console.log("Getting results for sg", eventSubgroupId)
+    return new Promise((resolve, reject) => {
+        const transaction = dbSegments.transaction("segmentResults", "readonly");
+        const store = transaction.objectStore("segmentResults");
+        const index = store.index("eventSubgroupId"); // Use the index for eventSubgroupId
+        const request = index.getAll(eventSubgroupId); // Fetch all entries with matching eventSubgroupId
+        //debugger
+        request.onsuccess = function () {
+            resolve(request.result); // Resolve with the array of matching entries
+        };
+
+        request.onerror = function (event) {
+            console.error("Error fetching entries by eventSubgroupId:", event.target.error);
+            reject(event.target.error);
+        };
+    })
+}
