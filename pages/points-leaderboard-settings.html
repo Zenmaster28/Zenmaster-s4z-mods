@@ -293,7 +293,8 @@
                     finScoreFormat: document.getElementById('finScoreFormat').value,
                     eventId: parseInt(document.getElementById('eventsSelect').value),
                     eventSubgroupId: parseInt(document.getElementById('penSelect').value),
-                    segments: segData
+                    segments: segData,
+                    ts: Date.now()
                 }
                 const transaction = dbSegmentConfig.transaction("segmentConfig", "readwrite");
                 const store = transaction.objectStore("segmentConfig")
