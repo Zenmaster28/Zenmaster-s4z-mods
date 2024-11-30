@@ -2638,7 +2638,7 @@ export function getUniqueValues(arr, property) {
 
 export async function openSegmentConfigDB() {
     return new Promise((resolve, reject) => {
-        const segmentConfigDB = indexedDB.open("segmentResultsDatabase", 3)
+        const segmentConfigDB = indexedDB.open("segmentResultsDatabase", 4)
         segmentConfigDB.onupgradeneeded = function(event) {
             const db = event.target.result;
             if (!db.objectStoreNames.contains("segmentResults")) {
@@ -2649,16 +2649,26 @@ export async function openSegmentConfigDB() {
                 store.createIndex("segmentId", "segmentId", {unique: false})
                 store.createIndex("ts", "ts", {unique: false})
             }
+            if (!db.objectStoreNames.contains("segmentResultsLive")) {
+                console.log("Creating segmentResultsLive store")
+                const store = db.createObjectStore("segmentResultsLive", {keyPath: "id"});
+                store.createIndex("eventSubgroupId", "eventSubgroupId", {unique: false})
+                store.createIndex("athleteId", "athleteId", {unique: false})
+                store.createIndex("segmentId", "segmentId", {unique: false})
+                store.createIndex("ts", "ts", {unique: false})
+            }
             if (!db.objectStoreNames.contains("segmentConfig")) {
                 console.log("Creating segmentConfig store")
                 const store = db.createObjectStore("segmentConfig", {keyPath: "eventSubgroupId"});                
                 store.createIndex("ts", "ts", {unique: false})
             }
+            /*
             if (!db.objectStoreNames.contains("knownRacers")) {
                 console.log("Creating knownRacers store");
                 const store = db.createObjectStore("knownRacers", {keyPath: ["eventSubgroupId", "athleteId"]});  
                 store.createIndex("eventSubgroupId", "eventSubgroupId", {unique: false});              
             }
+            */
         };
         segmentConfigDB.onsuccess = async function(event) {
             const dbSegmentConfig = event.target.result;
@@ -2674,7 +2684,7 @@ export async function openSegmentConfigDB() {
 
 export async function openSegmentsDB() {
     return new Promise((resolve, reject) => {
-        const segmentResultsDB = indexedDB.open("segmentResultsDatabase", 3)
+        const segmentResultsDB = indexedDB.open("segmentResultsDatabase", 4)
         segmentResultsDB.onupgradeneeded = function(event) {
             const db = event.target.result;
             if (!db.objectStoreNames.contains("segmentResults")) {
@@ -2684,17 +2694,27 @@ export async function openSegmentsDB() {
                 store.createIndex("athleteId", "athleteId", {unique: false})
                 store.createIndex("segmentId", "segmentId", {unique: false})
                 store.createIndex("ts", "ts", {unique: false})
-            }            
+            }
+            if (!db.objectStoreNames.contains("segmentResultsLive")) {
+                console.log("Creating segmentResultsLive store")
+                const store = db.createObjectStore("segmentResultsLive", {keyPath: "id"});
+                store.createIndex("eventSubgroupId", "eventSubgroupId", {unique: false})
+                store.createIndex("athleteId", "athleteId", {unique: false})
+                store.createIndex("segmentId", "segmentId", {unique: false})
+                store.createIndex("ts", "ts", {unique: false})
+            }
             if (!db.objectStoreNames.contains("segmentConfig")) {
                 console.log("Creating segmentConfig store")
                 const store = db.createObjectStore("segmentConfig", {keyPath: "eventSubgroupId"});                
                 store.createIndex("ts", "ts", {unique: false})
             }
+            /*
             if (!db.objectStoreNames.contains("knownRacers")) {
                 console.log("Creating knownRacers store");
                 const store = db.createObjectStore("knownRacers", {keyPath: ["eventSubgroupId", "athleteId"]});   
                 store.createIndex("eventSubgroupId", "eventSubgroupId", {unique: false});
             }
+            */
         };
         segmentResultsDB.onsuccess = async function(event) {
             const dbSegments = event.target.result;
@@ -2708,10 +2728,11 @@ export async function openSegmentsDB() {
     });
 }
 
-export async function cleanupSegmentsDB(dbSegments) {
+export async function cleanupSegmentsDB(dbSegments, options) {
     return new Promise((resolve, reject) => {
-        const transaction = dbSegments.transaction("segmentResults", "readwrite");
-        const store = transaction.objectStore("segmentResults");
+        const storeName = options?.live ? "segmentResultsLive" : "segmentResults"
+        const transaction = dbSegments.transaction(storeName, "readwrite");
+        const store = transaction.objectStore(storeName);
         const index = store.index("ts");
 
         const now = Date.now();
@@ -2736,7 +2757,7 @@ export async function cleanupSegmentsDB(dbSegments) {
         };
 
         transaction.oncomplete = function () {
-            console.log(`Cleanup complete. Deleted ${deletedCount} old entries.`);
+            console.log(`Segments cleanup complete. Deleted ${deletedCount} old entries.`);
             resolve(deletedCount);
         };
 
@@ -2747,10 +2768,51 @@ export async function cleanupSegmentsDB(dbSegments) {
     });
 }
 
-export async function storeSegmentResults(dbSegments, resultsToStore) {
+export async function cleanupSegmentConfigDB(dbSegmentConfig) {
     return new Promise((resolve, reject) => {
-        const transaction = dbSegments.transaction("segmentResults", "readwrite");
-        const store = transaction.objectStore("segmentResults")
+        const storeName = "segmentConfig"
+        const transaction = dbSegmentConfig.transaction(storeName, "readwrite");
+        const store = transaction.objectStore(storeName);
+        const index = store.index("ts");
+
+        const now = Date.now();
+        const cutoff = now - 24 * 60 * 60 * 1000; 
+
+        const request = index.openCursor(IDBKeyRange.upperBound(cutoff));
+
+        let deletedCount = 0;
+
+        request.onsuccess = function (event) {
+            const cursor = event.target.result;
+            if (cursor) {
+                cursor.delete(); 
+                deletedCount++;
+                cursor.continue(); 
+            }
+        };
+
+        request.onerror = function (event) {
+            console.error("Error cleaning up old entries:", event.target.error);
+            reject(event.target.error);
+        };
+
+        transaction.oncomplete = function () {
+            console.log(`Config cleanup complete. Deleted ${deletedCount} old entries.`);
+            resolve(deletedCount);
+        };
+
+        transaction.onerror = function (event) {
+            console.error("Transaction failed during cleanup:", event.target.error);
+            reject(event.target.error);
+        };
+    });
+}
+
+export async function storeSegmentResults(dbSegments, resultsToStore, options) {
+    return new Promise((resolve, reject) => {
+        const storeName = options?.live ? "segmentResultsLive" : "segmentResults"
+        const transaction = dbSegments.transaction(storeName, "readwrite");
+        const store = transaction.objectStore(storeName)
         let resultsCount = 0;
         resultsToStore.forEach(result => {
             const request = store.put(result);
@@ -2809,28 +2871,28 @@ export async function getKnownRacers(dbSegments, eventSubgroupId) {
     }
     return new Promise((resolve, reject) => {
         try {
-            
+            /*
             const transaction = dbSegments.transaction("knownRacers", "readonly");
             const store = transaction.objectStore("knownRacers");
             const index = store.index("eventSubgroupId");
             //console.log("Starting query for eventSubgroupId:", eventSubgroupId);
 
             const request = index.getAll(eventSubgroupId);
-            /*
+            */
+            
             const transaction = dbSegments.transaction("segmentResults", "readonly");
             const store = transaction.objectStore("segmentResults");
             const index = store.index("eventSubgroupId");
             //console.log("Starting query for eventSubgroupId:", eventSubgroupId);
 
             const request = index.getAll(eventSubgroupId);
-            */
+            
             request.onsuccess = function () {                
                 //console.log("Query success. Retrieved", request.result.length, "entries");
                 //debugger
-                if (request.result.length > 0) {
-                    //debugger
-                }
-                resolve(request.result);
+                let idResult = request.result.map(({ athleteId, eventSubgroupId }) => ({ athleteId, eventSubgroupId }));
+                resolve(idResult)
+                //resolve(request.result);
             };
 
             request.onerror = function (event) {
@@ -2853,16 +2915,18 @@ export async function getKnownRacers(dbSegments, eventSubgroupId) {
     });
 }
 
-export async function getSegmentResults(dbSegments, eventSubgroupId) {
+export async function getSegmentResults(dbSegments, eventSubgroupId, options) {
     //console.log("Getting results for sg", eventSubgroupId, "from", dbSegments);
     if (!dbSegments) {
         console.error("Database connection is invalid!");
         return [];
     }
+    const storeName = options?.live ? "segmentResultsLive" : "segmentResults";
+    //console.log("Getting segment results from", storeName)
     return new Promise((resolve, reject) => {
         try {
-            const transaction = dbSegments.transaction("segmentResults", "readonly");
-            const store = transaction.objectStore("segmentResults");
+            const transaction = dbSegments.transaction(storeName, "readonly");
+            const store = transaction.objectStore(storeName);
             const index = store.index("eventSubgroupId");
             //console.log("Starting query for eventSubgroupId:", eventSubgroupId);
 
