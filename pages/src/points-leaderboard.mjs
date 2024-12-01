@@ -315,6 +315,9 @@ async function processResults(watching, dbResults) {
 }
 
 async function scoreResults(eventResults, currentEventConfig) {
+    if (!currentEventConfig) {
+        return [];
+    }
     let racerScores = [];
     //let scoreFormat = "fts";
     //let scoreFormat = settings.FTSorFAL;
@@ -333,53 +336,54 @@ async function scoreResults(eventResults, currentEventConfig) {
                 continue; 
             }
             scoreFormats = segmentRepeat.scoreFormat.split(",");
-        }
-        for (let scoreFormat of scoreFormats) {
-            //console.log("Scoring",scoreFormat)
-            scoreFormat = scoreFormat.toLowerCase();
-            let scores;
-            if (scoreFormat == "fts") {
-                scores = currentEventConfig.ftsScoreFormat;
-            } else if (scoreFormat == "fal") {
-                scores = currentEventConfig.falScoreFormat;
-            }
-            let scorePoints = getScoreFormat(scores);        
-            let pointsCounter = scorePoints.length
-            //debugger
-            //console.log("Scoring ", pointsCounter, "racers as", scorePoints)
-            for (let i = 0; i < pointsCounter; i++) {
-                if (racerScores.length > 0) {
-                    //debugger
+        //}
+            for (let scoreFormat of scoreFormats) {
+                //console.log("Scoring",scoreFormat)
+                scoreFormat = scoreFormat.toLowerCase();
+                let scores;
+                if (scoreFormat == "fts") {
+                    scores = currentEventConfig.ftsScoreFormat;
+                } else if (scoreFormat == "fal") {
+                    scores = currentEventConfig.falScoreFormat;
                 }
-                if (segRes[scoreFormat].length > 0 && segRes[scoreFormat][i]) {
-                let prevScore = racerScores.find(x => x.athleteId == segRes[scoreFormat][i].athleteId)
+                let scorePoints = getScoreFormat(scores);        
+                let pointsCounter = scorePoints.length
+                //debugger
+                //console.log("Scoring ", pointsCounter, "racers as", scorePoints)
+                for (let i = 0; i < pointsCounter; i++) {
+                    if (racerScores.length > 0) {
+                        //debugger
+                    }
+                    if (segRes[scoreFormat].length > 0 && segRes[scoreFormat][i]) {
+                    let prevScore = racerScores.find(x => x.athleteId == segRes[scoreFormat][i].athleteId)
 
-                if (!prevScore) {
-                    //debugger
-                    let score = scoreFormat == "fts" ? {
-                        athleteId: segRes[scoreFormat][i].athleteId,
-                        name: segRes[scoreFormat][i].firstName + " " + segRes[scoreFormat][i].lastName,
-                        ftsPointTotal: scorePoints[i],
-                        falPointTotal: 0
-                    } : {
-                        athleteId: segRes[scoreFormat][i].athleteId,
-                        name: segRes[scoreFormat][i].firstName + " " + segRes[scoreFormat][i].lastName,
-                        ftsPointTotal: 0,
-                        falPointTotal: scorePoints[i]
-                    }
-                    score.pointTotal = score.ftsPointTotal + score.falPointTotal;
-                    racerScores.push(score);
-                } else {
-                    if (scoreFormat == "fts") {
-                        prevScore.ftsPointTotal += scorePoints[i];
-                        prevScore.pointTotal = prevScore.ftsPointTotal + prevScore.falPointTotal;
+                    if (!prevScore) {
+                        //debugger
+                        let score = scoreFormat == "fts" ? {
+                            athleteId: segRes[scoreFormat][i].athleteId,
+                            name: segRes[scoreFormat][i].firstName + " " + segRes[scoreFormat][i].lastName,
+                            ftsPointTotal: scorePoints[i],
+                            falPointTotal: 0
+                        } : {
+                            athleteId: segRes[scoreFormat][i].athleteId,
+                            name: segRes[scoreFormat][i].firstName + " " + segRes[scoreFormat][i].lastName,
+                            ftsPointTotal: 0,
+                            falPointTotal: scorePoints[i]
+                        }
+                        score.pointTotal = score.ftsPointTotal + score.falPointTotal;
+                        racerScores.push(score);
                     } else {
-                        prevScore.falPointTotal += scorePoints[i];
-                        prevScore.pointTotal = prevScore.ftsPointTotal + prevScore.falPointTotal;
+                        if (scoreFormat == "fts") {
+                            prevScore.ftsPointTotal += scorePoints[i];
+                            prevScore.pointTotal = prevScore.ftsPointTotal + prevScore.falPointTotal;
+                        } else {
+                            prevScore.falPointTotal += scorePoints[i];
+                            prevScore.pointTotal = prevScore.ftsPointTotal + prevScore.falPointTotal;
+                        }
                     }
+                    //points--;
                 }
-                //points--;
-            }
+                }
             }
         }
     }
@@ -418,6 +422,9 @@ async function scoreResults(eventResults, currentEventConfig) {
 }
 
 function evaluateVisibility(scoreType) {
+    if (!currentEventConfig) {
+        return "style=display:none";
+    }
     if (settings.onlyTotalPoints) {
         return "style=display:none";
     }
