@@ -216,12 +216,11 @@
                             segmentsSaveDiv.innerHTML = "";
                             segmentsHeaderDiv.innerHTML = "<h2>" + routeData.routeFullData.name + " in " + common.courseToNames[routeData.routeFullData.courseId]
                             segmentsTableDiv.appendChild(segmentsTable)
-                            const saveButtonDiv = document.getElementById("segmentsSave")
-                            const saveButton = document.createElement('button')
-                            saveButton.textContent = "Save"
-                            saveButton.addEventListener('click', saveConfig);
-                            saveButtonDiv.appendChild(saveButton)
-
+                            ftsScoreFormatDiv.addEventListener('change', saveConfig);
+                            falScoreFormatDiv.addEventListener('change', saveConfig);
+                            finScoreFormatDiv.addEventListener('change', saveConfig);
+                            const segTable = document.getElementById('segmentsTable')
+                            segTable.addEventListener('change', saveConfig);
                         }
                         //debugger
                     })
@@ -273,7 +272,7 @@
                 //debugger
             }
             function saveConfig() {
-                //console.log("Save clicked")
+                //console.log("Saving eventConfig")
                 const segmentsTable = document.getElementById('segmentsTable')
                 const tableRows = segmentsTable.querySelectorAll('tr')
                 const segData = [];
