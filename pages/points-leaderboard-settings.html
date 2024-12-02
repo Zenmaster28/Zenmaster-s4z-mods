@@ -274,36 +274,40 @@
             function saveConfig() {
                 //console.log("Saving eventConfig")
                 const segmentsTable = document.getElementById('segmentsTable')
-                const tableRows = segmentsTable.querySelectorAll('tr')
-                const segData = [];
-                for (let row of tableRows) {
-                    const segConfig = {
-                        name: row.cells[0].textContent.replace(/\s\[\d+\]$/, ""),
-                        segmentId: row.cells[1].textContent,
-                        repeat: parseInt(row.cells[2].textContent),
-                        enabled: row.cells[3].querySelector('input').checked,
-                        scoreFormat: row.cells[4].querySelector('select').value
+                if (segmentsTable) {
+                    const tableRows = segmentsTable.querySelectorAll('tr')
+                    const segData = [];
+                    for (let row of tableRows) {
+                        const segConfig = {
+                            name: row.cells[0].textContent.replace(/\s\[\d+\]$/, ""),
+                            segmentId: row.cells[1].textContent,
+                            repeat: parseInt(row.cells[2].textContent),
+                            enabled: row.cells[3].querySelector('input').checked,
+                            scoreFormat: row.cells[4].querySelector('select').value
+                        }
+                        segData.push(segConfig);
                     }
-                    segData.push(segConfig);
+                    const eventConfig = {
+                        ftsScoreFormat: document.getElementById('ftsScoreFormat').value,
+                        falScoreFormat: document.getElementById('falScoreFormat').value,
+                        finScoreFormat: document.getElementById('finScoreFormat').value,
+                        eventId: parseInt(document.getElementById('eventsSelect').value),
+                        eventSubgroupId: parseInt(document.getElementById('penSelect').value),
+                        segments: segData,
+                        ts: Date.now()
+                    }
+                    const transaction = dbSegmentConfig.transaction("segmentConfig", "readwrite");
+                    const store = transaction.objectStore("segmentConfig")
+                    const request = store.put(eventConfig);
+                    request.onsuccess = function () {                    
+                        console.log("Event config saved:", eventConfig.eventSubgroupId, eventConfig);
+                    };
+                    request.onerror = function (event) {
+                        console.error("Failed to save event config:", event.target.error);
+                    };
+                } else {
+                    console.log("No segments defined / no pen selected")
                 }
-                const eventConfig = {
-                    ftsScoreFormat: document.getElementById('ftsScoreFormat').value,
-                    falScoreFormat: document.getElementById('falScoreFormat').value,
-                    finScoreFormat: document.getElementById('finScoreFormat').value,
-                    eventId: parseInt(document.getElementById('eventsSelect').value),
-                    eventSubgroupId: parseInt(document.getElementById('penSelect').value),
-                    segments: segData,
-                    ts: Date.now()
-                }
-                const transaction = dbSegmentConfig.transaction("segmentConfig", "readwrite");
-                const store = transaction.objectStore("segmentConfig")
-                const request = store.put(eventConfig);
-                request.onsuccess = function () {                    
-                    console.log("Event config saved:", eventConfig.eventSubgroupId);
-                };
-                request.onerror = function (event) {
-                    console.error("Failed to save event config:", event.target.error);
-                };
                 //debugger
             }
             //debugger
