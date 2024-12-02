@@ -53,7 +53,7 @@
             .scoreLabel {
                 display: inline-block;
                 margin-right: 0.4em;
-                min-width: 20ch;
+                min-width: 5ch;
             }
             form label key {
                 display: inline-block;
@@ -124,9 +124,39 @@
             const scoreFormatDiv = document.getElementById("scoreFormats");
             scoreFormatDiv.innerHTML += `
                 <b>Score Formats</b></br>
-                <span class="scoreLabel">FTS:</span> <input type="text" id="ftsScoreFormat" size="20"><br>
-                <span class="scoreLabel">FAL:</span> <input type="text" id="falScoreFormat" size="20"><br>
-                <span class="scoreLabel">FIN:</span> <input type="text" id="finScoreFormat" size="20"><br>
+                <span class="scoreLabel">FTS:</span> 
+                <input type="text" id="ftsScoreFormat" size="18" title="Examples are 10..1 which would score 10 for 1st, 9 for 2nd etc.  Comma separated values such as 15,11,9 would score as 15 for 1st, 11 for 2nd, 9 for 3rd.  Formats can be combined like 20,15,10,7..1">
+                <select id="ftsStep" title="The amount to decrease points per rider when using ..  ie. 50..1 with -2 would score as 50, 48, 46 etc.">
+                    <option value="-1">-1</option>
+                    <option value="-2">-2</option>
+                    <option value="-3">-3</option>
+                    <option value="-4">-4</option>
+                    <option value="-5">-5</option>
+                </select>
+                <input type="text" id="ftsBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">
+                <br>
+                <span class="scoreLabel">FAL:</span> 
+                <input type="text" id="falScoreFormat" size="18" title="Examples are 10..1 which would score 10 for 1st, 9 for 2nd etc.  Comma separated values such as 15,11,9 would score as 15 for 1st, 11 for 2nd, 9 for 3rd.  Formats can be combined like 20,15,10,7..1">
+                <select id="falStep" title="The amount to decrease points per rider when using ..  ie. 50..1 with -2 would score as 50, 48, 46 etc.">
+                    <option value="-1">-1</option>
+                    <option value="-2">-2</option>
+                    <option value="-3">-3</option>
+                    <option value="-4">-4</option>
+                    <option value="-5">-5</option>
+                </select>
+                <input type="text" id="falBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">
+                <br>
+                <span class="scoreLabel">FIN:</span> 
+                <input type="text" id="finScoreFormat" size="18" title="Examples are 10..1 which would score 10 for 1st, 9 for 2nd etc.  Comma separated values such as 15,11,9 would score as 15 for 1st, 11 for 2nd, 9 for 3rd.  Formats can be combined like 20,15,10,7..1">
+                <select id="finStep" title="The amount to decrease points per rider when using ..  ie. 50..1 with -2 would score as 50, 48, 46 etc.">
+                    <option value="-1">-1</option>
+                    <option value="-2">-2</option>
+                    <option value="-3">-3</option>
+                    <option value="-4">-4</option>
+                    <option value="-5">-5</option>
+                </select>
+                <input type="text" id="finBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">
+                <br>
                 <hr>
             `
 
@@ -159,8 +189,14 @@
             const segmentsTableDiv = document.getElementById('segmentsList')
             const segmentsHeaderDiv = document.getElementById('segmentsHeader')
             const ftsScoreFormatDiv = document.getElementById('ftsScoreFormat')
+            const ftsStepDiv = document.getElementById('ftsStep')
+            const ftsBonusDiv = document.getElementById('ftsBonus')
             const falScoreFormatDiv = document.getElementById('falScoreFormat')
+            const falStepDiv = document.getElementById('falStep')
+            const falBonusDiv = document.getElementById('falBonus')
             const finScoreFormatDiv = document.getElementById('finScoreFormat')
+            const finStepDiv = document.getElementById('finStep')
+            const finBonusDiv = document.getElementById('finBonus')
             eventsSelect.addEventListener('change', async function() {
                 segmentsTableDiv.innerHTML = "";
                 penListDiv.innerHTML = "";
@@ -217,8 +253,14 @@
                             segmentsHeaderDiv.innerHTML = "<h2>" + routeData.routeFullData.name + " in " + common.courseToNames[routeData.routeFullData.courseId]
                             segmentsTableDiv.appendChild(segmentsTable)
                             ftsScoreFormatDiv.addEventListener('change', saveConfig);
+                            ftsStepDiv.addEventListener('change', saveConfig);
+                            ftsBonusDiv.addEventListener('change', saveConfig);
                             falScoreFormatDiv.addEventListener('change', saveConfig);
+                            falStepDiv.addEventListener('change', saveConfig);
+                            falBonusDiv.addEventListener('change', saveConfig);
                             finScoreFormatDiv.addEventListener('change', saveConfig);
+                            finStepDiv.addEventListener('change', saveConfig);
+                            finBonusDiv.addEventListener('change', saveConfig);
                             const segTable = document.getElementById('segmentsTable')
                             segTable.addEventListener('change', saveConfig);
                         }
@@ -289,8 +331,14 @@
                     }
                     const eventConfig = {
                         ftsScoreFormat: document.getElementById('ftsScoreFormat').value,
+                        ftsStep: document.getElementById('ftsStep').value,
+                        ftsBonus: document.getElementById('ftsBonus').value,
                         falScoreFormat: document.getElementById('falScoreFormat').value,
+                        falStep: document.getElementById('falStep').value,
+                        falBonus: document.getElementById('falBonus').value,
                         finScoreFormat: document.getElementById('finScoreFormat').value,
+                        finStep: document.getElementById('finStep').value,
+                        finBonus: document.getElementById('finBonus').value,
                         eventId: parseInt(document.getElementById('eventsSelect').value),
                         eventSubgroupId: parseInt(document.getElementById('penSelect').value),
                         segments: segData,
