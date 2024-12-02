@@ -388,6 +388,15 @@ export async function main() {
                         }
                     }
                 }
+                if (ad.remainingType == "event" && ad.remainingMetric == "distance") {
+                    elProfile.remainingDistance = ad.remaining;
+                    elProfile.remainingMetric = ad.remainingType;
+                    elProfile.remainingType = ad.remainingType
+                } else {
+                    elProfile.remainingDistance = null;
+                    elProfile.remainingType = null;
+                    elProfile.remainingMetric = null;
+                }
                 fieldRenderer.setData(ad);
                 fieldRenderer.render();                       
             });
@@ -463,6 +472,15 @@ export async function main() {
                             fieldRenderer.fps = 1;
                         }
                     }
+                }
+                if (ad.remainingType == "event" && ad.remainingMetric == "distance") {
+                    elProfile.remainingDistance = ad.remaining;
+                    elProfile.remainingMetric = ad.remainingType;
+                    elProfile.remainingType = ad.remainingType
+                } else {
+                    elProfile.remainingDistance = null;
+                    elProfile.remainingType = null;
+                    elProfile.remainingMetric = null;
                 }
                 fieldRenderer.setData(ad);
                 fieldRenderer.render();                       
