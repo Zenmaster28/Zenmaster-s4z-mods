@@ -35,6 +35,12 @@ let powerupData = [
         "include": typeof(settings.includeCoffee) == "undefined" ? true : settings.includeCoffee
     },
     {
+        "name": "COFFEE_STOP",
+        "image": "coffee.png",
+        "count": 0,
+        "include": typeof(settings.includeCoffee) == "undefined" ? true : settings.includeCoffee
+    },
+    {
         "name": "AERO",
         "image": "aero.png",
         "count": 0,
