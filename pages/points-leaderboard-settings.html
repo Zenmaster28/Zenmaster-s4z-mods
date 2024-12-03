@@ -127,33 +127,33 @@
                 <span class="scoreLabel">FTS:</span> 
                 <input type="text" id="ftsScoreFormat" size="18" title="Examples are 10..1 which would score 10 for 1st, 9 for 2nd etc.  Comma separated values such as 15,11,9 would score as 15 for 1st, 11 for 2nd, 9 for 3rd.  Formats can be combined like 20,15,10,7..1">
                 <select id="ftsStep" title="The amount to decrease points per rider when using ..  ie. 50..1 with -2 would score as 50, 48, 46 etc.">
-                    <option value="-1">-1</option>
-                    <option value="-2">-2</option>
-                    <option value="-3">-3</option>
-                    <option value="-4">-4</option>
-                    <option value="-5">-5</option>
+                    <option value="1">-1</option>
+                    <option value="2">-2</option>
+                    <option value="3">-3</option>
+                    <option value="4">-4</option>
+                    <option value="5">-5</option>
                 </select>
                 <input type="text" id="ftsBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">
                 <br>
                 <span class="scoreLabel">FAL:</span> 
                 <input type="text" id="falScoreFormat" size="18" title="Examples are 10..1 which would score 10 for 1st, 9 for 2nd etc.  Comma separated values such as 15,11,9 would score as 15 for 1st, 11 for 2nd, 9 for 3rd.  Formats can be combined like 20,15,10,7..1">
                 <select id="falStep" title="The amount to decrease points per rider when using ..  ie. 50..1 with -2 would score as 50, 48, 46 etc.">
-                    <option value="-1">-1</option>
-                    <option value="-2">-2</option>
-                    <option value="-3">-3</option>
-                    <option value="-4">-4</option>
-                    <option value="-5">-5</option>
+                    <option value="1">-1</option>
+                    <option value="2">-2</option>
+                    <option value="3">-3</option>
+                    <option value="4">-4</option>
+                    <option value="5">-5</option>
                 </select>
                 <input type="text" id="falBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">
                 <br>
                 <span class="scoreLabel">FIN:</span> 
                 <input type="text" id="finScoreFormat" size="18" title="Examples are 10..1 which would score 10 for 1st, 9 for 2nd etc.  Comma separated values such as 15,11,9 would score as 15 for 1st, 11 for 2nd, 9 for 3rd.  Formats can be combined like 20,15,10,7..1">
                 <select id="finStep" title="The amount to decrease points per rider when using ..  ie. 50..1 with -2 would score as 50, 48, 46 etc.">
-                    <option value="-1">-1</option>
-                    <option value="-2">-2</option>
-                    <option value="-3">-3</option>
-                    <option value="-4">-4</option>
-                    <option value="-5">-5</option>
+                    <option value="1">-1</option>
+                    <option value="2">-2</option>
+                    <option value="3">-3</option>
+                    <option value="4">-4</option>
+                    <option value="5">-5</option>
                 </select>
                 <input type="text" id="finBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">
                 <br>
@@ -165,6 +165,7 @@
             const allEvents = await common.rpc.getCachedEvents();
             const eventsSelect = document.createElement('select')
             eventsSelect.id = "eventsSelect"
+            eventsSelect.style.maxWidth = '27em';
             const optChoose = document.createElement('option')
             optChoose.textContent = "Click to select an event to configure";
             optChoose.value = -1;
@@ -174,14 +175,53 @@
                 const eventStartTime = new Date(event.eventStart)
                 const opt = document.createElement('option')
                 opt.textContent = eventStartTime.toLocaleTimeString(undefined, {
+                    weekday: 'short',
                     hour: '2-digit',
                     minute: '2-digit',
-                    hour12: true
+                    hour12: true,
+                    timeZoneName: 'short'
                 }) + " - " + event.name;
                 opt.value = event.id
                 eventsSelect.appendChild(opt)
             }
             eventsListDiv.appendChild(eventsSelect)
+            const eventText = document.createElement('input');
+            eventText.type = "text";
+            eventText.id = "eventText";
+            eventText.title = "Enter an event ID (from the URL on Zwiftpower) to find an event not in the list"
+            eventText.style.width = "8em"
+            eventText.placeholder = "or event ID"
+            eventsListDiv.appendChild(eventText);
+            eventText.addEventListener("change", async function() {
+                const eventTextDiv = document.getElementById("eventText");
+                let eventIdSearch = eventTextDiv.value;
+                if (eventIdSearch != "") {
+                    eventIdSearch = parseInt(eventIdSearch)
+                    //const eventDetails = await common.rpc.getEvent(eventIdSearch);
+                    let eventDetails;
+                    try {
+                        eventDetails = await common.rpc.getEvent(eventIdSearch);
+                        //return await this.fetchJSON(`/api/profiles/${id}`, options);
+                    } catch(e) {
+                        console.log("EventId not found", eventIdSearch)                        
+                    }
+                    if (eventDetails) {
+                        const eventStartTime = new Date(eventDetails.eventStart)
+                        const eventsSelect = document.getElementById("eventsSelect")
+                        const opt = document.createElement('option')
+                        opt.textContent = eventStartTime.toLocaleTimeString(undefined, {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true
+                        }) + " - " + eventDetails.name;
+                        opt.value = eventDetails.id
+                        eventsSelect.appendChild(opt)
+                        eventsSelect.value = eventDetails.id
+                        const event = new Event('change')
+                        eventsSelect.dispatchEvent(event)
+                    }
+                }
+            })
             const watching = await common.rpc.getAthleteData("watching")
             
             const penListDiv = document.getElementById('penList');
