@@ -117,6 +117,7 @@
             import * as zen from './src/segments-xCoord.mjs';
             //zen.buildPointsForm();
             //zen.buildSegmentsTable()
+            let sgStartTime;
             let dbSegmentConfig = await zen.openSegmentConfigDB();
             import {settingsMain} from './src/points-leaderboard.mjs';
             settingsMain();
@@ -256,6 +257,7 @@
                     const penSelect = document.createElement('select');
                     penSelect.id = "penSelect"
                     if (eventInfo) {
+                        sgStartTime = eventInfo.ts;
                         console.log(eventInfo)
                         
                         const optText = document.createElement('option');
@@ -272,8 +274,8 @@
                     }
                     penSelect.addEventListener('change', async function() {
                         const sg = eventInfo.eventSubgroups.find(x => x.id == this.value)
-                        if (sg) {
-                            const currentEventConfig = await zen.getEventConfig(dbSegmentConfig, sg.id)
+                        if (sg) {                            
+                            const currentEventConfig = await zen.getEventConfig(dbSegmentConfig, sg.id)                            
                             console.log(currentEventConfig)
                             if (currentEventConfig) {
                                 ftsScoreFormatDiv.value = currentEventConfig.ftsScoreFormat;
@@ -382,7 +384,7 @@
                         eventId: parseInt(document.getElementById('eventsSelect').value),
                         eventSubgroupId: parseInt(document.getElementById('penSelect').value),
                         segments: segData,
-                        ts: Date.now()
+                        ts: sgStartTime
                     }
                     const transaction = dbSegmentConfig.transaction("segmentConfig", "readwrite");
                     const store = transaction.objectStore("segmentConfig")
