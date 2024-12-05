@@ -291,6 +291,13 @@
                             const routeData = await zen.processRoute(sg.courseId, sg.routeId, sg.laps, sg.distanceInMeters, false, false, false)
                             let segmentData = routeData.markLines
                             segmentData = segmentData.filter(x => x.type != "custom" && !x.name.includes("Finish"));
+                            segmentData.sort((a,b) => {
+                                if (a.markLine > b.markLine) {
+                                    return 1
+                                } else {
+                                    return -1
+                                }
+                            });
                             const segmentsTable = await zen.buildPointsTable(segmentData, currentEventConfig)                    
                             segmentsTableDiv.innerHTML = "";
                             segmentsSaveDiv.innerHTML = "";
