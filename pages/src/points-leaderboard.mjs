@@ -31,7 +31,11 @@ function setBackground() {
 }
 
 common.settingsStore.setDefault({
-    onlyTotalPoints: false
+    onlyTotalPoints: false,
+    lastKnownSG: {
+        eventSubgroupId: 0,
+        eventSubgroupStart: 0
+    }
 });
 /*
 common.settingsStore.addEventListener('changed', ev => {
@@ -40,6 +44,7 @@ common.settingsStore.addEventListener('changed', ev => {
 });
 */
 let settings = common.settingsStore.get();
+console.log(settings)
 if (settings.transparentNoData) {document.body.classList = "transparent-bg"};
 
 function getUniqueValues(arr, property) {
@@ -172,7 +177,6 @@ async function getKnownRacers(watching) {
 }
 
 async function getAllSegmentResults(watching) {
-    // todo - save last known route segments before sg -> 0
     let eventSubgroupId;
     let segmentData;    
     if (watching.state.eventSubgroupId == 0 && lastKnownSG.eventSubgroupId > 0) {
@@ -326,7 +330,7 @@ async function scoreResults(eventResults, currentEventConfig) {
     console.log("Event config", currentEventConfig)
     //debugger
     for (let segRes of eventResults) {
-        
+        //console.log(segRes)
         //let points = 10;  
         //debugger 
         if (currentEventConfig) {
@@ -341,43 +345,64 @@ async function scoreResults(eventResults, currentEventConfig) {
                 //console.log("Scoring",scoreFormat)
                 scoreFormat = scoreFormat.toLowerCase();
                 let scores;
+                let scoreStep;
+                let bonusScores = [];
                 if (scoreFormat == "fts") {
                     scores = currentEventConfig.ftsScoreFormat;
+                    scoreStep = currentEventConfig.ftsStep;
+                    const ftsBonus = currentEventConfig.ftsBonus;
+                    if (ftsBonus !== "") {
+                        bonusScores = getScoreFormat(ftsBonus, 1)
+                    }
                 } else if (scoreFormat == "fal") {
                     scores = currentEventConfig.falScoreFormat;
+                    scoreStep = currentEventConfig.falStep;
+                    const falBonus = currentEventConfig.falBonus;
+                    if (falBonus !== "") {
+                        bonusScores = getScoreFormat(falBonus, 1)
+                    }
                 }
-                let scorePoints = getScoreFormat(scores);        
+                let scorePoints = getScoreFormat(scores, scoreStep);        
                 let pointsCounter = scorePoints.length
+                
+                
                 //debugger
                 //console.log("Scoring ", pointsCounter, "racers as", scorePoints)
-                for (let i = 0; i < pointsCounter; i++) {
-                    if (racerScores.length > 0) {
-                        //debugger
-                    }
+                for (let i = 0; i < pointsCounter; i++) {                    
                     if (segRes[scoreFormat].length > 0 && segRes[scoreFormat][i]) {
                     let prevScore = racerScores.find(x => x.athleteId == segRes[scoreFormat][i].athleteId)
 
                     if (!prevScore) {
                         //debugger
+                        let scoreToAdd = scorePoints[i]
+                        if (i < bonusScores.length) {
+                            console.log("Adding", bonusScores[i], "bonus", scoreFormat, "points to",segRes[scoreFormat][i].firstName, " ", segRes[scoreFormat][i].lastName )
+                            scoreToAdd += bonusScores[i];
+                        }
                         let score = scoreFormat == "fts" ? {
                             athleteId: segRes[scoreFormat][i].athleteId,
                             name: segRes[scoreFormat][i].firstName + " " + segRes[scoreFormat][i].lastName,
-                            ftsPointTotal: scorePoints[i],
+                            ftsPointTotal: scoreToAdd,
                             falPointTotal: 0
                         } : {
                             athleteId: segRes[scoreFormat][i].athleteId,
                             name: segRes[scoreFormat][i].firstName + " " + segRes[scoreFormat][i].lastName,
                             ftsPointTotal: 0,
-                            falPointTotal: scorePoints[i]
+                            falPointTotal: scoreToAdd
                         }
                         score.pointTotal = score.ftsPointTotal + score.falPointTotal;
                         racerScores.push(score);
                     } else {
+                        let scoreToAdd = scorePoints[i]
+                        if (i < bonusScores.length) {
+                            console.log("Adding", bonusScores[i], "bonus", scoreFormat, "points to",segRes[scoreFormat][i].firstName, " ", segRes[scoreFormat][i].lastName )
+                            scoreToAdd += bonusScores[i];
+                        }
                         if (scoreFormat == "fts") {
-                            prevScore.ftsPointTotal += scorePoints[i];
+                            prevScore.ftsPointTotal += scoreToAdd;
                             prevScore.pointTotal = prevScore.ftsPointTotal + prevScore.falPointTotal;
                         } else {
-                            prevScore.falPointTotal += scorePoints[i];
+                            prevScore.falPointTotal += scoreToAdd;
                             prevScore.pointTotal = prevScore.ftsPointTotal + prevScore.falPointTotal;
                         }
                     }
@@ -388,21 +413,51 @@ async function scoreResults(eventResults, currentEventConfig) {
         }
     }
     const finScores = currentEventConfig.finScoreFormat;
+    const finScoreStep = currentEventConfig.finStep;
     let scorePoints =[];
+    let bonusScores = [];
     if (finScores) {
-        scorePoints = getScoreFormat(finScores);  
-        //console.log("FIN score points",scorePoints)
+        const finBonus = currentEventConfig.finBonus;
+        if (finBonus !== "") {
+            bonusScores = getScoreFormat(finBonus, 1);
+            console.log("FIN bonus points",bonusScores)
+        }
+        scorePoints = getScoreFormat(finScores, finScoreStep);  
+        console.log("FIN score points",scorePoints)
+    }
+    //debugger
+    if (raceResults.length > 0) {
+        for (let result of raceResults) {
+            const findRacer = racerScores.find(x => x.athleteId == result.profileId) // make sure race result has an entry in racerScores
+            if (!findRacer) {
+                console.log("Creating missnig racerScores entry for finisher",result.profileData.firstName.trim(), " ", result.profileData.lastName.trim())
+                const newEntry = {
+                    athleteId: result.profileId,
+                    falPointTotal: 0,
+                    finPoints: 0,
+                    ftsPointTotal: 0,
+                    name: result.profileData.firstName.trim() + " " + result.profileData.lastName.trim(),
+                    pointTotal: 0
+                }
+                racerScores.push(newEntry)
+            }
+        }
     }
     for (let racer of racerScores) {
         if (raceResults.length > 0) {            
             const racerResult = raceResults.find(x => x.profileId == racer.athleteId)
             //debugger
-            let pointsCounter = scorePoints.length            
+            let pointsCounter = scorePoints.length;
+            let bonusPointsCounter = bonusScores.length;
             if (racerResult) {
                 if (racerResult.rank < pointsCounter) {
                     racer.finPoints = scorePoints[racerResult.rank - 1];
                 } else {
                     racer.finPoints = 0;
+                }
+                if (racerResult.rank <= bonusPointsCounter) {
+                    console.log("Adding", bonusScores[racerResult.rank - 1], "bonus FIN points to",racer.name )
+                    racer.finPoints += bonusScores[racerResult.rank - 1];
                 }
                 //debugger
             } else {
@@ -415,9 +470,8 @@ async function scoreResults(eventResults, currentEventConfig) {
             racer.finPoints = 0;
         }
         racer.pointTotal = racer.ftsPointTotal + racer.falPointTotal + racer.finPoints;
-    }
-    //debugger
-    
+    }  
+    console.log("Racer scores",racerScores)  
     return racerScores;
 }
 
@@ -482,6 +536,13 @@ async function getLeaderboard(watching) {
         if ((Date.now() - refresh) > 20000) {
             //console.log("not in an event")
             refresh = Date.now();
+            settings = common.settingsStore.get();
+            if (settings.lastKnownSG?.eventSubgroupId != lastKnownSG.eventSubgroupId) {
+                console.log("Saving last knownSG")
+                common.settingsStore.set("lastKnownSG", lastKnownSG)
+                settings = common.settingsStore.get();
+                console.log(settings)
+            }
             if (watching.athlete.team) {
                 watchingTeam = watching.athlete.team;
                 //console.log("Watching team is",watchingTeam)
@@ -510,7 +571,7 @@ async function getLeaderboard(watching) {
             let dbResults = await zen.getSegmentResults(dbSegments, eventSubgroupId)
             console.log("DB results:",dbResults)
             let eventResults = await processResults(watching, dbResults);
-            //console.log("event segment results",eventResults)
+            console.log("event segment results",eventResults)
             let racerScores = await scoreResults(eventResults, currentEventConfig);
             //debugger
             racerScores.sort((a, b) => {
@@ -529,20 +590,18 @@ async function getLeaderboard(watching) {
         
     }
 };
-function getScoreFormat(scoreFormat) {
-    //let scoreFormat = settings.scoreFormat;
-    let scoreList = [];
-    //if (scoreFormat != null)
+function getScoreFormat(scoreFormat, scoreStep) {
+    
+    let scoreList = [];    
     if (scoreFormat)
     {
-        //debugger
         let scores = scoreFormat.split(',');        
         for (let score of scores)
         {
             if (score.includes(".."))
             {
                 let scoreSeq = score.split("..")
-                for (let i = scoreSeq[0]; i > scoreSeq[1] - 1 ; i--)
+                for (let i = scoreSeq[0]; i > scoreSeq[1] - 1 ; i = i - parseInt(scoreStep))
                 {
                     scoreList.push(parseInt(i));
                 }
@@ -554,7 +613,6 @@ function getScoreFormat(scoreFormat) {
         }
         return scoreList;
     }
-    //return [10,9,8,7,6,5,4,3,2,1];
     return [0];
 }
 function changeFontScale() {

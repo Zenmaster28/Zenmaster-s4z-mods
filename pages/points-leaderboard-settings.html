@@ -228,18 +228,19 @@
             const watching = await common.rpc.getAthleteData("watching")
             
             const penListDiv = document.getElementById('penList');
-            const segmentsSaveDiv = document.getElementById('segmentsSave')
-            const segmentsTableDiv = document.getElementById('segmentsList')
-            const segmentsHeaderDiv = document.getElementById('segmentsHeader')
-            const ftsScoreFormatDiv = document.getElementById('ftsScoreFormat')
-            const ftsStepDiv = document.getElementById('ftsStep')
-            const ftsBonusDiv = document.getElementById('ftsBonus')
-            const falScoreFormatDiv = document.getElementById('falScoreFormat')
-            const falStepDiv = document.getElementById('falStep')
-            const falBonusDiv = document.getElementById('falBonus')
-            const finScoreFormatDiv = document.getElementById('finScoreFormat')
-            const finStepDiv = document.getElementById('finStep')
-            const finBonusDiv = document.getElementById('finBonus')
+            const segmentsSaveDiv = document.getElementById('segmentsSave');
+            const segmentsTableDiv = document.getElementById('segmentsList');
+            const segmentsHeaderDiv = document.getElementById('segmentsHeader');
+            const ftsScoreFormatDiv = document.getElementById('ftsScoreFormat');
+            const ftsStepDiv = document.getElementById('ftsStep');
+            const ftsBonusDiv = document.getElementById('ftsBonus');
+            const falScoreFormatDiv = document.getElementById('falScoreFormat');
+            const falStepDiv = document.getElementById('falStep');
+            const falBonusDiv = document.getElementById('falBonus');
+            const finScoreFormatDiv = document.getElementById('finScoreFormat');
+            const finStepDiv = document.getElementById('finStep');
+            const finBonusDiv = document.getElementById('finBonus');
+            const eventTextDiv = document.getElementById('eventText');            
             eventsSelect.addEventListener('change', async function() {
                 segmentsTableDiv.innerHTML = "";
                 penListDiv.innerHTML = "";
@@ -248,6 +249,13 @@
                 ftsScoreFormatDiv.value = "";
                 falScoreFormatDiv.value = "";
                 finScoreFormatDiv.value = "";
+                eventTextDiv.value = "";
+                ftsBonusDiv.value = "";
+                falBonusDiv.value = "";
+                finBonusDiv.value = "";
+                ftsStepDiv.value = 1;
+                falStepDiv.value = 1;
+                finStepDiv.value = 1;
                 if (this.value != -1) {
                     eventInfo = await common.rpc.getEvent(parseInt(this.value))
                     eventInfo.eventSubgroups.sort((a,b) => {
@@ -283,13 +291,25 @@
                                 ftsScoreFormatDiv.value = currentEventConfig.ftsScoreFormat;
                                 falScoreFormatDiv.value = currentEventConfig.falScoreFormat;
                                 finScoreFormatDiv.value = currentEventConfig.finScoreFormat;
+                                ftsStepDiv.value = currentEventConfig.ftsStep;
+                                falStepDiv.value = currentEventConfig.falStep;
+                                finStepDiv.value = currentEventConfig.finStep;
+                                ftsBonusDiv.value = currentEventConfig.ftsBonus;
+                                falBonusDiv.value = currentEventConfig.falBonus;
+                                finBonusDiv.value = currentEventConfig.finBonus;
                             } else {
                                 ftsScoreFormatDiv.value = "";
                                 falScoreFormatDiv.value = "";
                                 finScoreFormatDiv.value = "";
+                                ftsBonusDiv.value = "";
+                                falBonusDiv.value = "";
+                                finBonusDiv.value = "";
+                                ftsStepDiv.value = 1;
+                                falStepDiv.value = 1;
+                                finStepDiv.value = 1;
                             }
                             const routeData = await zen.processRoute(sg.courseId, sg.routeId, sg.laps, sg.distanceInMeters, false, false, false)
-                            let segmentData = routeData.markLines
+                            let segmentData = routeData.markLines                            
                             segmentData = segmentData.filter(x => x.type != "custom" && !x.name.includes("Finish"));
                             segmentData.sort((a,b) => {
                                 if (a.markLine > b.markLine) {
@@ -301,6 +321,7 @@
                             const segmentsTable = await zen.buildPointsTable(segmentData, currentEventConfig)                    
                             segmentsTableDiv.innerHTML = "";
                             segmentsSaveDiv.innerHTML = "";
+                            eventTextDiv.value = "";
                             segmentsHeaderDiv.innerHTML = "<h2>" + routeData.routeFullData.name + " in " + common.courseToNames[routeData.routeFullData.courseId]
                             segmentsTableDiv.appendChild(segmentsTable)
                             ftsScoreFormatDiv.addEventListener('change', saveConfig);
