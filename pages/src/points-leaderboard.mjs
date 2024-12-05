@@ -508,7 +508,15 @@ async function displayResults(racerScores) {
     //pointsResultsDiv.innerHTML = "";
     let tableOutput = `<table id='pointsTable'><thead><th>Rank</th><th>Name</th><th ${evaluateVisibility('FTS')}>FTS</th><th ${evaluateVisibility('FAL')}>FAL</th><th ${evaluateVisibility('FIN')}>FIN</th><th>Total</th></thead><tbody>`;
     let rank = 1;
+    let maxRacers = settings.maxRacersToDisplay;
+    if (maxRacers == 0 || maxRacers == null) {
+        maxRacers = Infinity;
+    }
+    console.log("Max racers to display:", maxRacers)
     for (let racer of racerScores) {
+        if (rank > maxRacers) {
+            break;
+        }
         const athlete = await common.rpc.getAthleteData(racer.athleteId)
         let isWatching = false;
         let isMarked = false;
