@@ -430,7 +430,7 @@ async function scoreResults(eventResults, currentEventConfig) {
         for (let result of raceResults) {
             const findRacer = racerScores.find(x => x.athleteId == result.profileId) // make sure race result has an entry in racerScores
             if (!findRacer) {
-                console.log("Creating missnig racerScores entry for finisher",result.profileData.firstName.trim(), " ", result.profileData.lastName.trim())
+                console.log("Creating missing racerScores entry for finisher",result.profileData.firstName.trim(), "", result.profileData.lastName.trim())
                 const newEntry = {
                     athleteId: result.profileId,
                     falPointTotal: 0,
