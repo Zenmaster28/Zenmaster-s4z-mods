@@ -35,7 +35,8 @@ common.settingsStore.setDefault({
     lastKnownSG: {
         eventSubgroupId: 0,
         eventSubgroupStart: 0
-    }
+    },
+    showTeamBadges: true
 });
 /*
 common.settingsStore.addEventListener('changed', ev => {
@@ -517,7 +518,13 @@ async function displayResults(racerScores) {
         if (rank > maxRacers) {
             break;
         }
+        let o101Teambadge = "";
+        
         const athlete = await common.rpc.getAthleteData(racer.athleteId)
+        if (settings.showTeamBadges && athlete?.o101?.teamBadge) {
+                o101Teambadge = athlete.o101.teamBadge;
+        }
+        const sanitizedName = racer.name.replace(/\s*[\(\[].*?[\)\]]\s*/g, '').trim();
         let isWatching = false;
         let isMarked = false;
         let isTeamMate = false;
@@ -529,7 +536,7 @@ async function displayResults(racerScores) {
             isMarked = true;
         }
         tableOutput += isWatching ? "<tr class=watching>" : isMarked ? "<tr class=marked>" : isTeamMate ? "<tr class=teammate>" : "<tr>"
-        tableOutput += `<td>${rank}</td><td>${racer.name}</td><td ${evaluateVisibility('FTS')}>${racer.ftsPointTotal}</td><td ${evaluateVisibility('FAL')}>${racer.falPointTotal}</td><td ${evaluateVisibility('FIN')}>${racer.finPoints}</td><td>${racer.pointTotal}</td></tr>`
+        tableOutput += `<td>${rank}</td><td>${sanitizedName}&nbsp;${o101Teambadge}</td><td ${evaluateVisibility('FTS')}>${racer.ftsPointTotal}</td><td ${evaluateVisibility('FAL')}>${racer.falPointTotal}</td><td ${evaluateVisibility('FIN')}>${racer.finPoints}</td><td>${racer.pointTotal}</td></tr>`
         rank++;
     }
     tableOutput += "</table>"    
