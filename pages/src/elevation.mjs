@@ -83,7 +83,7 @@ common.settingsStore.setDefault({
 });
 
 const settings = common.settingsStore.get();
-doc.style.setProperty('--dataTransparency', common.settingsStore.get('dataTransparency') || 0.8);
+doc.style.setProperty('--dataTransparency', common.settingsStore.get('dataTransparency'));
 
 let watchdog;
 let inGame;
