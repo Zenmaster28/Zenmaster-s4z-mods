@@ -1946,9 +1946,8 @@ export class SauceElevationProfile {
                                             } 
                                             //debugger
                                         }
-                                        const distToNextSegment = nextSegment.markLine - xCoord;
-                                        nextSegment.markLine - xCoord > 1000 ? distanceToGo = ((distToNextSegment) / 1000).toFixed(2) : distanceToGo = (distToNextSegment).toFixed(0);
-                                        
+
+                                        const distToNextSegment = nextSegment.markLine - xCoord;                                                                                
                                         if (locale.isImperial()) {
                                             const metersPerMile = 1000 / locale.milesPerKm
                                             if (distToNextSegment > metersPerMile) {
@@ -1961,7 +1960,8 @@ export class SauceElevationProfile {
                                                 this.refresh = 200;
                                             }
                                         } else {
-                                            distanceToGoUnits = H.distance(distToNextSegment, {suffixOnly: true})                                        
+                                            nextSegment.markLine - xCoord > 1000 ? distanceToGo = ((distToNextSegment) / 1000).toFixed(2) : distanceToGo = (distToNextSegment).toFixed(0);
+                                            distanceToGoUnits = distToNextSegment > 1000 ? "km" : "m";
                                             distanceToGo > 1000 ? this.refresh = 1000 : this.refresh = 200;
                                         }
 
