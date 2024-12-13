@@ -12,11 +12,11 @@ div .myField {
   overflow: hidden;
   padding: 0.3em 1em;
   width: fit-content;
-  background-color : hsl(var(--theme-bg-hue) var(--theme-bg-sat) var(--theme-bg-light)/0.5);
+  background-color : hsl(var(--theme-bg-hue) var(--theme-bg-sat) var(--theme-bg-light)/var(--dataTransparency));
   font-variant-numeric: tabular-nums;  
 }
 #content > .fields {  
-  background-color: hsl(var(--theme-bg-hue) var(--theme-bg-sat) var(--theme-bg-light)/0.5);  
+  background-color: hsl(var(--theme-bg-hue) var(--theme-bg-sat) var(--theme-bg-light)/var(--dataTransparency));  
 }
 div .routeList {
   display: flex;

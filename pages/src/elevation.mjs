@@ -78,11 +78,12 @@ common.settingsStore.setDefault({
     aheadLineType: "solid",
     showNextPowerup: false,
     disablePenRouting: false,
-    zoomRemainingRoute: false
+    zoomRemainingRoute: false,
+    dataTransparency: 0.8
 });
 
 const settings = common.settingsStore.get();
-
+doc.style.setProperty('--dataTransparency', common.settingsStore.get('dataTransparency') || 0.8);
 
 let watchdog;
 let inGame;
@@ -234,6 +235,8 @@ function createElevationProfile({worldList}) {
     const disablePenRouting = settings.disablePenRouting;
     typeof(settings.zoomRemainingRoute) == "undefined" ? common.settingsStore.set("zoomRemainingRoute", false) : null;
     const zoomRemainingRoute = settings.zoomRemainingRoute;
+    typeof(settings.dataTransparency) == "undefined" ? common.settingsStore.set("dataTransparency", 0.8) : null;
+    
     return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute});
 }
 
@@ -593,7 +596,9 @@ export async function main() {
             if (!changed.get('zoomSegmentOnlyWithinApproach')) {
                 location.reload()
             }
-        } 
+        }  else if (changed.has('dataTransparency')) {
+            doc.style.setProperty('--dataTransparency', common.settingsStore.get('dataTransparency'));
+        }
         props.forEach(property => {
             if (changed.has(property)) {                
                 elProfile[property] = changed.get(property);                
