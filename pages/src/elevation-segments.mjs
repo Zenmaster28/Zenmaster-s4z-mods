@@ -1595,10 +1595,14 @@ export class SauceElevationProfile {
                                     let offsetBack = 500
                                     let distance;
                                     if (this.zoomRemainingRoute) {
-                                        if (this.routeDistances.at(-1) - xCoord > 1000) {
-                                            distance = this.routeDistances.at(-1) - xCoord;
+                                        if (state.eventDistance > 0 && xCoord) {
+                                            if (this.routeDistances.at(-1) - xCoord > 1000) {
+                                                distance = this.routeDistances.at(-1) - xCoord;
+                                            } else {
+                                                distance = 1000;
+                                            }
                                         } else {
-                                            distance = 1000;
+                                            distance = this.routeDistances.at(-1)
                                         }
                                     } else {
                                         distance = this.forwardDistance; 
