@@ -5,7 +5,6 @@ import * as ec from '/pages/deps/src/echarts.mjs';
 import * as theme from '/pages/src/echarts-sauce-theme.mjs';
 import * as zen from './segments-xCoord.mjs';
 
-
 locale.setImperial(!!common.storage.get('/imperialUnits'));
 ec.registerTheme('sauce', theme.getTheme('dynamic'));
 const H = locale.human;
@@ -1947,9 +1946,25 @@ export class SauceElevationProfile {
                                             } 
                                             //debugger
                                         }
-                                        nextSegment.markLine - xCoord > 1000 ? distanceToGo = ((nextSegment.markLine - xCoord) / 1000).toFixed(2) : distanceToGo = (nextSegment.markLine - xCoord).toFixed(0);
-                                        nextSegment.markLine - xCoord > 1000 ? distanceToGoUnits = "km" : distanceToGoUnits = "m";
-                                        nextSegment.markLine - xCoord > 1000 ? this.refresh = 1000 : this.refresh = 200;
+                                        const distToNextSegment = nextSegment.markLine - xCoord;
+                                        nextSegment.markLine - xCoord > 1000 ? distanceToGo = ((distToNextSegment) / 1000).toFixed(2) : distanceToGo = (distToNextSegment).toFixed(0);
+                                        
+                                        if (locale.isImperial()) {
+                                            const metersPerMile = 1000 / locale.milesPerKm
+                                            if (distToNextSegment > metersPerMile) {
+                                                distanceToGo = (distToNextSegment / 1000 * locale.milesPerKm).toFixed(2)
+                                                distanceToGoUnits = "mi"
+                                                this.refresh = 1000;
+                                            } else {
+                                                distanceToGo = (distToNextSegment * locale.feetPerMeter).toFixed(0)
+                                                distanceToGoUnits = "ft"
+                                                this.refresh = 200;
+                                            }
+                                        } else {
+                                            distanceToGoUnits = H.distance(distToNextSegment, {suffixOnly: true})                                        
+                                            distanceToGo > 1000 ? this.refresh = 1000 : this.refresh = 200;
+                                        }
+
                                         nextSegmentDiv.innerHTML = (nextSegment.displayName ?? nextSegment.name) + ": " + distanceToGo + distanceToGoUnits + puImgs;
                                         //debugger
                                         nextSegmentDiv.style.visibility = "";
