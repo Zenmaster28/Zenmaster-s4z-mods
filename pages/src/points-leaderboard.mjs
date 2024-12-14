@@ -392,7 +392,9 @@ async function scoreResults(eventResults, currentEventConfig) {
                             falPointTotal: scoreToAdd
                         }
                         score.pointTotal = score.ftsPointTotal + score.falPointTotal;
-                        racerScores.push(score);
+                        if (score.pointTotal > 0) {
+                            racerScores.push(score);
+                        }
                     } else {
                         let scoreToAdd = scorePoints[i]
                         if (i < bonusScores.length) {
@@ -516,6 +518,9 @@ async function displayResults(racerScores) {
     console.log("Max racers to display:", maxRacers)
     for (let racer of racerScores) {
         if (rank > maxRacers) {
+            break;
+        };
+        if (racer.pointTotal == 0) {
             break;
         }
         let teamBadge = "";
