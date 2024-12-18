@@ -16,7 +16,7 @@ let lastKnownSG = {
 let lastKnownSegmentData;
 let currentEventConfig;
 let watchingTeam;
-let refresh = Date.now() - 30000;
+let refresh = Date.now() - 2000000;
 const doc = document.documentElement;
 doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  
 
@@ -543,7 +543,7 @@ async function displayResults(racerScores) {
             isMarked = true;
         }
         tableOutput += isWatching ? "<tr class=watching>" : isMarked ? "<tr class=marked>" : isTeamMate ? "<tr class=teammate>" : "<tr>"
-        tableOutput += `<td>${rank}</td><td><span>${sanitizedName}</span>${teamBadge}</td><td ${evaluateVisibility('FTS')}>${racer.ftsPointTotal}</td><td ${evaluateVisibility('FAL')}>${racer.falPointTotal}</td><td ${evaluateVisibility('FIN')}>${racer.finPoints}</td><td>${racer.pointTotal}</td></tr>`
+        tableOutput += `<td>${rank}</td><td><span id="riderName">${sanitizedName}</span><div id="info-item-team">${teamBadge}</div></td><td ${evaluateVisibility('FTS')}>${racer.ftsPointTotal}</td><td ${evaluateVisibility('FAL')}>${racer.falPointTotal}</td><td ${evaluateVisibility('FIN')}>${racer.finPoints}</td><td>${racer.pointTotal}</td></tr>`
         rank++;
     }
     tableOutput += "</table>"    
