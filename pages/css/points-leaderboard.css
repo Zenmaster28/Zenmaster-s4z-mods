@@ -103,11 +103,11 @@ div .info-item-team span {
   text-align: right;
 }
 #info-item-team {
-  position: absolute; /* Overlap behavior */
-  top: 0; /* Align to the top */
-  right: 0; /* Align to the right */
-  white-space: nowrap; /* Prevent wrapping */
-  z-index: 1; /* Ensure it appears below riderName */
+  position: absolute;
+  top: 0;
+  right: 0;
+  white-space: nowrap;
+  z-index: 1;
   background-image: linear-gradient(var(--o101lg1), var(--o101lg2));
   border-radius: 4px;
   font-weight: var(--weight);
