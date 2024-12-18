@@ -50,10 +50,16 @@ table {
   font-size: calc(var(--font-scale) * 0.8em);
 }
 
-th, td {  
+td {  
   text-align: left;
   white-space: nowrap; 
   
+}
+th {
+  text-align: left;
+  white-space: nowrap; 
+  font-variant: small-caps tabular-nums;
+  font-size: calc(var(--font-scale) * 0.75em);
 }
 
 th:not(:nth-child(2)), td:not(:nth-child(2)) {
@@ -63,14 +69,13 @@ th:not(:nth-child(2)), td:not(:nth-child(2)) {
 }
 
 th:nth-child(2), td:nth-child(2) {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  white-space: nowrap;
-  overflow: hidden;
-}
-td span {
-  flex-shrink: 0;
+  position: relative; /* Enable positioning context */
+  overflow: hidden; /* Prevent overflow beyond td boundaries */
+  height: auto; /* Allow for vertical growth */
+  white-space: normal; /* Let text wrap naturally if needed */
+  padding-top: 10px;
+  padding-bottom: 10px;
+  line-height: 1.5;
 }
 table tr.watching {
   background-image: linear-gradient(135deg, hsl(var(--theme-primary-hue) var(--theme-primary-sat) var(--theme-primary-light)/85%), hsl(var(--theme-primary-hue) var(--theme-primary-sat) calc(var(--theme-primary-light) + -10% * var(--theme-primary-shade-dir))/80%));
@@ -96,6 +101,25 @@ div .info-item-team span {
   color: var(--o101c);
   zoom: 0.6;
   text-align: right;
-  flex-shrink: 1;
+}
+#info-item-team {
+  position: absolute; /* Overlap behavior */
+  top: 0; /* Align to the top */
+  right: 0; /* Align to the right */
+  white-space: nowrap; /* Prevent wrapping */
+  z-index: 1; /* Ensure it appears below riderName */
+  background-image: linear-gradient(var(--o101lg1), var(--o101lg2));
+  border-radius: 4px;
+  font-weight: var(--weight);
+  padding: 0 0.4em;
+  color: var(--o101c);
+  zoom: 0.7;
+}
+#riderName {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  white-space: nowrap;
+  z-index: 2;
 }
 
