@@ -113,7 +113,7 @@ div .info-item-team span {
   font-weight: var(--weight);
   padding: 0 0.4em;
   color: var(--o101c);
-  zoom: 0.7;
+  zoom: var(--badge-scale);
 }
 #riderName {
   position: absolute;

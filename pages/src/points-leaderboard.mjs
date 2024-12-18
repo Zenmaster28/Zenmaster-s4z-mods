@@ -36,7 +36,8 @@ common.settingsStore.setDefault({
         eventSubgroupId: 0,
         eventSubgroupStart: 0
     },
-    showTeamBadges: true
+    showTeamBadges: true,
+    badgeScale: 0.7
 });
 /*
 common.settingsStore.addEventListener('changed', ev => {
@@ -641,6 +642,10 @@ function changeFontScale() {
     const doc = document.documentElement;
     doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  
 }
+function changeBadgeScale() {
+    const doc = document.documentElement;
+    doc.style.setProperty('--badge-scale', common.settingsStore.get('badgeScale') || 0.7);  
+}
 
 export async function main() {
     common.initInteractionListeners();  
@@ -659,8 +664,12 @@ export async function main() {
         if (changed.has('fontScale')) {
             changeFontScale();
         }
+        if (changed.has('badgeScale')) {
+            changeBadgeScale();
+        }
         settings = common.settingsStore.get();
     });
+    changeBadgeScale();
 }
 
 export async function settingsMain() {
