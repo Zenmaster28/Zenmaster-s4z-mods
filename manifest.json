@@ -196,7 +196,7 @@
         {
             "file": "pages/points-leaderboard.html",
             "id": "points-leaderboard",
-            "name": "Points leaderboard (experimental)",
+            "name": "Points leaderboard",
             "description": "Show FTS or FAL point totals for a race.",
             "always_visible": true,
             "overlay": true,
