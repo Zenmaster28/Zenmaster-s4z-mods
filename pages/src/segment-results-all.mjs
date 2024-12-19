@@ -674,7 +674,7 @@ async function buildTable(eventResults,watching) {
         {
             continue;
         }  
-        const athlete = await common.rpc.getAthlete(eventResults[rank].athleteId)
+        const athlete = await common.rpc.getAthleteData(eventResults[rank].athleteId)
         let tr = document.createElement('tr');            
         let td = document.createElement('td');  
         if (scoreFormat != -1) 
@@ -699,15 +699,25 @@ async function buildTable(eventResults,watching) {
         let firstName;
         settings.nameFormat == "O101" ? lastName = fmtLastName(eventResults[rank]) : lastName = nameTeam[0];        
         let teamBadge = "";
+        //const athlete = await common.rpc.getAthleteData(racer.athleteId)
+        if (settings.showTeamBadge && athlete?.o101?.teamBadge) {
+            teamBadge = athlete.o101.teamBadge;
+            //console.log("using o101 team badge")
+        } else if (settings.showTeamBadge && athlete?.athlete.team) {
+            teamBadge = common.teamBadge(athlete.athlete.team)
+            //console.log("using sauce team badge")
+        }
+        /*
         if (nameTeam[1] && settings.showTeamBadge)
         {            
             //teamBadge = common.teamBadge(nameTeam[1]);
             //console.log("Getting team badge for " + nameTeam[1])
             o101enabled ? teamBadge = zen.fmtTeamBadgeV2(nameTeam[1]) : teamBadge = common.teamBadge(nameTeam[1]);
             //debugger
-        }    
+        }  
+        */  
         if (settings.nameFormat == "FirstLast") {
-            firstName = athlete ? athlete.firstName : eventResults[rank].firstName.charAt(0) + "."
+            firstName = athlete ? athlete.athlete.firstName : eventResults[rank].firstName.charAt(0) + "."
             //debugger
         } else {
             firstName = eventResults[rank].firstName.charAt(0) + "."
