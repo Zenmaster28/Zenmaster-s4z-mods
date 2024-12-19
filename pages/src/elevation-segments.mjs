@@ -1964,8 +1964,12 @@ export class SauceElevationProfile {
                                             distanceToGoUnits = distToNextSegment > 1000 ? "km" : "m";
                                             distanceToGo > 1000 ? this.refresh = 1000 : this.refresh = 200;
                                         }
-
-                                        nextSegmentDiv.innerHTML = (nextSegment.displayName ?? nextSegment.name) + ": " + distanceToGo + distanceToGoUnits + puImgs;
+                                        //debugger
+                                        let nextName = nextSegment.name;
+                                        if (nextSegment.finishArchOnly) {
+                                            nextName = nextSegment.name.replace("Finish", "Arch")
+                                        }
+                                        nextSegmentDiv.innerHTML = (nextSegment.displayName ?? nextName) + ": " + distanceToGo + distanceToGoUnits + puImgs;
                                         //debugger
                                         nextSegmentDiv.style.visibility = "";
                                     }
