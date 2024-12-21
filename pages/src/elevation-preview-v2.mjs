@@ -42,6 +42,8 @@ const courseSelect = document.querySelector('#titlebar select[name="course"]');
 const routeSelect = document.querySelector('#titlebar select[name="route"]');
 const lapsSelect = document.getElementById("laps");
 const distanceSelect = document.getElementById("customDistance")
+const eventsListDiv = document.getElementById("eventsList");
+const penListDiv = document.getElementById('penList');
 const demoState = {};
 
 let worldList;
@@ -424,6 +426,9 @@ export async function main() {
         zwiftMap.overrideLaps = 1;
         elProfile.overrideDistance = 0;
         zwiftMap.overrideDistance = 0;
+        eventsSelect.value = -1;
+        penListDiv.innerHTML = "";
+        eventText.value = "";
         lapsSelect.value = 1;
         elProfile.overrideLaps = 1;
         common.settingsStore.set("overrideDistance", 0)
@@ -443,6 +448,9 @@ export async function main() {
         routeId = undefined;
         distanceSelect.value = "";
         lapsSelect.value = 1;
+        eventsSelect.value = -1;
+        penListDiv.innerHTML = "";
+        eventText.value = "";
         elProfile.overrideLaps = 1;
         zwiftMap.overrideLaps = 1;
         elProfile.overrideDistance = 0;
@@ -506,7 +514,124 @@ export async function main() {
                 point.setPosition(pos);
             }
         });
-    };    
+    };  
+    const allEvents = await common.rpc.getCachedEvents();
+    const eventsSelect = document.createElement('select')
+    eventsSelect.id = "eventsSelect"
+    eventsSelect.style.maxWidth = '17em';
+    const optChoose = document.createElement('option')
+    optChoose.textContent = "Click to select an event to view";
+    optChoose.value = -1;
+    eventsSelect.appendChild(optChoose);
+    let eventInfo;
+    for (let event of allEvents) {
+        const eventStartTime = new Date(event.eventStart)
+        const opt = document.createElement('option')
+        opt.textContent = eventStartTime.toLocaleTimeString(undefined, {
+            weekday: 'short',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+            timeZoneName: 'short'
+        }) + " - " + event.name;
+        opt.value = event.id
+        eventsSelect.appendChild(opt)
+    }
+    eventsListDiv.appendChild(eventsSelect);
+    const eventText = document.createElement('input');
+    eventText.type = "text";
+    eventText.id = "eventText";
+    eventText.title = "Enter an event ID (from the URL on Zwiftpower) to find an event not in the list"
+    eventText.style.width = "8em"
+    eventText.placeholder = "or event ID"
+    eventsListDiv.appendChild(eventText);
+    eventText.addEventListener("change", async function() {
+        const eventTextDiv = document.getElementById("eventText");
+        let eventIdSearch = eventTextDiv.value;
+        if (eventIdSearch != "") {
+            eventIdSearch = parseInt(eventIdSearch)
+            //const eventDetails = await common.rpc.getEvent(eventIdSearch);
+            let eventDetails;
+            try {
+                eventDetails = await common.rpc.getEvent(eventIdSearch);
+                //return await this.fetchJSON(`/api/profiles/${id}`, options);
+            } catch(e) {
+                console.log("EventId not found", eventIdSearch)                        
+            }
+            if (eventDetails) {
+                const eventStartTime = new Date(eventDetails.eventStart)
+                const eventsSelect = document.getElementById("eventsSelect")
+                const opt = document.createElement('option')
+                opt.textContent = eventStartTime.toLocaleTimeString(undefined, {
+                    weekday: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true,
+                    timeZoneName: 'short'
+                }) + " - " + eventDetails.name;
+                opt.value = eventDetails.id
+                eventsSelect.appendChild(opt)
+                eventsSelect.value = eventDetails.id
+                const event = new Event('change')
+                eventsSelect.dispatchEvent(event)
+            }
+        }
+    });
+    eventsSelect.addEventListener('change', async function() {        
+        if (this.value != -1) {
+            penListDiv.innerHTML = "";
+            eventInfo = await common.rpc.getEvent(parseInt(this.value))
+            eventInfo.eventSubgroups.sort((a,b) => {
+                if (a.subgroupLabel > b.subgroupLabel) return 1;
+                if (a.subgroupLabel < b.subgroupLabel) return -1;
+                return 0;
+            })
+            //debugger
+            const penSelect = document.createElement('select');
+            penSelect.id = "penSelect"
+            if (eventInfo) {                
+                //console.log(eventInfo)                
+                const optText = document.createElement('option');
+                optText.textContent = "Select a pen"
+                optText.value = -1
+                penSelect.appendChild(optText)
+                for (let sg of eventInfo.eventSubgroups) {
+                    const optPen = document.createElement('option')
+                    optPen.value = sg.id;
+                    optPen.textContent = sg.subgroupLabel;
+                    penSelect.appendChild(optPen)
+                }
+                penListDiv.appendChild(penSelect)
+            }
+            penSelect.addEventListener('change', async function() {
+                const sg = eventInfo.eventSubgroups.find(x => x.id == this.value)
+                if (sg) {                            
+                    console.log(sg)
+                    courseId = sg.courseId
+                    routeId = sg.routeId
+                    distanceSelect.value = "";
+                    common.settingsStore.set("overrideDistance", "")
+                    lapsSelect.value = 1;
+                    await applyCourse();       
+                    await applyRoute();
+                    if (sg.distanceInMeters > 0) {
+                        //console.log("Applying custom distance", sg.distanceInMeters)
+                        distanceSelect.value = sg.distanceInMeters;
+                        common.settingsStore.set("overrideDistance", sg.distanceInMeters)
+                        const event = new Event('change')
+                        distanceSelect.dispatchEvent(event)
+                    } else if (sg.laps > 1) {
+                        //console.log("applying laps", sg.laps)
+                        lapsSelect.value = sg.laps
+                        const event = new Event('change')
+                        lapsSelect.dispatchEvent(event)
+                    }
+                }
+                //debugger
+            })
+            
+        }
+    });
     if (courseId != null) {
         if (!settings.showMap) {            
             document.getElementById("mapDiv").style.visibility = "hidden"
