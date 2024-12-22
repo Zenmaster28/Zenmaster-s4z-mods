@@ -15,6 +15,7 @@
         <link rel="stylesheet" href="/pages/css/common.css"/>
         <link rel="stylesheet" href="/pages/css/geo.css"/>
         <link rel="stylesheet" href="./css/elevation-segments.css"/>
+        <link rel="stylesheet" href="./css/elevation-preview.css"/>
 
         <script type="module">
             import {main} from './src/elevation-preview-v2.mjs';
@@ -25,15 +26,25 @@
         <div id="titlebar">
             <header>
                 <div class="logo"><img src="/pages/images/icon128.png"/></div>
-                <div class="title">Route Preview</div>
-                <div class="course"><select required name="course"></select></div>
-                <div class="route"><select required name="route"></select></div>
-                <div class="title">&nbsp;Laps</div>
-                <div class="course"> <input id="laps" type="number" min="1" max="20"></div>
-                <div class="title">&nbsp;Distance (m)</div>
-                <div ><input id="customDistance" type="number" min="1000" max="100000" step="100" class="options"></div>
-                <div id="eventsList"></div>
-                <div id="penList"></div>
+                <div id="routes">
+                    <div id="routesGroup">
+                    <div class="p-title">Route Preview</div>
+                    <div class="p-course"><select required name="course"></select></div>
+                    <div class="p-course"><select required name="route"></select></div>
+                    </div>
+                    <div id="lapsGroup">
+                    <div class="p-title">&nbsp;Laps</div>
+                    <div class="p-course"> <input id="laps" type="number" min="1" max="20"></div>
+                    
+                    <div class="p-title">&nbsp;Distance (m)</div>
+                    <div class="p-course"><input id="customDistance" type="number" min="1000" max="100000" step="100" class="options"></div>
+                    </div>
+                </div>
+                <div id="events">
+                    <div id="eventsList" class="p-course"></div>
+                    <div id="eventId" class="p-course"></div>
+                    <div id="penList" class="p-course"></div>
+                </div>                
                 <div class="filler"></div>
                 <div class="buttons">
                     <a class="button open-settings" href="route-preview-settings-v2.html?width=450&height=630&child-window"

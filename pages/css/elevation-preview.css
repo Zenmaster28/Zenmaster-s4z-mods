@@ -1,0 +1,38 @@
+#events {
+    display: flex;
+    flex-wrap: wrap;
+}
+#events .p-course {
+    display: flex;
+    align-items: center;
+}
+#routes {
+    display: flex;
+    flex-wrap: wrap;
+}
+#routes .p-title {
+    flex: 0 1 auto;
+    display: flex;
+    align-items: center;
+    font-size: 0.8em;
+    white-space: nowrap;
+    padding: 0 0.3em;
+      padding-left: 0.3em;
+    overflow: hidden;
+}
+#routes .p-course {
+    display: flex;
+    align-items: center;
+}
+#lapsGroup {
+    display: flex;
+    flex-wrap: wrap;
+}
+#distanceGroup {
+    display: flex;
+    flex-wrap: wrap;
+}
+#routesGroup {
+    display: flex;
+    flex-wrap: nowrap;
+}

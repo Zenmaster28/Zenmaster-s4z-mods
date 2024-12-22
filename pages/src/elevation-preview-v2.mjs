@@ -43,6 +43,7 @@ const routeSelect = document.querySelector('#titlebar select[name="route"]');
 const lapsSelect = document.getElementById("laps");
 const distanceSelect = document.getElementById("customDistance")
 const eventsListDiv = document.getElementById("eventsList");
+const eventIdDiv = document.getElementById("eventId");
 const penListDiv = document.getElementById('penList');
 const demoState = {};
 
@@ -425,12 +426,12 @@ export async function main() {
         distanceSelect.value = "";
         zwiftMap.overrideLaps = 1;
         elProfile.overrideDistance = 0;
+        elProfile.overrideLaps = 1;
         zwiftMap.overrideDistance = 0;
         eventsSelect.value = -1;
         penListDiv.innerHTML = "";
         eventText.value = "";
-        lapsSelect.value = 1;
-        elProfile.overrideLaps = 1;
+        lapsSelect.value = 1;        
         common.settingsStore.set("overrideDistance", 0)
         common.settingsStore.set("overrideLaps", 1)
         await applyRoute();
@@ -544,7 +545,8 @@ export async function main() {
     eventText.title = "Enter an event ID (from the URL on Zwiftpower) to find an event not in the list"
     eventText.style.width = "8em"
     eventText.placeholder = "or event ID"
-    eventsListDiv.appendChild(eventText);
+    //eventsListDiv.appendChild(eventText);
+    eventIdDiv.appendChild(eventText)
     eventText.addEventListener("change", async function() {
         const eventTextDiv = document.getElementById("eventText");
         let eventIdSearch = eventTextDiv.value;
@@ -602,6 +604,7 @@ export async function main() {
                     penSelect.appendChild(optPen)
                 }
                 penListDiv.appendChild(penSelect)
+                //eventsListDiv.appendChild(penSelect)
             }
             penSelect.addEventListener('change', async function() {
                 const sg = eventInfo.eventSubgroups.find(x => x.id == this.value)
@@ -611,6 +614,7 @@ export async function main() {
                     routeId = sg.routeId
                     distanceSelect.value = "";
                     common.settingsStore.set("overrideDistance", "")
+                    common.settingsStore.set("overrideLaps", 1)
                     lapsSelect.value = 1;
                     await applyCourse();       
                     await applyRoute();
@@ -618,13 +622,23 @@ export async function main() {
                         //console.log("Applying custom distance", sg.distanceInMeters)
                         distanceSelect.value = sg.distanceInMeters;
                         common.settingsStore.set("overrideDistance", sg.distanceInMeters)
+                        zwiftMap.overrideLaps = 1;
+                        elProfile.overrideDistance = sg.distanceInMeters;
+                        elProfile.overrideLaps = 1;
+                        zwiftMap.overrideDistance = sg.overrideDistance;
                         const event = new Event('change')
                         distanceSelect.dispatchEvent(event)
                     } else if (sg.laps > 1) {
                         //console.log("applying laps", sg.laps)
                         lapsSelect.value = sg.laps
+                        common.settingsStore.set("overrideLaps", sg.laps)
+                        zwiftMap.overrideLaps = sg.laps;
+                        elProfile.overrideDistance = 0;
+                        elProfile.overrideLaps = sg.laps;
+                        zwiftMap.overrideDistance = 0;
                         const event = new Event('change')
                         lapsSelect.dispatchEvent(event)
+                        //debugger
                     }
                 }
                 //debugger
