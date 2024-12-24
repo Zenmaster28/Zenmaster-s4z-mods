@@ -1,6 +1,6 @@
 {
     "manifest_version": 1,
-    "name": "Zenmaster MODs for S4Z",
+    "name": "Zenmaster",
     "description": "Arend's Mod Collection for S4Z",
     "author": "Arend teRaa",
     "website_url": "https://saucellc.io",
@@ -18,7 +18,6 @@
             "id": "Active Powerups",
             "name": "Active Powerups",
             "description": "Show active Powerups in current group",
-            "always_visible": true,
             "overlay": true,
             "frame": false,
             "default_bounds": {
@@ -33,7 +32,6 @@
             "id": "data-grid",
             "name": "Data Grid",
             "description": "A customizable grid to display any available Sauce data fields",
-            "always_visible": true,
             "overlay": true,
             "frame": false,
             "default_bounds": {
@@ -48,7 +46,6 @@
             "id": "Lap-controls",
             "name": "Lap controls",
             "description": "Lap controls",
-            "always_visible": true,
             "overlay": true,
             "frame": false,
             "default_bounds": {
@@ -63,7 +60,6 @@
             "id": "Lap data",
             "name": "Lap data",
             "description": "Lap data",
-            "always_visible": true,
             "overlay": true,
             "frame": false,
             "default_bounds": {
@@ -78,7 +74,6 @@
             "id": "Next Segment profile",
             "name": "Next segment profile",
             "description": "Route Profile of the next segment",
-            "always_visible": true,
             "overlay": true,
             "frame": false,
             "default_bounds": {
@@ -93,7 +88,6 @@
             "id": "Route-Profile with segments",
             "name": "Route Profile with segments",
             "description": "Route Profile with segments",
-            "always_visible": true,
             "overlay": true,
             "frame": false,
             "default_bounds": {
@@ -108,7 +102,6 @@
             "id": "Makuri-pp-locations",
             "name": "Makuri Islands Pace Partners",
             "description": "Show the route location of the Makuri Islands Pace Partners",
-            "always_visible": true,
             "overlay": true,
             "frame": false,
             "default_bounds": {
@@ -123,7 +116,6 @@
             "id": "Watopia-pp-locations",
             "name": "Watopia Pace Partners",
             "description": "Show the route location of the Watopia Pace Partners",
-            "always_visible": true,
             "overlay": true,
             "frame": false,
             "default_bounds": {
@@ -138,7 +130,6 @@
             "id": "Route-Profile-preview-v2",
             "name": "Preview any Route Profile",
             "description": "Preview any Route Profile",
-            "always_visible": true,
             "overlay": true,
             "frame": false,
             "default_bounds": {
@@ -153,7 +144,6 @@
             "id": "segment-data",
             "name": "Preview any Segment",
             "description": "Preview any segment with your results from the last 90 days",
-            "always_visible": true,
             "overlay": true,
             "frame": false,
             "default_bounds": {
@@ -168,7 +158,6 @@
             "id": "Segment results",
             "name": "Segment results",
             "description": "Show FTS or FAL results for the segments on a route.",
-            "always_visible": true,
             "overlay": true,
             "frame": false,
             "default_bounds": {
@@ -183,7 +172,6 @@
             "id": "Segment results multilap",
             "name": "Segment results Multilap",
             "description": "Show FTS or FAL results for the segments on a route.",
-            "always_visible": true,
             "overlay": true,
             "frame": false,
             "default_bounds": {
@@ -198,7 +186,6 @@
             "id": "points-leaderboard",
             "name": "Points leaderboard",
             "description": "Show FTS, FAL and FIN point totals for a race.",
-            "always_visible": true,
             "overlay": true,
             "frame": false,
             "default_bounds": {
