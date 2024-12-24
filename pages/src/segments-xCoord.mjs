@@ -2327,7 +2327,7 @@ async function fixMissingManifest(first, next, intersections, route) {
         const manifestIntersections = roadIntersections.intersections.filter(x => x.m_roadTime1 > first.start && x.m_roadTime2 < first.end) // look for an intersection on the most recent manifest
         if (manifestIntersections.length > 0) {
             // we found possible intersections, see if any were on the decision list
-            const validDecision = route.decisions.decisions.find(x => {return manifestIntersections.some(m => m.m_markerId == x.markerId.toString())})
+            const validDecision = route.decisions?.decisions.find(x => {return manifestIntersections.some(m => m.m_markerId == x.markerId.toString())})
             if (validDecision) {
                 if (validDecision.forward == "1") {
                     const turn = (() => {
@@ -2446,7 +2446,7 @@ async function fixManifestGap(first, next, intersections, allRoads, route) {
             }
             //debugger
             const matchingIntersections = roadIntersections.intersections.filter(int => {
-                return route.decisions.decisions.some(decision => decision.markerId === int.m_markerId.toString());
+                return route.decisions?.decisions.some(decision => decision.markerId === int.m_markerId.toString());
             });
             for (let int of matchingIntersections) {
                 let intOptions = int[direction]
