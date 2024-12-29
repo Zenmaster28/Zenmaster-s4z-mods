@@ -598,9 +598,10 @@ export async function main() {
                 optText.value = -1
                 penSelect.appendChild(optText)
                 for (let sg of eventInfo.eventSubgroups) {
+                    const zrsRange = sg.rangeAccessLabel ? ` (${sg.rangeAccessLabel})` : "";
                     const optPen = document.createElement('option')
                     optPen.value = sg.id;
-                    optPen.textContent = sg.subgroupLabel;
+                    optPen.textContent = sg.subgroupLabel + zrsRange;
                     penSelect.appendChild(optPen)
                 }
                 penListDiv.appendChild(penSelect)
