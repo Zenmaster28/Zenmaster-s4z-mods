@@ -69,10 +69,10 @@ th:not(:nth-child(2)), td:not(:nth-child(2)) {
 }
 
 th:nth-child(2), td:nth-child(2) {
-  position: relative; /* Enable positioning context */
-  overflow: hidden; /* Prevent overflow beyond td boundaries */
-  height: auto; /* Allow for vertical growth */
-  white-space: normal; /* Let text wrap naturally if needed */
+  position: relative;
+  overflow: hidden;
+  height: auto;
+  white-space: normal;
   padding-top: 10px;
   padding-bottom: 10px;
   line-height: 1.5;
