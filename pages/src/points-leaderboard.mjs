@@ -613,7 +613,7 @@ async function getLeaderboard(watching) {
         
     }
 };
-function getScoreFormat(scoreFormat, scoreStep) {
+export function getScoreFormat(scoreFormat, scoreStep) {
     
     let scoreList = [];    
     if (scoreFormat)
