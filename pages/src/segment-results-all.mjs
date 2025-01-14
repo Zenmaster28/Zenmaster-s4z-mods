@@ -1,6 +1,11 @@
 import * as sauce from '/shared/sauce/index.mjs';
 import * as common from '/pages/src/common.mjs';
 import * as zen from './segments-xCoord.mjs';
+let dbSegments = await zen.openSegmentsDB();
+let dbSegmentConfig = await zen.openSegmentConfigDB();
+await zen.cleanupSegmentsDB(dbSegments);
+await zen.cleanupSegmentsDB(dbSegments, {live: true});
+await zen.cleanupSegmentConfigDB(dbSegmentConfig);
 
 let o101enabled = false;
 let o101path = await zen.geto101();
@@ -742,7 +747,7 @@ async function buildTable(eventResults,watching) {
         if (watching.athleteId === eventResults[rank].athleteId)
         {            
             tr.className = "watching";
-        } else if (settings.highlightTeammate && athlete?.team?.trim() == watching.athlete.team?.trim()) {
+        } else if (settings.highlightTeammate && athlete?.team?.trim() == watching.athlete.team?.trim() && watching.athlete.team) {
             tr.className = "teammate"
         } else if (settings.highlightMarked && athlete?.marked) {
             tr.className = "marked"
@@ -819,9 +824,9 @@ async function getSegmentResults(watching) {
         if (watching.state.eventSubgroupId != 0) 
         {
             let sg = await common.rpc.getEventSubgroup(watching.state.eventSubgroupId)                       
-            if (sg.distanceInMeters) {
+            if (sg?.distanceInMeters) {
                 routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId, 0, sg.distanceInMeters) 
-            } else if (sg.laps > 1) {
+            } else if (sg?.laps > 1) {
                 routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId, sg.laps ) 
             } else {
                 routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId) 
