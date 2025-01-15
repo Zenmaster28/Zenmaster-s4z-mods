@@ -3142,10 +3142,15 @@ export async function findPathFromAtoB(startPoint, endPoint, intersections, allR
 }
 
 export function getScoreFormat(scoreFormat, scoreStep) {
-    if (scoreFormat.includes(":")) {
+    if (scoreFormat?.includes(":")) {
         const ranges = scoreFormat.split(',');
         const generateRange = (start, step, end) => {
-            const result = [];            
+            const result = []; 
+            if (step > 0) {
+                step = step * -1;
+            } else if (step == 0) {
+                return [0]
+            }
             for (let i = start; i >= end; i += step) {
                 result.push(i);
             }            
