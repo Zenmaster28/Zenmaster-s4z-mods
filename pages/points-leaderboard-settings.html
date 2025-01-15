@@ -163,37 +163,37 @@
             scoreFormatDiv.innerHTML += `
                 <b>Score Formats</b></br>
                 <span class="scoreLabel">FTS:</span> 
-                <input type="text" id="ftsScoreFormat" size="18" title="Examples are 10..1 which would score 10 for 1st, 9 for 2nd etc.  Comma separated values such as 15,11,9 would score as 15 for 1st, 11 for 2nd, 9 for 3rd.  Formats can be combined like 20,15,10,7..1">
-                <select id="ftsStep" title="The amount to decrease points per rider when using ..  ie. 50..1 with -2 would score as 50, 48, 46 etc.">
+                <input disabled type="text" id="ftsScoreFormat" size="18" title="Examples are 10..1 which would score 10 for 1st, 9 for 2nd etc.  Comma separated values such as 15,11,9 would score as 15 for 1st, 11 for 2nd, 9 for 3rd.  Formats can be combined like 20,15,10,7..1" placeholder="Select event first">
+                <select disabled id="ftsStep" title="The amount to decrease points per rider when using ..  ie. 50..1 with -2 would score as 50, 48, 46 etc.">
                     <option value="1">-1</option>
                     <option value="2">-2</option>
                     <option value="3">-3</option>
                     <option value="4">-4</option>
                     <option value="5">-5</option>
                 </select>
-                <input type="text" id="ftsBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">
+                <input disabled type="text" id="ftsBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">
                 <br>
                 <span class="scoreLabel">FAL:</span> 
-                <input type="text" id="falScoreFormat" size="18" title="Examples are 10..1 which would score 10 for 1st, 9 for 2nd etc.  Comma separated values such as 15,11,9 would score as 15 for 1st, 11 for 2nd, 9 for 3rd.  Formats can be combined like 20,15,10,7..1">
-                <select id="falStep" title="The amount to decrease points per rider when using ..  ie. 50..1 with -2 would score as 50, 48, 46 etc.">
+                <input disabled type="text" id="falScoreFormat" size="18" title="Examples are 10..1 which would score 10 for 1st, 9 for 2nd etc.  Comma separated values such as 15,11,9 would score as 15 for 1st, 11 for 2nd, 9 for 3rd.  Formats can be combined like 20,15,10,7..1" placeholder="Select event first">
+                <select disabled id="falStep" title="The amount to decrease points per rider when using ..  ie. 50..1 with -2 would score as 50, 48, 46 etc.">
                     <option value="1">-1</option>
                     <option value="2">-2</option>
                     <option value="3">-3</option>
                     <option value="4">-4</option>
                     <option value="5">-5</option>
                 </select>
-                <input type="text" id="falBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">
+                <input disabled type="text" id="falBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">
                 <br>
                 <span class="scoreLabel">FIN:</span> 
-                <input type="text" id="finScoreFormat" size="18" title="Examples are 10..1 which would score 10 for 1st, 9 for 2nd etc.  Comma separated values such as 15,11,9 would score as 15 for 1st, 11 for 2nd, 9 for 3rd.  Formats can be combined like 20,15,10,7..1">
-                <select id="finStep" title="The amount to decrease points per rider when using ..  ie. 50..1 with -2 would score as 50, 48, 46 etc.">
+                <input disabled type="text" id="finScoreFormat" size="18" title="Examples are 10..1 which would score 10 for 1st, 9 for 2nd etc.  Comma separated values such as 15,11,9 would score as 15 for 1st, 11 for 2nd, 9 for 3rd.  Formats can be combined like 20,15,10,7..1" placeholder="Select event first">
+                <select disabled id="finStep" title="The amount to decrease points per rider when using ..  ie. 50..1 with -2 would score as 50, 48, 46 etc.">
                     <option value="1">-1</option>
                     <option value="2">-2</option>
                     <option value="3">-3</option>
                     <option value="4">-4</option>
                     <option value="5">-5</option>
                 </select>
-                <input type="text" id="finBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">
+                <input disabled type="text" id="finBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">
                 <br>
                 <hr>
             `
@@ -341,7 +341,7 @@
                                 sampleScoring.innerHTML = "Sample Scoring";
                                 sampleScoring.innerHTML = showSampleScoring(currentEventConfig);
                             } else {
-                                ftsScoreFormatDiv.value = "";
+                                ftsScoreFormatDiv.value = "";    
                                 falScoreFormatDiv.value = "";
                                 finScoreFormatDiv.value = "";
                                 ftsBonusDiv.value = "";
@@ -352,7 +352,19 @@
                                 finStepDiv.value = 1;
                                 const sampleScoring = document.getElementById('sampleScoring');
                                 sampleScoring.innerHTML = "Sample Scoring";
-                            }
+                            }                            
+                            ftsScoreFormatDiv.disabled = false;
+                            ftsScoreFormatDiv.placeholder = "";                            
+                            falScoreFormatDiv.disabled = false;
+                            falScoreFormatDiv.placeholder = "";                            
+                            finScoreFormatDiv.disabled = false;
+                            finScoreFormatDiv.placeholder = "";
+                            ftsBonusDiv.disabled = false;      
+                            falBonusDiv.disabled = false;
+                            finBonusDiv.disabled = false;
+                            ftsStepDiv.disabled = false;
+                            falStepDiv.disabled = false;
+                            finStepDiv.disabled = false;
                             const routeData = await zen.processRoute(sg.courseId, sg.routeId, sg.laps, sg.distanceInMeters, false, false, false)
                             let segmentData = routeData.markLines                            
                             segmentData = segmentData.filter(x => x.type != "custom" && !x.name.includes("Finish"));
