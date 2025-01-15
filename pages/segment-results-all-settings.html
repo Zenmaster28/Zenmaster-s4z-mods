@@ -81,12 +81,56 @@
                 min-width: 2ch;
                 text-align: center;
             }
+            .settingsContainer {
+                display: flex;
+                width: 100%;                
+            }
+            .settingsLeft {
+                flex: 9;
+                display: flex;
+                flex-direction: column;
+            }
+            .settingsRight {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+            table {
+                width: 100%;
+            }
+            td {  
+                text-align: left;
+                white-space: nowrap;             
+            }
+            th {
+                text-align: left;
+                white-space: nowrap; 
+                font-variant: small-caps tabular-nums;
+            }
         </style>
 
         <script type="module">
-            import {settingsMain} from './src/segment-results-all.mjs';
+            import {settingsMain, showSampleScoring} from './src/segment-results-all.mjs';
+            import * as common from '/pages/src/common.mjs';
             settingsMain();
             document.body.classList.remove("transparent-bg");
+            const scoreFormatInput = document.getElementById("scoreFormat")
+            const sampleScoringDiv = document.getElementById("sampleScoring")
+            let settings = common.settingsStore.get();
+            if (settings.scoreFormat) {
+                const sampleScores = showSampleScoring(settings.scoreFormat, 1)
+                sampleScoringDiv.innerHTML = sampleScores;
+            } else {
+                sampleScoringDiv.innerHTML = "";
+            }
+            scoreFormatInput.addEventListener('change', function() {
+                if (scoreFormatInput.value) {
+                    const sampleScores = showSampleScoring(scoreFormatInput.value, 1)
+                    sampleScoringDiv.innerHTML = sampleScores;
+                } else {
+                    sampleScoringDiv.innerHTML = "";
+                }                
+            });
         </script>
     </head>
     <body>
@@ -101,113 +145,120 @@
             </header>
         </div>
         <div id="settings">
-            <form id="options" class="section">
-                <div class="title">Window Settings</div>
-                <label>
-                    <key>Result type: </key>
-                    <select name="FTSorFAL">Result format: 
-                        <option value="FTS">FTS</option>
-                        <option value="FAL">FAL</option>
-                    </select>                                        
-                </label>
-                <label title="Scoring format in comma separated values">
-                    <key>Score format:</key>
-                    <input type="text" name="scoreFormat">
-                </label>
-                <label>
-                    <key>Number of results: </key>
-                    <input type="range" name="resultsCount" min="1" max="100" step="1"/>
-                    <input type="number" name="resultsCount" min="1" max="100" step="1" style="--size: 5"/>
-                </label>                  
-                <label>
-                    <key>Name format:</key>
-                    <select name="nameFormat">
-                        <option value="raw">F. Last</option>                        
-                        <option value="FirstLast">First Last</option>   
-                        <option value="O101">O101</option>                     
-                    </select>
-                </label>
-                <label title="Only include female results">
-                    <key>Female only results:</key>    
-                    <input type="checkbox" name="femaleOnly">                
-                </label>                
-                <label>
-                    <key>Include time in results:</key>    
-                    <input type="checkbox" name="includeTime">                
-                </label>
-                <label>
-                    <key>Show Team badge:</key>
-                    <input type="checkbox" name="showTeamBadge">
-                </label> 
-                <label title="Set the window transparent when there is no data showing, regardless of theme settings">
-                    <key>Enable transparency<br>when no results:</key>
-                    <input type="checkbox" name="transparentNoData">
-                </label> 
-                <label title="How many decimal places to show in time results">
-                    <key>Time precision:</key>
-                    <input type="range" name="timePrecision" min="1" max="3" step="1"/>
-                    <input type="number" name="timePrecision" min="1" max="3" step="1" style="--size: 5"/>
-                </label>            
-                <label>
-                    <key>Font scaling:</key>
-                    <input type="range" name="fontScale" min="0.1" max="2" step="0.05"/>
-                    <input type="number" name="fontScale" min="0.1" max="2" step="0.05" style="--size: 5"/>
-                </label>                
-                <label>
-                    <key>Theme override:</key>
-                    <select is="sauce-theme" override></select>
-                </label> 
-                <hr>
-                <div class="title">Highlight</div>
-                <label>
-                    <key>&nbsp;&nbsp;- teammates</key>
-                    <input type="checkbox" name="highlightTeammate">
-                </label>
-                <label>
-                    <key>&nbsp;&nbsp;- marked riders</key>
-                    <input type="checkbox" name="highlightMarked">
-                </label>                
-                <hr>
-                <div class="title">When approaching a segment</div>               
-                <label title="When to start showing upcoming segment results (in meters)">
-                    <key>Show results within:</key>
-                    <input type="range" name="nextSegmentThreshold" min="100" max="1000" step="100"/>
-                    <input type="number" name="nextSegmentThreshold" min="100" max="1000" step="100" style="--size: 6"/> meters
-                </label>
-                <label>
-                    <key>Show distance & PB:</key>
-                    <input type="checkbox" name="approachingInfo">
-                </label>
-                <hr>
-                <div class="title">When in a segment</div>
-                <label>
-                    <key>Show finish distance & timer</key>
-                    <input type="checkbox" name="inSegmentInfo">
-                </label>
-                <hr>
-                <div class="title">When departing a segment</div>               
-                <label title="When to stop showing previous segment results">
-                    <key>Show results for:</key>
-                    <input type="range" name="lastSegmentThreshold" min="10" max="300" step="10"/>
-                    <input type="number" name="lastSegmentThreshold" min="10" max="300" step="10" style="--size: 5"/> seconds
-                </label>
-                <label>
-                    <key>Show rank & time:</key>
-                    <input type="checkbox" name="departingInfo">
-                </label>
-                <label title="Mostly useful for streamers using OBS window and browser sources">
-                    <key>Solid background:</key>
-                    <input type="checkbox" name="solidBackground"/>
-                </label>
-                <label>
-                    <key>Background color:</key>
-                    <input type="color" name="backgroundColor" data-depends-on="solidBackground"/>
-                    <input type="text" name="backgroundColor" data-depends-on="solidBackground" size="7"/>
-                </label>
-            </form>
-            <form id="fields" class="section">
-                <div class="title"></div>
-            </form>
+            <div class="settingsContainer">
+                <div class="settingsLeft">
+                <form id="options" class="section">
+                    <div class="title">Window Settings</div>
+                    <label>
+                        <key>Result type: </key>
+                        <select name="FTSorFAL">Result format: 
+                            <option value="FTS">FTS</option>
+                            <option value="FAL">FAL</option>
+                        </select>                                        
+                    </label>
+                    <label title="Scoring format in comma separated values">
+                        <key>Score format:</key>
+                        <input id="scoreFormat" type="text" name="scoreFormat">
+                    </label>
+                    <label>
+                        <key>Number of results: </key>
+                        <input type="range" name="resultsCount" min="1" max="100" step="1"/>
+                        <input type="number" name="resultsCount" min="1" max="100" step="1" style="--size: 5"/>
+                    </label>                  
+                    <label>
+                        <key>Name format:</key>
+                        <select name="nameFormat">
+                            <option value="raw">F. Last</option>                        
+                            <option value="FirstLast">First Last</option>   
+                            <option value="O101">O101</option>                     
+                        </select>
+                    </label>
+                    <label title="Only include female results">
+                        <key>Female only results:</key>    
+                        <input type="checkbox" name="femaleOnly">                
+                    </label>                
+                    <label>
+                        <key>Include time in results:</key>    
+                        <input type="checkbox" name="includeTime">                
+                    </label>
+                    <label>
+                        <key>Show Team badge:</key>
+                        <input type="checkbox" name="showTeamBadge">
+                    </label> 
+                    <label title="Set the window transparent when there is no data showing, regardless of theme settings">
+                        <key>Enable transparency<br>when no results:</key>
+                        <input type="checkbox" name="transparentNoData">
+                    </label> 
+                    <label title="How many decimal places to show in time results">
+                        <key>Time precision:</key>
+                        <input type="range" name="timePrecision" min="1" max="3" step="1"/>
+                        <input type="number" name="timePrecision" min="1" max="3" step="1" style="--size: 5"/>
+                    </label>            
+                    <label>
+                        <key>Font scaling:</key>
+                        <input type="range" name="fontScale" min="0.1" max="2" step="0.05"/>
+                        <input type="number" name="fontScale" min="0.1" max="2" step="0.05" style="--size: 5"/>
+                    </label>                
+                    <label>
+                        <key>Theme override:</key>
+                        <select is="sauce-theme" override></select>
+                    </label> 
+                    <hr>
+                    <div class="title">Highlight</div>
+                    <label>
+                        <key>&nbsp;&nbsp;- teammates</key>
+                        <input type="checkbox" name="highlightTeammate">
+                    </label>
+                    <label>
+                        <key>&nbsp;&nbsp;- marked riders</key>
+                        <input type="checkbox" name="highlightMarked">
+                    </label>                
+                    <hr>
+                    <div class="title">When approaching a segment</div>               
+                    <label title="When to start showing upcoming segment results (in meters)">
+                        <key>Show results within:</key>
+                        <input type="range" name="nextSegmentThreshold" min="100" max="1000" step="100"/>
+                        <input type="number" name="nextSegmentThreshold" min="100" max="1000" step="100" style="--size: 6"/> meters
+                    </label>
+                    <label>
+                        <key>Show distance & PB:</key>
+                        <input type="checkbox" name="approachingInfo">
+                    </label>
+                    <hr>
+                    <div class="title">When in a segment</div>
+                    <label>
+                        <key>Show finish distance & timer</key>
+                        <input type="checkbox" name="inSegmentInfo">
+                    </label>
+                    <hr>
+                    <div class="title">When departing a segment</div>               
+                    <label title="When to stop showing previous segment results">
+                        <key>Show results for:</key>
+                        <input type="range" name="lastSegmentThreshold" min="10" max="300" step="10"/>
+                        <input type="number" name="lastSegmentThreshold" min="10" max="300" step="10" style="--size: 5"/> seconds
+                    </label>
+                    <label>
+                        <key>Show rank & time:</key>
+                        <input type="checkbox" name="departingInfo">
+                    </label>
+                    <label title="Mostly useful for streamers using OBS window and browser sources">
+                        <key>Solid background:</key>
+                        <input type="checkbox" name="solidBackground"/>
+                    </label>
+                    <label>
+                        <key>Background color:</key>
+                        <input type="color" name="backgroundColor" data-depends-on="solidBackground"/>
+                        <input type="text" name="backgroundColor" data-depends-on="solidBackground" size="7"/>
+                    </label>
+                </form>
+                <form id="fields" class="section">
+                    <div class="title"></div>
+                </form>
+                </div>
+                <div class="settingsRight">
+                    <div id="sampleScoring"></div>
+                </div>
+            </div>
         </div>
     </body>
 </html>

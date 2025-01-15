@@ -1006,3 +1006,14 @@ export async function settingsMain() {
 }
 
 setBackground();
+
+export function showSampleScoring(settingsScoreFormat, scoreType) {
+    const scoreFormat = zen.getScoreFormat(settingsScoreFormat, 1)    
+    const maxScoring = scoreFormat.length
+    let sampleOutput = `Sample Scoring<br><table><tr><th>Rank</th><th>Score</th>`;
+    for (let i = 0; i < maxScoring; i++) {
+        sampleOutput += `<tr><td>${i + 1}</td><td>${(scoreFormat[i] || 0)}</td></tr>`
+    }
+    sampleOutput += "</table>"
+    return sampleOutput;
+}
