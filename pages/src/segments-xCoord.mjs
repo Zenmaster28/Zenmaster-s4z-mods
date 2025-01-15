@@ -3142,7 +3142,7 @@ export async function findPathFromAtoB(startPoint, endPoint, intersections, allR
 }
 
 export function getScoreFormat(scoreFormat, scoreStep) {
-    if (scoreFormat?.includes(":")) {
+    if (scoreFormat?.includes(":")) { // Matlab colon notation 
         const ranges = scoreFormat.split(',');
         const generateRange = (start, step, end) => {
             const result = []; 
@@ -3156,14 +3156,19 @@ export function getScoreFormat(scoreFormat, scoreStep) {
             }            
             return result;
         };
-        const output = ranges.flatMap(range => {
+        const scoreList = ranges.flatMap(range => {
             const [start, step, end] = range.split(':').map(Number);
             return generateRange(start, step, end);
         });
 
-        return output;
+        return scoreList;
     } else {
-        let scoreList = [];    
+        let scoreList = [];  
+        if (scoreStep < 0) {
+            scoreStep = scoreStep * -1; //make sure scoreStep is always positive
+        } else if (scoreStep == 0) {
+            scoreStep = 1;
+        }
         if (scoreFormat)
         {
             let scores = scoreFormat.split(',');        
