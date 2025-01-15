@@ -619,6 +619,7 @@ export async function main() {
                     lapsSelect.value = 1;
                     await applyCourse();       
                     await applyRoute();
+                    distanceSelect.value = parseInt(elProfile.routeDistances.at(-1))
                     if (sg.distanceInMeters > 0) {
                         //console.log("Applying custom distance", sg.distanceInMeters)
                         distanceSelect.value = sg.distanceInMeters;
