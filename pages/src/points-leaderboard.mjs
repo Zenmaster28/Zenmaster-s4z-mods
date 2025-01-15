@@ -354,17 +354,17 @@ async function scoreResults(eventResults, currentEventConfig) {
                     scoreStep = currentEventConfig.ftsStep;
                     const ftsBonus = currentEventConfig.ftsBonus;
                     if (ftsBonus !== "") {
-                        bonusScores = getScoreFormat(ftsBonus, 1)
+                        bonusScores = zen.getScoreFormat(ftsBonus, 1)
                     }
                 } else if (scoreFormat == "fal") {
                     scores = currentEventConfig.falScoreFormat;
                     scoreStep = currentEventConfig.falStep;
                     const falBonus = currentEventConfig.falBonus;
                     if (falBonus !== "") {
-                        bonusScores = getScoreFormat(falBonus, 1)
+                        bonusScores = zen.getScoreFormat(falBonus, 1)
                     }
                 }
-                let scorePoints = getScoreFormat(scores, scoreStep);        
+                let scorePoints = zen.getScoreFormat(scores, scoreStep);        
                 let pointsCounter = scorePoints.length
                 
                 
@@ -423,10 +423,10 @@ async function scoreResults(eventResults, currentEventConfig) {
     if (finScores) {
         const finBonus = currentEventConfig.finBonus;
         if (finBonus !== "") {
-            bonusScores = getScoreFormat(finBonus, 1);
+            bonusScores = zen.getScoreFormat(finBonus, 1);
             console.log("FIN bonus points",bonusScores)
         }
-        scorePoints = getScoreFormat(finScores, finScoreStep);  
+        scorePoints = zen.getScoreFormat(finScores, finScoreStep);  
         console.log("FIN score points",scorePoints)
     }
     //debugger
@@ -613,31 +613,6 @@ async function getLeaderboard(watching) {
         
     }
 };
-export function getScoreFormat(scoreFormat, scoreStep) {
-    
-    let scoreList = [];    
-    if (scoreFormat)
-    {
-        let scores = scoreFormat.split(',');        
-        for (let score of scores)
-        {
-            if (score.includes(".."))
-            {
-                let scoreSeq = score.split("..")
-                for (let i = scoreSeq[0]; i > scoreSeq[1] - 1 ; i = i - parseInt(scoreStep))
-                {
-                    scoreList.push(parseInt(i));
-                }
-            }
-            else
-            {
-                scoreList.push(parseInt(score));
-            }
-        }
-        return scoreList;
-    }
-    return [0];
-}
 function changeFontScale() {
     const doc = document.documentElement;
     doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  

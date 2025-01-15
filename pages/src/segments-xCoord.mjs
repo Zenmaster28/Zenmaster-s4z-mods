@@ -3142,27 +3142,43 @@ export async function findPathFromAtoB(startPoint, endPoint, intersections, allR
 }
 
 export function getScoreFormat(scoreFormat, scoreStep) {
-    
-    let scoreList = [];    
-    if (scoreFormat)
-    {
-        let scores = scoreFormat.split(',');        
-        for (let score of scores)
+    if (scoreFormat.includes(":")) {
+        const ranges = scoreFormat.split(',');
+        const generateRange = (start, step, end) => {
+            const result = [];            
+            for (let i = start; i >= end; i += step) {
+                result.push(i);
+            }            
+            return result;
+        };
+        const output = ranges.flatMap(range => {
+            const [start, step, end] = range.split(':').map(Number);
+            return generateRange(start, step, end);
+        });
+
+        return output;
+    } else {
+        let scoreList = [];    
+        if (scoreFormat)
         {
-            if (score.includes(".."))
+            let scores = scoreFormat.split(',');        
+            for (let score of scores)
             {
-                let scoreSeq = score.split("..")
-                for (let i = scoreSeq[0]; i > scoreSeq[1] - 1 ; i = i - parseInt(scoreStep))
+                if (score.includes(".."))
                 {
-                    scoreList.push(parseInt(i));
+                    let scoreSeq = score.split("..")
+                    for (let i = scoreSeq[0]; i > scoreSeq[1] - 1 ; i = i - parseInt(scoreStep))
+                    {
+                        scoreList.push(parseInt(i));
+                    }
+                }
+                else
+                {
+                    scoreList.push(parseInt(score));
                 }
             }
-            else
-            {
-                scoreList.push(parseInt(score));
-            }
+            return scoreList;
         }
-        return scoreList;
     }
     return [0];
 }

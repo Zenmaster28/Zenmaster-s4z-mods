@@ -156,7 +156,7 @@
             //zen.buildSegmentsTable()
             let sgStartTime;
             let dbSegmentConfig = await zen.openSegmentConfigDB();
-            import {settingsMain, getScoreFormat} from './src/points-leaderboard.mjs';
+            import {settingsMain} from './src/points-leaderboard.mjs';
             settingsMain();
             document.body.classList.remove("transparent-bg");
             const scoreFormatDiv = document.getElementById("scoreFormats");
@@ -479,12 +479,12 @@
                 //debugger
             }
             function showSampleScoring(eventConfig) {
-                const falScoreFormat = getScoreFormat(eventConfig.falScoreFormat, eventConfig.falStep)
-                const falBonus = getScoreFormat(eventConfig.falBonus, 1)
-                const ftsScoreFormat = getScoreFormat(eventConfig.ftsScoreFormat, eventConfig.ftsStep)
-                const ftsBonus = getScoreFormat(eventConfig.ftsBonus, 1)
-                const finScoreFormat = getScoreFormat(eventConfig.finScoreFormat, eventConfig.finStep)
-                const finBonus = getScoreFormat(eventConfig.finBonus, 1)
+                const falScoreFormat = zen.getScoreFormat(eventConfig.falScoreFormat, eventConfig.falStep)
+                const falBonus = zen.getScoreFormat(eventConfig.falBonus, 1)
+                const ftsScoreFormat = zen.getScoreFormat(eventConfig.ftsScoreFormat, eventConfig.ftsStep)
+                const ftsBonus = zen.getScoreFormat(eventConfig.ftsBonus, 1)
+                const finScoreFormat = zen.getScoreFormat(eventConfig.finScoreFormat, eventConfig.finStep)
+                const finBonus = zen.getScoreFormat(eventConfig.finBonus, 1)
                 const maxScoring = Math.max(falScoreFormat.length, ftsScoreFormat.length, finScoreFormat.length)
                 let sampleOutput = "Sample Scoring<br><table><tr><th>Rank</th><th>FTS</th><th>FAL</th><th>FIN</th></tr>";
                 for (let i = 0; i < maxScoring; i++) {
