@@ -257,32 +257,6 @@ function splitNameAndTeam(name) {
     return [name, team];
 }
 
-function getScoreFormat() {
-    let scoreFormat = settings.scoreFormat;
-    let scoreList = [];
-    if (scoreFormat != null)
-    {
-        let scores = scoreFormat.split(',');        
-        for (let score of scores)
-        {
-            if (score.includes(".."))
-            {
-                let scoreSeq = score.split("..")
-                for (let i = scoreSeq[0]; i > scoreSeq[1] - 1 ; i--)
-                {
-                    scoreList.push(parseInt(i));
-                }
-            }
-            else
-            {
-                scoreList.push(parseInt(score));
-            }
-        }
-        return scoreList;
-    }
-    return -1;
-}
-
 async function doApproach(routeSegments,segIdx, currentLocation,watching) {   
     //debugger
     if (routeSegments[segIdx].exclude) {
@@ -658,7 +632,8 @@ async function buildTable(eventResults,watching) {
     if (settings.femaleOnly) {
         eventResults = eventResults.filter(x => x.gender == "female")
     }
-    let scoreFormat = getScoreFormat();
+    let settingsScoreFormat = settings.scoreFormat;
+    let scoreFormat = zen.getScoreFormat(settingsScoreFormat, 1);
     let firstAL    
     if (settings.FTSorFAL == "FAL")
     {        
