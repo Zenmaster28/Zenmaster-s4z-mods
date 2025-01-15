@@ -657,8 +657,9 @@ async function buildTable(eventResults,watching) {
         const athlete = await common.rpc.getAthleteData(eventResults[rank].athleteId)
         let tr = document.createElement('tr');            
         let td = document.createElement('td');  
-        if (scoreFormat != -1) 
-        {
+        if (scoreFormat.length == 1 && scoreFormat[0] == 0) {
+            td.innerHTML = rank + 1;                        
+        } else {
             if (rank < scoreFormat.length)
             {
                 td.innerHTML = scoreFormat[rank];
@@ -667,11 +668,7 @@ async function buildTable(eventResults,watching) {
             {
                 td.innerHTML = 0;
             }
-        }
-        else
-        {
-            td.innerHTML = rank + 1;                        
-        }
+        }        
         tr.appendChild(td);
         td = document.createElement('td');
         let nameTeam = splitNameAndTeam(eventResults[rank].lastName);
