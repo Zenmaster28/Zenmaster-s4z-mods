@@ -89,6 +89,64 @@ table tr.teammate {
   background-image: linear-gradient(135deg, hsl(var(--theme-following-hue) var(--theme-following-sat) var(--theme-following-light)/80%), hsl(var(--theme-following-hue) var(--theme-following-sat) calc(var(--theme-following-light) + -10% * var(--theme-following-shade-dir))/80%));
   color: hsl(var(--theme-following-hue) var(--theme-following-sat) calc(var(--theme-following-light) + 100% * var(--theme-following-shade-dir))/100%);
 }
+tr.hidden {
+  display: none;
+}
+tr.shown {
+  display: table-row;
+}
+table .table-racers {
+  width: fit-content;
+  max-width: 100%;
+  table-layout: auto;
+  border-collapse: collapse;
+  font-size: calc(var(--font-scale) * 0.5em);
+}
+table .table-racers td {
+  padding-right: 2em;
+  text-align: left;
+  min-width: 0;
+}
+table .table-segments {
+  width: 100%;
+  max-width: 100%;
+  table-layout: auto;
+  border-collapse: collapse;
+  font-size: calc(var(--font-scale) * 0.5em);
+}
+table .table-segments td {
+  padding-right: 2em;
+  text-align: left;
+  min-width: 0;
+  border-bottom: 1px solid #ccc;  
+}
+table .table-segments th {
+  padding-right: 2em;
+  text-align: center;
+  min-width: 0;
+}
+table .table-segments td:nth-child(2),
+table .table-segments td:nth-child(3),
+table .table-segments td:nth-child(5),
+table .table-segments td:nth-child(6) {
+  padding-right: 2em;
+  text-align: right;
+  min-width: 0;
+  width: 1%;
+}
+table .table-segments td:nth-child(1),
+table .table-segments td:nth-child(4) {
+  padding-right: 2em;  
+  text-align: left;
+  min-width: 0;
+  width: 50%;
+}
+table .table-segments td:nth-child(4) { 
+  padding-left: 1em;
+}
+table .table-segments td:nth-child(3) {
+  border-right: 1px solid #ccc;
+}
 div .info-item-team {
   margin-top: -0.03em;
   display: inline-table;
@@ -122,4 +180,19 @@ div .info-item-team span {
   white-space: nowrap;
   z-index: 2;
 }
-
+#events {
+  display: flex;
+  flex-wrap: wrap;
+}
+#events .p-course {
+  display: flex;
+  align-items: center;
+}
+#selectEvent {
+  max-width: 27em;
+}
+div .points-view {
+  display: flex;
+  align-items: center;
+  font-size: 0.8em;
+}
