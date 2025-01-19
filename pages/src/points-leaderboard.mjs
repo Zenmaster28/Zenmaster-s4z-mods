@@ -114,7 +114,7 @@ async function getKnownRacersV2(watching) {
                 }
             }
             if (missingLiveResults.length > 0) {
-                console.log("Adding", missingLiveResults.length, "new results to the live db")
+                //console.log("Adding", missingLiveResults.length, "new results to the live db")
                 await zen.storeSegmentResults(dbSegments, missingLiveResults, {live: true})
             }
             //console.log("Found segment results", eventRes)
@@ -173,8 +173,8 @@ async function getKnownRacers(watching) {
         }
     }
     const savedKnownRacers = await zen.storeKnownRacers(dbSegments, allKnownRacers)
-    console.log("Saved known racers in IndexedDB", savedKnownRacers)
-    console.log("Known racer count from getKnownRacers: " + allKnownRacers.length, allKnownRacers)
+    //console.log("Saved known racers in IndexedDB", savedKnownRacers)
+    //console.log("Known racer count from getKnownRacers: " + allKnownRacers.length, allKnownRacers)
    //debugger
 }
 
@@ -239,7 +239,7 @@ async function getAllSegmentResults(watching) {
     //debugger
     //console.log("resultsToStore", resultsToStore)
     const savedResultsCount = await zen.storeSegmentResults(dbSegments, resultsToStore);    
-    console.log("New saved results:", savedResultsCount)
+    //console.log("New saved results:", savedResultsCount)
     //console.log("segment results:",segmentResults)
     //console.log("results to store:", resultsToStore)
 }
@@ -340,7 +340,7 @@ async function scoreResults(eventResults, currentEventConfig) {
         if (currentEventConfig) {
             segmentRepeat = currentEventConfig.segments.find(x => x.segmentId == segRes.segmentId && x.repeat == segRes.repeat)
             if (!segmentRepeat.enabled) {
-                console.log("NOT scoring", segmentRepeat.name, "repeat", segmentRepeat.repeat)
+                //console.log("NOT scoring", segmentRepeat.name, "repeat", segmentRepeat.repeat)
                 continue; 
             }
             scoreFormats = segmentRepeat.scoreFormat.split(",");
@@ -380,7 +380,7 @@ async function scoreResults(eventResults, currentEventConfig) {
                         //debugger
                         let scoreToAdd = scorePoints[i]
                         if (i < bonusScores.length) {
-                            console.log("Adding", bonusScores[i], "bonus", scoreFormat, "points to",segRes[scoreFormat][i].firstName, " ", segRes[scoreFormat][i].lastName )
+                            //console.log("Adding", bonusScores[i], "bonus", scoreFormat, "points to",segRes[scoreFormat][i].firstName, " ", segRes[scoreFormat][i].lastName )
                             scoreToAdd += bonusScores[i];
                         }
                         let score = scoreFormat == "fts" ? {
@@ -401,7 +401,7 @@ async function scoreResults(eventResults, currentEventConfig) {
                     } else {
                         let scoreToAdd = scorePoints[i]
                         if (i < bonusScores.length) {
-                            console.log("Adding", bonusScores[i], "bonus", scoreFormat, "points to",segRes[scoreFormat][i].firstName, " ", segRes[scoreFormat][i].lastName )
+                            //console.log("Adding", bonusScores[i], "bonus", scoreFormat, "points to",segRes[scoreFormat][i].firstName, " ", segRes[scoreFormat][i].lastName )
                             scoreToAdd += bonusScores[i];
                         }
                         if (scoreFormat == "fts") {
@@ -426,17 +426,17 @@ async function scoreResults(eventResults, currentEventConfig) {
         const finBonus = currentEventConfig.finBonus;
         if (finBonus !== "") {
             bonusScores = zen.getScoreFormat(finBonus, 1);
-            console.log("FIN bonus points",bonusScores)
+            //console.log("FIN bonus points",bonusScores)
         }
         scorePoints = zen.getScoreFormat(finScores, finScoreStep);  
-        console.log("FIN score points",scorePoints)
+        //console.log("FIN score points",scorePoints)
     }
     //debugger
     if (raceResults.length > 0) {
         for (let result of raceResults) {
             const findRacer = racerScores.find(x => x.athleteId == result.profileId) // make sure race result has an entry in racerScores
             if (!findRacer) {
-                console.log("Creating missing racerScores entry for finisher",result.profileData.firstName.trim(), result.profileData.lastName.trim())
+                //console.log("Creating missing racerScores entry for finisher",result.profileData.firstName.trim(), result.profileData.lastName.trim())
                 const newEntry = {
                     athleteId: result.profileId,
                     falPointTotal: 0,
@@ -462,7 +462,7 @@ async function scoreResults(eventResults, currentEventConfig) {
                     racer.finPoints = 0;
                 }
                 if (racerResult.rank <= bonusPointsCounter) {
-                    console.log("Adding", bonusScores[racerResult.rank - 1], "bonus FIN points to",racer.name )
+                    //console.log("Adding", bonusScores[racerResult.rank - 1], "bonus FIN points to",racer.name )
                     racer.finPoints += bonusScores[racerResult.rank - 1];
                 }
                 //debugger
@@ -518,7 +518,7 @@ async function displayResults(racerScores) {
     if (maxRacers == 0 || maxRacers == null) {
         maxRacers = Infinity;
     }
-    console.log("Max racers to display:", maxRacers)
+    //console.log("Max racers to display:", maxRacers)
     for (let racer of racerScores) {
         if (rank > maxRacers) {
             break;
@@ -563,7 +563,7 @@ async function getLeaderboard(watching) {
             refresh = Date.now();
             settings = common.settingsStore.get();
             if (settings.lastKnownSG?.eventSubgroupId != lastKnownSG.eventSubgroupId) {
-                console.log("Saving last knownSG")
+                //console.log("Saving last knownSG")
                 common.settingsStore.set("lastKnownSG", lastKnownSG)
                 settings = common.settingsStore.get();
                 console.log(settings)
@@ -575,11 +575,11 @@ async function getLeaderboard(watching) {
                 watchingTeam = "";
             }
             if (watching.state.eventSubgroupId == 0) {
-                console.log("We were in an event but no longer are...")
+                //console.log("We were in an event but no longer are...")
                 if (raceResults.find(x => x.profileId == watching.athleteId)) {
-                    console.log("We are in the race results!")
+                    //console.log("We are in the race results!")
                 } else {
-                    console.log("Not in race results, left the event early?")
+                    //console.log("Not in race results, left the event early?")
                 }
 
             }
@@ -594,9 +594,9 @@ async function getLeaderboard(watching) {
             }
             currentEventConfig = await zen.getEventConfig(dbSegmentConfig, eventSubgroupId)
             let dbResults = await zen.getSegmentResults(dbSegments, eventSubgroupId)
-            console.log("DB results:",dbResults)
+            //console.log("DB results:",dbResults)
             let eventResults = await processResults(watching, dbResults);
-            console.log("event segment results",eventResults)
+            //console.log("event segment results",eventResults)
             let racerScores = await scoreResults(eventResults, currentEventConfig);
             //debugger
             racerScores.sort((a, b) => {
