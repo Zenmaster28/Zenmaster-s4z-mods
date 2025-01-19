@@ -2965,7 +2965,7 @@ export function getEventConfig(dbSegmentConfig, eventSubgroupId) {
         try {
             const transaction = dbSegmentConfig.transaction("segmentConfig", "readonly");
             const store = transaction.objectStore("segmentConfig");
-            const request = store.get(eventSubgroupId);
+            const request = eventSubgroupId ? store.get(eventSubgroupId) : store.getAll();
 
             request.onsuccess = function () {                
                 //console.log("Query success. Retrieved", request.result.length, "entries");
