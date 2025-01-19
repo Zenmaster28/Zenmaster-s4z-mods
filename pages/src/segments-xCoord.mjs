@@ -3159,7 +3159,10 @@ export function getScoreFormat(scoreFormat, scoreStep) {
         const scoreList = ranges.flatMap(range => {
             let [start, step, end] = range.split(':').map(Number); 
             step = parseInt(step) || 1;
-            end = parseInt(end) ?? start;           
+            end = parseInt(end) || start; 
+            if (end == 0) {
+                end = 1;
+            }
             return generateRange(parseInt(start), step, end);
         });
 
