@@ -192,7 +192,7 @@ async function getAllSegmentResults(watching) {
     //let eventRacers = (await zen.getKnownRacers(dbSegments, eventSubgroupId)).map(x => x.athleteId)
     //eventRacers = [...new Set(eventRacers)]
     //debugger
-    console.log("Known racer count: " + eventRacers.length, eventRacers)
+    console.log("Known racer count: ", eventRacers.length, "Event participants:", watching.eventParticipants)
     //debugger
     let sg = await common.rpc.getEventSubgroup(eventSubgroupId)    
     let eventStartTime;
@@ -245,7 +245,6 @@ async function getAllSegmentResults(watching) {
 }
 
 async function getRaceResults(watching) {
-    // todo - deal with sg = 0 after race is over
     let eventSubgroupId;
     if (watching.state.eventSubgroupId == 0 && lastKnownSG.eventSubgroupId > 0) {
         eventSubgroupId = lastKnownSG.eventSubgroupId;
@@ -253,6 +252,8 @@ async function getRaceResults(watching) {
         eventSubgroupId = watching.state.eventSubgroupId;
     }
     let res = await common.rpc.getEventSubgroupResults(eventSubgroupId);
+    raceResults = [...res];
+    /*
     res.forEach(result => {
         const exists = raceResults.some(r => r.profileId === result.profileId);
         if (!exists) {
@@ -260,6 +261,7 @@ async function getRaceResults(watching) {
             raceResults.push(result)
         }
     })
+    */
 }
 
 async function processResults(watching, dbResults) {
