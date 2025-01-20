@@ -255,6 +255,8 @@ async function scoreResults(eventResults, currentEventConfig) {
         console.log("FIN score points",scorePoints)
     }
     let res = await common.rpc.getEventSubgroupResults(currentEventConfig.eventSubgroupId);
+    raceResults = [...res];
+    /*
     res.forEach(result => {
         const exists = raceResults.some(r => r.profileId === result.profileId);
         if (!exists) {
@@ -262,6 +264,7 @@ async function scoreResults(eventResults, currentEventConfig) {
             raceResults.push(result)
         }
     });
+    */
     if (raceResults.length > 0) {
         for (let result of raceResults) {
             const findRacer = racerScores.find(x => x.athleteId == result.profileId) // make sure race result has an entry in racerScores
