@@ -46,6 +46,14 @@ let allRacerRefresh = Date.now() - 25000;
 let teamColors;
 let eventJoined= [];
 let eventJoinedRefresh = Date.now() - 60000;
+let lastKnownSG = {
+    eventSubgroupId: 0,
+    eventSubgroupStart: 0,
+    segmentsNeeded: false,
+    segments: []
+};
+let postEventUpdates = false;
+let tsLastSegment = Date.now() - 60000;
 async function getTeamColors() {
     try {
         teamColors = await fetch("/mods/o101_s4z_mods/pages/src/o101/teamcolors.json").then((response) => response.json());
@@ -257,7 +265,7 @@ function splitNameAndTeam(name) {
     return [name, team];
 }
 
-async function doApproach(routeSegments,segIdx, currentLocation,watching) {   
+async function doApproach(routeSegments,segIdx, currentLocation,watching, eventSubgroupId) {   
     //debugger
     if (routeSegments[segIdx].exclude) {
         infoLeftDiv.innerHTML = "";
@@ -307,7 +315,7 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching) {
         let eventResults = [];   
         if (activeSegmentRepeat == 1) {   
             segmentResults = await common.rpc.getSegmentResults(activeSegment,{live:true})
-            eventResults = segmentResults.filter(x => x.eventSubgroupId === watching.state.eventSubgroupId);        
+            eventResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);        
         } else {
             segmentResults = await common.rpc.getSegmentResults(activeSegment)
             let startTime = Date.now() - (watching.state.time * 1000);
@@ -343,12 +351,12 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching) {
         let inEvent = false;  
         let segRepeat = "";  
         //debugger            
-        if (watching.state.eventSubgroupId != 0)
+        if (eventSubgroupId != 0)
         {
             if (eventData.length == 0)
             {
                 //console.log("getting event data")
-                eventData = await common.rpc.getEventSubgroup(watching.state.eventSubgroupId);
+                eventData = await common.rpc.getEventSubgroup(eventSubgroupId);
                 if (eventData) {
                     eventStartTime = eventData.eventSubgroupStartWT;
                 } else {
@@ -370,7 +378,7 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching) {
     }
 }
 
-async function doInSegment(routeSegments,segIdx, currentLocation, watching) {
+async function doInSegment(routeSegments,segIdx, currentLocation, watching, eventSubgroupId) {
     if (routeSegments[segIdx].exclude) {
         infoLeftDiv.innerHTML = "";
         infoRightDiv.innerHTML = "";
@@ -385,6 +393,7 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching) {
         segTimer = setInterval(segmentTimer,1000);
         //console.log(segTimer)
     }
+    tsLastSegment = Date.now();
     activeSegment = routeSegments[segIdx].id;
     activeSegmentName = routeSegments[segIdx].displayName ?? routeSegments[segIdx].name;
     activeSegmentMarkLine = routeSegments[segIdx].markLine; 
@@ -422,7 +431,7 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching) {
         }
         if (activeSegmentRepeat == 1) {
             segmentResults = await common.rpc.getSegmentResults(activeSegment,{live:true})
-            eventResults = segmentResults.filter(x => x.eventSubgroupId === watching.state.eventSubgroupId);
+            eventResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
         } else {  
             segmentResults = await common.rpc.getSegmentResults(activeSegment)
             let startTime = Date.now() - (watching.state.time * 1000);
@@ -456,12 +465,12 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching) {
         let segmentName = activeSegmentName.replace(" Finish","")        
         let inEvent = false;     
         let segRepeat = "";           
-        if (watching.state.eventSubgroupId != 0)
+        if (eventSubgroupId != 0)
         {
             if (eventData.length == 0)
             {
                 //console.log("getting event data")
-                eventData = await common.rpc.getEventSubgroup(watching.state.eventSubgroupId);
+                eventData = await common.rpc.getEventSubgroup(eventSubgroupId);
                 if (eventData) {
                     eventStartTime = eventData.eventSubgroupStartWT;
                 } else {
@@ -482,7 +491,7 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching) {
     }
 }
 
-async function doDeparting(routeSegments,segIdx, currentLocation, watching) {
+async function doDeparting(routeSegments,segIdx, currentLocation, watching, eventSubgroupId) {
     if (routeSegments[segIdx].exclude) {
         infoLeftDiv.innerHTML = "";
         infoRightDiv.innerHTML = "";
@@ -524,7 +533,7 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching) {
         let eventResults = [];
         if (activeSegmentRepeat == 1) {
             segmentResults = await common.rpc.getSegmentResults(activeSegment,{live:true})
-            eventResults = segmentResults.filter(x => x.eventSubgroupId === watching.state.eventSubgroupId);
+            eventResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
         } else {
             segmentResults = await common.rpc.getSegmentResults(activeSegment)
             let startTime = Date.now() - (watching.state.time * 1000);
@@ -558,11 +567,11 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching) {
         let segmentName = activeSegmentName.replace(" Finish","")        
         let inEvent = false;        
         let segRepeat = "";
-        if (watching.state.eventSubgroupId != 0)
+        if (eventSubgroupId != 0)
         {
             if (eventData.length == 0)
             {
-                eventData = await common.rpc.getEventSubgroup(watching.state.eventSubgroupId);
+                eventData = await common.rpc.getEventSubgroup(eventSubgroupId);
                 if (eventData) {
                     eventStartTime = eventData.eventSubgroupStartWT;
                 } else {
@@ -570,6 +579,138 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching) {
                 }
             }
             segRepeat = "[" + routeSegments[segIdx].repeat + "] " + settings.FTSorFAL
+            inEvent = true;
+        }        
+        if (settings.femaleOnly) {
+            segNameDiv.innerHTML = '\u21e0 ' + segmentName + segRepeat + '\u2640';
+        } else {
+            segNameDiv.innerHTML = '\u21e0 ' + segmentName + segRepeat;
+        }
+        if (settings.departingInfo)
+        {
+            if (segmentBests.length == 0)
+            {        
+                //console.log("Getting PB")                
+                segmentBests = await getSegmentBests(activeSegment, watching.athleteId); 
+                if (segmentBests.length > 0 ) {
+                    segmentBests.sort((a,b) => {
+                        return b.worldTime - a.worldTime;
+                    })  
+                    
+                    if (Date.now() - segmentBests[0].ts > 30000)    
+                    {                    
+                        segmentBests.length = 0; // we refreshed too soon after crossing the line
+                    }
+                }
+            }
+            let lasttime;
+            segmentBests.length > 0 ? lasttime = formatTime(segmentBests[0].elapsed) : lasttime = "---";
+            infoRightDiv.innerHTML = "Last: " + lasttime;
+            let rank = "---";
+            //console.log(settings.FTSorFAL)
+            if (settings.FTSorFAL == "FAL")
+            {                
+                eventResults.sort((a, b) => {
+                    return a.worldTime - b.worldTime;
+                })
+            } else {
+                eventResults.sort((a, b) => {
+                    return a.elapsed - b.elapsed;
+                })
+            }                             
+            for (let i = 0; i < eventResults.length; i++)
+            {                                       
+                if (watching.athleteId == eventResults[i].athleteId)
+                {
+                    rank = i + 1;
+                    break;
+                }
+            }            
+            infoLeftDiv.innerHTML = settings.FTSorFAL + " Rank: " + rank; 
+        } else {
+            infoLeftDiv.innerHTML = "";
+            infoRightDiv.innerHTML = "";
+        }   
+        
+        await buildTable(eventResults,watching);
+       
+    }
+}
+
+async function doPostEvent(routeSegments,segIdx, eventSubgroupId, watching) {
+    if (routeSegments.at(segIdx).exclude) {
+        infoLeftDiv.innerHTML = "";
+        infoRightDiv.innerHTML = "";
+        segNameDiv.innerHTML = "";
+        segmentDiv.innerHTML = "";
+        if (settings.transparentNoData) {document.body.classList = "transparent-bg"};
+        return null;
+    }
+    if (segTimer > 0)
+    {
+        clearInterval(segTimer);
+        segTimer = 0;
+        noPB = false;
+        segmentBests = [];
+    }
+    
+    document.body.classList.remove("transparent-bg");
+    activeSegment = routeSegments.at(segIdx).id;
+    activeSegmentName = routeSegments.at(segIdx).displayName ?? routeSegments.at(segIdx).name;
+    activeSegmentMarkLine = routeSegments.at(segIdx).markLine;
+    activeSegmentRepeat = routeSegments.at(segIdx).repeat;    
+    refreshRate = 1000;
+    
+    if (Date.now() - refresh > refreshRate)
+    {
+        refresh = Date.now(); 
+        let segmentResults;
+        let eventResults = [];
+        if (activeSegmentRepeat == 1) {
+            segmentResults = await common.rpc.getSegmentResults(activeSegment,{live:true})
+            eventResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
+        } else {
+            segmentResults = await common.rpc.getSegmentResults(activeSegment)
+            let startTime = eventStartTime
+            let segmentResultsSinceStart = segmentResults.filter(x => x.ts > startTime);
+            for (let racer of allKnownRacers) {
+                let racerResults = segmentResultsSinceStart.filter(x => x.athleteId == racer);
+
+                if (racerResults) {
+                    //console.log(racerResults);
+                    racerResults.sort((a, b) => {
+                        return a.worldTime - b.worldTime;
+                    })
+                    if (racerResults.length >= activeSegmentRepeat) {
+                        let repeatResult = racerResults[activeSegmentRepeat - 1]
+                        //debugger
+                        let resultCheck = eventResults.find(x => x.id == repeatResult.id)
+                        if (!resultCheck) {
+                            eventResults.push(repeatResult)
+                            //console.log("Adding result to eventResults")
+                        } else {
+                            //console.log("Skipping result already logged")
+                        }
+                    }
+                }
+            }
+            //console.log(eventResults)
+        }        
+        let segmentName = activeSegmentName.replace(" Finish","")        
+        let inEvent = false;        
+        let segRepeat = "";
+        if (eventSubgroupId != 0)
+        {
+            if (eventData.length == 0)
+            {
+                eventData = await common.rpc.getEventSubgroup(eventSubgroupId);
+                if (eventData) {
+                    eventStartTime = eventData.eventSubgroupStartWT;
+                } else {
+                    eventData = [];
+                }
+            }
+            segRepeat = "[" + routeSegments.at(segIdx).repeat + "] " + settings.FTSorFAL
             inEvent = true;
         }        
         if (settings.femaleOnly) {
@@ -781,21 +922,36 @@ async function getKnownRacers(eventId) {
             }        
         }
     }
-   console.log("Known racer count from segment results: ",allKnownRacers.length)
+   //console.log("Known racer count from segment results: ",allKnownRacers.length)
 }
 
 async function getSegmentResults(watching) {    
     refreshRate = 5000;
     const doc = document.documentElement;
+    let eventSubgroupId;
+    if (watching.state.eventSubgroupId > 0 && lastKnownSG.eventSubgroupId != watching.state.eventSubgroupId) {
+        lastKnownSG.eventSubgroupId = watching.state.eventSubgroupId;
+        lastKnownSG.segmentsNeeded = true;
+    }
+    if (watching.state.eventSubgroupId == 0 && lastKnownSG.eventSubgroupId > 0) {
+        eventSubgroupId = lastKnownSG.eventSubgroupId;
+        postEventUpdates = true;
+        //console.log("Using last known eventSubgroupId", lastKnownSG.eventSubgroupId)
+        //TODO: show last segment results after the event if it ends at a segment.
+    } else {
+        postEventUpdates = false;
+        eventSubgroupId = watching.state.eventSubgroupId;
+    }
+    
     doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);    
     if ((!routeInfo || watching.state.routeId != routeInfo.routeFullData.id) && !inProgress)
     {
         //console.log("Getting segments on route")
         inProgress = true;  
         let eventSettings;      
-        if (watching.state.eventSubgroupId != 0) 
+        if (eventSubgroupId != 0) 
         {
-            let sg = await common.rpc.getEventSubgroup(watching.state.eventSubgroupId)                       
+            let sg = await common.rpc.getEventSubgroup(eventSubgroupId)                       
             if (sg?.distanceInMeters) {
                 routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId, 0, sg.distanceInMeters) 
             } else if (sg?.laps > 1) {
@@ -806,7 +962,7 @@ async function getSegmentResults(watching) {
         } else {
             routeInfo = await zen.processRoute(watching.state.courseId, watching.state.routeId)             
         }
-        routeInfo.sg = watching.state.eventSubgroupId
+        routeInfo.sg = eventSubgroupId
         console.log(routeInfo) 
         console.log(watching.segmentData)  
         common.settingsStore.set("routeInfo", routeInfo)
@@ -836,17 +992,13 @@ async function getSegmentResults(watching) {
         
         
         inProgress = false;
-    } else if (watching.state.eventSubgroupId == 0 && settings.FTSorFAL == "FAL")
-    {
+    } else if (eventSubgroupId == 0 && settings.FTSorFAL == "FAL") {
         //FAL disabled outside of events
         if (settings.transparentNoData) 
         {
             document.body.classList = "transparent-bg"
         }
-    } 
-    //else if (watching.segmentData)
-    else if (routeInfo.segments)
-    {   
+    } else if (routeInfo.segments) {   
         let routeSegments;
         if (watching.segmentData && watching.segmentData.routeSegments) {
             routeSegments = watching.segmentData.routeSegments
@@ -861,10 +1013,10 @@ async function getSegmentResults(watching) {
             routeSegments = routeInfo.markLines;
         }
         //debugger
-        if (Date.now() - eventJoinedRefresh > 60000 && watching.state.eventSubgroupId != 0) {
+        if (Date.now() - eventJoinedRefresh > 60000 && eventSubgroupId != 0) {
             eventJoinedRefresh = Date.now();
             //console.log("Refreshing the event joined list")
-            eventJoined = await common.rpc.getEventSubgroupEntrants(watching.state.eventSubgroupId, {joined: true});
+            eventJoined = await common.rpc.getEventSubgroupEntrants(eventSubgroupId, {joined: true});
             //console.log("Found", eventJoined.length,"racers", eventJoined)
             allKnownRacers = allKnownRacers.filter(racer => {
                 if (!eventJoined.find(x => x.id === racer)) {
@@ -876,32 +1028,52 @@ async function getSegmentResults(watching) {
             
         }
         if (Date.now() - allRacerRefresh > 30000) {
-            getKnownRacers(watching.state.eventSubgroupId);
+            getKnownRacers(eventSubgroupId);
         }
         if (routeSegments.length > 0)        {
             //let currentLocation = zen.getxCoord(watching, routeInfo); 
             let currentLocation = watching.segmentData.currentPosition;           
             //let segmentStatus = getSegmentStatus(routeSegments, currentLocation, settings.nextSegmentThreshold); 
-            routeSegments = routeSegments.filter(x => x.type != "custom" && !x.finishArchOnly)           
-            let segmentStatus = getSegmentStatus(routeSegments, currentLocation, settings.nextSegmentThreshold); 
-            //console.log(segmentStatus)           
-            if (segmentStatus.status != lastStatus) {
-                //console.log("Resetting after status change from: " + lastStatus + " to " + segmentStatus.status)
-                noPB = false;
-                segmentBests.length = 0;
+            routeSegments = routeSegments.filter(x => x.type != "custom" && !x.finishArchOnly) 
+            let segmentStatus = {};
+            //console.log("postEventUpdates", postEventUpdates, "tsLastSegment", tsLastSegment, "settings.lastSegmentThreshold", settings.lastSegmentThreshold)
+            if (postEventUpdates && Date.now() - tsLastSegment < settings.lastSegmentThreshold * 1000) {
+                //console.log("Setting status to postEventUpdates")
+                segmentStatus.status = "postEventUpdates"
+            } else if (postEventUpdates && Date.now() - tsLastSegment > settings.lastSegmentThreshold * 1000) {
+                //console.log("Resetting postEventUpdates status and clearing lastknownsg")
+                postEventUpdates = false;
+                lastKnownSG.eventSubgroupId = 0
+                lastKnownSG.segments = [];
+            } else {
+                segmentStatus = getSegmentStatus(routeSegments, currentLocation, settings.nextSegmentThreshold); 
+                //console.log(segmentStatus)           
+                if (segmentStatus.status != lastStatus) {
+                    //console.log("Resetting after status change from: " + lastStatus + " to " + segmentStatus.status)
+                    noPB = false;
+                    segmentBests.length = 0;
+                }
+                lastStatus = segmentStatus.status;
             }
-            lastStatus = segmentStatus.status;
+            if (lastKnownSG.segmentsNeeded) {
+                console.log("Updating lastKnownSG.segments")
+                lastKnownSG.segments = [...routeSegments]
+                lastKnownSG.segmentsNeeded = false;
+            }
             //console.log(segmentStatus)
             //debugger
             switch(segmentStatus.status) {
                 case "Approaching" : 
-                    await doApproach(routeSegments,segmentStatus.nextSegmentIndex, currentLocation,watching);
+                    await doApproach(routeSegments,segmentStatus.nextSegmentIndex, currentLocation,watching, eventSubgroupId);
                     break;
                 case "inSegment" :
-                    await doInSegment(routeSegments,segmentStatus.nextSegmentIndex, currentLocation,watching);
+                    await doInSegment(routeSegments,segmentStatus.nextSegmentIndex, currentLocation,watching, eventSubgroupId);
                     break;
                 case "Departing" :
-                    await doDeparting(routeSegments,segmentStatus.prevSegmentIndex, currentLocation,watching);
+                    await doDeparting(routeSegments,segmentStatus.prevSegmentIndex, currentLocation,watching, eventSubgroupId);
+                    break;
+                case "postEventUpdates" :
+                    await doPostEvent(lastKnownSG.segments, -1, eventSubgroupId, watching);
                     break;
             }
             if (segmentStatus.status == "other" || segmentStatus.status == "Finishing")  
