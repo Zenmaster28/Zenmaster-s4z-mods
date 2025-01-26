@@ -313,11 +313,33 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching, eventS
         if (segTimer > 0) {clearInterval(segTimer)};  
         let segmentResults;
         let eventResults = [];   
+        let liveResults = false;
+        let prevSegmentResults;
         if (activeSegmentRepeat == 1) {   
+            prevSegmentResults = eventSubgroupId == 0 ? [] : await zen.getSegmentResults(dbSegments, eventSubgroupId, {live: true})
             segmentResults = await common.rpc.getSegmentResults(activeSegment,{live:true})
-            eventResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);        
+            const filteredSegmentResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
+            //eventResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);        
+            eventResults = prevSegmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
+            const prevIds = new Set(prevSegmentResults.map(res => res.id))
+            for (let res of filteredSegmentResults) {
+                if (!prevIds.has(res.id)) {
+                    console.log("Adding new live result", res)
+                    eventResults.push(res)
+                }
+            }
+            liveResults = true;
         } else {
-            segmentResults = await common.rpc.getSegmentResults(activeSegment)
+            prevSegmentResults = eventSubgroupId == 0 ? [] :  await zen.getSegmentResults(dbSegments, eventSubgroupId)
+            const segmentResults = [...prevSegmentResults]
+            const prevIds = new Set(prevSegmentResults.map(res => res.id))
+            const allSegmentResults = await common.rpc.getSegmentResults(activeSegment)
+            for (let res of allSegmentResults) {
+                if (!prevIds.has(res.id)) {
+                    segmentResults.push(res)
+                    console.log("Adding new result", res)
+                }
+            }
             let startTime = Date.now() - (watching.state.time * 1000);
             let segmentResultsSinceStart = segmentResults.filter(x => x.ts > startTime);
             //debugger
@@ -347,6 +369,10 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching, eventS
             //debugger
             //console.log(eventResults)
         }
+        eventResults.forEach(result => {   
+            result.eventSubgroupId = eventSubgroupId;
+            result.segmentId = activeSegment; 
+        });
         let segmentName = activeSegmentName.replace(" Finish","")        
         let inEvent = false;  
         let segRepeat = "";  
@@ -373,7 +399,7 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching, eventS
             segNameDiv.innerHTML = segmentName + segRepeat + ' \u21E2';
         }
         await buildTable(eventResults,watching);
-        
+        const savedResultsCount =  eventSubgroupId == 0 ? 0 : await zen.storeSegmentResults(dbSegments, eventResults, {live: liveResults});
         approachingRefresh = Date.now();                            
     }
 }
@@ -424,16 +450,38 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching, even
         refresh = Date.now();
         let segmentResults;
         let eventResults = [];
+        let liveResults = false;
+        let prevSegmentResults;
         //console.log("Refreshing insegment")
         if (!noPB)
         {
             segmentBests.length != 0 ? segmentBests.length = 0 : ""; // clear the PB for departure check
         }
         if (activeSegmentRepeat == 1) {
+            prevSegmentResults = eventSubgroupId == 0 ? [] : await zen.getSegmentResults(dbSegments, eventSubgroupId, {live: true})
             segmentResults = await common.rpc.getSegmentResults(activeSegment,{live:true})
-            eventResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
+            const filteredSegmentResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
+            //eventResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
+            eventResults = prevSegmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
+            const prevIds = new Set(prevSegmentResults.map(res => res.id))
+            for (let res of filteredSegmentResults) {
+                if (!prevIds.has(res.id)) {
+                    console.log("Adding new live result", res)
+                    eventResults.push(res)
+                }
+            }
+            liveResults = true;
         } else {  
-            segmentResults = await common.rpc.getSegmentResults(activeSegment)
+            prevSegmentResults = eventSubgroupId == 0 ? [] :  await zen.getSegmentResults(dbSegments, eventSubgroupId)
+            const segmentResults = [...prevSegmentResults]
+            const prevIds = new Set(prevSegmentResults.map(res => res.id))
+            const allSegmentResults = await common.rpc.getSegmentResults(activeSegment)
+            for (let res of allSegmentResults) {
+                if (!prevIds.has(res.id)) {
+                    segmentResults.push(res)
+                    console.log("Adding new result", res)
+                }
+            }
             let startTime = Date.now() - (watching.state.time * 1000);
             let segmentResultsSinceStart = segmentResults.filter(x => x.ts > startTime);
             //debugger
@@ -461,7 +509,11 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching, even
                 }
             }
             //console.log(eventResults)
-        }     
+        }
+        eventResults.forEach(result => {   
+            result.eventSubgroupId = eventSubgroupId;
+            result.segmentId = activeSegment; 
+        });
         let segmentName = activeSegmentName.replace(" Finish","")        
         let inEvent = false;     
         let segRepeat = "";           
@@ -485,9 +537,9 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching, even
         } else {
             segNameDiv.innerHTML = '\u21e0 ' + segmentName + segRepeat + ' \u21E2';
         }
-        await buildTable(eventResults,watching);
-        
-        inSegmentRefresh = Date.now();                            
+        await buildTable(eventResults,watching);        
+        inSegmentRefresh = Date.now();          
+        const savedResultsCount = await zen.storeSegmentResults(dbSegments, eventResults, {live: liveResults});                  
     }
 }
 
@@ -525,22 +577,44 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching, even
     else {
         refreshRate = 10000;
     }    
-    //console.log("Distance after segment: " + (currentLocation - activeSegmentMarkLine) + " Refresh rate: " + refreshRate)
+    //console.log("Distance after segment: " + (currentLocation - activeSegmentMarkLine) + " Refresh rate: " + refreshRate + "refresh diff: " + (Date.now() - refresh))
     if (Date.now() - refresh > refreshRate)
     {
         refresh = Date.now(); 
         let segmentResults;
         let eventResults = [];
+        let liveResults = false;
+        let prevSegmentResults;
         if (activeSegmentRepeat == 1) {
+            prevSegmentResults = eventSubgroupId == 0 ? [] : await zen.getSegmentResults(dbSegments, eventSubgroupId, {live: true})
             segmentResults = await common.rpc.getSegmentResults(activeSegment,{live:true})
-            eventResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
+            const filteredSegmentResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
+            //eventResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
+            eventResults = prevSegmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
+            const prevIds = new Set(prevSegmentResults.map(res => res.id))
+            for (let res of filteredSegmentResults) {
+                if (!prevIds.has(res.id)) {
+                    console.log("Adding new live result", res)
+                    eventResults.push(res)
+                }
+            }
+            liveResults = true;
         } else {
-            segmentResults = await common.rpc.getSegmentResults(activeSegment)
+            prevSegmentResults = eventSubgroupId == 0 ? [] :  await zen.getSegmentResults(dbSegments, eventSubgroupId)
+            const segmentResults = [...prevSegmentResults]
+            const prevIds = new Set(prevSegmentResults.map(res => res.id))
+            const allSegmentResults = await common.rpc.getSegmentResults(activeSegment)
+            for (let res of allSegmentResults) {
+                if (!prevIds.has(res.id)) {
+                    segmentResults.push(res)
+                    console.log("Adding new result", res)
+                }
+            }
             let startTime = Date.now() - (watching.state.time * 1000);
             let segmentResultsSinceStart = segmentResults.filter(x => x.ts > startTime);
             //debugger
             //console.log("There have been " + segmentResultsSinceStart.length + " results since " + tsToTime(startTime))
-            //console.log(segmentResultsSinceStart);
+            console.log(segmentResultsSinceStart);
             for (let racer of allKnownRacers) {
                 let racerResults = segmentResultsSinceStart.filter(x => x.athleteId == racer);
 
@@ -553,7 +627,7 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching, even
                         let repeatResult = racerResults[activeSegmentRepeat - 1]
                         //debugger
                         let resultCheck = eventResults.find(x => x.id == repeatResult.id)
-                        if (!resultCheck) {
+                        if (!resultCheck) {                            
                             eventResults.push(repeatResult)
                             //console.log("Adding result to eventResults")
                         } else {
@@ -563,7 +637,11 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching, even
                 }
             }
             //console.log(eventResults)
-        }        
+        }
+        eventResults.forEach(result => {   
+            result.eventSubgroupId = eventSubgroupId;
+            result.segmentId = activeSegment; 
+        });
         let segmentName = activeSegmentName.replace(" Finish","")        
         let inEvent = false;        
         let segRepeat = "";
@@ -631,9 +709,10 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching, even
             infoLeftDiv.innerHTML = "";
             infoRightDiv.innerHTML = "";
         }   
-        
+        //console.log("Building table from results", eventResults)
         await buildTable(eventResults,watching);
-       
+        const savedResultsCount = await zen.storeSegmentResults(dbSegments, eventResults, {live: liveResults});
+        //console.log("Saved results", savedResultsCount)
     }
 }
 
@@ -666,11 +745,33 @@ async function doPostEvent(routeSegments,segIdx, eventSubgroupId, watching) {
         refresh = Date.now(); 
         let segmentResults;
         let eventResults = [];
+        let liveResults = false;
+        let prevSegmentResults;
         if (activeSegmentRepeat == 1) {
+            prevSegmentResults = eventSubgroupId == 0 ? [] : await zen.getSegmentResults(dbSegments, eventSubgroupId, {live: true})
             segmentResults = await common.rpc.getSegmentResults(activeSegment,{live:true})
-            eventResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
+            const filteredSegmentResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
+            //eventResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);        
+            eventResults = prevSegmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
+            const prevIds = new Set(prevSegmentResults.map(res => res.id))
+            for (let res of filteredSegmentResults) {
+                if (!prevIds.has(res.id)) {
+                    console.log("Adding new live result", res)
+                    eventResults.push(res)
+                }
+            }
+            liveResults = true;
         } else {
-            segmentResults = await common.rpc.getSegmentResults(activeSegment)
+            prevSegmentResults = eventSubgroupId == 0 ? [] :  await zen.getSegmentResults(dbSegments, eventSubgroupId)
+            const segmentResults = [...prevSegmentResults]
+            const prevIds = new Set(prevSegmentResults.map(res => res.id))
+            const allSegmentResults = await common.rpc.getSegmentResults(activeSegment)
+            for (let res of allSegmentResults) {
+                if (!prevIds.has(res.id)) {
+                    segmentResults.push(res)
+                    console.log("Adding new result", res)
+                }
+            }
             let startTime = eventStartTime
             let segmentResultsSinceStart = segmentResults.filter(x => x.ts > startTime);
             for (let racer of allKnownRacers) {
@@ -695,7 +796,11 @@ async function doPostEvent(routeSegments,segIdx, eventSubgroupId, watching) {
                 }
             }
             //console.log(eventResults)
-        }        
+        } 
+        eventResults.forEach(result => {   
+            result.eventSubgroupId = eventSubgroupId;
+            result.segmentId = activeSegment; 
+        });       
         let segmentName = activeSegmentName.replace(" Finish","")        
         let inEvent = false;        
         let segRepeat = "";
@@ -765,7 +870,7 @@ async function doPostEvent(routeSegments,segIdx, eventSubgroupId, watching) {
         }   
         
         await buildTable(eventResults,watching);
-       
+        const savedResultsCount = await zen.storeSegmentResults(dbSegments, eventResults, {live: liveResults});
     }
 }
 
@@ -1045,6 +1150,7 @@ async function getSegmentResults(watching) {
                 postEventUpdates = false;
                 lastKnownSG.eventSubgroupId = 0
                 lastKnownSG.segments = [];
+                segmentStatus.status = "other"
             } else {
                 segmentStatus = getSegmentStatus(routeSegments, currentLocation, settings.nextSegmentThreshold); 
                 //console.log(segmentStatus)           
