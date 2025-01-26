@@ -400,13 +400,13 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching, even
     activeSegmentRepeat = routeSegments[segIdx].repeat;     
     //debugger    
     let distanceFromSegmentEnd = activeSegmentMarkLine - currentLocation;
-    if (distanceFromSegmentEnd < 50)
+    if (distanceFromSegmentEnd < 200)
     {
-        refreshRate = 400;
+        refreshRate = 1000;
     }
-    else if (distanceFromSegmentEnd < 200)
+    else if (distanceFromSegmentEnd < 500)
     {
-        refreshRate = 1000
+        refreshRate = 3000
     }  
     else {
         refreshRate = 5000
@@ -514,9 +514,9 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching, even
     activeSegmentMarkLine = routeSegments[segIdx].markLine;
     activeSegmentRepeat = routeSegments[segIdx].repeat;    
     let distanceFromSegment = currentLocation - activeSegmentMarkLine;
-    if (distanceFromSegment < 50)
+    if (distanceFromSegment < 200)
     {
-        refreshRate = 400;
+        refreshRate = 1000;
     }
     else if (distanceFromSegment < 500)
     {
