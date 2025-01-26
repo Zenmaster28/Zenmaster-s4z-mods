@@ -135,28 +135,21 @@
     "worldId": 1
   },
   {
-    "ascentInMeters": 895.5,
+    "ascentInMeters": 893.6876220703,
     "blockedForMeetups": 1,
-    "distanceInMeters": 44609.2,
+    "distanceInMeters": 44609.63671875,
     "eventOnly": true,
     "eventPaddocks": "1,2,3,4",
     "freeRideLeadinAscentInMeters": 0,
-    "freeRideLeadinDistanceInMeters": 15.3,
+    "freeRideLeadinDistanceInMeters": 15.315178,
     "id": 1724903700,
     "leadinAscentInMeters": 0.1,
-    "leadinDistanceInMeters": 193.9,
+    "leadinDistanceInMeters": 193.9007873535,
     "levelLocked": 1,
     "locKey": "LOC_ROUTE_WATOPIA_ZG25_QUEEN",
     "manifest": [
       {
         "end": 0.9828947441652414,
-        "leadin": true,
-        "reverse": true,
-        "roadId": 0,
-        "start": 0.981123036734127
-      },
-      {
-        "end": 0.9808932542800903,
         "reverse": true,
         "roadId": 0,
         "start": 0.918908
@@ -371,9 +364,146 @@
       }
     ],
     "meetupLeadinAscentInMeters": 0,
-    "meetupLeadinDistanceInMeters": 30.2,
+    "meetupLeadinDistanceInMeters": 30.171535,
     "name": "ZG25 Queen",
     "sportType": 3,
+    "supportedLaps": false,
+    "useAlternateEventRamp": false,
+    "worldId": 1
+  },
+  {
+    "ascentInMeters": 414.3,
+    "blockedForMeetups": 1,
+    "distanceInMeters": 32069.6,
+    "eventOnly": true,
+    "eventPaddocks": "1,2,3,4",
+    "freeRideLeadinAscentInMeters": 0,
+    "freeRideLeadinDistanceInMeters": 14.6,
+    "id": 2888820995,
+    "leadinAscentInMeters": 0.1,
+    "leadinDistanceInMeters": 193.9,
+    "locKey": "LOC_ROUTE_WATOPIA_DANGER_NOODLE",
+    "manifest": [
+      {
+        "end": 0.9828947442,
+        "reverse": true,
+        "roadId": 0,
+        "start": 0.4149745645
+      },
+      {
+        "end": 0.9176778479,
+        "roadId": 118,
+        "start": 0.38020833333333304
+      },
+      {
+        "end": 0.5851666753863298,
+        "reverse": true,
+        "roadId": 114,
+        "start": 0.0519085663
+      },
+      {
+        "end": 1,
+        "roadId": 0,
+        "start": 0.6082456185668708
+      },
+      {
+        "end": 0.0288596493,
+        "roadId": 0,
+        "start": 0
+      },
+      {
+        "end": 0.8303519983,
+        "roadId": 3,
+        "start": 0.23444445143143325
+      },
+      {
+        "end": 0.109843,
+        "roadId": 1,
+        "start": 0.005968992225825785
+      },
+      {
+        "end": 0.7254166667,
+        "roadId": 84,
+        "start": 0.36375
+      },
+      {
+        "end": 0.7700000057,
+        "roadId": 79,
+        "start": 0.04685185220092532
+      },
+      {
+        "end": 0.750952414522568,
+        "reverse": true,
+        "roadId": 80,
+        "start": 0.102171
+      },
+      {
+        "end": 0.9093616733327607,
+        "reverse": true,
+        "roadId": 81,
+        "start": 0.260671675
+      },
+      {
+        "end": 0.914444471697012,
+        "reverse": true,
+        "roadId": 78,
+        "start": 0.292639
+      },
+      {
+        "end": 0.7527911401,
+        "roadId": 83,
+        "start": 0.49000002190470693
+      },
+      {
+        "end": 0.9111542188,
+        "roadId": 81,
+        "start": 0.25583923539767817
+      },
+      {
+        "end": 0.816627,
+        "roadId": 80,
+        "start": 0.26714286908507323
+      },
+      {
+        "end": 0.7546296352520584,
+        "reverse": true,
+        "roadId": 79,
+        "start": 0.052519
+      },
+      {
+        "end": 0.7479166666666657,
+        "reverse": true,
+        "roadId": 84,
+        "start": 0.3490995
+      },
+      {
+        "end": 0.10883720889687534,
+        "reverse": true,
+        "roadId": 1,
+        "start": 0.0036697674
+      },
+      {
+        "end": 0.8033333572745327,
+        "reverse": true,
+        "roadId": 3,
+        "start": 0.0989000029
+      },
+      {
+        "end": 0.027938596699387475,
+        "reverse": true,
+        "roadId": 0,
+        "start": 0
+      },
+      {
+        "end": 1,
+        "reverse": true,
+        "roadId": 0,
+        "start": 0.9828947442
+      }
+    ],
+    "meetupLeadinAscentInMeters": 0,
+    "meetupLeadinDistanceInMeters": 29.5,
+    "name": "Danger Noodle",
     "supportedLaps": false,
     "useAlternateEventRamp": false,
     "worldId": 1
