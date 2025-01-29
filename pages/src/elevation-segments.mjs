@@ -1919,11 +1919,10 @@ export class SauceElevationProfile {
                                 if (this.showNextSegment && (this.showSegmentStart || this.showAllArches))
                                 {
                                     let nextSegmentDiv = document.getElementById('nextSegmentDiv');
-                                    
                                     if (nextSegment != -1)
                                     {                                        
                                         let puImgs = "";
-                                        if (this._eventSubgroupId && this.showNextPowerup) {
+                                        if (this._eventSubgroupId && this.showNextPowerup && nextSegment.type != "custom") {
                                             //debugger
                                             
                                             if (this.eventPowerups.type == "powerup_percent") {                                                
