@@ -212,7 +212,7 @@ export class SauceElevationProfile {
         if (rightPanel) {        
             rightPanel.addEventListener('mouseup', ev => {                
                 if (this.newPOIClicked) {
-                    this.createPOI(ev, self, this.hoverPoint[0]);                    
+                    this.createPOI(ev, self, this.hoverPoint[0]); 
                 };
             });  
             rightPanel.addEventListener('touchend', ev => {                
@@ -278,7 +278,10 @@ export class SauceElevationProfile {
             })
         }
     }
-    createPOI(ev, self, xValue) {                
+    createPOI(ev, self, xValue) { 
+        if (self.activePOIHandler) {
+            document.getElementById("poiInput").removeEventListener("keydown", self.activePOIHandler);
+        }
         const newPOIdiv = document.getElementById("newPOIdiv")
         const poiInput = document.getElementById("poiInput")
         newPOIdiv.style.display = "block";
@@ -301,19 +304,23 @@ export class SauceElevationProfile {
                     self.setRoute(self.routeId)
                     poiInput.removeEventListener("keydown", handleKeypress)
                     self.newPOIClicked = false;
+                    self.activePOIHandler = null;
                 } else {
                     poiInput.value = "";
                     newPOIdiv.style.display = "none";
                     poiInput.removeEventListener("keydown", handleKeypress)
                     self.newPOIClicked = false;
+                    self.activePOIHandler = null;
                 }                           
             } else if (e.key === "Escape") {                
                 poiInput.value = "";
                 newPOIdiv.style.display = "none";
                 poiInput.removeEventListener("keydown", handleKeypress)
                 self.newPOIClicked = false;
+                self.activePOIHandler = null;
             }
         }
+        self.activePOIHandler = handleKeypress
         poiInput.addEventListener("keydown", handleKeypress);
         
         //debugger
