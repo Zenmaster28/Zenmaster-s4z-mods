@@ -45,8 +45,8 @@ console.log(settings)
 if (settings.transparentNoData) {document.body.classList = "transparent-bg"};
 
 const formatTime = (milliseconds,timePrecision) => {
-    milliseconds = milliseconds * 1000;
-    const ms = milliseconds.toString().substr(-3).slice(0,timePrecision);    
+    milliseconds = Math.round(milliseconds * 1000);
+    const ms = milliseconds.toString().padStart(3, "0").substr(-3).slice(0,timePrecision);    
     const seconds = Math.floor((milliseconds / 1000) % 60);
     const minutes = Math.floor((milliseconds / 1000 / 60) % 60);                
     const hours = Math.floor((milliseconds / 1000 / 60 / 60) % 60);     
@@ -395,15 +395,17 @@ async function displayResults(racerScores, segmentScores, sgConfig, eventResults
             tableOutput += `<tr class="hidden"><td></td><td><table class="table-segments"><tr><th colspan='3'>FTS</th><th colspan='3'>FAL</th>`
             const maxRows = Math.max(segment.fal.length, segment.fts.length);
             const thisSegment = eventResults.find(x => x.segmentId == segment.segmentId && x.repeat == segment.repeat)
+            
             for (let i = 0; i < maxRows; i++) {
                 //TODO - include segment times
                 const thisRacerFTS = thisSegment.fts.find(x => x.athleteId == segment.fts[i]?.athleteId) || []
-                const thisRacerFAL = thisSegment.fal.find(x => x.athleteId == segment.fal[i]?.athleteId) || []  
+                const thisRacerFAL = thisSegment.fal.find(x => x.athleteId == segment.fal[i]?.athleteId) || []                  
                 const ftsName = segment.fts[i]?.name || "n/a";
                 const ftsTime = thisRacerFTS.elapsed ? formatTime(thisRacerFTS.elapsed, 3) : "n/a";
                 const ftsPoints = segment.fts[i]?.points || "n/a";
                 const falName = segment.fal[i]?.name || "n/a";
-                const falDiff = (thisRacerFAL.falDiff / 1000).toFixed(3) || "n/a";
+                //const falDiff = (thisRacerFAL.falDiff / 1000).toFixed(3) || "n/a";
+                const falDiff = (thisRacerFAL.falDiff / 1000) || "n/a";
                 const falPoints = segment.fal[i]?.points || "n/a";
                 tableOutput += `<tr><td>${ftsName}</td><td>${ftsTime}</td><td>${ftsPoints}</td><td>${falName}</td><td>${i == 0 ? "" : isNaN(falDiff) ? "" : "+"}${isNaN(falDiff) ? "n/a" : formatTime(falDiff,3)}</td><td>${falPoints}</td></tr>`
             }
