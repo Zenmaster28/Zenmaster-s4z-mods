@@ -431,6 +431,7 @@ export class SauceElevationProfile {
 
     setRoad(id, reverse=false, roadSegments) {
         let markLines = [];
+        allMarkLines.length = 0;
         for (let segment of roadSegments) {
             for (let markline of segment.markLines) {
                 //debugger
@@ -466,16 +467,22 @@ export class SauceElevationProfile {
                         }
                     });
                 }
+                //allMarkLines.push(markline)
             }
         }
         //debugger
         //console.log(markLines)
         routeSegments.length = 0;
-        allMarkLines.length = 0;
+        //allMarkLines.length = 0;
         this.lapCounter = 1;
         let nextSegmentDiv = document.getElementById('nextSegmentDiv');
-        nextSegmentDiv.innerHTML = "";
-        nextSegmentDiv.style.visibility = "hidden";
+        if (this.showNextSegment && (this.showSegmentStart || this.showAllArches)) {
+            nextSegmentDiv.innerHTML = "";
+            nextSegmentDiv.style.visibility = "";
+        } else {
+            nextSegmentDiv.innerHTML = "";
+            nextSegmentDiv.style.visibility = "hidden";
+        }
         const athleteSegmentData = {
             segmentData: {
                 currentPosition: 0,
@@ -1265,7 +1272,7 @@ export class SauceElevationProfile {
                     
                     if (!this.road || this.road.id !== watching.roadId || this.reverse !== watching.reverse) {
                         let roadSegments = await zen.getRoadSegments(this.courseId, watching.roadId, watching.reverse)
-                        console.log("Setting road to", watching.roadId, "reverse:", watching.reverse)
+                        console.log("Setting road to", watching.roadId, "reverse:", watching.reverse, "roadSegments", roadSegments)
                         this.setRoad(watching.roadId, watching.reverse, roadSegments);
                     }
                 } else {
