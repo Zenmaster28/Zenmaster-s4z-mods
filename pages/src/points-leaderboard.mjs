@@ -463,7 +463,7 @@ async function scoreResults(eventResults, currentEventConfig) {
             let pointsCounter = scorePoints.length;
             let bonusPointsCounter = bonusScores.length;
             if (racerResult) {
-                if (racerResult.rank < pointsCounter) {
+                if (racerResult.rank <= pointsCounter) {
                     racer.finPoints = scorePoints[racerResult.rank - 1];
                 } else {
                     racer.finPoints = 0;
