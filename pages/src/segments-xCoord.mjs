@@ -2039,6 +2039,31 @@ export const formatTime = (milliseconds,timePrecision) => {
     }
 }
 
+export const formatTime2 = (milliseconds, timePrecision = 3) => {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const ms = milliseconds % 1000;
+
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    // Truncate milliseconds without rounding
+    const msString = ms.toString().padStart(3, '0').slice(0, timePrecision);
+
+    // Build the time string dynamically
+    let timeString = '';
+    if (hours > 0) timeString += `${hours}:`;
+    if (minutes > 0 || hours > 0) timeString += `${minutes.toString().padStart(hours > 0 ? 2 : 1, '0')}:`;
+    timeString += `${seconds.toString().padStart((minutes > 0 || hours > 0) ? 2 : 1, '0')}`;
+
+    if (timePrecision > 0) {
+        timeString += `.${msString.padEnd(timePrecision, '0')}`;
+    }
+
+    return timeString;
+};
+
+
 export function getEventPowerups(sg) {
     let powerUps = {};
     const puList = {
@@ -2811,6 +2836,7 @@ export async function cleanupSegmentConfigDB(dbSegmentConfig) {
 export async function storeSegmentResults(dbSegments, resultsToStore, options) {
     return new Promise((resolve, reject) => {
         const storeName = options?.live ? "segmentResultsLive" : "segmentResults"
+        //console.log("Saving results to store", storeName)
         const transaction = dbSegments.transaction(storeName, "readwrite");
         const store = transaction.objectStore(storeName)
         let resultsCount = 0;
@@ -2921,7 +2947,8 @@ export async function getSegmentResults(dbSegments, eventSubgroupId, options) {
         console.error("Database connection is invalid!");
         return [];
     }
-    const storeName = options?.live ? "segmentResultsLive" : "segmentResults";
+    options = options ? options : {live: false}
+    const storeName = options.live ? "segmentResultsLive" : "segmentResults";
     //console.log("Getting segment results from", storeName)
     return new Promise((resolve, reject) => {
         try {
