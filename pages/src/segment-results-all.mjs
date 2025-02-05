@@ -267,7 +267,8 @@ function splitNameAndTeam(name) {
 
 async function getFullSegmentResults(dbSegments, eventSubgroupId, activeSegment, watching) {
     const prevSegmentResults = eventSubgroupId == 0 ? [] :  await zen.getSegmentResults(dbSegments, eventSubgroupId, {live: false})
-    let segmentResults = prevSegmentResults.filter(x => x.segmentId == activeSegment)            
+    let segmentResults = prevSegmentResults.filter(x => x.segmentId == activeSegment)   
+    //console.log("Previous saved results count", segmentResults.length, activeSegment)         
     const prevIds = new Set(segmentResults.map(res => res.id))
     const allSegmentResults = await common.rpc.getSegmentResults(activeSegment)
     
@@ -278,6 +279,7 @@ async function getFullSegmentResults(dbSegments, eventSubgroupId, activeSegment,
             segmentResults.push(res)
         }
     }
+    //console.log("Full saved results count:", segmentResults.length, activeSegment)
     return segmentResults;
 }
 
@@ -672,8 +674,14 @@ async function doPostEvent(routeSegments,segIdx, eventSubgroupId, watching) {
     activeSegment = routeSegments.at(segIdx).id;
     activeSegmentName = routeSegments.at(segIdx).displayName ?? routeSegments.at(segIdx).name;
     activeSegmentMarkLine = routeSegments.at(segIdx).markLine;
-    activeSegmentRepeat = routeSegments.at(segIdx).repeat;    
-    refreshRate = 1000;
+    activeSegmentRepeat = routeSegments.at(segIdx).repeat; 
+    if (Date.now() - tsLastSegment < 15000) {
+        refreshRate = 1000;        
+    } else if (Date.now() - tsLastSegment < 30000) {
+        refreshRate = 5000;
+    } else {
+        refreshRate = 10000;
+    }
     console.log("Refresh rate:", refreshRate, "diff", Date.now() - refresh)
     if (Date.now() - refresh > refreshRate)
     {
@@ -963,7 +971,7 @@ async function getKnownRacers(eventSubgroupId, watching) {
             result.segmentId = segId; 
         });
         const savedResultsCountAll = eventSubgroupId == 0 ? 0 : await zen.storeSegmentResults(dbSegments, segmentResults, {live: false});
-        console.log("Full saved results count:", savedResultsCountAll)
+        
     }
     
    //console.log("Known racer count from segment results: ",allKnownRacers.length)
@@ -1082,8 +1090,8 @@ async function getSegmentResults(watching) {
             routeSegments = routeSegments.filter(x => x.type != "custom" && !x.finishArchOnly) 
             let segmentStatus = {};
             //console.log("postEventUpdates", postEventUpdates, "tsLastSegment", tsLastSegment, "settings.lastSegmentThreshold", settings.lastSegmentThreshold)
-            if (postEventUpdates && Date.now() - tsLastSegment < settings.lastSegmentThreshold * 1000) {
-                //console.log("Setting status to postEventUpdates")
+            if (postEventUpdates && (Date.now() - tsLastSegment < settings.lastSegmentThreshold * 1000)) {
+                //console.log("postEventUpdates: Date.now() - tsLastSegment", Date.now() - tsLastSegment, "lastSegmentThreshold * 1000", settings.lastSegmentThreshold * 1000)
                 segmentStatus.status = "postEventUpdates"
             } else if (postEventUpdates && Date.now() - tsLastSegment > settings.lastSegmentThreshold * 1000) {
                 //console.log("Resetting postEventUpdates status and clearing lastknownsg")
