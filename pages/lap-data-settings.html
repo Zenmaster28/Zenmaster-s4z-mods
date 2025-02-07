@@ -104,6 +104,15 @@
             <form id="options" class="section">
                 <div class="title">Window Settings</div>
                 <label>
+                    <key>Auto-lap on power:</key>
+                    <input type="checkbox" name="autoLapPower">
+                </label>
+                <label>
+                    <key>Threshold:</key>
+                    <input type="range" name="autoLapPowerThreshold" min="10" max="500" step="5"/ data-depends-on="autoLapPower">
+                    <input type="number" name="autoLapPowerThreshold" min="10" max="500" step="5" style="--size: 5"/ data-depends-on="autoLapPower">
+                </label>
+                <label>
                     <key>Secondary Data fields:</key>
                     <input type="number" name="fields"/>
                 </label>  

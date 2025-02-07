@@ -12,6 +12,11 @@ html.solid-background body {
   display: flex;
   flex-direction: column;  
 }
+#autoLapStatus {
+  font-variant: small-caps tabular-nums;
+  font-size: calc(var(--font-scale) * 0.9em);
+  text-align: center;
+}
 .controlDiv {
   display: flex;   
   width: 95%;    
