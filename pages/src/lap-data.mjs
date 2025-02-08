@@ -42,7 +42,8 @@ common.settingsStore.setDefault({
     steeringAction: "none",
     fields: 2,
     autoLapPower: false,
-    autoLapPowerThreshold: 200
+    autoLapPowerThreshold: 200,
+    autoLapPowerDuration: 1500
 });
 
 common.settingsStore.addEventListener('changed', ev => {
@@ -271,7 +272,7 @@ export async function main() {
                     intervalTS = Date.now();                    
                     //console.log("Transitioning from recovery to work")
                 } else {
-                    if (Date.now() - intervalTS > 1500) {
+                    if (Date.now() - intervalTS > settings.autoLapPowerDuration) {
                         //went over the power threshold for more than 1.5 seconds, set a lap
                         common.rpc.startLap()
                         intervalTransition = false;
@@ -289,7 +290,7 @@ export async function main() {
                     intervalTS = Date.now();   
                     //console.log("Transitioning from work to recovery")                 
                 } else {
-                    if (Date.now() - intervalTS > 1500) {
+                    if (Date.now() - intervalTS > settings.autoLapPowerDuration) {
                         //went below the power threshold for more than 1.5 seconds, set a lap
                         common.rpc.startLap()
                         intervalTransition = false;

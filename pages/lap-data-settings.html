@@ -107,10 +107,15 @@
                     <key>Auto-lap on power:</key>
                     <input type="checkbox" name="autoLapPower">
                 </label>
-                <label>
-                    <key>Threshold:</key>
+                <label title="The power threshold that determines when to trigger a lap">
+                    <key>&nbsp;&nbsp;- Threshold (w):</key>
                     <input type="range" name="autoLapPowerThreshold" min="10" max="500" step="5"/ data-depends-on="autoLapPower">
                     <input type="number" name="autoLapPowerThreshold" min="10" max="500" step="5" style="--size: 5"/ data-depends-on="autoLapPower">
+                </label>
+                <label title="How long power needs to go above or below the threshold before triggering a lap">
+                    <key>&nbsp;&nbsp;- Duration (ms):</key>
+                    <input type="range" name="autoLapPowerDuration" min="500" max="2500" step="100"/ data-depends-on="autoLapPower">
+                    <input type="number" name="autoLapPowerDuration" min="500" max="2500" step="100" style="--size: 7"/ data-depends-on="autoLapPower">
                 </label>
                 <label>
                     <key>Secondary Data fields:</key>
