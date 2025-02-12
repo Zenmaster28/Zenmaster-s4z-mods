@@ -172,6 +172,7 @@ function tsToDateTime(ts) {
 common.settingsStore.setDefault({
     resultsCount: 50,
     showTeamBadge: true,
+    badgeScale: 0.7,
     timePrecision: 3,
     fontScale: 1,
     nameFormat: "raw",
@@ -194,6 +195,11 @@ common.settingsStore.addEventListener('changed', ev => {
 
 let settings = common.settingsStore.get();
 if (settings.transparentNoData) {document.body.classList = "transparent-bg"};
+
+function changeBadgeScale() {
+    const doc = document.documentElement;
+    doc.style.setProperty('--badge-scale', common.settingsStore.get('badgeScale') || 0.7);  
+}
 
 function getSegmentStatus(arr, number, nextSegmentThreshold) {
     arr.sort((a, b) => a.markLine - b.markLine);
@@ -880,7 +886,7 @@ async function buildTable(eventResults,watching) {
         } else {
             firstName = eventResults[rank].firstName.charAt(0) + "."
         }
-        td.innerHTML = firstName + "&nbsp;" + lastName + "&nbsp;" + teamBadge;                        
+        td.innerHTML = firstName + "&nbsp;" + lastName + "&nbsp;<div id='info-item-team'>" + teamBadge + "</div>";
         tr.appendChild(td);
         td = document.createElement('td');
         if (settings.FTSorFAL == "FAL")
@@ -1230,6 +1236,9 @@ export async function main() {
         const changed = ev.data.changed; 
         if (changed.has('solidBackground') || changed.has('backgroundColor')) {            
             setBackground();
+        }
+        if (changed.has('badgeScale')) {
+            changeBadgeScale();
         }
         let eventSegmentChanged = [...changed.entries()].filter(([key, value]) => key.startsWith("eventSegData"));
         if (eventSegmentChanged.length > 0) {
