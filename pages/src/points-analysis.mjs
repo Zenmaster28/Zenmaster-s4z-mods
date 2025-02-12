@@ -463,12 +463,16 @@ export async function main() {
     const eventsListDiv = document.getElementById("eventsList");
     const penListDiv = document.getElementById("penList");
     const pointsViewDiv = document.getElementById("pointsView");  
-    const pointsResultsDiv = document.getElementById("pointsResults")  
+    const pointsResultsDiv = document.getElementById("pointsResults")
+    const pointsViewRefresh = document.getElementById("refreshButton") 
     const allEventConfigs = await zen.getEventConfig(dbSegmentConfig)
     console.log("allEventConfigs", allEventConfigs)
     pointsViewDiv.addEventListener("change", function() {
         showResults(allEventConfigs)
     });
+    pointsViewRefresh.addEventListener("click", function() {
+        showResults(allEventConfigs)
+    })
     let eventData = [];
     for (let eventConfig of allEventConfigs) {
         const sauceEvent = await common.rpc.getEvent(eventConfig.eventId)
@@ -479,16 +483,20 @@ export async function main() {
     })
     console.log("eventData", eventData)
     let selectEvents = "<select id='selectEvent'><option value='-1'>Select an event</option>"
+    const optionIds = new Set();
     for (let event of eventData) {
-        const eventStartTime = new Date(event.eventStart)
-        const eventText = eventStartTime.toLocaleTimeString(undefined, {
-            weekday: 'short',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true,
-            timeZoneName: 'short'
-        }) + " - " + event.name;
-        selectEvents += `<option value=${event.id}>${eventText}</option>`
+        if (!optionIds.has(event.id)) {
+            optionIds.add(event.id)
+            const eventStartTime = new Date(event.eventStart)
+            const eventText = eventStartTime.toLocaleTimeString(undefined, {
+                weekday: 'short',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true,
+                timeZoneName: 'short'
+            }) + " - " + event.name;
+            selectEvents += `<option value=${event.id}>${eventText}</option>`
+        }
     }
     selectEvents += "</select>"    
     eventsListDiv.innerHTML = selectEvents;

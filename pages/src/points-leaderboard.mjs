@@ -17,6 +17,7 @@ let lastKnownSegmentData;
 let currentEventConfig;
 let watchingTeam;
 let refresh = Date.now() - 2000000;
+let lastAllCatRefresh = Date.now() - 2000000;
 const doc = document.documentElement;
 doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  
 
@@ -182,6 +183,70 @@ async function getKnownRacers(watching) {
    //debugger
 }
 
+async function monitorAllCats(eventSubgroupId, currentEventConfig) {
+    if (Date.now() - lastAllCatRefresh > 15000) {
+        console.log("Monitoring all cats")
+        const eventSubgroupIds = currentEventConfig.eventSubgroupIds
+        const uniqueSegmentIds = getUniqueValues(currentEventConfig.segments, "segmentId")
+        for (let segId of uniqueSegmentIds) {
+            const resultsFull = await common.rpc.getSegmentResults(segId);
+            const resultsLive = await common.rpc.getSegmentResults(segId, {live:true})
+            //console.log("Got the segment results for", segId)
+            for (let sgId of eventSubgroupIds) {
+                if (sgId == eventSubgroupId) {
+                    continue;
+                }
+                //console.log("Monitoring", sgId)
+                const sg = await common.rpc.getEventSubgroup(sgId);            
+                const prevLiveResults = await zen.getSegmentResults(dbSegments, sgId, {live: true})
+                //console.log("prevLiveResults", prevLiveResults)
+                const eventJoined = await common.rpc.getEventSubgroupEntrants(sgId, {joined: true})
+                //console.log("eventJoined", eventJoined)
+                const eventRes = resultsLive.filter(x => x.eventSubgroupId == sgId)
+                //console.log("eventRes", eventRes)
+                let missingLiveResults = [];
+                for (let res of eventRes) {
+                    if (!prevLiveResults.find(x => res.id == x.id)) {
+                        missingLiveResults.push(res)
+                        prevLiveResults.push(res)
+                    }
+                }
+                if (missingLiveResults.length > 0) {
+                    const savedLiveResultsCount = await zen.storeSegmentResults(dbSegments, missingLiveResults, {live: true})
+                    //console.log("Saved Live results", savedLiveResultsCount)
+                }
+                const knownRacersFromResults = prevLiveResults.map(d => ({ athleteId: d.athleteId, eventSubgroupId: d.eventSubgroupId }));
+                //console.log("knownRacersFromResults", knownRacersFromResults)
+                const sgKnownRacers = [];
+                for (let racer of knownRacersFromResults) {
+                    if (eventJoined.find(x => x.id == racer.athleteId)) {
+                        sgKnownRacers.push(racer.athleteId)
+                    } else {
+                        console.log("Found a racer that wasn't in the joined pen list? ", racer)
+                    }
+                }
+                //console.log("sgKnownRacers", sgKnownRacers)
+                const resultsToStore = [];
+                const resultsAfterStartTime = resultsFull.filter(x => x.ts > sg.eventSubgroupStart)
+                //console.log("resultAfterStartTime", resultsAfterStartTime)
+                const resultsForRacers = resultsAfterStartTime.filter(result => sgKnownRacers.includes(result.athleteId))
+                //console.log("resultsForRacers", resultsForRacers)
+                resultsForRacers.forEach(result => {
+                    result.eventSubgroupId = sgId;
+                    result.segmentId = segId;
+                    resultsToStore.push(result)
+                })
+                //console.log("resultsToStore", resultsToStore)
+                const savedResultsCount = await zen.storeSegmentResults(dbSegments, resultsToStore);                
+                //console.log("Saved full results", savedResultsCount)
+            }
+            //console.log("Done processing", segId)
+        }
+        console.log("Done processing all cats")
+        lastAllCatRefresh = Date.now();
+    }
+}
+
 async function getAllSegmentResults(watching, currentEventConfig) {
     let eventSubgroupId;
     let segmentData;    
@@ -190,15 +255,10 @@ async function getAllSegmentResults(watching, currentEventConfig) {
         segmentData = lastKnownSegmentData;
     } else {
         eventSubgroupId = watching.state.eventSubgroupId;
-        //segmentData = watching.segmentData;
         segmentData = currentEventConfig.segments;
     }
-    let eventRacers = allKnownRacers.filter(x => x.eventSubgroupId === eventSubgroupId).map(x => x.athleteId); // make sure we only get racers from this eventsubgroup
-    //let eventRacers = (await zen.getKnownRacers(dbSegments, eventSubgroupId)).map(x => x.athleteId)
-    //eventRacers = [...new Set(eventRacers)]
-    //debugger
+    let eventRacers = allKnownRacers.filter(x => x.eventSubgroupId === eventSubgroupId).map(x => x.athleteId); // make sure we only get racers from this eventsubgroup    
     console.log("Known racer count: ", eventRacers.length, "Event participants:", watching.eventParticipants)
-    //debugger
     let sg = await common.rpc.getEventSubgroup(eventSubgroupId)    
     let eventStartTime;
     if (sg) { 
@@ -206,7 +266,6 @@ async function getAllSegmentResults(watching, currentEventConfig) {
         lastKnownSG.eventSubgroupStart = eventStartTime
         if (watching.state.eventSubgroupId) {
             lastKnownSegmentData = currentEventConfig.segments;
-            //console.log("Setting last known segment data", lastKnownSegmentData)
         }
     } else {
         eventStartTime = lastKnownSG.eventSubgroupStart
@@ -218,25 +277,13 @@ async function getAllSegmentResults(watching, currentEventConfig) {
         let eventRes = resultsFull.filter(x => x.ts > eventStartTime);      
         //console.log("Found segment results from full leaderboard", eventRes)     
         if (eventRes.length > 0)  // don't bother getting the full leaderboard if no live results for the event yet
-        {
-            //const results = await common.rpc.getSegmentResults(firstSegment.id);
-            //const filteredEventRes = eventRes.filter(event => allKnownRacers.includes(event.athleteId));
+        {            
             const filteredEventRes = eventRes.filter(event => eventRacers.includes(event.athleteId)); 
             //console.log(filteredEventRes)
             filteredEventRes.forEach(result => {   
                 result.eventSubgroupId = eventSubgroupId;
                 result.segmentId = segId;
-                resultsToStore.push(result)   
-                /*          
-                const exists = segmentResults.some(r => r.id === result.id);
-                if (!exists) {
-                    result.eventSubgroupId = eventSubgroupId;
-                    result.segmentId = segId;
-                    //console.log("Adding new result for ", result)
-                    segmentResults.push(result)
-                    
-                }  
-                */          
+                resultsToStore.push(result)                   
             })
             //debugger     
         }
@@ -564,8 +611,29 @@ async function displayResults(racerScores) {
 }
 
 async function getLeaderboard(watching) {
-    if (watching.state.eventSubgroupId != 0 || lastKnownSG.eventSubgroupId > 0) {
-        if ((Date.now() - refresh) > 20000) {
+    if (watching.state.eventSubgroupId != 0 || lastKnownSG.eventSubgroupId > 0) {        
+        let refreshRate = 20000;
+        if (watching.segmentData?.routeSegments) {
+            const segmentFinishLines = watching.segmentData.routeSegments.filter(segment => segment.name.includes("Finish") && !segment.finishArchOnly);
+            if (segmentFinishLines.length > 0) {
+                const proximityThreshold = 200;
+                const currentPosition = watching.segmentData.currentPosition;
+                let closestSegment = null;
+                let minDistance = Infinity;
+                for (const segment of segmentFinishLines) {
+                    const distance = Math.abs(segment.markLine - currentPosition);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                    }
+                }
+                if (minDistance < proximityThreshold) {
+                    refreshRate = 5000;
+                    //console.log("Refreshing every 5s due to segment finish proximity");
+                }
+            }
+        }
+
+        if ((Date.now() - refresh) > refreshRate) {
             //console.log("not in an event")
             refresh = Date.now();
             settings = common.settingsStore.get();
@@ -581,6 +649,7 @@ async function getLeaderboard(watching) {
             } else {
                 watchingTeam = "";
             }
+            /*
             if (watching.state.eventSubgroupId == 0) {
                 //console.log("We were in an event but no longer are...")
                 if (raceResults.find(x => x.profileId == watching.athleteId)) {
@@ -590,6 +659,7 @@ async function getLeaderboard(watching) {
                 }
 
             }
+            */
             let eventSubgroupId;
             if (watching.state.eventSubgroupId == 0 && lastKnownSG.eventSubgroupId > 0) {
                 eventSubgroupId = lastKnownSG.eventSubgroupId;
@@ -616,6 +686,10 @@ async function getLeaderboard(watching) {
             } 
             if (watching.state.eventSubgroupId > 0) {
                 lastKnownSG.eventSubgroupId = watching.state.eventSubgroupId
+            }
+            if (currentEventConfig.allCats) {
+                //console.log("Monitoring all cats")
+                await monitorAllCats(eventSubgroupId, currentEventConfig)
             }
             //debugger
         }

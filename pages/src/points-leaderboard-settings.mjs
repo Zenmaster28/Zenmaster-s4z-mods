@@ -127,6 +127,7 @@ const finStepDiv = document.getElementById('finStep');
 const finBonusDiv = document.getElementById('finBonus');
 const eventTextDiv = document.getElementById('eventText'); 
 const sampleScoring = document.getElementById('sampleScoring');
+let allCats = false;
 sampleScoring.innerHTML = "Sample Scoring";           
 eventsSelect.addEventListener('change', async function() {
     segmentsTableDiv.innerHTML = "";
@@ -162,6 +163,10 @@ eventsSelect.addEventListener('change', async function() {
             optText.textContent = "Select a pen"
             optText.value = -1
             penSelect.appendChild(optText)
+            const optAll = document.createElement('option');
+            optAll.textContent = "All categories"
+            optAll.value = -2
+            penSelect.appendChild(optAll)
             for (let sg of eventInfo.eventSubgroups) {
                 const optPen = document.createElement('option')
                 optPen.value = sg.id;
@@ -171,7 +176,14 @@ eventsSelect.addEventListener('change', async function() {
             penListDiv.appendChild(penSelect)
         }
         penSelect.addEventListener('change', async function() {
-            const sg = eventInfo.eventSubgroups.find(x => x.id == this.value)
+            let penValue = this.value;
+            allCats = false;
+            if (penValue == -2) {
+                allCats = true;
+                penValue = this.options[2].value
+            }
+            console.log("penValue", penValue, "allCats", allCats)
+            const sg = eventInfo.eventSubgroups.find(x => x.id == penValue)
             if (sg) {                            
                 const currentEventConfig = await zen.getEventConfig(dbSegmentConfig, sg.id)                            
                 console.log(currentEventConfig)
@@ -294,10 +306,12 @@ function saveConfig() {
     //console.log("Saving eventConfig")
     const segmentsTable = document.getElementById('segmentsTable');
     const sampleScoring = document.getElementById('sampleScoring');
+    const penOptions = document.getElementById('penSelect');
     sampleScoring.innerHTML = "Sample Scoring";
     if (segmentsTable) {
         const tableRows = segmentsTable.querySelectorAll('tr')
         const segData = [];
+        const penValues = [];
         for (let row of tableRows) {
             const segConfig = {
                 name: row.cells[0].textContent.replace(/\s\[\d+\]$/, ""),
@@ -308,31 +322,45 @@ function saveConfig() {
             }
             segData.push(segConfig);
         }
-        const eventConfig = {
-            ftsScoreFormat: document.getElementById('ftsScoreFormat').value,
-            ftsStep: document.getElementById('ftsStep').value,
-            ftsBonus: document.getElementById('ftsBonus').value,
-            falScoreFormat: document.getElementById('falScoreFormat').value,
-            falStep: document.getElementById('falStep').value,
-            falBonus: document.getElementById('falBonus').value,
-            finScoreFormat: document.getElementById('finScoreFormat').value,
-            finStep: document.getElementById('finStep').value,
-            finBonus: document.getElementById('finBonus').value,
-            eventId: parseInt(document.getElementById('eventsSelect').value),
-            eventSubgroupId: parseInt(document.getElementById('penSelect').value),
-            segments: segData,
-            ts: sgStartTime
+        if (allCats) {
+            Array.from(penOptions.options).forEach(option => {
+                if (option.value != -1 && option.value != -2) {
+                    penValues.push(parseInt(option.value))
+                }
+            })
+        } else {
+            penValues.push(parseInt(penOptions.value))
         }
-        const transaction = dbSegmentConfig.transaction("segmentConfig", "readwrite");
-        const store = transaction.objectStore("segmentConfig")
-        const request = store.put(eventConfig);
-        request.onsuccess = function () {                    
-            console.log("Event config saved:", eventConfig.eventSubgroupId, eventConfig);                        
-            sampleScoring.innerHTML = showSampleScoring(eventConfig);
-        };
-        request.onerror = function (event) {
-            console.error("Failed to save event config:", event.target.error);
-        };
+        //debugger
+        for (let pen of penValues) {
+            const eventConfig = {
+                ftsScoreFormat: document.getElementById('ftsScoreFormat').value,
+                ftsStep: document.getElementById('ftsStep').value,
+                ftsBonus: document.getElementById('ftsBonus').value,
+                falScoreFormat: document.getElementById('falScoreFormat').value,
+                falStep: document.getElementById('falStep').value,
+                falBonus: document.getElementById('falBonus').value,
+                finScoreFormat: document.getElementById('finScoreFormat').value,
+                finStep: document.getElementById('finStep').value,
+                finBonus: document.getElementById('finBonus').value,
+                eventId: parseInt(document.getElementById('eventsSelect').value),
+                eventSubgroupId: pen,
+                segments: segData,
+                ts: sgStartTime,
+                allCats: allCats,
+                eventSubgroupIds: penValues
+            }
+            const transaction = dbSegmentConfig.transaction("segmentConfig", "readwrite");
+            const store = transaction.objectStore("segmentConfig")
+            const request = store.put(eventConfig);
+            request.onsuccess = function () {                    
+                console.log("Event config saved:", eventConfig.eventSubgroupId, eventConfig);                        
+                sampleScoring.innerHTML = showSampleScoring(eventConfig);
+            };
+            request.onerror = function (event) {
+                console.error("Failed to save event config:", event.target.error);
+            };
+        }
     } else {
         console.log("No segments defined / no pen selected")
     }
