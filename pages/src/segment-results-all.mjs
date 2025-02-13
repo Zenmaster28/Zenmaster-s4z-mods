@@ -815,7 +815,7 @@ async function doPostEvent(routeSegments,segIdx, eventSubgroupId, watching) {
     }
 }
 
-async function buildTable(eventResults,watching) {    
+async function buildTable(eventResults,watching) {
     if (settings.femaleOnly) {
         eventResults = eventResults.filter(x => x.gender == "female")
     }
@@ -841,7 +841,8 @@ async function buildTable(eventResults,watching) {
         {
             continue;
         }  
-        const athlete = await common.rpc.getAthleteData(eventResults[rank].athleteId)
+        const athleteId = eventResults[rank].athleteId
+        const athlete = await common.rpc.getAthleteData(athleteId)
         let tr = document.createElement('tr');            
         let td = document.createElement('td');  
         if (scoreFormat.length == 1 && scoreFormat[0] == 0) {
@@ -877,7 +878,8 @@ async function buildTable(eventResults,watching) {
         } else {
             firstName = eventResults[rank].firstName.charAt(0) + "."
         }
-        td.innerHTML = "<a href='/pages/profile.html?id=" + athlete.athleteId + "&windowType=profile' target='profile'>" + firstName + "&nbsp;" + lastName + "</a>&nbsp;<div id='info-item-team'>" + teamBadge + "</div>";
+        let profileLink = "<a href='/pages/profile.html?id=" + athleteId + "&windowType=profile' target='profile'>"        
+        td.innerHTML = profileLink + firstName + "&nbsp;" + lastName + "</a>&nbsp;<div id='info-item-team'>" + teamBadge + "</div>";
         tr.appendChild(td);
         td = document.createElement('td');
         if (settings.FTSorFAL == "FAL")
