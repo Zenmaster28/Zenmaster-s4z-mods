@@ -688,7 +688,7 @@ async function doPostEvent(routeSegments,segIdx, eventSubgroupId, watching) {
     } else {
         refreshRate = 10000;
     }
-    console.log("Refresh rate:", refreshRate, "diff", Date.now() - refresh)
+    //console.log("Refresh rate:", refreshRate, "diff", Date.now() - refresh)
     if (Date.now() - refresh > refreshRate)
     {
         refresh = Date.now(); 
@@ -870,23 +870,14 @@ async function buildTable(eventResults,watching) {
         } else if (settings.showTeamBadge && athlete?.athlete.team) {
             teamBadge = common.teamBadge(athlete.athlete.team)
             //console.log("using sauce team badge")
-        }
-        /*
-        if (nameTeam[1] && settings.showTeamBadge)
-        {            
-            //teamBadge = common.teamBadge(nameTeam[1]);
-            //console.log("Getting team badge for " + nameTeam[1])
-            o101enabled ? teamBadge = zen.fmtTeamBadgeV2(nameTeam[1]) : teamBadge = common.teamBadge(nameTeam[1]);
-            //debugger
         }  
-        */  
         if (settings.nameFormat == "FirstLast") {
             firstName = athlete ? athlete.athlete.firstName : eventResults[rank].firstName.charAt(0) + "."
             //debugger
         } else {
             firstName = eventResults[rank].firstName.charAt(0) + "."
         }
-        td.innerHTML = firstName + "&nbsp;" + lastName + "&nbsp;<div id='info-item-team'>" + teamBadge + "</div>";
+        td.innerHTML = "<a href='/pages/profile.html?id=" + athlete.athleteId + "&windowType=profile' target='profile'>" + firstName + "&nbsp;" + lastName + "</a>&nbsp;<div id='info-item-team'>" + teamBadge + "</div>";
         tr.appendChild(td);
         td = document.createElement('td');
         if (settings.FTSorFAL == "FAL")
