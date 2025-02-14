@@ -447,7 +447,7 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching, even
         {
             segmentBests.length != 0 ? segmentBests.length = 0 : ""; // clear the PB for departure check
         }
-        if (activeSegmentRepeat == 1) {
+        if (activeSegmentRepeat == 1 || eventSubgroupId == 0) {
             prevSegmentResults = eventSubgroupId == 0 ? [] : await zen.getSegmentResults(dbSegments, eventSubgroupId, {live: true})
             prevSegmentResults = prevSegmentResults.filter(x => x.segmentId == activeSegment)
             segmentResults = await common.rpc.getSegmentResults(activeSegment,{live:true})
@@ -553,7 +553,7 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching, even
         let eventResults = [];
         let liveResults = false;
         let prevSegmentResults;
-        if (activeSegmentRepeat == 1) {
+        if (activeSegmentRepeat == 1 || eventSubgroupId == 0) {
             prevSegmentResults = eventSubgroupId == 0 ? [] : await zen.getSegmentResults(dbSegments, eventSubgroupId, {live: true})
             prevSegmentResults = prevSegmentResults.filter(x => x.segmentId == activeSegment)
             segmentResults = await common.rpc.getSegmentResults(activeSegment,{live:true})
@@ -833,8 +833,9 @@ async function buildTable(eventResults,watching) {
             return a.elapsed - b.elapsed;
         });
     }
-    let resultsTable = document.createElement('table');    
-    
+    let resultsTable = document.createElement('table');
+    const athleteIds = eventResults.slice(0, settings.resultsCount).map(x => x.athleteId);
+    const athletes = await common.rpc.getAthletesData(athleteIds);
     for (let rank = 0; rank < settings.resultsCount; rank++)
     {        
         if (rank >= eventResults.length)
@@ -842,7 +843,7 @@ async function buildTable(eventResults,watching) {
             continue;
         }  
         const athleteId = eventResults[rank].athleteId
-        const athlete = await common.rpc.getAthleteData(athleteId)
+        const athlete = athletes.find(x => x?.athleteId == athleteId);
         let tr = document.createElement('tr');            
         let td = document.createElement('td');  
         if (scoreFormat.length == 1 && scoreFormat[0] == 0) {
@@ -868,7 +869,7 @@ async function buildTable(eventResults,watching) {
         if (settings.showTeamBadge && athlete?.o101?.teamBadge) {
             teamBadge = athlete.o101.teamBadge;
             //console.log("using o101 team badge")
-        } else if (settings.showTeamBadge && athlete?.athlete.team) {
+        } else if (settings.showTeamBadge && athlete?.athlete?.team) {
             teamBadge = common.teamBadge(athlete.athlete.team)
             //console.log("using sauce team badge")
         }  

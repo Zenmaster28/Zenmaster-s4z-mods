@@ -573,6 +573,8 @@ async function displayResults(racerScores) {
         maxRacers = Infinity;
     }
     //console.log("Max racers to display:", maxRacers)
+    const athleteIds = racerScores.map(x => x.athleteId);
+    const athletes = await common.rpc.getAthletesData(athleteIds);
     for (let racer of racerScores) {
         if (rank > maxRacers) {
             break;
@@ -582,7 +584,8 @@ async function displayResults(racerScores) {
         }
         let teamBadge = "";
         
-        const athlete = await common.rpc.getAthleteData(racer.athleteId)
+        //const athlete = await common.rpc.getAthleteData(racer.athleteId)
+        const athlete = athletes.find(x => x?.athleteId == racer.athleteId);
         if (settings.showTeamBadges && athlete?.o101?.teamBadge) {
             teamBadge = athlete.o101.teamBadge;
         } else if (settings.showTeamBadges && athlete?.athlete.team) {
