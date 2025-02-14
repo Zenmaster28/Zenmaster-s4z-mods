@@ -4,7 +4,7 @@
     "description": "Arend's Mod Collection for S4Z",
     "author": "Arend teRaa",
     "website_url": "https://github.com/Zenmaster28/Zenmaster-s4z-mods",
-    "version": "1.6.4",
+    "version": "1.6.5",
     "content_js": [
         "pages/src/data-fields.js"
     ],
@@ -100,8 +100,8 @@
         {
             "file": "pages/pp-location-makuri.html",
             "id": "Makuri-pp-locations",
-            "name": "Makuri Islands Pace Partners",
-            "description": "Show the route location of the Makuri Islands Pace Partners",
+            "name": "Non Watopia Pace Partners",
+            "description": "Show the route location of the Pace Partners in worlds other than Watopia",
             "overlay": true,
             "frame": false,
             "default_bounds": {
@@ -156,7 +156,7 @@
         {
             "file": "pages/segment-results.html",
             "id": "Segment results",
-            "name": "Segment results",
+            "name": "Segment results (deprecated - use multilap)",
             "description": "Show FTS or FAL results for the segments on a route.",
             "overlay": true,
             "frame": false,
