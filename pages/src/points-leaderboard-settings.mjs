@@ -163,10 +163,17 @@ eventsSelect.addEventListener('change', async function() {
             optText.textContent = "Select a pen"
             optText.value = -1
             penSelect.appendChild(optText)
-            const optAll = document.createElement('option');
-            optAll.textContent = "All categories"
-            optAll.value = -2
-            penSelect.appendChild(optAll)
+            const allSameRoute = eventInfo.eventSubgroups.every(
+                (obj, _, arr) => obj.routeId === arr[0].routeId && obj.laps === arr[0].laps
+            );
+            if (allSameRoute && eventInfo.eventSubgroups.length > 1) {
+                const optAll = document.createElement('option');
+                optAll.textContent = "All categories"
+                optAll.value = -2
+                penSelect.appendChild(optAll)
+            } else {
+                console.log("Differing routes or only one category so excluding All Categories option for", eventInfo.name)
+            }
             for (let sg of eventInfo.eventSubgroups) {
                 const optPen = document.createElement('option')
                 optPen.value = sg.id;
@@ -182,7 +189,7 @@ eventsSelect.addEventListener('change', async function() {
                 allCats = true;
                 penValue = this.options[2].value
             }
-            console.log("penValue", penValue, "allCats", allCats)
+            //console.log("penValue", penValue, "allCats", allCats)
             const sg = eventInfo.eventSubgroups.find(x => x.id == penValue)
             if (sg) {                            
                 const currentEventConfig = await zen.getEventConfig(dbSegmentConfig, sg.id)                            
