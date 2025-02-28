@@ -13,6 +13,7 @@ let lastKnownSG = {
     eventSubgroupId: 0,
     eventSubgroupStart: 0
 };
+let sgEntrantsList = [];
 let lastKnownSegmentData;
 let currentEventConfig;
 let watchingTeam;
@@ -199,8 +200,28 @@ async function monitorAllCats(eventSubgroupId, currentEventConfig) {
                 //console.log("Monitoring", sgId)
                 const sg = await common.rpc.getEventSubgroup(sgId);            
                 const prevLiveResults = await zen.getSegmentResults(dbSegments, sgId, {live: true})
+                const eventSubgroupStart = sg.eventSubgroupStart;
                 //console.log("prevLiveResults", prevLiveResults)
-                const eventJoined = await common.rpc.getEventSubgroupEntrants(sgId, {joined: true})
+                //TODO: don't get the eventJoined on every refresh.  Ensure you get it after the event starts and then save it.
+                const sgEntrants = sgEntrantsList.find(x => x.eventSubgroupId == sgId);
+                let eventJoined;
+                if (sgEntrants) {
+                    //console.log("Found previous entrants for", sgId)
+                    eventJoined = sgEntrants.entrants;
+                } else {
+                    eventJoined = await common.rpc.getEventSubgroupEntrants(sgId, {joined: true});
+                    if (Date.now() - eventSubgroupStart > 60000) {
+                        //console.log("Pushing entrants to sgEntrantsList for", sgId)
+                        sgEntrantsList.push({
+                            eventSubgroupId: sgId,
+                            ts: Date.now(),
+                            entrants: eventJoined
+                        })
+                    } else {
+                        //console.log("Waiting until 1 min after start before saving entrants for", sgId, Date.now() - eventSubgroupStart)
+                        //debugger
+                    }
+                }
                 //console.log("eventJoined", eventJoined)
                 const eventRes = resultsLive.filter(x => x.eventSubgroupId == sgId)
                 //console.log("eventRes", eventRes)

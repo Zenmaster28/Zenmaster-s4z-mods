@@ -6,6 +6,7 @@ let sgStartTime;
 let dbSegmentConfig = await zen.openSegmentConfigDB();
 import {settingsMain} from './points-leaderboard.mjs';
 settingsMain();
+common.settingsStore.set("formatsChanged", false)
 document.body.classList.remove("transparent-bg");
 const scoreFormatDiv = document.getElementById("scoreFormats");
 scoreFormatDiv.innerHTML += `
@@ -19,7 +20,7 @@ scoreFormatDiv.innerHTML += `
         <option value="4">-4</option>
         <option value="5">-5</option>
     </select>
-    <input disabled type="text" id="ftsBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">
+    <input disabled type="text" id="ftsBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">    
     <br>
     <span class="scoreLabel">FAL:</span> 
     <input disabled type="text" id="falScoreFormat" size="18" title="Examples are 10..1 which would score 10 for 1st, 9 for 2nd etc.  Comma separated values such as 15,11,9 would score as 15 for 1st, 11 for 2nd, 9 for 3rd.  Formats can be combined like 20,15,10,7..1" placeholder="Select event first">
@@ -30,7 +31,7 @@ scoreFormatDiv.innerHTML += `
         <option value="4">-4</option>
         <option value="5">-5</option>
     </select>
-    <input disabled type="text" id="falBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">
+    <input disabled type="text" id="falBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">    
     <br>
     <span class="scoreLabel">FIN:</span> 
     <input disabled type="text" id="finScoreFormat" size="18" title="Examples are 10..1 which would score 10 for 1st, 9 for 2nd etc.  Comma separated values such as 15,11,9 would score as 15 for 1st, 11 for 2nd, 9 for 3rd.  Formats can be combined like 20,15,10,7..1" placeholder="Select event first">
@@ -43,9 +44,16 @@ scoreFormatDiv.innerHTML += `
     </select>
     <input disabled type="text" id="finBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">
     <br>
+    <span id="savedFormatsSpan" style="visibility:hidden" class="scoreLabel">Load:</span>
+    <select id="savedFormats" style="visibility: hidden;">
+        <option value="-1"></option>
+    </select>
+    <input type="text" id="formatName" size="10" style="visibility:hidden" spellcheck="false">
+    <input type="button" id="buttonSaveFormat" value="&#x1F4BE;" class="zenButton" style="visibility:hidden" title="Save">
+    <input type="button" id="buttonDeleteFormat" value="&#x274C;" class="zenButton" style="visibility:hidden" title="Delete">        
+    <input type="button" id="buttonImportExport" style="visibility:hidden" class="zenButton" value="&#x21B9;" title="Import/Export">
     <hr>
 `
-
 
 const eventsListDiv = document.getElementById("eventsList");
 const allEvents = await common.rpc.getCachedEvents();
@@ -127,7 +135,131 @@ const finStepDiv = document.getElementById('finStep');
 const finBonusDiv = document.getElementById('finBonus');
 const eventTextDiv = document.getElementById('eventText'); 
 const sampleScoring = document.getElementById('sampleScoring');
+const formatName = document.getElementById("formatName")
+const savedFormatsSelect = document.getElementById("savedFormats");
+const buttonSaveFormat = document.getElementById("buttonSaveFormat");
+const buttonDeleteFormat = document.getElementById("buttonDeleteFormat");
+const buttonImportExport = document.getElementById("buttonImportExport");
 let allCats = false;
+
+async function loadSavedScoreFormats(action) {    
+    const zenScoreFormats = zen.scoreFormats;
+    const dbScoreFormats = await zen.getSavedScoreFormats(dbSegmentConfig);
+    const scoreFormats = [...zenScoreFormats, ...dbScoreFormats]
+    scoreFormats.sort((a,b) => a.name.localeCompare(b.name));
+    console.log("merged score formats", scoreFormats)    
+    savedFormatsSelect.options.length = 1;
+    for (let format of scoreFormats) {
+        const opt = document.createElement("option")
+        opt.value = format.name
+        opt.text = format.name
+        savedFormatsSelect.appendChild(opt)
+    }
+    if (action == "delete") {
+        savedFormatsSelect.value = -1;
+        formatName.value = "";
+        buttonSaveFormat.title = `Save`
+        buttonDeleteFormat.title = `Delete`
+        //ftsScoreFormatDiv.value = "";
+        //falScoreFormatDiv.value = "";
+        //finScoreFormatDiv.value = "";
+        //eventTextDiv.value = "";
+        //ftsBonusDiv.value = "";
+        //falBonusDiv.value = "";
+        //finBonusDiv.value = "";
+        //ftsStepDiv.value = 1;
+        //falStepDiv.value = 1;
+        //finStepDiv.value = 1;
+        //sampleScoring.innerHTML = "Sample Scoring";
+    } else if (action == "save") {
+        savedFormatsSelect.value = formatName.value;
+        buttonSaveFormat.title = `Save '${formatName.value}'`
+        buttonDeleteFormat.title = `Delete '${formatName.value}'`
+    }
+    return scoreFormats;
+}
+let scoreFormats = await loadSavedScoreFormats();
+savedFormatsSelect.addEventListener("change", function() {
+    const selectedformatName = scoreFormats.find(x => x.name == savedFormatsSelect.value)
+    ftsScoreFormatDiv.value = selectedformatName.fts;
+    ftsStepDiv.value = parseInt(selectedformatName.ftsStep);
+    ftsBonusDiv.value = selectedformatName.ftsBonus;
+    falScoreFormatDiv.value = selectedformatName.fal;
+    falStepDiv.value = parseInt(selectedformatName.falStep);
+    falBonusDiv.value = selectedformatName.falBonus;
+    finScoreFormatDiv.value = selectedformatName.fin;
+    finStepDiv.value = parseInt(selectedformatName.finStep);
+    finBonusDiv.value = selectedformatName.finBonus;
+    formatName.value = selectedformatName.name;
+    buttonSaveFormat.title = `Save '${formatName.value}'`
+    buttonDeleteFormat.title = `Delete '${formatName.value}'`
+    saveConfig();
+});
+buttonSaveFormat.addEventListener("click", function() {
+    if (formatName.value != "") {
+        const newFormat = {
+            name: formatName.value,
+            fts: ftsScoreFormatDiv.value,
+            ftsStep: ftsStepDiv.value,
+            ftsBonus: ftsBonusDiv.value,
+            fal: falScoreFormatDiv.value,
+            falStep: falStepDiv.value,
+            falBonus: falBonusDiv.value,
+            fin: finScoreFormatDiv.value,
+            finStep: finStepDiv.value,
+            finBonus: finBonusDiv.value
+        };
+        console.log("newFormat",newFormat);
+        const transaction = dbSegmentConfig.transaction("scoringConfig", "readwrite");
+        const store = transaction.objectStore("scoringConfig")
+        const request = store.put(newFormat);
+        request.onsuccess = async function () {                    
+            console.log("Scoring format saved:", formatName.value, newFormat);  
+            scoreFormats = await loadSavedScoreFormats("save");       
+        };
+        request.onerror = function (event) {
+            console.error("Failed to save scoring format:", event.target.error);
+        };
+
+    } else {
+        console.log("enter a name");
+    }
+});
+buttonDeleteFormat.addEventListener("click", function() {
+    if (formatName.value != "") {
+        const transaction = dbSegmentConfig.transaction("scoringConfig", "readwrite");
+        const store = transaction.objectStore("scoringConfig");
+        const request = store.delete(formatName.value);
+        request.onsuccess = async function () {
+            console.log(`Deleted entry with name: ${formatName.value}`);
+            scoreFormats = await loadSavedScoreFormats("delete"); 
+        };
+    
+        request.onerror = function () {
+            console.error("Error deleting entry:", request.error);
+        };
+    } else {
+        console.log("Format name is empty")
+    }
+});
+buttonImportExport.addEventListener("click", function() {
+    window.open("points-leaderboard-import-export.html?width=1150&height=500&child-window", "_blank")
+})
+formatName.addEventListener("input", function() {
+    const matchingOption = Array.from(savedFormatsSelect.options).find(option => option.value == formatName.value)
+    if (matchingOption && matchingOption.value != "-1") {
+        console.log("found a matching option!", matchingOption)
+        savedFormatsSelect.value = matchingOption.value;
+        buttonSaveFormat.title = `Save '${formatName.value}'`
+        buttonDeleteFormat.title = `Delete '${formatName.value}'`
+        //debugger
+    } else {
+        savedFormatsSelect.value = "-1"
+        buttonSaveFormat.title = `Save '${formatName.value}'`
+        buttonDeleteFormat.title = `Delete`
+    }
+})
+
 sampleScoring.innerHTML = "Sample Scoring";           
 eventsSelect.addEventListener('change', async function() {
     segmentsTableDiv.innerHTML = "";
@@ -232,6 +364,12 @@ eventsSelect.addEventListener('change', async function() {
                 ftsStepDiv.disabled = false;
                 falStepDiv.disabled = false;
                 finStepDiv.disabled = false;
+                savedFormatsSelect.style.visibility = "";
+                savedFormatsSpan.style.visibility = "";
+                buttonSaveFormat.style.visibility = "";
+                buttonDeleteFormat.style.visibility = "";
+                buttonImportExport.style.visibility = "";
+                formatName.style.visibility = "";
                 const routeData = await zen.processRoute(sg.courseId, sg.routeId, sg.laps, sg.distanceInMeters, false, false, false)
                 let segmentData = routeData.markLines                            
                 segmentData = segmentData.filter(x => x.type != "custom" && !x.name.includes("Finish"));
@@ -388,3 +526,12 @@ function showSampleScoring(eventConfig) {
     sampleOutput += "</table>"
     return sampleOutput;
 }
+common.settingsStore.addEventListener('changed', async ev => {
+        const changed = ev.data.changed;
+        console.log(changed)
+        if (changed.has('formatsChanged') && changed.get('formatsChanged')) {
+            console.log("formatsChanged: true")
+            scoreFormats = await loadSavedScoreFormats("save");
+            common.settingsStore.set("formatsChanged", false)
+        }
+});

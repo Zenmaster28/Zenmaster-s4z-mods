@@ -196,3 +196,21 @@ div .points-view {
   align-items: center;
   font-size: 0.8em;
 }
+#importExport {
+  padding: 25px;
+  font-size: 1.1em;
+}
+#jsonFormat {
+  width: 100%;
+  caret-color: auto;
+}
+.zenButton {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: inherit;
+  cursor: pointer;  
+}
+.zenButton:hover {
+  opacity: 0.7;
+}

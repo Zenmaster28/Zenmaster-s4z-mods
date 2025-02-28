@@ -2663,7 +2663,7 @@ export function getUniqueValues(arr, property) {
 
 export async function openSegmentConfigDB() {
     return new Promise((resolve, reject) => {
-        const segmentConfigDB = indexedDB.open("segmentResultsDatabase", 4)
+        const segmentConfigDB = indexedDB.open("segmentResultsDatabase", 5)
         segmentConfigDB.onupgradeneeded = function(event) {
             const db = event.target.result;
             if (!db.objectStoreNames.contains("segmentResults")) {
@@ -2687,13 +2687,10 @@ export async function openSegmentConfigDB() {
                 const store = db.createObjectStore("segmentConfig", {keyPath: "eventSubgroupId"});                
                 store.createIndex("ts", "ts", {unique: false})
             }
-            /*
-            if (!db.objectStoreNames.contains("knownRacers")) {
-                console.log("Creating knownRacers store");
-                const store = db.createObjectStore("knownRacers", {keyPath: ["eventSubgroupId", "athleteId"]});  
-                store.createIndex("eventSubgroupId", "eventSubgroupId", {unique: false});              
+            if (!db.objectStoreNames.contains("scoringConfig")) {
+                console.log("Creating scoringConfig store")
+                const store = db.createObjectStore("scoringConfig", {keyPath: "name"});
             }
-            */
         };
         segmentConfigDB.onsuccess = async function(event) {
             const dbSegmentConfig = event.target.result;
@@ -2709,7 +2706,7 @@ export async function openSegmentConfigDB() {
 
 export async function openSegmentsDB() {
     return new Promise((resolve, reject) => {
-        const segmentResultsDB = indexedDB.open("segmentResultsDatabase", 4)
+        const segmentResultsDB = indexedDB.open("segmentResultsDatabase", 5)
         segmentResultsDB.onupgradeneeded = function(event) {
             const db = event.target.result;
             if (!db.objectStoreNames.contains("segmentResults")) {
@@ -2733,13 +2730,10 @@ export async function openSegmentsDB() {
                 const store = db.createObjectStore("segmentConfig", {keyPath: "eventSubgroupId"});                
                 store.createIndex("ts", "ts", {unique: false})
             }
-            /*
-            if (!db.objectStoreNames.contains("knownRacers")) {
-                console.log("Creating knownRacers store");
-                const store = db.createObjectStore("knownRacers", {keyPath: ["eventSubgroupId", "athleteId"]});   
-                store.createIndex("eventSubgroupId", "eventSubgroupId", {unique: false});
+            if (!db.objectStoreNames.contains("scoringConfig")) {
+                console.log("Creating scoringConfig store")
+                const store = db.createObjectStore("scoringConfig", {keyPath: "name"});
             }
-            */
         };
         segmentResultsDB.onsuccess = async function(event) {
             const dbSegments = event.target.result;
@@ -3018,6 +3012,41 @@ export function getEventConfig(dbSegmentConfig, eventSubgroupId) {
         }
     });
 }
+export function getSavedScoreFormats(dbSegmentConfig) {
+    if (!dbSegmentConfig) {
+        console.error("Database connection is invalid!");
+        return [];
+    }
+    return new Promise((resolve, reject) => {
+        try {
+            const transaction = dbSegmentConfig.transaction("scoringConfig", "readonly");
+            const store = transaction.objectStore("scoringConfig");
+            const request = store.getAll();
+
+            request.onsuccess = function () {                
+                //console.log("Query success. Retrieved", request.result.length, "entries");
+                resolve(request.result);
+            };
+
+            request.onerror = function (event) {
+                console.error("Error fetching scoring entries:", event.target.error);
+                reject(event.target.error);
+            };
+
+            transaction.oncomplete = function () {
+                //console.log("Transaction completed successfully.");
+            };
+
+            transaction.onerror = function (event) {
+                console.error("Transaction error:", event.target.error);
+                reject(event.target.error);
+            };
+        } catch (error) {
+            console.error("Unexpected error in getSavedScoreFormats:", error);
+            reject(error);
+        }
+    });
+}
 
 //async function findPathFromAtoB(startRoad, startDirection, targetRoad, targetDirection, intersections, allRoads, route) {
 export async function findPathFromAtoB(startPoint, endPoint, intersections, allRoads, courseId) {
@@ -3224,3 +3253,52 @@ export function getScoreFormat(scoreFormat, scoreStep) {
     }
     return [0];
 }
+
+export async function openTeamsDB() {
+    return new Promise((resolve, reject) => {
+        const teamsDB = indexedDB.open("teamsDatabase", 1)
+        teamsDB.onupgradeneeded = function(event) {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains("teamsDatabase")) {
+                console.log("Creating teamsDatabase store")
+                const store = db.createObjectStore("teams", {keyPath: "team"});                
+            }
+        };
+        teamsDB.onsuccess = async function(event) {
+            const teams = event.target.result;
+            console.log("Config Database initialized");
+            resolve(teams);
+        };
+        teamsDB.onerror = function(event) {
+            console.log("Config Database failed to open:", event.target.error);
+            reject(event.target.error)
+        };
+    });
+}
+
+export const scoreFormats = [
+    {
+        name: "ZRL",
+        fts: "10..1",
+        ftsStep: 2,
+        ftsBonus: "",
+        fal: "20..1",
+        falStep: 1,
+        falBonus: "",
+        fin: "x..1",
+        finStep: 1,
+        finBonus: "10,8,6,4,2"
+    },
+    {
+        name: "DRS",
+        fts: "15,13..5",
+        ftsStep: 1,
+        ftsBonus: "",
+        fal: "10,9,8,8,7,7,6,6,5,5",
+        falStep: 1,
+        falBonus: "",
+        fin: "120,114,108,102,101,100,98,97,96,95,89,88,86,85,84,83,82,80,79,78,72,71,70,68,67,66,65,64,62,61,60,59,58,56,55,54,53,52,50,49,48,47,46,44,43,42,41,40,38,37,30,30,29,29,28,28,26,26,25,25,24,24,23,23,22,22,20,20,19,19,18,18,17,17,16,16,14,14,13,13,12,12,11,11,10,10,8,8,7,7,6,6,5,5,4,4,2,2,2,2",
+        finStep: 1,
+        finBonus: ""
+    }
+]
