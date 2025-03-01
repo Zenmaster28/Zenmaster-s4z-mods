@@ -841,7 +841,8 @@ export class SauceElevationProfile {
                         return viewMaxElevation < routeMaxElevation ? `${H.elevation(viewMaxElevation)} / ${H.elevation(routeMaxElevation, {suffix: true})}` : `${H.elevation(routeMaxElevation, {suffix: true})}`;
                     },
                     position: options.reverse ? 'insideStartTop' : 'insideEndTop',
-                    color: this.lineTextColor
+                    color: this.lineTextColor,
+                    rotate: 0
                 },
             });
         }
