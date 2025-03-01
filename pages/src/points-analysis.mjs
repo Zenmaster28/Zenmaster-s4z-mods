@@ -114,6 +114,7 @@ async function scoreResults(eventResults, currentEventConfig) {
         return [];
     }
     let racerScores = [];
+    const femaleOnly = document.getElementById("femaleOnly").checked
     //let scoreFormat = "fts";
     //let scoreFormat = settings.FTSorFAL;
     let scoreFormats = ["FTS"];
@@ -148,6 +149,9 @@ async function scoreResults(eventResults, currentEventConfig) {
                 let scoreStep;
                 let bonusScores = [];
                 if (scoreFormat == "fts") {
+                    if (femaleOnly) {
+                        segRes.fts = segRes.fts.filter(x => x.gender == "female")
+                    }
                     scores = currentEventConfig.ftsScoreFormat;
                     scoreStep = currentEventConfig.ftsStep;
                     const ftsBonus = currentEventConfig.ftsBonus;
@@ -155,6 +159,9 @@ async function scoreResults(eventResults, currentEventConfig) {
                         bonusScores = zen.getScoreFormat(ftsBonus, 1)
                     }
                 } else if (scoreFormat == "fal") {
+                    if (femaleOnly) {
+                        segRes.fal = segRes.fal.filter(x => x.gender == "female")
+                    }
                     scores = currentEventConfig.falScoreFormat;
                     scoreStep = currentEventConfig.falStep;
                     const falBonus = currentEventConfig.falBonus;
@@ -266,6 +273,17 @@ async function scoreResults(eventResults, currentEventConfig) {
     });
     */
     if (raceResults.length > 0) {
+        console.log("raceResults",raceResults)
+        const femaleOnly = document.getElementById("femaleOnly").checked;
+        if (femaleOnly) {
+            raceResults = raceResults.filter(x => x.athlete.gender == "female");
+            let newRank = 1;
+            for (let result of raceResults) {
+                result.rank = newRank;
+                newRank++;
+            }
+            console.log("female race results", raceResults)
+        }
         for (let result of raceResults) {
             const findRacer = racerScores.find(x => x.athleteId == result.profileId) // make sure race result has an entry in racerScores
             if (!findRacer) {

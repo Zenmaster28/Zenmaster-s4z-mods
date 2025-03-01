@@ -39,7 +39,8 @@ common.settingsStore.setDefault({
         eventSubgroupStart: 0
     },
     showTeamBadges: true,
-    badgeScale: 0.7
+    badgeScale: 0.7,
+    femaleOnly: false
 });
 /*
 common.settingsStore.addEventListener('changed', ev => {
@@ -392,7 +393,7 @@ async function processResults(watching, dbResults, currentEventConfig) {
         }
         eventResults.push(repeatData)
         
-    }    
+    }
     return eventResults;    
 }
 
@@ -408,9 +409,6 @@ async function scoreResults(eventResults, currentEventConfig) {
     console.log("Event config", currentEventConfig)
     //debugger
     for (let segRes of eventResults) {
-        //console.log(segRes)
-        //let points = 10;  
-        //debugger 
         if (currentEventConfig) {
             segmentRepeat = currentEventConfig.segments.find(x => x.segmentId == segRes.segmentId && x.repeat == segRes.repeat)
             //debugger
@@ -427,6 +425,9 @@ async function scoreResults(eventResults, currentEventConfig) {
                 let scoreStep;
                 let bonusScores = [];
                 if (scoreFormat == "fts") {
+                    if (settings.femaleOnly) {
+                        segRes.fts = segRes.fts.filter(x => x.gender == "female")
+                    }
                     scores = currentEventConfig.ftsScoreFormat;
                     scoreStep = currentEventConfig.ftsStep;
                     const ftsBonus = currentEventConfig.ftsBonus;
@@ -434,6 +435,9 @@ async function scoreResults(eventResults, currentEventConfig) {
                         bonusScores = zen.getScoreFormat(ftsBonus, 1)
                     }
                 } else if (scoreFormat == "fal") {
+                    if (settings.femaleOnly) {
+                        segRes.fal = segRes.fal.filter(x => x.gender == "female")
+                    }
                     scores = currentEventConfig.falScoreFormat;
                     scoreStep = currentEventConfig.falStep;
                     const falBonus = currentEventConfig.falBonus;
