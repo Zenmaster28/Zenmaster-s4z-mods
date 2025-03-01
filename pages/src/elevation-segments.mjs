@@ -826,6 +826,7 @@ export class SauceElevationProfile {
         this._yAxisMax = Math.ceil(Math.max(this._yMax, this._yMin + this.yAxisMin)) + 5;
         const markLineData = [];
         if (this.showMaxLine) {
+            const routeMaxElevation = Math.ceil(Math.max(...this.routeElevations));
             markLineData.push({
                 type: 'max',
                 lineStyle: {
@@ -834,7 +835,10 @@ export class SauceElevationProfile {
                     color: this.lineTextColor
                 },
                 label: {
-                    formatter: x => H.elevation(x.value, {suffix: true}),
+                    formatter: x => {
+                        const viewMaxElevation = Math.ceil(x.value);
+                        return viewMaxElevation < routeMaxElevation ? `${H.elevation(viewMaxElevation)} / ${H.elevation(routeMaxElevation, {suffix: true})}` : `${H.elevation(routeMaxElevation, {suffix: true})}`;
+                    },
                     position: options.reverse ? 'insideStartTop' : 'insideEndTop',
                     color: this.lineTextColor
                 },
@@ -1645,6 +1649,11 @@ export class SauceElevationProfile {
                                     }
                                     let idxStart = common.binarySearchClosest(this.routeDistances, (zoomStart)); 
                                     let idxFinish = common.binarySearchClosest(this.routeDistances, (zoomFinish)); 
+                                    const viewElevations = this.routeElevations.slice(idxStart, idxFinish);
+                                    let viewMin = Math.floor(Math.min(...viewElevations) - 5)
+                                    let viewMax = Math.ceil(Math.max(...viewElevations, this.yAxisMin) + 5)
+                                    //console.log("viewMin", viewMin, "viewMax", viewMax)
+                                    //debugger
                                     if (approachingFinish) {
                                         zoomStart = this.routeDistances.at(-(this.routeDistances.length - idxStart)) // adjust the zoom offset to line up with colorstops
                                     }
@@ -1669,7 +1678,11 @@ export class SauceElevationProfile {
                                                 },
                                                 opacity: this.gradientOpacity
                                             }
-                                        }]                                                                           
+                                        }],
+                                        yAxis: {
+                                            min: viewMin,
+                                            max: viewMax
+                                        }   
                                     })
                                     //debugger
                                 } else if (this.zoomNextSegment && !this.singleLapView) {
