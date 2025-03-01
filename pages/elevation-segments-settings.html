@@ -229,10 +229,15 @@
                     <key data-added="2024-11-21">&nbsp;&nbsp;- remaining route</key>
                     <input type="checkbox" name="zoomRemainingRoute" data-depends-on="profileZoom">
                 </label>
-                <label>    
+                <label title="How far ahead to display">    
                     <key data-added="2024-02-06">&nbsp;&nbsp;- Show the next </key>                
                     <input type="range" name="forwardDistance" min="1000" max="50000" step="500" data-depends-on="!zoomRemainingRoute"/>
                     <input type="number" name="forwardDistance" min="1000" max="50000" step="500" style="--size: 7" data-depends-on="profileZoom"/> meters
+                </label>
+                <label title="How far behind to display">    
+                    <key data-added="2025-03-01">&nbsp;&nbsp;- Show the previous </key>                
+                    <input type="range" name="behindDistance" min="100" max="2000" step="100" data-depends-on="!zoomRemainingRoute"/>
+                    <input type="number" name="behindDistance" min="100" max="2000" step="100" style="--size: 7" data-depends-on="profileZoom"/> meters
                 </label>
                 <label>
                     <key data-added="2024-03-21">Zoom to next segment:</key>

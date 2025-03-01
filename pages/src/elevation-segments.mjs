@@ -14,7 +14,7 @@ let allMarkLines = [];
 const allRoutes = await zen.getAllRoutes();
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, refresh=1000}) {
         this.debugXcoord = false;
         this.debugXcoordDistance = null;
         this.debugPinPlacement = false;
@@ -89,6 +89,7 @@ export class SauceElevationProfile {
         this.zoomSlider = zoomSlider;
         this.zoomRemainingRoute = zoomRemainingRoute;
         this.forwardDistance = forwardDistance;
+        this.behindDistance = behindDistance;
         this.refresh = refresh;
         this._lastRender = 0;
         this._refreshTimeout = null; 
@@ -1609,7 +1610,7 @@ export class SauceElevationProfile {
                                 }
                                 if (this.profileZoom && !this.singleLapView && ((this.forwardDistance < this.routeDistances.at(-1)) || this.zoomRemainingRoute)) {
                                     //console.log(xCoord)
-                                    let offsetBack = 500
+                                    let offsetBack = this.behindDistance || 500;
                                     let distance;
                                     if (this.zoomRemainingRoute) {
                                         if (state.eventDistance > 0 && xCoord) {
