@@ -1150,9 +1150,11 @@ export class SauceElevationProfile {
         } else if (watching) {
             if (watching.courseId !== this.courseId) {
                 await this.setCourse(watching.courseId);
+                this.courseRoads = await common.rpc.getRoads(watching.courseId);
             }
             const knownRoute = allRoutes.find(x => x.id == watching.routeId)
-            this.knownRoad = await common.rpc.getRoad(watching.courseId, watching.roadId)
+            //this.knownRoad = await common.rpc.getRoad(watching.courseId, watching.roadId)
+            this.knownRoad = this.courseRoads.find(x => x.id == watching.roadId);
             //debugger
             if (this.preferRoute) {
                 if ((!watching.routeId && !this.routeOverride && (Date.now() - this.routeOverrideTS > 5000)) || (!watching.routeId && (Date.now() - this.routeOverrideTS > 5000)) || !knownRoute) {
