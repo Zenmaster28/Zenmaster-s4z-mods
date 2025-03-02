@@ -76,6 +76,14 @@
                     <key data-added="2023-11-01">Show max elevation:</key>
                     <input type="checkbox" name="showElevationMaxLine" checked/>
                 </label>
+                <label title="Show the current altitude on max elevation line">
+                    <key data-added="2025-03-02">&nbsp;&nbsp;- current altitude</key>
+                    <input type="checkbox" name="showCurrentAltitude" data-depends-on="showElevationMaxLine"/>
+                </label>
+                <label title="When zoomed in, show the max elevation for the entire route">
+                    <key data-added="2025-03-02">&nbsp;&nbsp;- route max (zoomed)</key>
+                    <input type="checkbox" name="showRouteMaxElevation" data-depends-on="showElevationMaxLine"/>
+                </label>
                 <label title="Show segment start lines">
                     <key data-added="2023-12-02">Show segments:</key>
                     <input type="checkbox" name="showSegmentStart" checked/>

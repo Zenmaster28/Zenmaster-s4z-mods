@@ -14,7 +14,7 @@ let allMarkLines = [];
 const allRoutes = await zen.getAllRoutes();
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, showCurrentAltitude, showRouteMaxElevation, refresh=1000}) {
         this.debugXcoord = false;
         this.debugXcoordDistance = null;
         this.debugPinPlacement = false;
@@ -25,6 +25,8 @@ export class SauceElevationProfile {
         this.worldList = worldList;
         this.preferRoute = preferRoute;
         this.showMaxLine = showMaxLine;
+        this.showCurrentAltitude = showCurrentAltitude;
+        this.showRouteMaxElevation = showRouteMaxElevation;
         this.disablePenRouting = disablePenRouting;
         this.showLapMarker = showLapMarker;
         this.showCompletedLaps = showCompletedLaps;
@@ -838,7 +840,16 @@ export class SauceElevationProfile {
                 label: {
                     formatter: x => {
                         const viewMaxElevation = Math.ceil(x.value);
-                        return viewMaxElevation < routeMaxElevation ? `${H.elevation(viewMaxElevation)} / ${H.elevation(routeMaxElevation, {suffix: true})}` : `${H.elevation(routeMaxElevation, {suffix: true})}`;
+                        let output = [];
+                        if (this.showCurrentAltitude) {
+                            output.push(H.elevation(this.currentAltitude));
+                        }
+                        output.push(H.elevation(viewMaxElevation));
+                        if (viewMaxElevation < routeMaxElevation && this.showRouteMaxElevation) {
+                            output.push(H.elevation(routeMaxElevation));
+                        }                        
+                        return output.join(' / ');
+                        //return viewMaxElevation < routeMaxElevation ? `${H.elevation(viewMaxElevation)} / ${H.elevation(routeMaxElevation, {suffix: true})}` : `${H.elevation(routeMaxElevation, {suffix: true})}`;
                     },
                     position: options.reverse ? 'insideStartTop' : 'insideEndTop',
                     color: this.lineTextColor,
@@ -1155,6 +1166,7 @@ export class SauceElevationProfile {
             const knownRoute = allRoutes.find(x => x.id == watching.routeId)
             //this.knownRoad = await common.rpc.getRoad(watching.courseId, watching.roadId)
             this.knownRoad = this.courseRoads.find(x => x.id == watching.roadId);
+            this.currentAltitude = watching.altitude;
             //debugger
             if (this.preferRoute) {
                 if ((!watching.routeId && !this.routeOverride && (Date.now() - this.routeOverrideTS > 5000)) || (!watching.routeId && (Date.now() - this.routeOverrideTS > 5000)) || !knownRoute) {
