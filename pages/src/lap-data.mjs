@@ -20,6 +20,7 @@ let steeringRefresh = Date.now() - 5000;
 let intervalRecovery = true;
 let intervalTS = Date.now() + 1000000; //way in the future
 let intervalTransition = false;
+let autoLapOverride = false;
 
 function setBackground() {
     const {solidBackground, backgroundColor} = common.settingsStore.get();
@@ -257,6 +258,14 @@ export async function main() {
             }
         });
     }
+    autoLapStatusDiv.addEventListener("click", function() {
+        autoLapOverride = !autoLapOverride;
+    })
+    window.addEventListener('keydown', function(event) {
+        if (event.key === 'a') {
+            autoLapOverride = !autoLapOverride;
+        }
+    });
     common.subscribe('athlete/watching', watching => {
         doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1); 
         fieldRenderer.setData(watching);
@@ -265,43 +274,48 @@ export async function main() {
         fieldRendererSm.render();
         
         if (settings.autoLapPower) {
-            autoLapStatusDiv.innerHTML = `Auto Lap Power: ${settings.autoLapPowerThreshold}w`
-            if (intervalRecovery && watching.state.power >= settings.autoLapPowerThreshold) {
-                if (!intervalTransition) {
-                    intervalTransition = true;
-                    intervalTS = Date.now();                    
-                    //console.log("Transitioning from recovery to work")
-                } else {
-                    if (Date.now() - intervalTS > settings.autoLapPowerDuration) {
-                        //went over the power threshold for more than 1.5 seconds, set a lap
-                        common.rpc.startLap()
-                        intervalTransition = false;
-                        intervalRecovery = false;
-                        //console.log("Lapping to start work interval")
-                    }
-                }                
-            } else if (intervalRecovery && watching.state.power < settings.autoLapPowerThreshold && intervalTransition) {
-                //went over the threshold but not for more than 1.5 seconds
-                intervalTransition = false;
-                //console.log("Went over the threshold briefly but then went below again, not lapping")
-            } else if (!intervalRecovery && watching.state.power < settings.autoLapPowerThreshold) {
-                if (!intervalTransition) {
-                    intervalTransition = true;
-                    intervalTS = Date.now();   
-                    //console.log("Transitioning from work to recovery")                 
-                } else {
-                    if (Date.now() - intervalTS > settings.autoLapPowerDuration) {
-                        //went below the power threshold for more than 1.5 seconds, set a lap
-                        common.rpc.startLap()
-                        intervalTransition = false;
-                        intervalRecovery = true;
-                        //console.log("Lapping to start recovery interval")
-                    }
-                }   
-            } else if (!intervalRecovery && watching.state.power > settings.autoLapPowerThreshold && intervalTransition) {
-                //went below the threshold but not for more than 1.5 seconds
-                intervalTransition = false;
-                //console.log("Went below the threshold briefly but then went below again, not lapping")
+            if (!autoLapOverride) {
+                autoLapStatusDiv.innerHTML = `Auto Lap Power: ${settings.autoLapPowerThreshold}w`
+            
+                if (intervalRecovery && watching.state.power >= settings.autoLapPowerThreshold) {
+                    if (!intervalTransition) {
+                        intervalTransition = true;
+                        intervalTS = Date.now();                    
+                        //console.log("Transitioning from recovery to work")
+                    } else {
+                        if (Date.now() - intervalTS > settings.autoLapPowerDuration) {
+                            //went over the power threshold for more than 1.5 seconds, set a lap
+                            common.rpc.startLap()
+                            intervalTransition = false;
+                            intervalRecovery = false;
+                            //console.log("Lapping to start work interval")
+                        }
+                    }                
+                } else if (intervalRecovery && watching.state.power < settings.autoLapPowerThreshold && intervalTransition) {
+                    //went over the threshold but not for more than 1.5 seconds
+                    intervalTransition = false;
+                    //console.log("Went over the threshold briefly but then went below again, not lapping")
+                } else if (!intervalRecovery && watching.state.power < settings.autoLapPowerThreshold) {
+                    if (!intervalTransition) {
+                        intervalTransition = true;
+                        intervalTS = Date.now();   
+                        //console.log("Transitioning from work to recovery")                 
+                    } else {
+                        if (Date.now() - intervalTS > settings.autoLapPowerDuration) {
+                            //went below the power threshold for more than 1.5 seconds, set a lap
+                            common.rpc.startLap()
+                            intervalTransition = false;
+                            intervalRecovery = true;
+                            //console.log("Lapping to start recovery interval")
+                        }
+                    }   
+                } else if (!intervalRecovery && watching.state.power > settings.autoLapPowerThreshold && intervalTransition) {
+                    //went below the threshold but not for more than 1.5 seconds
+                    intervalTransition = false;
+                    //console.log("Went below the threshold briefly but then went below again, not lapping")
+                }
+            } else {
+                autoLapStatusDiv.innerHTML = "Auto Lap Power: Disabled"
             }
         } else {
             autoLapStatusDiv.innerHTML = "";
