@@ -267,6 +267,7 @@ export class SauceElevationProfile {
                                 }
                             }]                                                                           
                         })
+                        this.scaleXaxis(dzStart, dzEnd)
                     } else {   
                         //slider is off, toggle it on                 
                         dzShow = true
