@@ -929,7 +929,7 @@ export class SauceElevationProfile {
                         if (viewMaxElevation < routeMaxElevation && this.showRouteMaxElevation) {
                             output.push(H.elevation(routeMaxElevation));
                         }                        
-                        return output.join(' / ');
+                        return `${output.join(' / ')}m`;
                         //return viewMaxElevation < routeMaxElevation ? `${H.elevation(viewMaxElevation)} / ${H.elevation(routeMaxElevation, {suffix: true})}` : `${H.elevation(routeMaxElevation, {suffix: true})}`;
                     },
                     position: options.reverse ? 'insideStartTop' : 'insideEndTop',
