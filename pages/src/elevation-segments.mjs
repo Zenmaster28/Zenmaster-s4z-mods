@@ -14,7 +14,7 @@ let allMarkLines = [];
 const allRoutes = await zen.getAllRoutes();
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, showCurrentAltitude, showRouteMaxElevation, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, showCurrentAltitude, showRouteMaxElevation, showXaxis, xAxisIncrements, refresh=1000}) {
         this.debugXcoord = false;
         this.debugXcoordDistance = null;
         this.debugPinPlacement = false;
@@ -100,8 +100,11 @@ export class SauceElevationProfile {
         this.showLineAhead = showLineAhead;
         this.distanceAhead = distanceAhead;
         this.aheadLineColor = aheadLineColor;
-        this.aheadLineType = aheadLineType;      
+        this.aheadLineType = aheadLineType;
+        this.showXaxis = showXaxis;  
+        this.xAxisIncrements = xAxisIncrements;    
         el.classList.add('sauce-elevation-profile-container');
+        this.chartXaxis = ec.init(document.getElementById('xAxis'));  
         this.chart = ec.init(el, 'sauce', {renderer: 'svg'});
         this.chart.setOption({
             animation: false,
@@ -279,7 +282,7 @@ export class SauceElevationProfile {
                     })
                 }
             })
-        }
+        }                      
     }
     createPOI(ev, self, xValue) { 
         if (self.activePOIHandler) {
@@ -350,6 +353,7 @@ export class SauceElevationProfile {
     onResize() {
         this._updateFontSizes();
         this.chart.resize();
+        this.chartXaxis.resize();
         const axisPad = this.em(0.2);
         const tooltipSize = 0.4;        
         this.chart.setOption({
@@ -787,32 +791,109 @@ export class SauceElevationProfile {
         //console.log(routeDistances)
         //this.setData(distances, elevations, grades, {markLines, markAreas});        
         this.setData(this.routeDistances, this.routeElevations, this.routeGrades, {markLines, markAreas});
-        /* figuring out axis tickmarks, for possible future use.
+        //this.showXaxis = true;
+        if (this.showXaxis) {
+            const min = 0;
+            const max = this.routeDistances.at(-1);            
+            this.scaleXaxis(min, max);
+        }
+        /*
+        //figuring out axis tickmarks, for possible future use.
         this.chart.setOption({
             xAxis: [{
                 show: true,
+                min: 0,
+                offset: 10,
+                max: this.routeDistances.at(-1),
                 splitLine: {
-                    show: false // Disable grid lines
+                    show: false
                 },
                 axisTick: {
-                    show: true,  // Ensure tick marks are enabled
-                    inside: true, // Tick marks outside the graph
-                    interval: 'auto',
+                    show: true,
+                    inside: false,
                     length: 25,
                     lineStyle: {
-                        color: 'black',
+                        color: 'red',
                         width: 5
                     }
                 },
                 axisLine: {
-                    onZero: false
+                    show: true,
+                    lineStyle: {
+                        color: 'red',
+                        width: 5
+                    }
+                },
+                axisLabel: {
+                    show: true,
+                    fontSize: 15
                 }
             }]
         });
+        console.log(this.chart.getOption())
         */
         return this.route;
     });
+    scaleXaxis(min, max) { 
+        if (!this.showXaxis) {
+            return;
+        }
+        const interval = this.xAxisIncrements * 1000;
+        const tickSize = 10;
+        const tickMarks = [];
+        for (let i = interval; i <= max; i += interval) {
+            if (i >= min) {
+                tickMarks.push(i);
+            }
+        }
+        //console.log("tickMarks",tickMarks)
+        const option = {
+            grid: {
+                left: 0,
+                right: 0,
+                top: 0
+            },
+            xAxis: {
+                type: 'value',
+                min: min,
+                max: max,
+                axisLine: {
+                    show: true
+                },
+                axisTick: {
+                    show: true,
+                    length: tickSize,
+                    customValues: tickMarks,
+                    lineStyle: {
+                        color: this.lineTextColor,
+                        width: this.lineSize
+                    }
+                },
+                axisLabel: {
+                    show: true,
+                    margin: tickSize,
+                    fontSize: this.fontScale * 15,
+                    color: this.lineTextColor,
+                    customValues: tickMarks,
+                    formatter: function (value) {
+                        return value / 1000;
+                    }
+                },
+                splitLine: {
+                    show: false
+                }
+            },
+            yAxis: {
+                show: false
+            },
+            series: []
+        };
 
+        this.chartXaxis.setOption(option);
+        document.getElementById("rightPanel").style.bottom = "30px"
+        //this.el.style.setProperty('--profile-height', 0.9);
+        this.el.style.height = "calc(var(--profile-height) * 93%)"
+    }
     setData(distances, elevations, grades, options={}) {
         this._distances = distances;
         this._elevations = elevations;
@@ -1700,6 +1781,7 @@ export class SauceElevationProfile {
                                             max: viewMax
                                         }   
                                     })
+                                    this.scaleXaxis(zoomStart, zoomFinish)
                                     //debugger
                                 } else if (this.zoomNextSegment && !this.singleLapView) {
                                     let nextSegment = zen.getNextSegment(allMarkLines.filter(x => !x.finishArchOnly), xCoord)
@@ -1768,6 +1850,7 @@ export class SauceElevationProfile {
                                                 }                                                                          
                                             })
                                             this.zoomedIn = true;
+                                            this.scaleXaxis(zoomStart, zoomFinish);
                                         } else if (this.zoomedIn) {
                                             //zoom back out
                                             //console.log("Segment complete, zoom back out")
@@ -1814,6 +1897,7 @@ export class SauceElevationProfile {
                                                     max: this._yAxisMax
                                                 }                                                                          
                                             })
+                                            this.scaleXaxis(zoomStart, zoomFinish);
                                         }
                                         //debugger
                                     } else if (this.zoomFinalKm && !isNaN(xCoord)) {
@@ -1859,6 +1943,7 @@ export class SauceElevationProfile {
                                                 }                                                                          
                                             })
                                             this.zoomedIn = true;
+                                            this.scaleXaxis(zoomStart, zoomFinish);
                                         } else {
                                             this.zoomedIn = false;
                                             let zoomStart = this.routeDistances.at(0);
@@ -1903,6 +1988,7 @@ export class SauceElevationProfile {
                                                     max: this._yAxisMax
                                                 }                                                                          
                                             })
+                                            this.scaleXaxis(zoomStart, zoomFinish);
                                         }
                                     } else if (this.zoomedIn) {
                                         //zoom back out
@@ -1950,6 +2036,7 @@ export class SauceElevationProfile {
                                                 max: this._yAxisMax
                                             }                                                                          
                                         })
+                                        this.scaleXaxis(zoomStart, zoomFinish);
                                     }
                                     
                                 }

@@ -185,3 +185,7 @@ th:last-child, td:last-child {
   width: 30px;
   vertical-align: middle;
 }
+#xAxis {
+  width: 100%;
+  height: 30px;
+}

@@ -81,8 +81,10 @@ common.settingsStore.setDefault({
     disablePenRouting: false,
     zoomRemainingRoute: false,
     dataTransparency: 0.8,
-    showCurrentAltitude: true,
-    showRouteMaxElevation: true
+    showCurrentAltitude: false,
+    showRouteMaxElevation: false,
+    showXaxis: false,
+    xAxisIncrements: 5
 });
 
 const settings = common.settingsStore.get();
@@ -241,12 +243,16 @@ function createElevationProfile({worldList}) {
     typeof(settings.zoomRemainingRoute) == "undefined" ? common.settingsStore.set("zoomRemainingRoute", false) : null;
     const zoomRemainingRoute = settings.zoomRemainingRoute;
     typeof(settings.dataTransparency) == "undefined" ? common.settingsStore.set("dataTransparency", 0.8) : null;
-    typeof(settings.showCurrentAltitude) == "undefined" ? common.settingsStore.set("showCurrentAltitude", true) : null;
+    typeof(settings.showCurrentAltitude) == "undefined" ? common.settingsStore.set("showCurrentAltitude", false) : null;
     const showCurrentAltitude = settings.showCurrentAltitude;
-    typeof(settings.showRouteMaxElevation) == "undefined" ? common.settingsStore.set("showRouteMaxElevation", true) : null;
+    typeof(settings.showRouteMaxElevation) == "undefined" ? common.settingsStore.set("showRouteMaxElevation", false) : null;
     const showRouteMaxElevation = settings.showRouteMaxElevation;
+    typeof(settings.showXaxis) == "undefined" ? common.settingsStore.set("showXaxis", false) : null;
+    const showXaxis = settings.showXaxis;
+    typeof(settings.xAxisIncrements) == "undefined" ? common.settingsStore.set("xAxisIncrements", 5) : null;
+    const xAxisIncrements = settings.xAxisIncrements
     
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, showCurrentAltitude, showRouteMaxElevation});
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, showCurrentAltitude, showRouteMaxElevation, showXaxis, xAxisIncrements});
 }
 
 
@@ -589,7 +595,9 @@ export async function main() {
                         changed.has('fontScale') ||                        
                         changed.has('singleLapView') ||
                         changed.has('showGroups') ||
-                        changed.has('disablePenRouting')
+                        changed.has('disablePenRouting') ||
+                        changed.has('showXaxis') ||
+                        changed.has('xAxisIncrements')
                     )
                 {                    
                     location.reload();
