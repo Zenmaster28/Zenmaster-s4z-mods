@@ -848,6 +848,7 @@ export class SauceElevationProfile {
         }
         //console.log("tickMarks",tickMarks)
         const option = {
+            animation: false,
             grid: {
                 left: 0,
                 right: 0,
