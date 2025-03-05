@@ -90,6 +90,10 @@ export class SauceElevationProfile {
         this.zoomFinalKm = zoomFinalKm;
         this.zoomSlider = zoomSlider;
         this.zoomRemainingRoute = zoomRemainingRoute;
+        this.zoomIdx = {
+            start: null,
+            finish: null
+        };
         this.forwardDistance = forwardDistance;
         this.behindDistance = behindDistance;
         this.refresh = refresh;
@@ -910,6 +914,20 @@ export class SauceElevationProfile {
         //this.el.style.setProperty('--profile-height', 0.9);
         this.el.style.height = "calc(var(--profile-height) * 93%)"
     }
+    setThemeColorStops(ranges, distances, grades, distance) {  
+        this.routeColorStops = distances.map((x, i) => {
+            let grade = grades[i]; 
+            if (grade < -0.17 || grade > 0.25) { // sometimes a grade is an erronous extreme, instead take the average of the two entries on either side and use that
+                grade = i > 0 && i < distances.length ? (grades[i - 1] + grades[i + 1]) / 2 : grades[i];
+            }                 
+            let color = interpolateColor(grade, ranges)
+            //console.log(color.toString())              
+            return {
+                offset: x / distance,
+                color: color,
+            };
+        });
+    }
     setData(distances, elevations, grades, options={}) {
         this._distances = distances;
         this._elevations = elevations;
@@ -1019,19 +1037,8 @@ export class SauceElevationProfile {
                 {min: 0.17, r: 178, g: 24, b: 43},
                 {min: 0.5, r: 255, g: 238, b: 153} // catch for extremes
             ];
-            lineWidth = 0;            
-            this.routeColorStops = distances.map((x, i) => {
-                let grade = grades[i]; 
-                if (grade < -0.17 || grade > 0.25) { // sometimes a grade is an erronous extreme, instead take the average of the two entries on either side and use that
-                    grade = i > 0 && i < distances.length ? (grades[i - 1] + grades[i + 1]) / 2 : grades[i];
-                }                 
-                let color = interpolateColor(grade, ranges)
-                //console.log(color.toString())              
-                return {
-                    offset: x / distance,
-                    color: color,
-                };
-            });
+            lineWidth = 0;
+            this.setThemeColorStops(ranges, distances, grades, distance);
        } else if (this.colorScheme == "cvdPRGn") {
             //console.log("Selected colorscheme is " + this.colorScheme)               
             const ranges = [
@@ -1048,18 +1055,7 @@ export class SauceElevationProfile {
             ];
                 
             lineWidth = 0;            
-            this.routeColorStops = distances.map((x, i) => {
-                let grade = grades[i]; 
-                if (grade < -0.17 || grade > 0.25) { // sometimes a grade is an erronous extreme, instead take the average of the two entries on either side and use that
-                    grade = i > 0 && i < distances.length ? (grades[i - 1] + grades[i + 1]) / 2 : grades[i];
-                }                 
-                let color = interpolateColor(grade, ranges)
-                //console.log(color.toString())              
-                return {
-                    offset: x / distance,
-                    color: color,
-                };
-            });
+            this.setThemeColorStops(ranges, distances, grades, distance);
         } else if (this.colorScheme == "cvdSunset") {
             //console.log("Selected colorscheme is " + this.colorScheme)               
             const ranges = [
@@ -1073,21 +1069,9 @@ export class SauceElevationProfile {
                 {min: 0.105, r: 221, g: 61, b: 45},
                 {min: 0.17, r: 165, g: 0, b: 38},
                 {min: 0.5, r: 255, g: 255, b: 255} // catch for extremes
-            ];
-                
+            ];                
             lineWidth = 0;            
-            this.routeColorStops = distances.map((x, i) => {
-                let grade = grades[i]; 
-                if (grade < -0.17 || grade > 0.25) { // sometimes a grade is an erronous extreme, instead take the average of the two entries on either side and use that
-                    grade = i > 0 && i < distances.length ? (grades[i - 1] + grades[i + 1]) / 2 : grades[i];
-                }                 
-                let color = interpolateColor(grade, ranges)
-                //console.log(color.toString())              
-                return {
-                    offset: x / distance,
-                    color: color,
-                };
-            });
+            this.setThemeColorStops(ranges, distances, grades, distance);
         } else {
             lineWidth = 1;
             this.routeColorStops = distances.map((x, i) => {
@@ -1764,43 +1748,49 @@ export class SauceElevationProfile {
                                         approachingFinish = true
                                     }
                                     let idxStart = common.binarySearchClosest(this.routeDistances, (zoomStart)); 
-                                    let idxFinish = common.binarySearchClosest(this.routeDistances, (zoomFinish)); 
-                                    const viewElevations = this.routeElevations.slice(idxStart, idxFinish);
-                                    let viewMin = Math.floor(Math.min(...viewElevations) - 5)
-                                    let viewMax = Math.ceil(Math.max(...viewElevations, this.yAxisMin) + 5)
-                                    //console.log("viewMin", viewMin, "viewMax", viewMax)
-                                    //debugger
-                                    if (approachingFinish) {
-                                        zoomStart = this.routeDistances.at(-(this.routeDistances.length - idxStart)) // adjust the zoom offset to line up with colorstops
+                                    let idxFinish = common.binarySearchClosest(this.routeDistances, (zoomFinish));
+                                    if (this.zoomIdx.start != idxStart || this.zoomIdx.finish != idxFinish) {                                    
+                                        this.zoomIdx = {
+                                            start: idxStart,
+                                            finish: idxFinish
+                                        };
+                                        const viewElevations = this.routeElevations.slice(idxStart, idxFinish);
+                                        let viewMin = Math.floor(Math.min(...viewElevations) - 5)
+                                        let viewMax = Math.ceil(Math.max(...viewElevations, this.yAxisMin) + 5)
+                                        //console.log("viewMin", viewMin, "viewMax", viewMax)
+                                        //debugger
+                                        if (approachingFinish) {
+                                            zoomStart = this.routeDistances.at(-(this.routeDistances.length - idxStart)) // adjust the zoom offset to line up with colorstops
+                                        }
+                                        const dataZoomColorStops = Array.from(this.routeColorStops.slice(idxStart, idxFinish));                                    
+                                        const newColorStops = dataZoomColorStops.map((stop, i) => ({
+                                            offset: (this.routeDistances[idxStart + i] - this.routeDistances[idxStart]) / (distance + offsetBack),
+                                            color: stop.color
+                                        })) 
+                                        //console.log(newColorStops)
+                                        const dataZoomData = [];                                                              
+                                        dataZoomData.push({
+                                            type: 'inside',
+                                            startValue: zoomStart,
+                                            endValue: zoomFinish
+                                        })
+                                        this.chart.setOption({
+                                            dataZoom: dataZoomData[0], 
+                                            series: [{
+                                                areaStyle: {
+                                                    color: {
+                                                        colorStops: newColorStops
+                                                    },
+                                                    opacity: this.gradientOpacity
+                                                }
+                                            }],
+                                            yAxis: {
+                                                min: viewMin,
+                                                max: viewMax
+                                            }   
+                                        })
+                                        this.scaleXaxis(zoomStart, zoomFinish)
                                     }
-                                    const dataZoomColorStops = Array.from(this.routeColorStops.slice(idxStart, idxFinish));                                    
-                                    const newColorStops = dataZoomColorStops.map((stop, i) => ({
-                                        offset: (this.routeDistances[idxStart + i] - this.routeDistances[idxStart]) / (distance + offsetBack),
-                                        color: stop.color
-                                    })) 
-                                    //console.log(newColorStops)
-                                    const dataZoomData = [];                                                              
-                                    dataZoomData.push({
-                                        type: 'inside',
-                                        startValue: zoomStart,
-                                        endValue: zoomFinish
-                                    })
-                                    this.chart.setOption({
-                                        dataZoom: dataZoomData[0], 
-                                        series: [{
-                                            areaStyle: {
-                                                color: {
-                                                    colorStops: newColorStops
-                                                },
-                                                opacity: this.gradientOpacity
-                                            }
-                                        }],
-                                        yAxis: {
-                                            min: viewMin,
-                                            max: viewMax
-                                        }   
-                                    })
-                                    this.scaleXaxis(zoomStart, zoomFinish)
                                     //debugger
                                 } else if (this.zoomNextSegment && !this.singleLapView) {
                                     let nextSegment = zen.getNextSegment(allMarkLines.filter(x => !x.finishArchOnly), xCoord)
@@ -1833,43 +1823,49 @@ export class SauceElevationProfile {
                                             }
 
                                             let idxStart = common.binarySearchClosest(this.routeDistances, (zoomStart)); 
-                                            let idxFinish = common.binarySearchClosest(this.routeDistances, (zoomFinish)); 
-                                            let segmentElevations = this.routeElevations.slice(idxStart, idxFinish)                                    
-                                            //console.log(segmentElevations)
-                                            let segmentMin = Math.floor(Math.min(...segmentElevations) - 5)
-                                            let segmentMax = Math.ceil(Math.max(...segmentElevations) + 5)
-                                            //console.log("Min elev: " + segmentMin + " Max elev: " + segmentMax)
-                                            //debugger
-                                            const dataZoomColorStops = Array.from(this.routeColorStops.slice(idxStart, idxFinish));
-                                            const distance = (segmentFinish.markLine + 100) - (segmentStart.markLine - this.zoomNextSegmentApproach)                                    
-                                            const newColorStops = dataZoomColorStops.map((stop, i) => ({
-                                                offset: (this.routeDistances[idxStart + i] - this.routeDistances[idxStart]) / (distance), // fix distance colorstops
-                                                color: stop.color
-                                            })) 
-                                            //console.log(newColorStops)
-                                            const dataZoomData = [];                                                              
-                                            dataZoomData.push({
-                                                type: 'inside',
-                                                startValue: zoomStart,
-                                                endValue: zoomFinish
-                                            })
-                                            this.chart.setOption({
-                                                dataZoom: dataZoomData[0], 
-                                                series: [{
-                                                    areaStyle: {
-                                                        color: {
-                                                            colorStops: newColorStops
-                                                        },
-                                                        opacity: this.gradientOpacity
-                                                    }
-                                                }],
-                                                yAxis: {
-                                                    min: segmentMin,
-                                                    max: segmentMax
-                                                }                                                                          
-                                            })
-                                            this.zoomedIn = true;
-                                            this.scaleXaxis(zoomStart, zoomFinish);
+                                            let idxFinish = common.binarySearchClosest(this.routeDistances, (zoomFinish));
+                                            if (this.zoomIdx.start != idxStart || this.zoomIdx.finish != idxFinish) {
+                                                this.zoomIdx = {
+                                                    start: idxStart,
+                                                    finish: idxFinish
+                                                }; 
+                                                let segmentElevations = this.routeElevations.slice(idxStart, idxFinish)                                    
+                                                //console.log(segmentElevations)
+                                                let segmentMin = Math.floor(Math.min(...segmentElevations) - 5)
+                                                let segmentMax = Math.ceil(Math.max(...segmentElevations) + 5)
+                                                //console.log("Min elev: " + segmentMin + " Max elev: " + segmentMax)
+                                                //debugger
+                                                const dataZoomColorStops = Array.from(this.routeColorStops.slice(idxStart, idxFinish));
+                                                const distance = (segmentFinish.markLine + 100) - (segmentStart.markLine - this.zoomNextSegmentApproach)                                    
+                                                const newColorStops = dataZoomColorStops.map((stop, i) => ({
+                                                    offset: (this.routeDistances[idxStart + i] - this.routeDistances[idxStart]) / (distance), // fix distance colorstops
+                                                    color: stop.color
+                                                })) 
+                                                //console.log(newColorStops)
+                                                const dataZoomData = [];                                                              
+                                                dataZoomData.push({
+                                                    type: 'inside',
+                                                    startValue: zoomStart,
+                                                    endValue: zoomFinish
+                                                })
+                                                this.chart.setOption({
+                                                    dataZoom: dataZoomData[0], 
+                                                    series: [{
+                                                        areaStyle: {
+                                                            color: {
+                                                                colorStops: newColorStops
+                                                            },
+                                                            opacity: this.gradientOpacity
+                                                        }
+                                                    }],
+                                                    yAxis: {
+                                                        min: segmentMin,
+                                                        max: segmentMax
+                                                    }                                                                          
+                                                })
+                                                this.zoomedIn = true;
+                                                this.scaleXaxis(zoomStart, zoomFinish);
+                                            }
                                         } else if (this.zoomedIn) {
                                             //zoom back out
                                             //console.log("Segment complete, zoom back out")
@@ -1927,48 +1923,113 @@ export class SauceElevationProfile {
                                             let zoomFinish = this.routeDistances.at(-1);
                                             let idxStart = common.binarySearchClosest(this.routeDistances, (zoomStart)); 
                                             let idxFinish = common.binarySearchClosest(this.routeDistances, (zoomFinish)); 
-                                            let segmentElevations = this.routeElevations.slice(idxStart, idxFinish)                                    
-                                            //console.log(segmentElevations)
-                                            let segmentMin = Math.floor(Math.min(...segmentElevations) - 5)
-                                            let segmentMax = Math.ceil(Math.max(...segmentElevations) + 5)
-                                            //console.log("Min elev: " + segmentMin + " Max elev: " + segmentMax)
-                                            //debugger
-                                            const dataZoomColorStops = Array.from(this.routeColorStops.slice(idxStart, idxFinish));
-                                            const distance = zoomFinish - zoomStart;
-                                            const newColorStops = dataZoomColorStops.map((stop, i) => ({
-                                                offset: (this.routeDistances[idxStart + i] - this.routeDistances[idxStart]) / (distance), // fix distance colorstops
-                                                color: stop.color
-                                            })) 
-                                            //console.log(newColorStops)
-                                            const dataZoomData = [];                                                              
-                                            dataZoomData.push({
-                                                type: 'inside',
-                                                startValue: zoomStart,
-                                                endValue: zoomFinish
-                                            })
-                                            this.chart.setOption({
-                                                dataZoom: dataZoomData[0], 
-                                                series: [{
-                                                    areaStyle: {
-                                                        color: {
-                                                            colorStops: newColorStops
-                                                        },
-                                                        opacity: this.gradientOpacity
-                                                    }
-                                                }],
-                                                yAxis: {
-                                                    min: segmentMin,
-                                                    max: segmentMax
-                                                }                                                                          
-                                            })
-                                            this.zoomedIn = true;
-                                            this.scaleXaxis(zoomStart, zoomFinish);
+                                            if (this.zoomIdx.start != idxStart || this.zoomIdx.finish != idxFinish) {
+                                                this.zoomIdx = {
+                                                    start: idxStart,
+                                                    finish: idxFinish
+                                                };
+                                                let segmentElevations = this.routeElevations.slice(idxStart, idxFinish)                                    
+                                                //console.log(segmentElevations)
+                                                let segmentMin = Math.floor(Math.min(...segmentElevations) - 5)
+                                                let segmentMax = Math.ceil(Math.max(...segmentElevations) + 5)
+                                                //console.log("Min elev: " + segmentMin + " Max elev: " + segmentMax)
+                                                //debugger
+                                                const dataZoomColorStops = Array.from(this.routeColorStops.slice(idxStart, idxFinish));
+                                                const distance = zoomFinish - zoomStart;
+                                                const newColorStops = dataZoomColorStops.map((stop, i) => ({
+                                                    offset: (this.routeDistances[idxStart + i] - this.routeDistances[idxStart]) / (distance), // fix distance colorstops
+                                                    color: stop.color
+                                                })) 
+                                                //console.log(newColorStops)
+                                                const dataZoomData = [];                                                              
+                                                dataZoomData.push({
+                                                    type: 'inside',
+                                                    startValue: zoomStart,
+                                                    endValue: zoomFinish
+                                                })
+                                                this.chart.setOption({
+                                                    dataZoom: dataZoomData[0], 
+                                                    series: [{
+                                                        areaStyle: {
+                                                            color: {
+                                                                colorStops: newColorStops
+                                                            },
+                                                            opacity: this.gradientOpacity
+                                                        }
+                                                    }],
+                                                    yAxis: {
+                                                        min: segmentMin,
+                                                        max: segmentMax
+                                                    }                                                                          
+                                                })
+                                                this.zoomedIn = true;
+                                                this.scaleXaxis(zoomStart, zoomFinish);
+                                            }
                                         } else {
                                             this.zoomedIn = false;
                                             let zoomStart = this.routeDistances.at(0);
                                             let zoomFinish = this.routeDistances.at(-1);
                                             let idxStart = common.binarySearchClosest(this.routeDistances, (zoomStart)); 
                                             let idxFinish = common.binarySearchClosest(this.routeDistances, (zoomFinish)); 
+                                            if (this.zoomIdx.start != idxStart || this.zoomIdx.finish != idxFinish) {
+                                                this.zoomIdx = {
+                                                    start: idxStart,
+                                                    finish: idxFinish
+                                                };
+                                                let elevations = this.routeElevations.slice(idxStart, idxFinish)                                    
+                                                //console.log(segmentElevations)
+                                                //let segmentMin = Math.floor(Math.min(...segmentElevations) - 5)
+                                                //let segmentMax = Math.ceil(Math.max(...segmentElevations) + 5)
+                                                this._yMax = Math.max(...elevations);
+                                                this._yMin = Math.min(...elevations);
+                                                this._yAxisMin = Math.floor(this._yMin > 0 ? Math.max(0, this._yMin - 20) : this._yMin) - 10;
+                                                this._yAxisMax = Math.ceil(Math.max(this._yMax, this._yMin + this.yAxisMin)) + 5;
+                                                //console.log("Min elev: " + segmentMin + " Max elev: " + segmentMax)
+                                                //debugger
+                                                const dataZoomColorStops = Array.from(this.routeColorStops.slice(idxStart, idxFinish));
+                                                const distance = zoomFinish - zoomStart;
+                                                const newColorStops = dataZoomColorStops.map((stop, i) => ({
+                                                    offset: (this.routeDistances[idxStart + i] - this.routeDistances[idxStart]) / (distance), // fix distance colorstops
+                                                    color: stop.color
+                                                })) 
+                                                //console.log(newColorStops)
+                                                const dataZoomData = [];                                                              
+                                                dataZoomData.push({
+                                                    type: 'inside',
+                                                    startValue: zoomStart,
+                                                    endValue: zoomFinish
+                                                })
+                                                this.chart.setOption({
+                                                    dataZoom: dataZoomData[0], 
+                                                    series: [{
+                                                        areaStyle: {
+                                                            color: {
+                                                                colorStops: newColorStops
+                                                            },
+                                                            opacity: this.gradientOpacity
+                                                        }
+                                                    }],
+                                                    yAxis: {
+                                                        min: this._yAxisMin,
+                                                        max: this._yAxisMax
+                                                    }                                                                          
+                                                })
+                                                this.scaleXaxis(zoomStart, zoomFinish);
+                                            }
+                                        }
+                                    } else if (this.zoomedIn) {
+                                        //zoom back out
+                                        //console.log("No more segments, zoom back out")
+                                        this.zoomedIn = false;
+                                        let zoomStart = this.routeDistances.at(0);
+                                        let zoomFinish = this.routeDistances.at(-1);
+                                        let idxStart = common.binarySearchClosest(this.routeDistances, (zoomStart)); 
+                                        let idxFinish = common.binarySearchClosest(this.routeDistances, (zoomFinish)); 
+                                        if (this.zoomIdx.start != idxStart || this.zoomIdx.finish != idxFinish) {
+                                            this.zoomIdx = {
+                                                start: idxStart,
+                                                finish: idxFinish
+                                            };
                                             let elevations = this.routeElevations.slice(idxStart, idxFinish)                                    
                                             //console.log(segmentElevations)
                                             //let segmentMin = Math.floor(Math.min(...segmentElevations) - 5)
@@ -2009,53 +2070,6 @@ export class SauceElevationProfile {
                                             })
                                             this.scaleXaxis(zoomStart, zoomFinish);
                                         }
-                                    } else if (this.zoomedIn) {
-                                        //zoom back out
-                                        //console.log("No more segments, zoom back out")
-                                        this.zoomedIn = false;
-                                        let zoomStart = this.routeDistances.at(0);
-                                        let zoomFinish = this.routeDistances.at(-1);
-                                        let idxStart = common.binarySearchClosest(this.routeDistances, (zoomStart)); 
-                                        let idxFinish = common.binarySearchClosest(this.routeDistances, (zoomFinish)); 
-                                        let elevations = this.routeElevations.slice(idxStart, idxFinish)                                    
-                                        //console.log(segmentElevations)
-                                        //let segmentMin = Math.floor(Math.min(...segmentElevations) - 5)
-                                        //let segmentMax = Math.ceil(Math.max(...segmentElevations) + 5)
-                                        this._yMax = Math.max(...elevations);
-                                        this._yMin = Math.min(...elevations);
-                                        this._yAxisMin = Math.floor(this._yMin > 0 ? Math.max(0, this._yMin - 20) : this._yMin) - 10;
-                                        this._yAxisMax = Math.ceil(Math.max(this._yMax, this._yMin + this.yAxisMin)) + 5;
-                                        //console.log("Min elev: " + segmentMin + " Max elev: " + segmentMax)
-                                        //debugger
-                                        const dataZoomColorStops = Array.from(this.routeColorStops.slice(idxStart, idxFinish));
-                                        const distance = zoomFinish - zoomStart;
-                                        const newColorStops = dataZoomColorStops.map((stop, i) => ({
-                                            offset: (this.routeDistances[idxStart + i] - this.routeDistances[idxStart]) / (distance), // fix distance colorstops
-                                            color: stop.color
-                                        })) 
-                                        //console.log(newColorStops)
-                                        const dataZoomData = [];                                                              
-                                        dataZoomData.push({
-                                            type: 'inside',
-                                            startValue: zoomStart,
-                                            endValue: zoomFinish
-                                        })
-                                        this.chart.setOption({
-                                            dataZoom: dataZoomData[0], 
-                                            series: [{
-                                                areaStyle: {
-                                                    color: {
-                                                        colorStops: newColorStops
-                                                    },
-                                                    opacity: this.gradientOpacity
-                                                }
-                                            }],
-                                            yAxis: {
-                                                min: this._yAxisMin,
-                                                max: this._yAxisMax
-                                            }                                                                          
-                                        })
-                                        this.scaleXaxis(zoomStart, zoomFinish);
                                     }
                                     
                                 }
