@@ -121,14 +121,14 @@
                     <key data-added="2023-12-30">Show completed laps:</key>
                     <input type="checkbox" name="showCompletedLaps" data-depends-on="showLapMarker">
                 </label>
-                <label>
+                <label title="Show distance markers along the x-axis">
                     <key data-added="2025-03-04">Show X-Axis</key>
                     <input type="checkbox" name="showXaxis">
                 </label>
-                <label>
+                <label title="The distance between km markers.  Set to 0 to auto scale.">
                     <key>&nbsp;&nbsp;- Km increments</key>
-                    <input type="range" name="xAxisIncrements" min="1" max="10" step="1" data-depends-on="showXaxis">
-                    <input type="number" name="xAxisIncrements" min="1" max="10" step="1" data-depends-on="showXaxis">
+                    <input type="range" name="xAxisIncrements" min="0" max="20" step="1" data-depends-on="showXaxis">
+                    <input type="number" name="xAxisIncrements" min="0" max="20" step="1" data-depends-on="showXaxis">
                 </label>
                 <label title="Display a line ahead of the watched rider at the specified distance">
                     <key data-added="2024-08-21">Show a line ahead:</key>

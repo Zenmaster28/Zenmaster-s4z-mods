@@ -839,7 +839,21 @@ export class SauceElevationProfile {
         if (!this.showXaxis) {
             return;
         }
-        const interval = this.xAxisIncrements * 1000;
+        let interval;
+        if (!this.xAxisIncrements) {
+            const diff = max - min;
+            if (diff <= 15000) {
+                interval = 1000;
+            } else if (diff <= 50000) {
+                interval = 5000;
+            } else if (diff <= 100000) {
+                interval = 10000;
+            } else {
+                interval = 20000;
+            }
+        } else {
+            interval = this.xAxisIncrements * 1000;
+        }
         const tickSize = 10;
         const tickMarks = [];
         for (let i = interval; i <= max; i += interval) {
@@ -1686,11 +1700,13 @@ export class SauceElevationProfile {
                                         const newColorStops = dataZoomColorStops.map((stop, i) => ({
                                             offset: (this.routeDistances[lapStart + i] - this.routeDistances[lapStart]) / distance,
                                             color: stop.color
-                                        }))                                    
+                                        }))   
+                                        const zoomStart = this.routeDistances[lapStart];
+                                        const zoomFinish = this.routeDistances[lapFinish];
                                         dataZoomData.push({
                                             type: 'inside',
-                                            startValue: this.routeDistances[lapStart],
-                                            endValue: this.routeDistances[lapFinish]
+                                            startValue: zoomStart,
+                                            endValue: zoomFinish
                                         })
                                         this.chart.setOption({
                                             dataZoom: dataZoomData[0],
@@ -1703,6 +1719,7 @@ export class SauceElevationProfile {
                                                 }
                                             }]                                        
                                         })
+                                        this.scaleXaxis(zoomStart, zoomFinish)
                                     }
                                     //debugger
                                 }

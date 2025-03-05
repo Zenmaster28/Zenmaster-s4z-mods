@@ -84,7 +84,7 @@ common.settingsStore.setDefault({
     showCurrentAltitude: false,
     showRouteMaxElevation: false,
     showXaxis: false,
-    xAxisIncrements: 5
+    xAxisIncrements: 0
 });
 
 const settings = common.settingsStore.get();
@@ -249,7 +249,7 @@ function createElevationProfile({worldList}) {
     const showRouteMaxElevation = settings.showRouteMaxElevation;
     typeof(settings.showXaxis) == "undefined" ? common.settingsStore.set("showXaxis", false) : null;
     const showXaxis = settings.showXaxis;
-    typeof(settings.xAxisIncrements) == "undefined" ? common.settingsStore.set("xAxisIncrements", 5) : null;
+    typeof(settings.xAxisIncrements) == "undefined" ? common.settingsStore.set("xAxisIncrements", 0) : null;
     const xAxisIncrements = settings.xAxisIncrements
     
     return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, showCurrentAltitude, showRouteMaxElevation, showXaxis, xAxisIncrements});
