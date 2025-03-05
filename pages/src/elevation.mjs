@@ -596,8 +596,7 @@ export async function main() {
                         changed.has('singleLapView') ||
                         changed.has('showGroups') ||
                         changed.has('disablePenRouting') ||
-                        changed.has('showXaxis') ||
-                        changed.has('xAxisIncrements')
+                        changed.has('showXaxis')
                     )
                 {                    
                     location.reload();
@@ -618,6 +617,19 @@ export async function main() {
             }
         }  else if (changed.has('dataTransparency')) {
             doc.style.setProperty('--dataTransparency', common.settingsStore.get('dataTransparency'));
+        } else if (changed.has('xAxisIncrements')) {
+            elProfile.xAxisIncrements = changed.get('xAxisIncrements')            
+            let min;
+            let max;
+            const profileDatazoom = elProfile.chart.getOption().dataZoom;
+            if (profileDatazoom.length > 0) {
+                min = profileDatazoom[0].startValue;
+                max = profileDatazoom[0].endValue;
+            } else {
+                min = 0;
+                max = elProfile.routeDistances.at(-1);
+            }
+            elProfile.scaleXaxis(min, max)
         }
         props.forEach(property => {
             if (changed.has(property)) {                
