@@ -512,6 +512,15 @@ async function scoreResults(eventResults, currentEventConfig) {
     }
     //debugger
     if (raceResults.length > 0) {
+        if (settings.femaleOnly) {
+            raceResults = raceResults.filter(x => x.athlete.gender == "female");
+            let newRank = 1;
+            for (let result of raceResults) {
+                result.rank = newRank;
+                newRank++;
+            }
+            console.log("female race results", raceResults)
+        }
         for (let result of raceResults) {
             const findRacer = racerScores.find(x => x.athleteId == result.profileId) // make sure race result has an entry in racerScores
             if (!findRacer) {
