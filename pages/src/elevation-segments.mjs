@@ -106,7 +106,8 @@ export class SauceElevationProfile {
         this.aheadLineColor = aheadLineColor;
         this.aheadLineType = aheadLineType;
         this.showXaxis = showXaxis;  
-        this.xAxisIncrements = xAxisIncrements;    
+        this.xAxisIncrements = xAxisIncrements; 
+        this.courseRoads = [];   
         el.classList.add('sauce-elevation-profile-container');
         this.chartXaxis = ec.init(document.getElementById('xAxis'));  
         this.chart = ec.init(el, 'sauce', {renderer: 'svg'});
@@ -1240,13 +1241,13 @@ export class SauceElevationProfile {
         if (!watching && (this.courseId == null || (!this.road && !this.route))) {
             return;
         } else if (watching) {
-            if (watching.courseId !== this.courseId) {
+            if (watching.courseId !== this.courseId || this.courseRoads == 0) {
                 await this.setCourse(watching.courseId);
                 this.courseRoads = await common.rpc.getRoads(watching.courseId);
             }
             const knownRoute = allRoutes.find(x => x.id == watching.routeId)
             //this.knownRoad = await common.rpc.getRoad(watching.courseId, watching.roadId)
-            this.knownRoad = this.courseRoads.find(x => x.id == watching.roadId);
+            this.knownRoad = this.courseRoads?.find(x => x.id == watching.roadId);
             this.currentAltitude = watching.altitude;
             //debugger
             if (this.preferRoute) {
@@ -1266,7 +1267,6 @@ export class SauceElevationProfile {
                         await this.setRoute(this.routeOverride);
                     } else if (this.routeId !== watching.routeId ||
                         (this._eventSubgroupId || null) !== (watching.eventSubgroupId || null)) {
-                            
                         if (!this.routeOverride) {
                             let sg;
                             if (watching.eventSubgroupId) {
