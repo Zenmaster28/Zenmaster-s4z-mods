@@ -40,7 +40,8 @@ common.settingsStore.setDefault({
     },
     showTeamBadges: true,
     badgeScale: 0.7,
-    femaleOnly: false
+    femaleOnly: false,
+    lineSpacing: 1.2
 });
 /*
 common.settingsStore.addEventListener('changed', ev => {
@@ -49,7 +50,12 @@ common.settingsStore.addEventListener('changed', ev => {
 });
 */
 let settings = common.settingsStore.get();
-console.log(settings)
+if (settings.preview) {
+    console.log("clearing preview setting")
+    settings.preview = false;
+    common.settingsStore.set("preview", false);
+}
+changelineSpacing();
 if (settings.transparentNoData) {document.body.classList = "transparent-bg"};
 
 function getUniqueValues(arr, property) {
@@ -598,6 +604,7 @@ function evaluateVisibility(scoreType) {
 async function displayResults(racerScores) {
     //console.log("Scores to process:", racerScores)
     //let scoreFormat = settings.FTSorFAL;
+    
     const pointsResultsDiv = document.getElementById("pointsResults")
     //pointsResultsDiv.innerHTML = "";
     let tableOutput = `<table id='pointsTable'><thead><th>Rank</th><th>Name</th><th ${evaluateVisibility('FTS')}>FTS</th><th ${evaluateVisibility('FAL')}>FAL</th><th ${evaluateVisibility('FIN')}>FIN</th><th>Total</th></thead><tbody>`;
@@ -642,9 +649,54 @@ async function displayResults(racerScores) {
     }
     tableOutput += "</table>"    
 
-    
+    if (settings.preview) {
+        common.settingsStore.set("preview", false);
+    }
     pointsResultsDiv.innerHTML = tableOutput;
     
+}
+
+function getPreviewData() {
+    const pointsResultsDiv = document.getElementById("pointsResults")
+    if (settings.preview) {
+        const sampleData = zen.sampleNames;        
+        sampleData.sort(() => Math.random() - 0.5);
+        let racerScores = [];
+        let rank = 1;
+        for (let athlete of sampleData) {
+            const falPointTotal = Math.floor(Math.random() * (20)) + 1;
+            const ftsPointTotal = Math.floor(Math.random() * (20)) + 1;
+            const finPoints = 21 - rank;
+            const racer = {
+                athleteId: rank,
+                falPointTotal: falPointTotal,
+                finPoints: finPoints,
+                ftsPointTotal: ftsPointTotal,
+                name: athlete.name,
+                team: athlete.team,
+                pointTotal: falPointTotal + ftsPointTotal + finPoints
+            }  
+            racerScores.push(racer);
+            rank++;
+        }  
+        let tableOutput = `<table id='pointsTable'><thead><th>Rank</th><th>Name</th><th>FTS</th><th>FAL</th><th>FIN</th><th>Total</th></thead><tbody>`;
+        rank = 1;       
+               
+        racerScores.sort((a, b) => {
+            return b.pointTotal - a.pointTotal;
+        });
+        for (let racer of racerScores) {
+            const teamBadge = common.teamBadge(racer.team);
+            tableOutput += "<tr>"
+            tableOutput += `<td>${rank}</td><td><span id="riderName">${racer.name}</span><div id="info-item-team">${teamBadge}</div></td><td>${racer.ftsPointTotal}</td><td>${racer.falPointTotal}</td><td>${racer.finPoints}</td><td>${racer.pointTotal}</td></tr>`
+            rank++;
+        }
+        tableOutput += "</table>"
+        pointsResultsDiv.innerHTML = tableOutput;
+    } else {
+        pointsResultsDiv.innerHTML = "";
+    }
+
 }
 
 async function getLeaderboard(watching) {
@@ -738,6 +790,10 @@ function changeFontScale() {
     const doc = document.documentElement;
     doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  
 }
+function changelineSpacing() {
+    const doc = document.documentElement;
+    doc.style.setProperty('--line-spacing', common.settingsStore.get('lineSpacing') || 1.2);  
+}
 function changeBadgeScale() {
     const doc = document.documentElement;
     doc.style.setProperty('--badge-scale', common.settingsStore.get('badgeScale') || 0.7);  
@@ -762,6 +818,12 @@ export async function main() {
         }
         if (changed.has('badgeScale')) {
             changeBadgeScale();
+        }
+        if (changed.has('preview')) {
+            getPreviewData();
+        }
+        if (changed.has('lineSpacing')) {
+            changelineSpacing();
         }
         settings = common.settingsStore.get();
     });

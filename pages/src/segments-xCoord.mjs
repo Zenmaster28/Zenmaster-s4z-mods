@@ -3302,3 +3302,26 @@ export const scoreFormats = [
         finBonus: ""
     }
 ]
+
+export const sampleNames = [
+    { name: "Tadej Pogačar", team: "SLO" },
+    { name: "Remco Evenepoel", team: "BEL" },
+    { name: "Mathieu van der Poel", team: "NED" },
+    { name: "Wout van Aert", team: "BEL" },
+    { name: "Derek Gee", team: "CAN" },
+    { name: "Kristen Faulkner", team: "USA" },
+    { name: "Allison Jackson", team: "CAN" },
+    { name: "Demi Vollering", team: "NED" },
+    { name: "Kasia Niewiadoma", team: "POL" },
+    { name: "Lotte Kopecky", team: "BEL" },
+    { name: "Lionel Sanders", team: "CAN" },
+    { name: "Cameron Wurf", team: "AUS" },
+    { name: "Kristian Blummenfelt", team: "NOR" },
+    { name: "Gustav Iden", team: "NOR" },
+    { name: "Marten Van Riel", team: "BEL" },
+    { name: "Ashleigh Gentle", team: "AUS" },
+    { name: "Taylor Knibb", team: "USA" },
+    { name: "Paula Findlay", team: "CAN" },
+    { name: "Lucy Charles-Barclay", team: "UK" },
+    { name: "Flora Duffy", team: "BER" }
+]

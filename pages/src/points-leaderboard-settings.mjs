@@ -6,7 +6,8 @@ let sgStartTime;
 let dbSegmentConfig = await zen.openSegmentConfigDB();
 import {settingsMain} from './points-leaderboard.mjs';
 settingsMain();
-common.settingsStore.set("formatsChanged", false)
+common.settingsStore.set("formatsChanged", false);
+common.settingsStore.set("preview", false);
 document.body.classList.remove("transparent-bg");
 const scoreFormatDiv = document.getElementById("scoreFormats");
 scoreFormatDiv.innerHTML += `
@@ -20,7 +21,7 @@ scoreFormatDiv.innerHTML += `
         <option value="4">-4</option>
         <option value="5">-5</option>
     </select>
-    <input disabled type="text" id="ftsBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">    
+    <input disabled type="text" id="ftsBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">        
     <br>
     <span class="scoreLabel">FAL:</span> 
     <input disabled type="text" id="falScoreFormat" size="18" title="Examples are 10..1 which would score 10 for 1st, 9 for 2nd etc.  Comma separated values such as 15,11,9 would score as 15 for 1st, 11 for 2nd, 9 for 3rd.  Formats can be combined like 20,15,10,7..1" placeholder="Select event first">
@@ -140,6 +141,8 @@ const savedFormatsSelect = document.getElementById("savedFormats");
 const buttonSaveFormat = document.getElementById("buttonSaveFormat");
 const buttonDeleteFormat = document.getElementById("buttonDeleteFormat");
 const buttonImportExport = document.getElementById("buttonImportExport");
+const cbPreview = document.getElementById("cbPreview");
+
 let allCats = false;
 
 async function loadSavedScoreFormats(action) {    
@@ -368,7 +371,7 @@ eventsSelect.addEventListener('change', async function() {
                 savedFormatsSpan.style.visibility = "";
                 buttonSaveFormat.style.visibility = "";
                 buttonDeleteFormat.style.visibility = "";
-                buttonImportExport.style.visibility = "";
+                buttonImportExport.style.visibility = "";                
                 formatName.style.visibility = "";
                 const routeData = await zen.processRoute(sg.courseId, sg.routeId, sg.laps, sg.distanceInMeters, false, false, false)
                 let segmentData = routeData.markLines                            
@@ -426,6 +429,13 @@ eventsSelect.addEventListener('change', async function() {
             }
             //debugger
         }
+    }
+});
+cbPreview.addEventListener('change', function() {
+    if (this.checked) {
+        common.settingsStore.set("preview", true)
+    } else {
+        common.settingsStore.set("preview", false)
     }
 });
 if (watching) {
@@ -533,5 +543,8 @@ common.settingsStore.addEventListener('changed', async ev => {
             console.log("formatsChanged: true")
             scoreFormats = await loadSavedScoreFormats("save");
             common.settingsStore.set("formatsChanged", false)
+        }
+        if (changed.has('preview') && !changed.get('preview')) {
+            cbPreview.checked = false;
         }
 });
