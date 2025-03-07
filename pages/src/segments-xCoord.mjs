@@ -3308,7 +3308,7 @@ export const sampleNames = [
     { name: "Remco Evenepoel", team: "BEL" },
     { name: "Mathieu van der Poel", team: "NED" },
     { name: "Wout van Aert", team: "BEL" },
-    { name: "Derek Gee", team: "CAN" },
+    { name: "Jasper Philipsen", team: "Disaster" },
     { name: "Kristen Faulkner", team: "USA" },
     { name: "Allison Jackson", team: "CAN" },
     { name: "Demi Vollering", team: "NED" },
