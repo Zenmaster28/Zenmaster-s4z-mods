@@ -63,7 +63,7 @@ async function getTeamColors() {
 }
 //await getTeamColors();
 //let eventResults = [];
-
+changelineSpacing();
 
 
 function setBackground() {
@@ -148,7 +148,10 @@ function stripSpamFromName(value) {
 
     return value;
 }
-
+function changelineSpacing() {
+    const doc = document.documentElement;
+    doc.style.setProperty('--line-spacing', common.settingsStore.get('lineSpacing') || 1.2);  
+}
 async function getSegmentBests(segmentId, athleteId) {
     let segmentBests = await common.rpc.getSegmentResults(segmentId, {athleteId: athleteId, from: Date.now() - 86400000 * 90,})
     if (segmentBests) {
@@ -184,7 +187,8 @@ common.settingsStore.setDefault({
     transparentNoData: true,    
     FTSorFAL: "FTS",
     includeTime: true,
-    femaleOnly: false
+    femaleOnly: false,
+    lineSpacing: 1.2
 });
 
 common.settingsStore.addEventListener('changed', ev => {
@@ -1233,6 +1237,9 @@ export async function main() {
         }
         if (changed.has('badgeScale')) {
             changeBadgeScale();
+        }
+        if (changed.has('lineSpacing')) {
+            changelineSpacing();
         }
         let eventSegmentChanged = [...changed.entries()].filter(([key, value]) => key.startsWith("eventSegData"));
         if (eventSegmentChanged.length > 0) {
