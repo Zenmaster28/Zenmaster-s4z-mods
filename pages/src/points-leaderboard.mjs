@@ -608,7 +608,7 @@ async function displayResults(racerScores) {
     
     const pointsResultsDiv = document.getElementById("pointsResults")
     //pointsResultsDiv.innerHTML = "";
-    let tableFinalOutput = `<table id='pointsTable'><thead><th>Rank</th><th>Name</th><th ${evaluateVisibility('FTS')}>FTS</th><th ${evaluateVisibility('FAL')}>FAL</th><th ${evaluateVisibility('FIN')}>FIN</th><th>Total</th></thead><tbody>`;
+    let tableFinalOutput = `<table id='pointsTable'><thead><th>Rank</th><th>Name</th><th ${evaluateVisibility('FAL')}>FAL</th><th ${evaluateVisibility('FTS')}>FTS</th><th ${evaluateVisibility('FIN')}>FIN</th><th>Total</th></thead><tbody>`;
     let tableOutput = "";
     let rank = 1;
     let maxRacers = settings.maxRacersToDisplay;
@@ -661,10 +661,10 @@ async function displayResults(racerScores) {
             teamScore.totalPoints += racer.pointTotal;
         }
         tableOutput += isWatching ? "<tr class=watching>" : isMarked ? "<tr class=marked>" : isTeamMate ? "<tr class=teammate>" : "<tr>"
-        tableOutput += `<td>${rank}</td><td><span id="riderName"><a href="/pages/profile.html?id=${racer.athleteId}&windowType=profile" target="profile">${sanitizedName}</a></span><div id="info-item-team">${teamBadge}</div></td><td ${evaluateVisibility('FTS')}>${racer.ftsPointTotal}</td><td ${evaluateVisibility('FAL')}>${racer.falPointTotal}</td><td ${evaluateVisibility('FIN')}>${racer.finPoints}</td><td>${racer.pointTotal}</td></tr>`
+        tableOutput += `<td>${rank}</td><td><span id="riderName"><a href="/pages/profile.html?id=${racer.athleteId}&windowType=profile" target="profile">${sanitizedName}</a></span><div id="info-item-team">${teamBadge}</div></td><td ${evaluateVisibility('FAL')}>${racer.falPointTotal}</td><td ${evaluateVisibility('FTS')}>${racer.ftsPointTotal}</td><td ${evaluateVisibility('FIN')}>${racer.finPoints}</td><td>${racer.pointTotal}</td></tr>`
         rank++;
     }
-    let teamScoreOutput = `<tr class=teammate><td></td><td>Team<div id="info-item-team">${common.teamBadge(watchingTeam)}</div></td><td ${evaluateVisibility('FTS')}>${teamScore.ftsPoints}</td><td ${evaluateVisibility('FAL')}>${teamScore.falPoints}</td><td ${evaluateVisibility('FIN')}>${teamScore.finPoints}</td><td>${teamScore.totalPoints}</td></tr>`;
+    let teamScoreOutput = `<tr class=teammate><td></td><td>Team<div id="info-item-team">${common.teamBadge(watchingTeam)}</div></td><td ${evaluateVisibility('FAL')}>${teamScore.falPoints}</td><td ${evaluateVisibility('FTS')}>${teamScore.ftsPoints}</td><td ${evaluateVisibility('FIN')}>${teamScore.finPoints}</td><td>${teamScore.totalPoints}</td></tr>`;
     if (settings.showTeamScore) {
         tableFinalOutput += teamScoreOutput;
     }
