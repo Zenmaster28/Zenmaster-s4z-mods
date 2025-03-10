@@ -55,7 +55,8 @@ scoreFormatDiv.innerHTML += `
     <input type="button" id="buttonImportExport" style="visibility:hidden" class="zenButton" value="&#x21B9;" title="Import/Export">
     <hr>
 `
-
+let currentSg;
+let currentSgEntrants;
 const eventsListDiv = document.getElementById("eventsList");
 const allEvents = await common.rpc.getCachedEvents();
 const eventsSelect = document.createElement('select')
@@ -120,7 +121,8 @@ eventText.addEventListener("change", async function() {
     }
 })
 const watching = await common.rpc.getAthleteData("watching")
-
+const self = await common.rpc.getAthlete("self")
+const selfTeam = self.team || "";
 const penListDiv = document.getElementById('penList');
 const segmentsSaveDiv = document.getElementById('segmentsSave');
 const segmentsTableDiv = document.getElementById('segmentsList');
@@ -142,7 +144,10 @@ const buttonSaveFormat = document.getElementById("buttonSaveFormat");
 const buttonDeleteFormat = document.getElementById("buttonDeleteFormat");
 const buttonImportExport = document.getElementById("buttonImportExport");
 const cbPreview = document.getElementById("cbPreview");
-
+const teamMatesDiv = document.getElementById("teamMates");
+const nonTeammatesDiv = document.getElementById("nonTeammates");
+const teamNamesSetting = document.getElementById("teamNames");
+const highlightTeammateSetting = document.getElementById("highlightTeammate");
 let allCats = false;
 
 async function loadSavedScoreFormats(action) {    
@@ -163,17 +168,6 @@ async function loadSavedScoreFormats(action) {
         formatName.value = "";
         buttonSaveFormat.title = `Save`
         buttonDeleteFormat.title = `Delete`
-        //ftsScoreFormatDiv.value = "";
-        //falScoreFormatDiv.value = "";
-        //finScoreFormatDiv.value = "";
-        //eventTextDiv.value = "";
-        //ftsBonusDiv.value = "";
-        //falBonusDiv.value = "";
-        //finBonusDiv.value = "";
-        //ftsStepDiv.value = 1;
-        //falStepDiv.value = 1;
-        //finStepDiv.value = 1;
-        //sampleScoring.innerHTML = "Sample Scoring";
     } else if (action == "save") {
         savedFormatsSelect.value = formatName.value;
         buttonSaveFormat.title = `Save '${formatName.value}'`
@@ -181,6 +175,18 @@ async function loadSavedScoreFormats(action) {
     }
     return scoreFormats;
 }
+teamNamesSetting.addEventListener("change", function() {
+    getTeammates(true);
+});
+highlightTeammateSetting.addEventListener("change", function() {
+    if (this.checked) {
+        teamMatesDiv.style.visibility = "";   
+        getTeammates(true);     
+    } else {
+        teamMatesDiv.style.visibility = "hidden";
+        nonTeammatesDiv.style.visibility = "hidden";
+    }
+});
 let scoreFormats = await loadSavedScoreFormats();
 savedFormatsSelect.addEventListener("change", function() {
     const selectedformatName = scoreFormats.find(x => x.name == savedFormatsSelect.value)
@@ -279,6 +285,9 @@ eventsSelect.addEventListener('change', async function() {
     ftsStepDiv.value = 1;
     falStepDiv.value = 1;
     finStepDiv.value = 1;
+    teamMatesDiv.innerHTML = "";
+    nonTeammatesDiv.innerHTML = "";
+    nonTeammatesDiv.style.visibility = "hidden";
     sampleScoring.innerHTML = "Sample Scoring";
     if (this.value != -1) {
         eventInfo = await common.rpc.getEvent(parseInt(this.value))
@@ -316,7 +325,7 @@ eventsSelect.addEventListener('change', async function() {
                 penSelect.appendChild(optPen)
             }
             penListDiv.appendChild(penSelect)
-        }
+        }        
         penSelect.addEventListener('change', async function() {
             let penValue = this.value;
             allCats = false;
@@ -325,9 +334,10 @@ eventsSelect.addEventListener('change', async function() {
                 penValue = this.options[2].value
             }
             //console.log("penValue", penValue, "allCats", allCats)
-            const sg = eventInfo.eventSubgroups.find(x => x.id == penValue)
-            if (sg) {                            
-                const currentEventConfig = await zen.getEventConfig(dbSegmentConfig, sg.id)                            
+            //sg = eventInfo.eventSubgroups.find(x => x.id == penValue)
+            currentSg = eventInfo.eventSubgroups.find(x => x.id == penValue)
+            if (currentSg) {                            
+                const currentEventConfig = await zen.getEventConfig(dbSegmentConfig, currentSg.id)                            
                 console.log(currentEventConfig)
                 if (currentEventConfig) {
                     ftsScoreFormatDiv.value = currentEventConfig.ftsScoreFormat;
@@ -373,7 +383,7 @@ eventsSelect.addEventListener('change', async function() {
                 buttonDeleteFormat.style.visibility = "";
                 buttonImportExport.style.visibility = "";                
                 formatName.style.visibility = "";
-                const routeData = await zen.processRoute(sg.courseId, sg.routeId, sg.laps, sg.distanceInMeters, false, false, false)
+                const routeData = await zen.processRoute(currentSg.courseId, currentSg.routeId, currentSg.laps, currentSg.distanceInMeters, false, false, false)
                 let segmentData = routeData.markLines                            
                 segmentData = segmentData.filter(x => x.type != "custom" && !x.name.includes("Finish"));
                 segmentData.sort((a,b) => {
@@ -400,8 +410,13 @@ eventsSelect.addEventListener('change', async function() {
                 finBonusDiv.addEventListener('change', saveConfig);
                 const segTable = document.getElementById('segmentsTable')
                 segTable.addEventListener('change', saveConfig);
+            }    
+            const settings = common.settingsStore.get();
+            if (settings.highlightTeammate && settings.teamNames != "") {
+                const sgEntrants = await common.rpc.getEventSubgroupEntrants(currentSg.id);
+                currentSgEntrants = sgEntrants;
+                getTeammates();
             }
-            //debugger
         })
         if (watching) {
             const eventSubgroupId = watching.state.eventSubgroupId;
@@ -421,6 +436,7 @@ eventsSelect.addEventListener('change', async function() {
                     console.log(sg)
                     const validOption = Array.from(penSelect.options).some(option => option.value == sg.id)
                     if (validOption) {
+                        console.log("selecting pen for current user")
                         penSelect.value = sg.id
                         const event = new Event('change')
                         penSelect.dispatchEvent(event)
@@ -456,6 +472,66 @@ if (watching) {
         //debugger
     }
     //debugger
+}
+async function getTeammates(noToggle = false) {
+    //console.log("noToggle", noToggle)
+    if (!currentSg) {
+        console.log("no sg set")
+        return;
+    }
+    const settings = common.settingsStore.get();
+    if (!currentSgEntrants) {
+        const sgEntrants = await common.rpc.getEventSubgroupEntrants(currentSg.id);
+        currentSgEntrants = sgEntrants;
+    }
+    const sgEntrants = [...currentSgEntrants];
+    const sgTeammates = sgEntrants.filter(x => zen.isTeammate(x, settings.teamNames, selfTeam))
+    const nonTeammates = sgEntrants.filter(x => !zen.isTeammate(x, settings.teamNames, selfTeam))
+    sgTeammates.sort((a,b) => a.athlete.sanitizedFullname.localeCompare(b.athlete.sanitizedFullname));
+    nonTeammates.sort((a,b) => a.athlete.sanitizedFullname.localeCompare(b.athlete.sanitizedFullname));
+    console.log("sgTeammates", sgTeammates, "nonTeammates", nonTeammates)
+    teamMatesDiv.innerHTML = "<center>Teammates: " + sgTeammates.length + "</center>";
+    let tableOut = `<table><tr>`
+    for (let tm of sgTeammates) {
+        const teamBadge = tm.athlete.team ? common.teamBadge(tm.athlete.team) : "";
+        tableOut += `<td>${tm.athlete.sanitizedFullname}</td><td>${teamBadge}</td><td>${tm.athlete.id}</td></tr>`
+    }
+    tableOut += "</table>"
+    teamMatesDiv.innerHTML += tableOut;
+    teamMatesDiv.innerHTML += "<hr><center><span id='otherEntrants'>&#x21CA;&nbsp;&nbsp;Other entrants: " + nonTeammates.length + "&nbsp;&nbsp;&#x21CA;</span></center>";
+    const otherEntrants = document.getElementById('otherEntrants');
+       
+    otherEntrants.addEventListener('click', function() { 
+        let tableOutOther = `<table><tr>`
+        console.log("nonTeammates", nonTeammates)
+        for (let tm of nonTeammates) {
+            const teamBadge = tm.athlete.team ? common.teamBadge(tm.athlete.team) : "";
+            tableOutOther += `<td>${tm.athlete.sanitizedFullname}</td><td>${teamBadge}</td><td>${tm.athlete.id}</td></tr>`
+        }
+        tableOutOther += "</table>"     
+        nonTeammatesDiv.innerHTML = tableOutOther;  
+        //console.log("noToggle", noToggle) 
+        if (nonTeammatesDiv.style.visibility == "hidden") {
+            if (!noToggle) {
+                nonTeammatesDiv.style.visibility = "";
+                otherEntrants.innerHTML = "&#x21C8;&nbsp;&nbsp;Other entrants: " + nonTeammates.length + "&nbsp;&nbsp;&#x21C8;";
+            }               
+        } else {
+            if (!noToggle) {
+                nonTeammatesDiv.style.visibility = "hidden";
+                otherEntrants.innerHTML = "&#x21CA;&nbsp;&nbsp;Other entrants: " + nonTeammates.length + "&nbsp;&nbsp;&#x21CA;";
+            }
+        }
+    });
+    if (!noToggle) {
+        //console.log("!noToggle")
+        
+    } else {
+        //console.log("noToggle")
+        const event = new Event('click')
+        otherEntrants.dispatchEvent(event)
+    }
+    noToggle = false;
 }
 function saveConfig() {
     //console.log("Saving eventConfig")

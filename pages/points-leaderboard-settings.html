@@ -126,7 +126,7 @@
                 width: 100%;                
             }
             .leftScoring {
-                flex: 3;
+                flex: 1;
                 display: flex;
                 flex-direction: column;
             }
@@ -134,6 +134,8 @@
                 flex: 1;
                 display: flex;
                 flex-direction: column;
+                max-height: 100%;
+                overflow: auto;
             }
             table {
                 width: 100%;
@@ -157,6 +159,26 @@
             .zenButton:hover {
                 opacity: 0.7;
             }
+            #nonTeammates {
+                overflow: scroll;
+                height: 250px;
+            }
+            #allEntrants table {
+                width: 100%;
+                table-layout: fixed;
+                font-variant: tabular-nums;
+            }
+            #allEntrants td:nth-child(1) {
+                width: 50%;
+            }
+            #allEntrants td:nth-child(2) {
+                width: 30%;
+                overflow: hidden;
+            }
+            #allEntrants td:nth-child(3) {
+                width: 20%;
+                overflow: hidden;
+            }
         </style>
 
         <script type="module" src="./src/points-leaderboard-settings.mjs">            
@@ -175,58 +197,70 @@
         </div>
         <div id="settings">
             <div class="title" id="formTitle"></div>
-            <form id="options" class="section">                    
-                <label>
-                    <key>Theme override:</key>
-                    <select is="sauce-theme" override></select>
-                </label>
-                <label>
-                    <key>Font scaling:</key>
-                    <input type="range" name="fontScale" min="0.1" max="2" step="0.05"/>
-                    <input type="number" name="fontScale" min="0.1" max="2" step="0.05" style="--size: 5"/>
-                </label> 
-                <label>
-                    <key>Line spacing:</key>
-                    <input type="range" name="lineSpacing" min="0.7" max="2" step="0.05"/>
-                    <input type="number" name="lineSpacing" min="0.7" max="2" step="0.05" style="--size: 5"/>
-                </label> 
-                <label title="Only include female results">
-                    <key>Female only results:</key>    
-                    <input type="checkbox" name="femaleOnly">                
-                </label> 
-                <label title="Don't show the breakdown of FTS, FAL and FIN points, just the combined total.">
-                    <key>Only show total points:</key>
-                    <input type="checkbox" name="onlyTotalPoints">
-                </label>
-                <label title="Show some sample data to preview font size, scaling etc.">
-                    <key>Show sample data:</key>
-                    <input type="checkbox" name="preview" id="cbPreview">
-                </label>
-                <label title="The maximum number of racers to display on the leaderboard (0 or blank will show all results).  Other scores are still calculated, just not displayed">
-                    <key>Max racers to show:</key>
-                    <input type="number" name="maxRacersToDisplay" min="0" max="10000" step="1">
-                </label>
-                <label title="Uses o101 team badges if available, requires the Nearby Race window to be active.  Otherwise fallsback to default Sauce badge">
-                    <key>Show team badges:</key>
-                    <input type="checkbox" name="showTeamBadges">
-                </label>
-                <label>
-                    <key>Team badge size:</key>
-                    <input type="range" name="badgeScale" min="0.1" max="1" step="0.05"/>
-                    <input type="number" name="badgeScale" min="0.1" max="1" step="0.05" style="--size: 5"/>
-                </label>
-                <hr>
-                <div class="title">Highlight</div>
-                <label>
-                    <key>&nbsp;&nbsp;- teammates</key>
-                    <input type="checkbox" name="highlightTeammate">
-                </label>
-                <label>
-                    <key>&nbsp;&nbsp;- marked riders</key>
-                    <input type="checkbox" name="highlightMarked">
-                </label>                
-                <hr>
-            </form>
+            <div class="scoringContainer"><div class="leftScoring">
+                <form id="options" class="section">                    
+                    <label>
+                        <key>Theme override:</key>
+                        <select is="sauce-theme" override></select>
+                    </label>
+                    <label>
+                        <key>Font scaling:</key>
+                        <input type="range" name="fontScale" min="0.1" max="2" step="0.05"/>
+                        <input type="number" name="fontScale" min="0.1" max="2" step="0.05" style="--size: 5"/>
+                    </label> 
+                    <label>
+                        <key>Line spacing:</key>
+                        <input type="range" name="lineSpacing" min="0.7" max="2" step="0.05"/>
+                        <input type="number" name="lineSpacing" min="0.7" max="2" step="0.05" style="--size: 5"/>
+                    </label> 
+                    <label title="Only include female results">
+                        <key>Female only results:</key>    
+                        <input type="checkbox" name="femaleOnly">                
+                    </label> 
+                    <label title="Don't show the breakdown of FTS, FAL and FIN points, just the combined total.">
+                        <key>Only show total points:</key>
+                        <input type="checkbox" name="onlyTotalPoints">
+                    </label>
+                    <label title="Show some sample data to preview font size, scaling etc.">
+                        <key>Show sample data:</key>
+                        <input type="checkbox" name="preview" id="cbPreview">
+                    </label>
+                    <label title="The maximum number of racers to display on the leaderboard (0 or blank will show all results).  Other scores are still calculated, just not displayed">
+                        <key>Max racers to show:</key>
+                        <input type="number" name="maxRacersToDisplay" min="0" max="10000" step="1">
+                    </label>
+                    <label title="Uses o101 team badges if available, requires the Nearby Race window to be active.  Otherwise fallsback to default Sauce badge">
+                        <key>Show team badges:</key>
+                        <input type="checkbox" name="showTeamBadges">
+                    </label>
+                    <label>
+                        <key>Team badge size:</key>
+                        <input type="range" name="badgeScale" min="0.1" max="1" step="0.05"/>
+                        <input type="number" name="badgeScale" min="0.1" max="1" step="0.05" style="--size: 5"/>
+                    </label>
+                    <hr>
+                    <div class="title">Highlight</div>
+                    <label>
+                        <key>&nbsp;&nbsp;- teammates</key>
+                        <input type="checkbox" name="highlightTeammate" id="highlightTeammate">&nbsp;
+                        <input type="text" name="teamNames" id="teamNames" size="25" title="Comma separated teammate name possibilities, including partial name matches, and/or zwift IDs.  A negative zwift ID will exclude them" spellcheck="false">
+                    </label>
+                    <label>
+                        <key>&nbsp;&nbsp;- marked riders</key>
+                        <input type="checkbox" name="highlightMarked">
+                    </label>                
+                    <hr>
+                </form>
+                </div>
+                <div class="rightScoring" id="allEntrants">
+                    <div id="teamMates">
+                        
+                    </div>
+                    <div id="nonTeammates" style="visibility: hidden;">
+
+                    </div>
+                </div>
+            </div>
             <div class="scoringContainer">
                 <div class="leftScoring">
                     <div id="scoreFormats"></div>

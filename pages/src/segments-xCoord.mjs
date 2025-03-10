@@ -3325,3 +3325,36 @@ export const sampleNames = [
     { name: "Lucy Charles-Barclay", team: "UK" },
     { name: "Flora Duffy", team: "BER" }
 ]
+
+export function isTeammate(athlete, teamMatches, watchingTeam, options = { partial: false }) {    
+    if (!teamMatches && !watchingTeam) {
+        return false;
+    }
+    const teams = teamMatches?.split(",").map(team => team.trim()).filter(Boolean) || [];
+    const teamIds = teams.filter(x => Number.isInteger(Number(x))).map(x => Number(x));
+    const negativeTeamIds = teamIds.filter(id => id < 0).map(id => Math.abs(id));
+    if (negativeTeamIds.includes(athlete?.athlete.id)) {
+        console.log("excluding", athlete.athlete.id)
+        return false;
+    }
+    if (athlete?.athlete.team?.toLowerCase() === watchingTeam?.toLowerCase()) {
+        return true;
+    }
+    //console.log("matching teamIds", teamIds, "teams", teams)
+    //console.log(athlete?.athlete.id)
+    if (teamIds.includes(athlete?.athlete.id)) {
+        return true;
+    }
+    //console.log("teamMatches", teams)
+    let regex;
+    if (options.partial) {
+        regex = new RegExp(`(${teams.join('|')})`, 'i'); // No \b for partial matches
+    } else {
+        regex = new RegExp(`\\b(${teams.join('|')})\\b`, 'i'); // \b ensures full word match
+    }
+    if (teams.length > 0) {
+        return regex.test(athlete?.athlete.team?.toLowerCase());
+    } else {
+        return false;
+    }
+}

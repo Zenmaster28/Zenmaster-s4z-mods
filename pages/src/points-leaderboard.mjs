@@ -635,13 +635,16 @@ async function displayResults(racerScores) {
         const sanitizedName = racer.name.replace(/\s*[\(\[].*?[\)\]]\s*/g, '').trim();
         let isWatching = false;
         let isMarked = false;
+        //let teamTest = athlete?.athlete.team ? zen.isTeammate(athlete, settings.teamNames) : false;
+        //console.log("teamTest", teamTest, athlete?.athlete.team)
         let isTeamMate = false;
         if (athlete?.watching) {
             isWatching = true;
-        } else if (settings.highlightTeammate && athlete?.athlete.team?.trim() == watchingTeam.trim()) {
-            isTeamMate = true;
         } else if (settings.highlightMarked && athlete?.athlete.marked) {
             isMarked = true;
+        }
+        if (settings.highlightTeammate) {
+            isTeamMate = athlete ? zen.isTeammate(athlete, settings.teamNames, watchingTeam) : false;
         }
         tableOutput += isWatching ? "<tr class=watching>" : isMarked ? "<tr class=marked>" : isTeamMate ? "<tr class=teammate>" : "<tr>"
         tableOutput += `<td>${rank}</td><td><span id="riderName"><a href="/pages/profile.html?id=${racer.athleteId}&windowType=profile" target="profile">${sanitizedName}</a></span><div id="info-item-team">${teamBadge}</div></td><td ${evaluateVisibility('FTS')}>${racer.ftsPointTotal}</td><td ${evaluateVisibility('FAL')}>${racer.falPointTotal}</td><td ${evaluateVisibility('FIN')}>${racer.finPoints}</td><td>${racer.pointTotal}</td></tr>`
