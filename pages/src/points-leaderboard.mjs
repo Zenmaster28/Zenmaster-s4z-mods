@@ -41,7 +41,8 @@ common.settingsStore.setDefault({
     showTeamBadges: true,
     badgeScale: 0.7,
     femaleOnly: false,
-    lineSpacing: 1.2
+    lineSpacing: 1.2,
+    showTeamScore: false
 });
 /*
 common.settingsStore.addEventListener('changed', ev => {
@@ -607,7 +608,8 @@ async function displayResults(racerScores) {
     
     const pointsResultsDiv = document.getElementById("pointsResults")
     //pointsResultsDiv.innerHTML = "";
-    let tableOutput = `<table id='pointsTable'><thead><th>Rank</th><th>Name</th><th ${evaluateVisibility('FTS')}>FTS</th><th ${evaluateVisibility('FAL')}>FAL</th><th ${evaluateVisibility('FIN')}>FIN</th><th>Total</th></thead><tbody>`;
+    let tableFinalOutput = `<table id='pointsTable'><thead><th>Rank</th><th>Name</th><th ${evaluateVisibility('FTS')}>FTS</th><th ${evaluateVisibility('FAL')}>FAL</th><th ${evaluateVisibility('FIN')}>FIN</th><th>Total</th></thead><tbody>`;
+    let tableOutput = "";
     let rank = 1;
     let maxRacers = settings.maxRacersToDisplay;
     if (maxRacers == 0 || maxRacers == null) {
@@ -616,6 +618,12 @@ async function displayResults(racerScores) {
     //console.log("Max racers to display:", maxRacers)
     const athleteIds = racerScores.map(x => x.athleteId);
     const athletes = await common.rpc.getAthletesData(athleteIds);
+    const teamScore = {
+        ftsPoints: 0,
+        falPoints: 0,
+        finPoints: 0,
+        totalPoints: 0
+    }
     for (let racer of racerScores) {
         if (rank > maxRacers) {
             break;
@@ -646,16 +654,26 @@ async function displayResults(racerScores) {
         if (settings.highlightTeammate) {
             isTeamMate = athlete ? zen.isTeammate(athlete, settings.teamNames, watchingTeam) : false;
         }
+        if (isTeamMate || isWatching) {
+            teamScore.ftsPoints += racer.ftsPointTotal;
+            teamScore.falPoints += racer.falPointTotal;
+            teamScore.finPoints += racer.finPoints;
+            teamScore.totalPoints += racer.pointTotal;
+        }
         tableOutput += isWatching ? "<tr class=watching>" : isMarked ? "<tr class=marked>" : isTeamMate ? "<tr class=teammate>" : "<tr>"
         tableOutput += `<td>${rank}</td><td><span id="riderName"><a href="/pages/profile.html?id=${racer.athleteId}&windowType=profile" target="profile">${sanitizedName}</a></span><div id="info-item-team">${teamBadge}</div></td><td ${evaluateVisibility('FTS')}>${racer.ftsPointTotal}</td><td ${evaluateVisibility('FAL')}>${racer.falPointTotal}</td><td ${evaluateVisibility('FIN')}>${racer.finPoints}</td><td>${racer.pointTotal}</td></tr>`
         rank++;
     }
+    let teamScoreOutput = `<tr class=teammate><td></td><td>Team<div id="info-item-team">${common.teamBadge(watchingTeam)}</div></td><td ${evaluateVisibility('FTS')}>${teamScore.ftsPoints}</td><td ${evaluateVisibility('FAL')}>${teamScore.falPoints}</td><td ${evaluateVisibility('FIN')}>${teamScore.finPoints}</td><td>${teamScore.totalPoints}</td></tr>`;
+    if (settings.showTeamScore) {
+        tableFinalOutput += teamScoreOutput;
+    }
     tableOutput += "</table>"    
-
+    tableFinalOutput += tableOutput;
     if (settings.preview) {
         common.settingsStore.set("preview", false);
     }
-    pointsResultsDiv.innerHTML = tableOutput;
+    pointsResultsDiv.innerHTML = tableFinalOutput;
     
 }
 
