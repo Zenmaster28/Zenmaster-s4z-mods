@@ -654,7 +654,7 @@ async function displayResults(racerScores) {
         if (settings.highlightTeammate) {
             isTeamMate = athlete ? zen.isTeammate(athlete, settings.teamNames, watchingTeam) : false;
         }
-        if (isTeamMate || isWatching) {
+        if (settings.showTeamScore && (isTeamMate || isWatching)) {
             teamScore.ftsPoints += racer.ftsPointTotal;
             teamScore.falPoints += racer.falPointTotal;
             teamScore.finPoints += racer.finPoints;
