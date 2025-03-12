@@ -914,11 +914,7 @@ export class SauceElevationProfile {
                     color: this.lineTextColor,
                     customValues: tickMarks,
                     formatter: function (value) {
-                        if (inverse) {
-                            return value / 1000;
-                        } else {
-                            return value / 1000;
-                        }
+                        return value / 1000;                        
                     }
                 },
                 splitLine: {
