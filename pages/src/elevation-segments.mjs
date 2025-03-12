@@ -14,7 +14,7 @@ let allMarkLines = [];
 const allRoutes = await zen.getAllRoutes();
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, showCurrentAltitude, showRouteMaxElevation, showXaxis, xAxisIncrements, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, showCurrentAltitude, showRouteMaxElevation, showXaxis, xAxisIncrements, xAxisInverse, refresh=1000}) {
         this.debugXcoord = false;
         this.debugXcoordDistance = null;
         this.debugPinPlacement = false;
@@ -106,6 +106,7 @@ export class SauceElevationProfile {
         this.aheadLineColor = aheadLineColor;
         this.aheadLineType = aheadLineType;
         this.showXaxis = showXaxis;  
+        this.xAxisInverse = xAxisInverse;
         this.xAxisIncrements = xAxisIncrements; 
         this.courseRoads = [];   
         el.classList.add('sauce-elevation-profile-container');
@@ -860,13 +861,28 @@ export class SauceElevationProfile {
             interval = this.xAxisIncrements * 1000;
         }
         const tickSize = 10;
-        const tickMarks = [];
-        for (let i = interval; i <= max; i += interval) {
-            if (i >= min) {
-                tickMarks.push(i);
+        let tickMarks = [];
+        const inverse = this.xAxisInverse;
+        if (inverse) {
+            const zoomMax = this.routeDistances.at(-1) - min;
+            const zoomMin = this.routeDistances.at(-1) - max;
+            for (let i = interval; i <= zoomMax; i += interval) {
+                if (i >= zoomMin) {
+                    tickMarks.push(i);
+                }
+            }   
+            tickMarks.reverse()  
+            max = zoomMax;
+            min = zoomMin;       
+        } else {
+            for (let i = interval; i <= max; i += interval) {
+                if (i >= min) {
+                    tickMarks.push(i);
+                }
             }
         }
         //console.log("tickMarks",tickMarks)
+        //console.log("min", min, "max", max)
         const option = {
             animation: false,
             grid: {
@@ -878,6 +894,7 @@ export class SauceElevationProfile {
                 type: 'value',
                 min: min,
                 max: max,
+                inverse: inverse,
                 axisLine: {
                     show: true
                 },
@@ -897,7 +914,11 @@ export class SauceElevationProfile {
                     color: this.lineTextColor,
                     customValues: tickMarks,
                     formatter: function (value) {
-                        return value / 1000;
+                        if (inverse) {
+                            return value / 1000;
+                        } else {
+                            return value / 1000;
+                        }
                     }
                 },
                 splitLine: {

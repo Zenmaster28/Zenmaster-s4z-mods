@@ -126,9 +126,13 @@
                     <input type="checkbox" name="showXaxis">
                 </label>
                 <label title="The distance between km markers.  Set to 0 to auto scale.">
-                    <key>&nbsp;&nbsp;- Km increments</key>
+                    <key data-added="2025-03-04">&nbsp;&nbsp;- Km increments</key>
                     <input type="range" name="xAxisIncrements" min="0" max="20" step="1" data-depends-on="showXaxis">
                     <input type="number" name="xAxisIncrements" min="0" max="20" step="1" data-depends-on="showXaxis">
+                </label>
+                <label title="Show the distance to the end of the route rather than counting up from 0">
+                    <key data-added="2025-03-12">&nbsp;&nbsp;- invert X-Axis </key>
+                    <input type="checkbox" name="xAxisInverse" data-depends-on="showXaxis">
                 </label>
                 <label title="Display a line ahead of the watched rider at the specified distance">
                     <key data-added="2024-08-21">Show a line ahead:</key>

@@ -84,7 +84,8 @@ common.settingsStore.setDefault({
     showCurrentAltitude: false,
     showRouteMaxElevation: false,
     showXaxis: false,
-    xAxisIncrements: 0
+    xAxisIncrements: 0,
+    xAxisInverse: false
 });
 
 const settings = common.settingsStore.get();
@@ -251,8 +252,10 @@ function createElevationProfile({worldList}) {
     const showXaxis = settings.showXaxis;
     typeof(settings.xAxisIncrements) == "undefined" ? common.settingsStore.set("xAxisIncrements", 0) : null;
     const xAxisIncrements = settings.xAxisIncrements
+    typeof(settings.xAxisInverse) == "undefined" ? common.settingsStore.set("xAxisInverse", false) : null;
+    const xAxisInverse = settings.xAxisInverse
     
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, showCurrentAltitude, showRouteMaxElevation, showXaxis, xAxisIncrements});
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, showCurrentAltitude, showRouteMaxElevation, showXaxis, xAxisIncrements, xAxisInverse});
 }
 
 
@@ -617,8 +620,12 @@ export async function main() {
             }
         }  else if (changed.has('dataTransparency')) {
             doc.style.setProperty('--dataTransparency', common.settingsStore.get('dataTransparency'));
-        } else if (changed.has('xAxisIncrements')) {
-            elProfile.xAxisIncrements = changed.get('xAxisIncrements')            
+        } else if (changed.has('xAxisIncrements') || changed.has("xAxisInverse")) {
+            if (changed.has('xAxisIncrements')) {
+                elProfile.xAxisIncrements = changed.get('xAxisIncrements')
+            } else {
+                elProfile.xAxisInverse = changed.get('xAxisInverse')   
+            }
             let min;
             let max;
             const profileDatazoom = elProfile.chart.getOption().dataZoom;
