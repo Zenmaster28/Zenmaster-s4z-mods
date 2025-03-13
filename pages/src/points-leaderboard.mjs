@@ -660,7 +660,7 @@ async function displayResults(racerScores) {
             teamScore.finPoints += racer.finPoints;
             teamScore.totalPoints += racer.pointTotal;
         }
-        tableOutput += isWatching ? "<tr class=watching>" : isMarked ? "<tr class=marked>" : isTeamMate ? "<tr class=teammate>" : "<tr>"
+        tableOutput += isWatching ? "<tr class=watching>" : isTeamMate ? "<tr class=teammate>" : isMarked ? "<tr class=marked>" : "<tr>"
         tableOutput += `<td>${rank}</td><td><span id="riderName"><a href="/pages/profile.html?id=${racer.athleteId}&windowType=profile" target="profile">${sanitizedName}</a></span><div id="info-item-team">${teamBadge}</div></td><td ${evaluateVisibility('FAL')}>${racer.falPointTotal}</td><td ${evaluateVisibility('FTS')}>${racer.ftsPointTotal}</td><td ${evaluateVisibility('FIN')}>${racer.finPoints}</td><td>${racer.pointTotal}</td></tr>`
         rank++;
     }    
