@@ -10,11 +10,12 @@ ec.registerTheme('sauce', theme.getTheme('dynamic'));
 const H = locale.human;
 let routeSegments = [];
 let allMarkLines = [];
+let beaconSubs = [];
 //let missingLeadinRoutes = await fetch("data/missingLeadinRoutes.json").then((response) => response.json()); 
 const allRoutes = await zen.getAllRoutes();
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, showCurrentAltitude, showRouteMaxElevation, showXaxis, xAxisIncrements, xAxisInverse, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showNextSegmentFinish, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showRobopacersGap, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, showCurrentAltitude, showRouteMaxElevation, showXaxis, xAxisIncrements, xAxisInverse, refresh=1000}) {
         this.debugXcoord = false;
         this.debugXcoordDistance = null;
         this.debugPinPlacement = false;
@@ -34,6 +35,7 @@ export class SauceElevationProfile {
         this.showMarkedRiders = showMarkedRiders;
         this.showAllRiders = showAllRiders;
         this.showRobopacers = showRobopacers;
+        this.showRobopacersGap = showRobopacersGap;
         this.showLeaderSweep = showLeaderSweep;
         this.showGroups = showGroups;
         this.showNextPowerup = showNextPowerup;
@@ -44,12 +46,14 @@ export class SauceElevationProfile {
         this.currentLap = -1;
         this.lapCounter = 0;
         this.watchingTeam = "";
+        this.watchingPosition = 0;
         this.showSegmentStart = showSegmentStart;  
         this.showSegmentFinish = showSegmentFinish;
         this.showAllArches = showAllArches;
         this.minSegmentLength = minSegmentLength;
         this.showLoopSegments = showLoopSegments;
         this.showNextSegment = showNextSegment;
+        this.showNextSegmentFinish = showNextSegmentFinish;
         this.lineType = lineType;
         this.lineTypeFinish = lineTypeFinish;
         this.lineSize = lineSize;
@@ -1458,7 +1462,7 @@ export class SauceElevationProfile {
                         let isLeaderSweep = false;  
                         let isGroup = false;                
                         let beaconColour;
-                        let beaconImage;
+                        let beaconData = {};
                         const ad = common.getAthleteDataCacheEntry(state.athleteId);
                         if (state.isGroup) {
                             isGroup = true;
@@ -1476,6 +1480,21 @@ export class SauceElevationProfile {
                                 isBeacon = true;
                                 let wkg = ad.state.power / ad.athlete.weight;
                                 beaconColour = wkg <= 2.0 ? "#ffff00" : (wkg > 2.0 && wkg <= 3.0) ? "#00ffff" : (wkg > 3.0 && wkg < 4.0) ? "#00ff40" : "#ff0000"
+                                if (this.showRobopacersGap && !beaconSubs.find(x => x.athleteId == state.athleteId)) {
+                                    console.log("Found a beacon, subscribing to ", state.athleteId)
+                                    beaconSubs.push({
+                                        athleteId: state.athleteId,
+                                        ts: Date.now(),
+                                        data: {}
+                                    })
+                                    common.subscribe("athlete/" + state.athleteId, beacon => {
+                                        //console.log("beacon", beacon)
+                                        const thisBeacon = beaconSubs.find(x => x.athleteId == beacon.athleteId)
+                                        thisBeacon.data = beacon;
+                                    })
+                                }
+                                //beaconData = common.getAthleteDataCacheEntry(state.athleteId)
+                                beaconData = beaconSubs.find(x => x.athleteId == state.athleteId)
                                 //debugger
                                 //console.log("found a PP mark")
                             }
@@ -1810,7 +1829,9 @@ export class SauceElevationProfile {
                                     }
                                     //debugger
                                 } else if (this.zoomNextSegment && !this.singleLapView) {
-                                    let nextSegment = zen.getNextSegment(allMarkLines.filter(x => !x.finishArchOnly), xCoord)
+                                    let fullSegments = allMarkLines.filter(x => !x.finishArchOnly);
+                                    let nextSegmentIdx = zen.getNextSegment(fullSegments, xCoord)
+                                    let nextSegment = fullSegments[nextSegmentIdx]
                                     //let nextSegment = zen.getNextSegment(allMarkLines, xCoord)
                                     //console.log("next segment", nextSegment)
                                     //TODO: fix zoom next segment + show final km combo when in the pen
@@ -2091,10 +2112,13 @@ export class SauceElevationProfile {
                                     
                                 }
                                 //console.log(allMarkLines)
-                                let nextSegment = zen.getNextSegment(allMarkLines, xCoord) 
-                                //console.log(nextSegment)  
+                                let nextSegmentIdx = zen.getNextSegment(allMarkLines, xCoord) 
+                                let nextSegment = nextSegmentIdx != -1 ? allMarkLines[nextSegmentIdx] : -1;
+                                let nextSegmentFinish;                                
+                                //console.log("nextSegment", nextSegment, "nextSegmentFinish", nextSegmentFinish)  
                                 //debugger                         
                                 let distanceToGo;
+                                let distanceToGoFinish;
                                 let distanceToGoUnits;
                                 if (this.showNextSegment && (this.showSegmentStart || this.showAllArches))
                                 {
@@ -2126,20 +2150,33 @@ export class SauceElevationProfile {
                                             //debugger
                                         }
 
-                                        const distToNextSegment = nextSegment.markLine - xCoord;                                                                                
+                                        const distToNextSegment = nextSegment.markLine - xCoord;
+                                        let distToNextSegmentFinish = null;
+                                        if (this.showNextSegmentFinish && nextSegment != -1 && !nextSegment.name.includes("Finish")) {
+                                            nextSegmentFinish = allMarkLines[nextSegmentIdx + 1];
+                                            distToNextSegmentFinish =  nextSegmentFinish.markLine - xCoord;  
+                                        }
+                                        //debugger                                                                              
                                         if (locale.isImperial()) {
                                             const metersPerMile = 1000 / locale.milesPerKm
                                             if (distToNextSegment > metersPerMile) {
                                                 distanceToGo = (distToNextSegment / 1000 * locale.milesPerKm).toFixed(2)
+                                                distanceToGoFinish = this.showNextSegmentFinish && distToNextSegmentFinish ? (distToNextSegmentFinish / 1000 * locale.milesPerKm).toFixed(2) : ""
                                                 distanceToGoUnits = "mi"
                                                 this.refresh = 1000;
                                             } else {
                                                 distanceToGo = (distToNextSegment * locale.feetPerMeter).toFixed(0)
+                                                distanceToGoFinish = this.showNextSegmentFinish && distToNextSegmentFinish ? (distToNextSegmentFinish * locale.feetPerMeter).toFixed(0) : ""
                                                 distanceToGoUnits = "ft"
                                                 this.refresh = 200;
                                             }
                                         } else {
                                             nextSegment.markLine - xCoord > 1000 ? distanceToGo = ((distToNextSegment) / 1000).toFixed(2) : distanceToGo = (distToNextSegment).toFixed(0);
+                                            if (distToNextSegmentFinish != null) {
+                                                nextSegment.markLine - xCoord > 1000 ? distanceToGoFinish = ((distToNextSegmentFinish) / 1000).toFixed(2) : distanceToGoFinish = (distToNextSegmentFinish).toFixed(0);
+                                            } else {
+                                                distanceToGoFinish = "";
+                                            }
                                             distanceToGoUnits = distToNextSegment > 1000 ? "km" : "m";
                                             distanceToGo > 1000 ? this.refresh = 1000 : this.refresh = 200;
                                         }
@@ -2148,7 +2185,11 @@ export class SauceElevationProfile {
                                         if (nextSegment.finishArchOnly) {
                                             nextName = nextSegment.name.replace("Finish", "Arch")
                                         }
-                                        nextSegmentDiv.innerHTML = (nextSegment.displayName ?? nextName) + ": " + distanceToGo + distanceToGoUnits + puImgs;
+                                        if (this.showNextSegmentFinish && distToNextSegmentFinish != null) {
+                                            nextSegmentDiv.innerHTML = (nextSegment.displayName ?? nextName) + ": " + distanceToGo + " / " + distanceToGoFinish + distanceToGoUnits + puImgs;
+                                        } else {
+                                            nextSegmentDiv.innerHTML = (nextSegment.displayName ?? nextName) + ": " + distanceToGo + distanceToGoUnits + puImgs;
+                                        }
                                         //debugger
                                         nextSegmentDiv.style.visibility = "";
                                     }
@@ -2166,6 +2207,7 @@ export class SauceElevationProfile {
                                     nextSegmentDiv.style.visibility = "hidden";                     
                                 }
                                 //console.log("xCoord is", xCoord)
+                                this.watchingPosition = xCoord;
                                 if (this.setAthleteSegmentData)
                                 {
                                     
@@ -2399,6 +2441,58 @@ export class SauceElevationProfile {
                                 };
                                 
                             } else {
+                                let beaconLabel = {show: false};                                
+                                if (this.showRobopacers && this.showRobopacersGap) {
+                                    let beaconLabelData = "";
+                                    let beaconLabelZen = "";
+                                    if (beaconData?.data?.athlete) {
+                                        const zenGap = Math.ceil(this.watchingPosition - xCoord);
+                                        const sauceGap = Math.ceil(beaconData.data.gapDistance) || zenGap
+                                        const beaconName = beaconData.data.athlete.fullname
+                                        const gapDisplay = Math.abs(sauceGap) > 50 ? zenGap : sauceGap
+                                        if (gapDisplay > 0) {
+                                            beaconLabelData = `${beaconName}\n${Math.abs(gapDisplay)}m\u21A4`
+                                        } else if (gapDisplay < 0) {
+                                            beaconLabelData = `${beaconName}\n\u21A6${Math.abs(gapDisplay)}m`
+                                        } else {
+                                            beaconLabelData = `${beaconName}\n0m`
+                                        } 
+                                        /*
+                                        if (beaconData?.data?.gapDistance) {
+                                            const gap = Math.ceil(beaconData.data.gapDistance)
+                                            if (gap > 0) {
+                                                beaconLabelData = `${beaconData.data.athlete.fullname}\n${Math.abs(gap)}m\u21A4`
+                                            } else if (gap < 0) {
+                                                beaconLabelData = `${beaconData.data.athlete.fullname}\n\u21A6${Math.abs(gap)}m`
+                                            } else {
+                                                beaconLabelData = `${beaconData.data.athlete.fullname}`
+                                            }                                        
+                                        } else {
+                                            beaconLabelData = `${beaconData?.data?.athlete?.fullname}`
+                                        }
+                                        if (zenGap > 0) {
+                                            beaconLabelZen = `\n${Math.abs(zenGap)}m\u21A4 (z)`
+                                        } else if (zenGap < 0) {
+                                            beaconLabelZen = `\n\u21A6${Math.abs(zenGap)}m (z)`
+                                        }
+                                        beaconLabelData += beaconLabelZen;
+                                        */
+                                        if (isPP) {
+                                            //console.log("beaconData", beaconData)
+                                            beaconLabel = {
+                                                show: true,
+                                                position: "top",
+                                                distance: this.em(2 * markPointLabelSize),
+                                                fontSize: this.fontScale * 15,
+                                                color: beaconColour,
+                                                formatter: beaconLabelData
+                                            }
+                                        }
+                                        if (isBeacon) {
+
+                                        }
+                                    }
+                                }
                                 return {
                                     name: state.athleteId,
                                     coord: [xCoord, yCoord],                            
@@ -2428,6 +2522,7 @@ export class SauceElevationProfile {
                                             formatter: this.onMarkEmphasisLabel.bind(this),
                                         }
                                     },
+                                    label: beaconLabel
                                 };
                             };
                     };

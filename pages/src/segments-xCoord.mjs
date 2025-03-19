@@ -1441,7 +1441,8 @@ export function getNextSegment(arr, number) {
     // Find the first object with a roadindex greater than the given number
     for (let i = 0; i < arr.length; i++) {
         if (arr[i].markLine > number) {
-            return arr[i];
+            return i;
+            //return arr[i];
         }
     }    
     return -1;
