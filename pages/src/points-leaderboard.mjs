@@ -8,6 +8,7 @@ await zen.cleanupSegmentsDB(dbSegments, {live: true});
 await zen.cleanupSegmentConfigDB(dbSegmentConfig);
 let allKnownRacers = [];
 //let segmentResults = [];
+let settings = common.settingsStore.get();
 let raceResults = [];
 let lastKnownSG = {
     eventSubgroupId: 0,
@@ -19,8 +20,36 @@ let currentEventConfig;
 let watchingTeam;
 let refresh = Date.now() - 2000000;
 let lastAllCatRefresh = Date.now() - 2000000;
+let lastSegmentTS = Date.now() - 2000000;
+let lastRotationTS = Date.now() - 2000000;
 const doc = document.documentElement;
 doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  
+let allPointsTableVisible = true;
+let rotateTableInterval = settings.rotateInterval * 1000 || 10000;
+const pointsResultsDiv = document.getElementById("pointsResults");
+const lastSegmentPointsResultsDiv = document.getElementById("lastSegmentPointsResults");
+const pointsTitleDiv = document.getElementById("pointsTitle");
+function rotateVisibleTable(options) {
+    
+    if (settings.rotateTotalLast) {
+        lastRotationTS = Date.now();
+        //console.log("Rotating table at ", new Date())
+        if (options.forceLast) {
+            allPointsTableVisible = false;
+        } else {
+            allPointsTableVisible = !allPointsTableVisible;
+        }
+        pointsResultsDiv.style.display = allPointsTableVisible ? "" : "none";
+        lastSegmentPointsResultsDiv.style.display = allPointsTableVisible ? "none" : "";
+        pointsTitleDiv.style.display = allPointsTableVisible ? "none" : "";
+    } else {
+        //console.log("Rotation disabled")
+        pointsResultsDiv.style.display = "";
+        lastSegmentPointsResultsDiv.style.display = "none";   
+        pointsTitleDiv.style.display = "none";     
+    }
+}
+//let rotationInterval = setInterval(rotateVisibleTable, rotateTableInterval);
 
 function setBackground() {
     const {solidBackground, backgroundColor} = common.settingsStore.get();
@@ -50,7 +79,7 @@ common.settingsStore.addEventListener('changed', ev => {
     settings = common.settingsStore.get();
 });
 */
-let settings = common.settingsStore.get();
+
 if (settings.preview) {
     console.log("clearing preview setting")
     settings.preview = false;
@@ -576,7 +605,7 @@ async function scoreResults(eventResults, currentEventConfig) {
     return racerScores;
 }
 
-function evaluateVisibility(scoreType) {
+function evaluateVisibility(scoreType, ignoreFIN = false) {
     if (!currentEventConfig) {
         return "style=display:none";
     }
@@ -587,7 +616,7 @@ function evaluateVisibility(scoreType) {
         //console.log("No segments with a score of type",scoreType)
         return "style=display:none";
     }
-    if (scoreType == "FIN" && (currentEventConfig.finScoreFormat == "" || raceResults.length == 0)) {
+    if (scoreType == "FIN" && (currentEventConfig.finScoreFormat == "" || raceResults.length == 0 || ignoreFIN)) {
         //console.log("No score format for FIN")
         return "style=display:none";
     }
@@ -602,13 +631,9 @@ function evaluateVisibility(scoreType) {
     //debugger
 }
 
-async function displayResults(racerScores) {
-    //console.log("Scores to process:", racerScores)
-    //let scoreFormat = settings.FTSorFAL;
-    
-    const pointsResultsDiv = document.getElementById("pointsResults")
-    //pointsResultsDiv.innerHTML = "";
-    let tableFinalOutput = `<table id='pointsTable'><thead><th>Rank</th><th>Name</th><th ${evaluateVisibility('FAL')}>FAL</th><th ${evaluateVisibility('FTS')}>FTS</th><th ${evaluateVisibility('FIN')}>FIN</th><th>Total</th></thead><tbody>`;
+function buildPointsTable(racerScores, athletes, lastSegmentName = "", ignoreFIN = false) {
+    pointsTitleDiv.innerHTML = lastSegmentName;
+    let tableFinalOutput = `<table id='pointsTable'><thead><th>Rank</th><th>Name</th><th ${evaluateVisibility('FAL')}>FAL</th><th ${evaluateVisibility('FTS')}>FTS</th><th ${evaluateVisibility('FIN', ignoreFIN)}>FIN</th><th>Total</th></thead><tbody>`;
     let tableOutput = "";
     let rank = 1;
     let maxRacers = settings.maxRacersToDisplay;
@@ -616,8 +641,7 @@ async function displayResults(racerScores) {
         maxRacers = Infinity;
     }
     //console.log("Max racers to display:", maxRacers)
-    const athleteIds = racerScores.map(x => x.athleteId);
-    const athletes = await common.rpc.getAthletesData(athleteIds);
+    
     const teamScore = {
         ftsPoints: 0,
         falPoints: 0,
@@ -661,11 +685,11 @@ async function displayResults(racerScores) {
             teamScore.totalPoints += racer.pointTotal;
         }
         tableOutput += isWatching ? "<tr class=watching>" : isTeamMate ? "<tr class=teammate>" : isMarked ? "<tr class=marked>" : "<tr>"
-        tableOutput += `<td>${rank}</td><td><span id="riderName"><a href="/pages/profile.html?id=${racer.athleteId}&windowType=profile" target="profile">${sanitizedName}</a></span><div id="info-item-team">${teamBadge}</div></td><td ${evaluateVisibility('FAL')}>${racer.falPointTotal}</td><td ${evaluateVisibility('FTS')}>${racer.ftsPointTotal}</td><td ${evaluateVisibility('FIN')}>${racer.finPoints}</td><td>${racer.pointTotal}</td></tr>`
+        tableOutput += `<td>${rank}</td><td><span id="riderName"><a href="/pages/profile.html?id=${racer.athleteId}&windowType=profile" target="profile">${sanitizedName}</a></span><div id="info-item-team">${teamBadge}</div></td><td ${evaluateVisibility('FAL')}>${racer.falPointTotal}</td><td ${evaluateVisibility('FTS')}>${racer.ftsPointTotal}</td><td ${evaluateVisibility('FIN', ignoreFIN)}>${racer.finPoints}</td><td>${racer.pointTotal}</td></tr>`
         rank++;
     }    
     if (settings.showTeamScore) {
-        let teamScoreOutput = `<tr class=teammate><td></td><td>Team<div id="info-item-team">${common.teamBadge(watchingTeam)}</div></td><td ${evaluateVisibility('FAL')}>${teamScore.falPoints}</td><td ${evaluateVisibility('FTS')}>${teamScore.ftsPoints}</td><td ${evaluateVisibility('FIN')}>${teamScore.finPoints}</td><td>${teamScore.totalPoints}</td></tr>`;
+        let teamScoreOutput = `<tr class=teammate><td></td><td>Team<div id="info-item-team">${common.teamBadge(watchingTeam)}</div></td><td ${evaluateVisibility('FAL')}>${teamScore.falPoints}</td><td ${evaluateVisibility('FTS')}>${teamScore.ftsPoints}</td><td ${evaluateVisibility('FIN', ignoreFIN)}>${teamScore.finPoints}</td><td>${teamScore.totalPoints}</td></tr>`;
         tableFinalOutput += teamScoreOutput;
     }
     tableOutput += "</table>"    
@@ -673,7 +697,22 @@ async function displayResults(racerScores) {
     if (settings.preview) {
         common.settingsStore.set("preview", false);
     }
+    return tableFinalOutput;
+}
+
+async function displayResults(racerScores, lastSegmentScores, lastSegmentName) {
+    //console.log("Scores to process:", racerScores)
+    //let scoreFormat = settings.FTSorFAL;
+    const eventSubgroupId = currentEventConfig.eventSubgroupId;
+    const pointsResultsDiv = document.getElementById("pointsResults");
+    const lastSegmentPointsResultsDiv = document.getElementById("lastSegmentPointsResults");
+    const athleteIds = racerScores.map(x => x.athleteId);
+    const athletes = await common.rpc.getAthletesData(athleteIds);
+    //pointsResultsDiv.innerHTML = "";
+    const tableFinalOutput = buildPointsTable(racerScores, athletes);
+    const tableLastSegmentOutput = buildPointsTable(lastSegmentScores, athletes, lastSegmentName, true);
     pointsResultsDiv.innerHTML = tableFinalOutput;
+    lastSegmentPointsResultsDiv.innerHTML = tableLastSegmentOutput;
     
 }
 
@@ -731,14 +770,21 @@ async function getLeaderboard(watching) {
                 let closestSegment = null;
                 let minDistance = Infinity;
                 for (const segment of segmentFinishLines) {
-                    const distance = Math.abs(segment.markLine - currentPosition);
-                    if (distance < minDistance) {
-                        minDistance = distance;
+                    const distance = segment.markLine - currentPosition;
+                    //console.log("distance", distance)
+                    if (Math.abs(distance) < minDistance) {
+                        minDistance = Math.abs(distance);
                     }
                 }
-                if (minDistance < proximityThreshold) {
+                //console.log("minDistance", minDistance, "proximityThreshold", proximityThreshold)
+                if (Math.abs(minDistance) < proximityThreshold) {
                     refreshRate = 5000;
+                    if (Date.now() - lastRotationTS > rotateTableInterval) {
+                        rotateVisibleTable({forceLast: true})
+                    }
                     //console.log("Refreshing every 5s due to segment finish proximity");
+                } else if (Date.now() - lastRotationTS > rotateTableInterval) {
+                    rotateVisibleTable({forceLast: false})
                 }
             }
         }
@@ -751,7 +797,7 @@ async function getLeaderboard(watching) {
                 //console.log("Saving last knownSG")
                 common.settingsStore.set("lastKnownSG", lastKnownSG)
                 settings = common.settingsStore.get();
-                console.log(settings)
+                //console.log(settings)
             }
             if (watching.athlete.team) {
                 watchingTeam = watching.athlete.team;
@@ -785,12 +831,23 @@ async function getLeaderboard(watching) {
             //console.log("DB results:",dbResults)
             let eventResults = await processResults(watching, dbResults, currentEventConfig);
             console.log("event segment results",eventResults)
+            const lastSegmentWithResults = [eventResults.filter(x => x.fal.length > 0 || x.fts.length > 0).at(-1)] 
+            const lastSegmentName = lastSegmentWithResults[0].name;           
+            //console.log("segmentsWithResults", segmentsWithResults)
             let racerScores = await scoreResults(eventResults, currentEventConfig);
-            //debugger
             racerScores.sort((a, b) => {
                 return b.pointTotal - a.pointTotal;
             });
-            await displayResults(racerScores)
+            let lastSegmentScores = await scoreResults(lastSegmentWithResults, currentEventConfig);
+            lastSegmentScores.forEach(score => {
+                score.finPoints = 0; // don't include FIN points for the last segment display
+                score.pointTotal = score.ftsPointTotal + score.falPointTotal;
+            })
+            lastSegmentScores.sort((a, b) => {
+                return b.pointTotal - a.pointTotal;
+            });
+            console.log("lastSegmentScores", lastSegmentScores)
+            await displayResults(racerScores, lastSegmentScores, lastSegmentName)
             if (raceResults.length > 0) {
                 console.log("Race results", raceResults)
             } 
@@ -845,6 +902,9 @@ export async function main() {
         }
         if (changed.has('lineSpacing')) {
             changelineSpacing();
+        }
+        if (changed.has('rotateInterval')) {
+            rotateTableInterval =  changed.get('rotateInterval') * 1000;
         }
         settings = common.settingsStore.get();
     });

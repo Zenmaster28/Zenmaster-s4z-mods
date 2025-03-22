@@ -213,3 +213,7 @@ div .points-view {
 .zenButton:hover {
   opacity: 0.7;
 }
+div .pointsTitle {
+  text-align: center;
+  font-size: calc(var(--font-scale) * 0.6em);
+}
