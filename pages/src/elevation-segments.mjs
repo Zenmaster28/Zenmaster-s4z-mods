@@ -2451,9 +2451,11 @@ export class SauceElevationProfile {
                                         const beaconName = beaconData.data.athlete.fullname
                                         const gapDisplay = Math.abs(sauceGap) > 50 ? zenGap : sauceGap
                                         if (gapDisplay > 0) {
-                                            beaconLabelData = `${beaconName}\n${Math.abs(gapDisplay)}m\u21A4`
+                                            //beaconLabelData = `${beaconName}\n${Math.abs(gapDisplay)}m\u21A4`
+                                            beaconLabelData = `${beaconName}\n${H.distance(gapDisplay, {suffix: true})}\u21A4`
                                         } else if (gapDisplay < 0) {
-                                            beaconLabelData = `${beaconName}\n\u21A6${Math.abs(gapDisplay)}m`
+                                            //beaconLabelData = `${beaconName}\n\u21A6${Math.abs(gapDisplay)}m`
+                                            beaconLabelData = `${beaconName}\n\u21A6${H.distance(Math.abs(gapDisplay), {suffix: true})}`
                                         } else {
                                             beaconLabelData = `${beaconName}\n0m`
                                         } 
