@@ -54,6 +54,7 @@ let elProfile;
 let courseId = Number(url.searchParams.get('course')) || 6;
 let urlSegment = url.searchParams.get('segment')
 let segmentId = urlSegment ? BigInt(urlSegment) : undefined;
+let urlAthlete = url.searchParams.get('athlete')
 let currentRoute;
 
 function qualityScale(raw) {
@@ -445,7 +446,12 @@ async function getSegmentRoutes(segment, courseId) {
 
 async function getSegmentBests(id) {
     let athleteId = await common.rpc.getAthlete("self")
-    athleteId = athleteId.id
+    if (urlAthlete) {        
+        athleteId = urlAthlete
+        console.log("using athlete from URL", urlAthlete)
+    } else {
+        athleteId = athleteId.id
+    }
     let segmentBests = await common.rpc.getSegmentResults(id, {athleteId: athleteId, from: Date.now() - 86400000 * 90,})
     if (segmentBests) {
         return segmentBests;
