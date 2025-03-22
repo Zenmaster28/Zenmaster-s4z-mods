@@ -3346,6 +3346,9 @@ export function isTeammate(athlete, teamMatches, watchingTeam, options = { parti
     if (teamIds.includes(athlete?.athlete.id)) {
         return true;
     }
+    if (watchingTeam) {
+        teams.push(watchingTeam.toLowerCase());
+    }
     //console.log("teamMatches", teams)
     let regex;
     if (options.partial) {
