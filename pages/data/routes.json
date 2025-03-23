@@ -504,7 +504,7 @@
     "meetupLeadinAscentInMeters": 0,
     "meetupLeadinDistanceInMeters": 29.5,
     "name": "Danger Noodle",
-    "supportedLaps": false,
+    "supportedLaps": true,
     "useAlternateEventRamp": false,
     "worldId": 1
   },
@@ -875,6 +875,242 @@
     "worldId": 3
   },
   {
+    "ascentInMeters": 300.1,
+    "blockedForMeetups": 0,
+    "distanceInMeters": 20740.095703125,
+    "eventOnly": false,
+    "eventPaddocks": "1,2,3,4",
+    "freeRideLeadinAscentInMeters": 0,
+    "freeRideLeadinDistanceInMeters": 19.2210502625,
+    "id": 3669622170,
+    "leadinAscentInMeters": 0,
+    "leadinDistanceInMeters": 50.8274307251,
+    "locKey": "LOC_ROUTE_NEWYORK_LAGUARDIA_AFTER_PARTY",
+    "manifest": [
+      {
+        "end": 0.1687163593,
+        "reverse": true,
+        "roadId": 4,
+        "start": 0.1222961022
+      },
+      {
+        "end": 0.9928571872,
+        "roadId": 15,
+        "start": 0.3490476346512635
+      },
+      {
+        "end": 0.735641053,
+        "roadId": 6,
+        "start": 0.2266666751106582
+      },
+      {
+        "end": 0.9575045440975295,
+        "reverse": true,
+        "roadId": 17,
+        "start": 0.1
+      },
+      {
+        "end": 1,
+        "roadId": 4,
+        "start": 0.8909109896793943
+      },
+      {
+        "end": 0.1093581801,
+        "roadId": 4,
+        "start": 0
+      },
+      {
+        "end": 0.900000148,
+        "roadId": 14,
+        "start": 0.3306666715939839
+      },
+      {
+        "end": 0.735641053,
+        "roadId": 6,
+        "start": 0.19256410973767452
+      },
+      {
+        "end": 0.9575045440975295,
+        "reverse": true,
+        "roadId": 17,
+        "start": 0.1
+      },
+      {
+        "end": 1,
+        "roadId": 4,
+        "start": 0.8909109896793943
+      },
+      {
+        "end": 0.1093581801,
+        "roadId": 4,
+        "start": 0
+      },
+      {
+        "end": 0.900000148,
+        "roadId": 14,
+        "start": 0.3306666715939839
+      },
+      {
+        "end": 0.735641053,
+        "roadId": 6,
+        "start": 0.19256410973767452
+      },
+      {
+        "end": 0.9575045440975295,
+        "reverse": true,
+        "roadId": 17,
+        "start": 0.1
+      },
+      {
+        "end": 1,
+        "roadId": 4,
+        "start": 0.8909109896793943
+      },
+      {
+        "end": 0.1093581801,
+        "roadId": 4,
+        "start": 0
+      },
+      {
+        "end": 0.900000148,
+        "roadId": 14,
+        "start": 0.3306666715939839
+      },
+      {
+        "end": 0.735641053,
+        "roadId": 6,
+        "start": 0.19256410973767452
+      },
+      {
+        "end": 0.9575045440975295,
+        "reverse": true,
+        "roadId": 17,
+        "start": 0.1
+      },
+      {
+        "end": 1,
+        "roadId": 4,
+        "start": 0.8909109896793943
+      },
+      {
+        "end": 0.1093581801,
+        "roadId": 4,
+        "start": 0
+      },
+      {
+        "end": 0.900000148,
+        "roadId": 14,
+        "start": 0.3306666715939839
+      },
+      {
+        "end": 0.735641053,
+        "roadId": 6,
+        "start": 0.19256410973767452
+      },
+      {
+        "end": 0.9575045440975295,
+        "reverse": true,
+        "roadId": 17,
+        "start": 0.1
+      },
+      {
+        "end": 1,
+        "roadId": 4,
+        "start": 0.8909109896793943
+      },
+      {
+        "end": 0.1093581801,
+        "roadId": 4,
+        "start": 0
+      },
+      {
+        "end": 0.900000148,
+        "roadId": 14,
+        "start": 0.3306666715939839
+      },
+      {
+        "end": 0.735641053,
+        "roadId": 6,
+        "start": 0.19256410973767452
+      },
+      {
+        "end": 0.9575045440975295,
+        "reverse": true,
+        "roadId": 17,
+        "start": 0.1
+      },
+      {
+        "end": 1,
+        "roadId": 4,
+        "start": 0.8909109896793943
+      },
+      {
+        "end": 0.1093581801,
+        "roadId": 4,
+        "start": 0
+      },
+      {
+        "end": 0.900000148,
+        "roadId": 14,
+        "start": 0.3306666715939839
+      },
+      {
+        "end": 0.735641053,
+        "roadId": 6,
+        "start": 0.19256410973767452
+      },
+      {
+        "end": 0.9575045440975295,
+        "reverse": true,
+        "roadId": 17,
+        "start": 0.1
+      },
+      {
+        "end": 0.9434368706,
+        "roadId": 4,
+        "start": 0.8909109896793943
+      },
+      {
+        "end": 0.9640000144,
+        "roadId": 32,
+        "start": 0.0953333347539107
+      },
+      {
+        "end": 0.0743532321,
+        "roadId": 30,
+        "start": 0.008830845565535116
+      },
+      {
+        "end": 0.7200000107288357,
+        "reverse": true,
+        "roadId": 38,
+        "start": 0.0852600013
+      },
+      {
+        "end": 0.194139,
+        "roadId": 24,
+        "start": 0.06297619329144555
+      },
+      {
+        "end": 0.9758333333,
+        "roadId": 46,
+        "start": 0.3625000000000006
+      },
+      {
+        "end": 0.9671429003775125,
+        "reverse": true,
+        "roadId": 24,
+        "start": 0.5492857388
+      }
+    ],
+    "meetupLeadinAscentInMeters": 0,
+    "meetupLeadinDistanceInMeters": 34.1672859192,
+    "name": "LaGuardia After Party",
+    "supportedLaps": false,
+    "useAlternateEventRamp": false,
+    "worldId": 4
+  },
+  {
     "ascentInMeters": 85,
     "blockedForMeetups": 0,
     "distanceInMeters": 15948.6,
@@ -1007,6 +1243,171 @@
     "meetupLeadinDistanceInMeters": 140.9,
     "name": "Makuri Madness",
     "sportType": 3,
+    "supportedLaps": false,
+    "useAlternateEventRamp": false,
+    "worldId": 9
+  },
+  {
+    "ascentInMeters": 137.1630554199,
+    "blockedForMeetups": 0,
+    "distanceInMeters": 16199.232421875,
+    "eventOnly": false,
+    "eventPaddocks": "16,17,18,19,20",
+    "freeRideLeadinAscentInMeters": 3.4077208042,
+    "freeRideLeadinDistanceInMeters": 1064.7757568359,
+    "id": 1367364772,
+    "leadinAscentInMeters": 4.8508200645,
+    "leadinDistanceInMeters": 1123.9239501953,
+    "locKey": "LOC_ROUTE_MAKURIISLANDS_NEON_AFTER_PARTY",
+    "manifest": [
+      {
+        "end": 0.8673185395200977,
+        "leadin": true,
+        "reverse": true,
+        "roadId": 4,
+        "start": 0.7273969295048713
+      },
+      {
+        "end": 0.7269606590270996,
+        "reverse": true,
+        "roadId": 4,
+        "start": 0.5454805587
+      },
+      {
+        "end": 0.9414125,
+        "roadId": 22,
+        "start": 0.08166666666666664
+      },
+      {
+        "end": 0.964844185,
+        "roadId": 8,
+        "start": 0.03754717037081718
+      },
+      {
+        "end": 0.9873333480457461,
+        "reverse": true,
+        "roadId": 110,
+        "start": 0.0100000001
+      },
+      {
+        "end": 0.36112402966245993,
+        "reverse": true,
+        "roadId": 6,
+        "start": 0.0151705426
+      },
+      {
+        "end": 0.99,
+        "roadId": 25,
+        "start": 0.058148148581385596
+      },
+      {
+        "end": 0.310044451951981,
+        "reverse": true,
+        "roadId": 4,
+        "start": 0.2595037522
+      },
+      {
+        "end": 0.733869996,
+        "roadId": 30,
+        "start": 0.21600000321865076
+      },
+      {
+        "end": 0.964844185,
+        "roadId": 8,
+        "start": 0.7338993820051357
+      },
+      {
+        "end": 0.9324333328,
+        "roadId": 26,
+        "start": 0.1270370379835366
+      },
+      {
+        "end": 0.5946511606,
+        "roadId": 6,
+        "start": 0.42054263409227133
+      },
+      {
+        "end": 0.7224999999999999,
+        "reverse": true,
+        "roadId": 109,
+        "start": 0.0256
+      },
+      {
+        "end": 0.482746495,
+        "roadId": 4,
+        "start": 0.007851852041979626
+      },
+      {
+        "end": 0.9724199997,
+        "roadId": 103,
+        "start": 0.32133333812157294
+      },
+      {
+        "end": 0.9602898729592559,
+        "reverse": true,
+        "roadId": 18,
+        "start": 0.0121695654
+      },
+      {
+        "end": 0.7713333448270954,
+        "reverse": true,
+        "roadId": 104,
+        "start": 0.0434800006
+      },
+      {
+        "end": 0.7881926116781879,
+        "reverse": true,
+        "roadId": 4,
+        "start": 0.5454805587
+      },
+      {
+        "end": 0.9414125,
+        "roadId": 22,
+        "start": 0.08166666666666664
+      },
+      {
+        "end": 0.408070309,
+        "roadId": 8,
+        "start": 0.03754717037081718
+      },
+      {
+        "end": 0.6746666767199827,
+        "reverse": true,
+        "roadId": 116,
+        "start": 0.01
+      },
+      {
+        "end": 0.8633333719273405,
+        "reverse": true,
+        "roadId": 114,
+        "start": 0.0605214313
+      },
+      {
+        "end": 0.98985,
+        "roadId": 101,
+        "start": 0.1660000024735929
+      },
+      {
+        "end": 0.6043703850048274,
+        "reverse": true,
+        "roadId": 19,
+        "start": 0.300831484
+      },
+      {
+        "end": 0.9666666810711219,
+        "reverse": true,
+        "roadId": 71,
+        "start": 0.0515000008
+      },
+      {
+        "end": 0.6506578889,
+        "roadId": 70,
+        "start": 0.12882113341242096
+      }
+    ],
+    "meetupLeadinAscentInMeters": 3.9182682037,
+    "meetupLeadinDistanceInMeters": 1079.7806396484,
+    "name": "Neon After Party",
     "supportedLaps": false,
     "useAlternateEventRamp": false,
     "worldId": 9
