@@ -67,7 +67,9 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
                 //roadSegments[roadSegments.length - 1].lap = lap + 1;
             }  
         }
-        routeFullData.curvePath.extend(routeFullData.curvePath.slice(lapStartIdx, routeFullData.curvePath.nodes.length - routeFullData.lapFiller.curvePath?.nodes?.length));
+        const lapFillerCurvePathLength = routeFullData.lapFiller.curvePath?.nodes?.length || 0;
+        //routeFullData.curvePath.extend(routeFullData.curvePath.slice(lapStartIdx, routeFullData.curvePath.nodes.length - routeFullData.lapFiller.curvePath?.nodes?.length));
+        routeFullData.curvePath.extend(routeFullData.curvePath.slice(lapStartIdx, routeFullData.curvePath.nodes.length - lapFillerCurvePathLength));
         //debugger
         for (let i = lapStartIdx; i < routeFullData.distances.length; i++) {
             //need to get lapFiller distances, elevations and grades
