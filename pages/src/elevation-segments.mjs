@@ -1545,6 +1545,10 @@ export class SauceElevationProfile {
                                         //debugger
                                         nearIdx = this.routeInfo.routeFullData.lapNodes[state.laps]
                                     }
+                                    if (typeof nodes[nearIdx] === 'undefined') {
+                                        //debugger
+                                        console.log("nodes[nearIdx] is undefined!")
+                                    }
                                     const nearRoadSegIdx = nodes[nearIdx].index;
                                     //debugger
                                     // NOTE: This technique does not work for bots or people who joined a bot.
