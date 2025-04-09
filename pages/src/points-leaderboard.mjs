@@ -7,7 +7,7 @@ await zen.cleanupSegmentsDB(dbSegments);
 await zen.cleanupSegmentsDB(dbSegments, {live: true});
 await zen.cleanupSegmentConfigDB(dbSegmentConfig);
 let allKnownRacers = [];
-//let segmentResults = [];
+let allKnownRacersStatus = new Map();
 let settings = common.settingsStore.get();
 let raceResults = [];
 let lastKnownSG = {
@@ -22,6 +22,8 @@ let refresh = Date.now() - 2000000;
 let lastAllCatRefresh = Date.now() - 2000000;
 let lastSegmentTS = Date.now() - 2000000;
 let lastRotationTS = Date.now() - 2000000;
+let busyVerifying = false;
+let lastVerification = Date.now() - 2000000;
 const doc = document.documentElement;
 doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  
 let allPointsTableVisible = true;
@@ -179,6 +181,89 @@ async function getKnownRacersV2(watching, currentEventConfig) {
     }
 }
 
+async function verifyRacers() {    
+    busyVerifying = true;
+    const racers2Verify = [...allKnownRacers];
+    console.log("Verifying racers", racers2Verify)
+    const now = Date.now();
+    let lastRPCCheck = now - 5000;
+    for (let racer of racers2Verify) {
+        const racerStatus = allKnownRacersStatus.get(racer.athleteId);
+        if (racerStatus && now - racerStatus.lastSeenTS > 60000) {
+            console.log("Racer", racer.athleteId, "hasn't been seen in 60 seconds, checking status via RPC playerState") 
+            if (Date.now() - lastRPCCheck < 3500) {
+                console.log("Waiting 3.5 seconds before checking playerState for", racer.athleteId)
+                await zen.sleep(3500);
+            }
+            const racerState = await common.rpc.getPlayerState(racer.athleteId);
+            lastRPCCheck = Date.now();
+            if (!racerState) {
+                console.log("no playerState for", racer.athleteId)
+                racerStatus.noPlayerState = true;
+            } else if (racerState.eventSubgroupId != racer.eventSubgroupId || racerState.eventSubgroupId == 0) {
+                const racerLeft = await common.rpc.getAthlete(racer.athleteId);
+                if (raceResults.find(x => x.profileId == racer.athleteId)) {
+                    racerStatus.finishedEvent = true;
+                    racerStatus.noPlayerState = false;
+                    console.log("racer has finished the event!", racerLeft?.id, racerLeft?.sanitizedFullname);
+                } else {
+                    racerStatus.leftEvent = true;
+                    racerStatus.noPlayerState = false;
+                    console.log("racer appears to have left the event!", racerLeft?.id, racerLeft?.sanitizedFullname)
+                }
+            } else {
+                //debugger
+                racerStatus.lastSeenTS = Date.now();
+                racerStatus.noPlayerState = false;
+                console.log("Racer", racer.athleteId, "confirmed still in the event via playerState")
+            }
+        } else if (racerStatus && now - racerStatus.lastSeenTS <= 60000) {
+            //console.log("Racer", racer.athleteId, "has been seen recently, skipping RPC check")
+        } else {
+            if (Date.now() - lastRPCCheck < 3500) {
+                console.log("Waiting 3.5 seconds before checking playerState for", racer.athleteId)
+                await zen.sleep(3500);
+            }
+            const racerState = await common.rpc.getPlayerState(racer.athleteId);
+            lastRPCCheck = Date.now();
+            const newRacerStatus = racerState ? {
+                athleteId: racer.athleteId,
+                eventSubgroupId: racerState.eventSubgroupId,
+                lastSeenTS: Date.now() - 600000,
+                leftEvent: false,
+                lateJoin: false,
+                finishedEvent: false,
+                noPlayerState: false
+            } : {
+                athleteId: racer.athleteId,
+                eventSubgroupId: 0,
+                lastSeenTS: Date.now() - 600000,
+                leftEvent: false,
+                lateJoin: false,
+                finishedEvent: false,
+                noPlayerState: true
+            };
+            if (!racerState) {
+                console.log("no playerState for", racer.athleteId)
+                newRacerStatus.noPlayerState = true;
+            } else if (racerState.eventSubgroupId != racer.eventSubgroupId) {
+                const racerLeft = await common.rpc.getAthlete(racer.athleteId);
+                console.log("racer appears to have left the event!", racerLeft?.id, racerLeft?.sanitizedFullname)
+                newRacerStatus.leftEvent = true;
+                newRacerStatus.noPlayerState = false;
+            } else {
+                console.log("Racer", racer.athleteId, "confirmed still in the event via playerState")
+                newRacerStatus.lastSeenTS = Date.now();
+                newRacerStatus.noPlayerState = false;
+            }
+            allKnownRacersStatus.set(racer.athleteId, newRacerStatus);
+        }
+        
+    }
+    busyVerifying = false;
+    lastVerification = Date.now();
+}
+
 async function getKnownRacers(watching) {    
     // todo - deal with sg = 0 after race is over
     let eventSubgroupId;
@@ -316,7 +401,8 @@ async function getAllSegmentResults(watching, currentEventConfig) {
         segmentData = currentEventConfig.segments;
     }
     let eventRacers = allKnownRacers.filter(x => x.eventSubgroupId === eventSubgroupId).map(x => x.athleteId); // make sure we only get racers from this eventsubgroup    
-    console.log("Known racer count: ", eventRacers.length, "Event participants:", watching.eventParticipants)
+    console.log("Known racer count: ", eventRacers.length, "Event participants:", watching.eventParticipants, "racersStatus:", allKnownRacersStatus.size)
+    //console.log(allKnownRacersStatus)
     let sg = await common.rpc.getEventSubgroup(eventSubgroupId)    
     let eventStartTime;
     if (sg) { 
@@ -442,7 +528,7 @@ async function scoreResults(eventResults, currentEventConfig) {
     //let scoreFormat = settings.FTSorFAL;
     let scoreFormats = ["FTS"];
     let segmentRepeat;
-    console.log("Event config", currentEventConfig)
+    //console.log("Event config", currentEventConfig)
     //debugger
     for (let segRes of eventResults) {
         if (currentEventConfig) {
@@ -601,7 +687,7 @@ async function scoreResults(eventResults, currentEventConfig) {
         }
         racer.pointTotal = racer.ftsPointTotal + racer.falPointTotal + racer.finPoints;
     }  
-    console.log("Racer scores",racerScores)  
+    //console.log("Racer scores",racerScores)  
     return racerScores;
 }
 
@@ -684,8 +770,15 @@ function buildPointsTable(racerScores, athletes, lastSegmentName = "", ignoreFIN
             teamScore.finPoints += racer.finPoints;
             teamScore.totalPoints += racer.pointTotal;
         }
+        const racerStatus = allKnownRacersStatus.get(racer.athleteId);
+        let status = "";
+        if (racerStatus && racerStatus.leftEvent) {
+            //status = " (Left Event)"
+        } else if (racerStatus && racerStatus.noPlayerState) {
+            //status = " (No playerState)"
+        }
         tableOutput += isWatching ? "<tr class=watching>" : isTeamMate ? "<tr class=teammate>" : isMarked ? "<tr class=marked>" : "<tr>"
-        tableOutput += `<td>${rank}</td><td><span id="riderName"><a href="/pages/profile.html?id=${racer.athleteId}&windowType=profile" target="profile">${sanitizedName}</a></span><div id="info-item-team">${teamBadge}</div></td><td ${evaluateVisibility('FAL')}>${racer.falPointTotal}</td><td ${evaluateVisibility('FTS')}>${racer.ftsPointTotal}</td><td ${evaluateVisibility('FIN', ignoreFIN)}>${racer.finPoints}</td><td>${racer.pointTotal}</td></tr>`
+        tableOutput += `<td>${rank}</td><td><span id="riderName"><a href="/pages/profile.html?id=${racer.athleteId}&windowType=profile" target="profile">${sanitizedName}${status}</a></span><div id="info-item-team">${teamBadge}</div></td><td ${evaluateVisibility('FAL')}>${racer.falPointTotal}</td><td ${evaluateVisibility('FTS')}>${racer.ftsPointTotal}</td><td ${evaluateVisibility('FIN', ignoreFIN)}>${racer.finPoints}</td><td>${racer.pointTotal}</td></tr>`
         rank++;
     }    
     if (settings.showTeamScore) {
@@ -759,6 +852,30 @@ function getPreviewData() {
 
 }
 
+async function updateRacerStatus(states) {
+    if (lastKnownSG.eventSubgroupId == 0) {
+        return; // wait until watching rider is in an event
+    };
+    for (let state of states) {
+        let racerStatus = allKnownRacersStatus.get(state.athleteId);
+        if (!racerStatus && state.eventSubgroupId == lastKnownSG.eventSubgroupId) {
+            racerStatus = {
+                athleteId: state.athleteId,
+                eventSubgroupId: state.eventSubgroupId,
+                lastSeenTS: Date.now(),
+                leftEvent: false,
+                lateJoin: false,
+                finishedEvent: false,
+                noPlayerState: false
+            };
+            allKnownRacersStatus.set(state.athleteId, racerStatus);
+        } else if (racerStatus) {
+            racerStatus.lastSeenTS = Date.now();
+        }
+
+    }
+}
+
 async function getLeaderboard(watching) {
     if (watching.state.eventSubgroupId != 0 || lastKnownSG.eventSubgroupId > 0) {        
         let refreshRate = 20000;
@@ -788,7 +905,10 @@ async function getLeaderboard(watching) {
                 }
             }
         }
-
+        if (Date.now() - lastVerification > 30000 && !busyVerifying && allKnownRacers.length > 0) {
+            //console.log("Verifying racers")
+            verifyRacers();
+        }
         if ((Date.now() - refresh) > refreshRate) {
             //console.log("not in an event")
             refresh = Date.now();
@@ -830,9 +950,9 @@ async function getLeaderboard(watching) {
             let dbResults = await zen.getSegmentResults(dbSegments, eventSubgroupId)
             //console.log("DB results:",dbResults)
             let eventResults = await processResults(watching, dbResults, currentEventConfig);
-            console.log("event segment results",eventResults)
+            //console.log("event segment results",eventResults)
             const lastSegmentWithResults = [eventResults.filter(x => x.fal.length > 0 || x.fts.length > 0).at(-1)] 
-            const lastSegmentName = lastSegmentWithResults[0].name;           
+            const lastSegmentName = lastSegmentWithResults?.length > 0 ? lastSegmentWithResults[0].name : "";           
             //console.log("segmentsWithResults", segmentsWithResults)
             let racerScores = await scoreResults(eventResults, currentEventConfig);
             racerScores.sort((a, b) => {
@@ -846,7 +966,7 @@ async function getLeaderboard(watching) {
             lastSegmentScores.sort((a, b) => {
                 return b.pointTotal - a.pointTotal;
             });
-            console.log("lastSegmentScores", lastSegmentScores)
+            //console.log("lastSegmentScores", lastSegmentScores)
             await displayResults(racerScores, lastSegmentScores, lastSegmentName)
             if (raceResults.length > 0) {
                 console.log("Race results", raceResults)
@@ -886,6 +1006,8 @@ export async function main() {
             raceResults = [];
         }
     });
+    common.subscribe('states', updateRacerStatus);
+
     common.settingsStore.addEventListener('changed', ev => {
         const changed = ev.data.changed; 
         if (changed.has('solidBackground') || changed.has('backgroundColor')) {            
