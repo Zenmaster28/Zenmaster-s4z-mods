@@ -2452,7 +2452,10 @@ export class SauceElevationProfile {
                                     if (beaconData?.data?.athlete) {
                                         const zenGap = Math.ceil(this.watchingPosition - xCoord);
                                         const sauceGap = Math.ceil(beaconData.data.gapDistance) || zenGap
-                                        const beaconName = beaconData.data.athlete.fullname
+                                        let beaconName = beaconData.data.athlete.fullname
+                                        const ppGroupSize = beaconData.data.state.pacerBotGroupSize || null;
+                                        beaconName = ppGroupSize ? `${beaconName} (${ppGroupSize})` : beaconName;
+                                        //console.log("beaconData", beaconData)
                                         const gapDisplay = Math.abs(sauceGap) > 50 ? zenGap : sauceGap
                                         if (gapDisplay > 0) {
                                             //beaconLabelData = `${beaconName}\n${Math.abs(gapDisplay)}m\u21A4`
