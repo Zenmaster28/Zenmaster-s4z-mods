@@ -33,9 +33,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "m_roadId": 0,
         "b": 0
       },
@@ -44,9 +42,7 @@
         "m_roadTime1": 0.773109598,
         "m_roadTime2": 0.7763441936,
         "m_markerId": 3,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -78,7 +74,7 @@
       },
       {
         "type": "ENTITY_TYPE_INTERSECTIONMARKER",
-        "m_roadTime1": 0.9652322127,
+        "m_roadTime1": 0.9671294636,
         "m_roadTime2": 0.9774901178,
         "m_markerId": 4,
         "forward": [
@@ -107,9 +103,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "m_roadId": 0,
         "b": 0
       },
@@ -132,9 +126,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "m_roadId": 0,
         "b": 0
       },
@@ -143,9 +135,7 @@
         "m_roadTime1": 0.016916527,
         "m_roadTime2": 0.0231280971,
         "m_markerId": 1,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -180,9 +170,7 @@
         "m_roadTime1": 0.0054567105,
         "m_roadTime2": 0.0136191034,
         "m_markerId": 0,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -199,6 +187,146 @@
         ],
         "m_roadId": 0,
         "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.6446694029,
+        "m_roadTime2": 0.6507552083,
+        "m_markerId": 6,
+        "forward": [],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_Summit.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Ventoux Summit",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 122,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_DosedAne.tga",
+              "forward": false,
+              "exitTime": 0.6446694029380122,
+              "b": "0",
+              "turnText": "Dos d'Âne",
+              "d": false
+            }
+          }
+        ],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.6338379239,
+        "m_roadTime2": 0.6383298648,
+        "m_markerId": 7,
+        "forward": [
+          {
+            "option": {
+              "road": 121,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_DosedAne.tga",
+              "forward": false,
+              "exitTime": 0.6383298647926985,
+              "b": "0",
+              "turnText": "Dos d'Âne",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_Balloons.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Balloon Field",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.6294997376,
+        "m_roadTime2": 0.6330933926,
+        "m_markerId": 8,
+        "forward": [],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_Summit.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Ventoux Summit",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 123,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_Cratere.tga",
+              "forward": false,
+              "exitTime": 0.6294997376441032,
+              "b": "0",
+              "turnText": "Cratère",
+              "d": false
+            }
+          }
+        ],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.6156753656,
+        "m_roadTime2": 0.6219741274,
+        "m_markerId": 9,
+        "forward": [
+          {
+            "option": {
+              "road": 124,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_Cratere.tga",
+              "forward": false,
+              "exitTime": 0.6219741273964429,
+              "b": "0",
+              "turnText": "Cratère",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_Balloons.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Ventoux Summit",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "m_roadId": 0,
+        "b": 0
       }
     ]
   },
@@ -211,9 +339,7 @@
         "m_roadTime2": 0.4975274864,
         "m_roadId": 1,
         "m_markerId": 10001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -250,9 +376,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -266,9 +390,7 @@
         "m_roadTime2": 0.3996666282,
         "m_roadId": 2,
         "m_markerId": 20000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -305,9 +427,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -321,9 +441,7 @@
         "m_roadTime2": 0.3992046445,
         "m_roadId": 3,
         "m_markerId": 30000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -360,9 +478,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -376,9 +492,7 @@
         "m_roadTime2": 0.7887175191,
         "m_roadId": 4,
         "m_markerId": 40000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -420,9 +534,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -452,9 +564,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -489,9 +599,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -521,9 +629,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -552,9 +658,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -583,9 +687,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -614,9 +716,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -645,9 +745,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -703,9 +801,7 @@
         "m_roadTime2": 0.4998666387,
         "m_roadId": 26,
         "m_markerId": 260000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -766,9 +862,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -777,9 +871,7 @@
         "m_roadTime2": 0.0137660155,
         "m_roadId": 26,
         "m_markerId": 260002,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -814,9 +906,7 @@
         "m_roadTime2": 0.0078221803,
         "m_roadId": 26,
         "m_markerId": 260003,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -865,9 +955,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -876,9 +964,7 @@
         "m_roadTime2": 0.5525557531,
         "m_roadId": 26,
         "m_markerId": 260005,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -927,9 +1013,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -964,9 +1048,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -975,9 +1057,7 @@
         "m_roadTime2": 0.3200028832,
         "m_roadId": 26,
         "m_markerId": 260008,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -1004,6 +1084,181 @@
             }
           }
         ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.2408813836,
+        "m_roadTime2": 0.247388792,
+        "m_roadId": 26,
+        "m_markerId": 260009,
+        "forward": [],
+        "reverse": [
+          {
+            "option": {
+              "road": 26,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_Aqueduct.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Aqueduct",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 127,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_DosedAne.tga",
+              "forward": false,
+              "exitTime": 0.2408813836096129,
+              "b": "0",
+              "turnText": "Dos d'Âne",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.230533732,
+        "m_roadTime2": 0.2350154492,
+        "m_roadId": 26,
+        "m_markerId": 260010,
+        "forward": [
+          {
+            "option": {
+              "road": 128,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_DosedAne.tga",
+              "forward": false,
+              "exitTime": 0.23501544921342626,
+              "b": "0",
+              "turnText": "Dos d'Âne",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 26,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_SaintMichel.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Mont Saint-Michel",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3315739263,
+        "m_roadTime2": 0.333709944,
+        "m_roadId": 26,
+        "m_markerId": 260011,
+        "forward": [],
+        "reverse": [
+          {
+            "option": {
+              "road": 26,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_SaintMichel.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Mont Saint-Michel",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 125,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_Cratere.tga",
+              "forward": false,
+              "exitTime": 0.331573926253917,
+              "b": "0",
+              "turnText": "Cratère",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3270604279,
+        "m_roadTime2": 0.329443672,
+        "m_roadId": 26,
+        "m_markerId": 260012,
+        "forward": [
+          {
+            "option": {
+              "road": 126,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_Cratere.tga",
+              "forward": false,
+              "exitTime": 0.3294436719519038,
+              "b": "0",
+              "turnText": "Cratère",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 26,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_Summit.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Ventoux Summit",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.7563519601,
+        "m_roadTime2": 0.7585145629,
+        "m_roadId": 26,
+        "m_markerId": 260013,
+        "forward": [
+          {
+            "option": {
+              "road": 137,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_Balloons.tga",
+              "forward": true,
+              "exitTime": 0.7585145628611036,
+              "b": "0",
+              "turnText": "Balloon Fields",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 26,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_Summit.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Ventoux Summit",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -1057,11 +1312,11 @@
             "option": {
               "road": 118,
               "alt": 263,
-              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_SaintMichel.tga",
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_DosedAne.tga",
               "forward": false,
               "exitTime": 0.06331666855365044,
               "b": "0",
-              "turnText": "Mont Saint-Michel",
+              "turnText": "Dos d'Âne",
               "d": false
             }
           },
@@ -1069,11 +1324,11 @@
             "option": {
               "road": 119,
               "alt": 262,
-              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_Summit.tga",
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_Cratere.tga",
               "forward": false,
               "exitTime": 0.06331666855365044,
               "b": "0",
-              "turnText": "Ventoux Summit",
+              "turnText": "Cratère",
               "d": false
             }
           }
@@ -1137,9 +1392,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -1212,9 +1465,6 @@
   },
   {
     "id": 57
-  },
-  {
-    "id": 58
   },
   {
     "id": 59
@@ -1364,9 +1614,6 @@
     "id": 107
   },
   {
-    "id": 108
-  },
-  {
     "id": 109
   },
   {
@@ -1408,9 +1655,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -1439,9 +1684,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -1470,8 +1713,47 @@
             }
           }
         ],
+        "reverse": [],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 108,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.4759666809,
+        "m_roadTime2": 0.6936666578,
+        "m_roadId": 108,
+        "m_markerId": 1080000,
+        "forward": [
+          {
+            "option": {
+              "road": 26,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.6936666578352991,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
         "reverse": [
-          {}
+          {
+            "option": {
+              "road": 132,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.34387246470029675,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
         ],
         "b": 0
       }
@@ -1558,5 +1840,724 @@
         "b": 0
       }
     ]
+  },
+  {
+    "id": 121,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0293666675,
+        "m_roadTime2": 0.8516999959,
+        "m_roadId": 121,
+        "m_markerId": 1210000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.8516999958608357,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 120,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.029366667541861523,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 122,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.01,
+        "m_roadTime2": 0.99,
+        "m_roadId": 122,
+        "m_markerId": 1220000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.99,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 120,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.01,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 123,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0404666679,
+        "m_roadTime2": 0.9756333329,
+        "m_roadId": 123,
+        "m_markerId": 1230000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9756333329051776,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 130,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.040466667872667304,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 124,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0145433622,
+        "m_roadTime2": 0.844066662,
+        "m_roadId": 124,
+        "m_markerId": 1240000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.844066662019477,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 130,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.01454336220544011,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 125,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0406666679,
+        "m_roadTime2": 0.99,
+        "m_roadId": 125,
+        "m_markerId": 1250000,
+        "forward": [
+          {
+            "option": {
+              "road": 26,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.99,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 130,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.04066666787862778,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 126,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0316000009,
+        "m_roadTime2": 0.8925999971,
+        "m_roadId": 126,
+        "m_markerId": 1260000,
+        "forward": [
+          {
+            "option": {
+              "road": 26,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.8925999970972709,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 130,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.03160000094175338,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 127,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.01,
+        "m_roadTime2": 0.99,
+        "m_roadId": 127,
+        "m_markerId": 1270000,
+        "forward": [
+          {
+            "option": {
+              "road": 26,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.99,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 120,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.01,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 128,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.01,
+        "m_roadTime2": 0.99,
+        "m_roadId": 128,
+        "m_markerId": 1280000,
+        "forward": [
+          {
+            "option": {
+              "road": 26,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.99,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 120,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.01,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 129,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3620666775,
+        "m_roadTime2": 0.9627333322,
+        "m_roadId": 129,
+        "m_markerId": 1290000,
+        "forward": [
+          {
+            "option": {
+              "road": 132,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9627333322227343,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 130,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.9174111597,
+        "m_roadTime2": 0.9814033961,
+        "m_roadId": 130,
+        "m_markerId": 1300000,
+        "forward": [
+          {
+            "option": {
+              "road": 123,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_Balloons.tga",
+              "forward": true,
+              "exitTime": 0.9814033960951061,
+              "b": "0",
+              "turnText": "Balloon Field",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 124,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_Summit.tga",
+              "forward": true,
+              "exitTime": 0.9814033960951061,
+              "b": "0",
+              "turnText": "Ventoux Summit",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0052079999,
+        "m_roadTime2": 0.1133830548,
+        "m_roadId": 130,
+        "m_markerId": 1300001,
+        "forward": [],
+        "reverse": [
+          {
+            "option": {
+              "road": 125,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_Summit.tga",
+              "forward": true,
+              "exitTime": 0.005207999883592127,
+              "b": "0",
+              "turnText": "Ventoux Summit",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 126,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_SaintMichel.tga",
+              "forward": true,
+              "exitTime": 0.005207999883592127,
+              "b": "0",
+              "turnText": "Mont Saint-Michel",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 131,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3910666783,
+        "m_roadTime2": 0.9796999994,
+        "m_roadId": 131,
+        "m_markerId": 1310000,
+        "forward": [
+          {
+            "option": {
+              "road": 132,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9796999993950278,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 132,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.8162000243,
+        "m_roadTime2": 0.9806333626,
+        "m_roadId": 132,
+        "m_markerId": 1320000,
+        "forward": [
+          {
+            "option": {
+              "road": 134,
+              "alt": 263,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9806333625585273,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 108,
+              "alt": 262,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9806333625585273,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 133,
+    "roadIsPaddock": true,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3750000112,
+        "m_roadTime2": 0.9852333329,
+        "m_roadId": 133,
+        "m_markerId": 1330000,
+        "forward": [
+          {
+            "option": {
+              "road": 132,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9852333328932639,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 134,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.4557333469,
+        "m_roadTime2": 0.7012999911,
+        "m_roadId": 134,
+        "m_markerId": 1340000,
+        "forward": [
+          {
+            "option": {
+              "road": 26,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.701299991098069,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 132,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.34423090335934187,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 136,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.01,
+        "m_roadTime2": 0.6700666571,
+        "m_roadId": 136,
+        "m_markerId": 1360000,
+        "forward": [
+          {
+            "option": {
+              "road": 26,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.6700666571319396,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 137,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.01,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 137,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.6744581986,
+        "m_roadTime2": 0.9673915341,
+        "m_roadId": 137,
+        "m_markerId": 1370000,
+        "forward": [
+          {
+            "option": {
+              "road": 136,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9673915340963869,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 120,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.9121333078,
+        "m_roadTime2": 0.9791214504,
+        "m_roadId": 120,
+        "m_markerId": 1200000,
+        "forward": [
+          {
+            "option": {
+              "road": 127,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_SaintMichel.tga",
+              "forward": true,
+              "exitTime": 0.9791214504321704,
+              "b": "0",
+              "turnText": "Mont Saint-Michel",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 128,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_Aqueduct.tga",
+              "forward": true,
+              "exitTime": 0.9791214504321704,
+              "b": "0",
+              "turnText": "Aqueduct",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0133896557,
+        "m_roadTime2": 0.0740228333,
+        "m_roadId": 120,
+        "m_markerId": 1200001,
+        "forward": [],
+        "reverse": [
+          {
+            "option": {
+              "road": 122,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_Balloons.tga",
+              "forward": true,
+              "exitTime": 0.013389655671217327,
+              "b": "0",
+              "turnText": "Balloon Field",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 121,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_France_Summit.tga",
+              "forward": true,
+              "exitTime": 0.013389655671217327,
+              "b": "0",
+              "turnText": "Ventoux Summit",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 58
   }
 ]

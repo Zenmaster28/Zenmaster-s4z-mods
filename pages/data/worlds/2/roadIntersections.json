@@ -33,9 +33,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "m_roadId": 0,
         "b": 0
       },
@@ -70,9 +68,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "m_roadId": 0,
         "b": 0
       },
@@ -81,9 +77,7 @@
         "m_roadTime1": 0.4099436944,
         "m_roadTime2": 0.4155104592,
         "m_markerId": 2,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -130,9 +124,7 @@
         "m_roadTime1": 0.0116879743,
         "m_roadTime2": 0.0142310306,
         "m_markerId": 3,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -167,9 +159,7 @@
         "m_roadTime1": 0.0530321085,
         "m_roadTime2": 0.057908838,
         "m_markerId": 4,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -204,9 +194,7 @@
         "m_roadTime1": 0.3729588898,
         "m_roadTime2": 0.374247395,
         "m_markerId": 5,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -344,9 +332,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -375,9 +361,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -406,9 +390,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -438,9 +420,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -475,9 +455,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -506,9 +484,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -621,9 +597,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]

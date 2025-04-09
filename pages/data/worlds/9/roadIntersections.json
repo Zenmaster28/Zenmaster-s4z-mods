@@ -33,9 +33,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "m_roadId": 0,
         "b": 0
       },
@@ -44,9 +42,7 @@
         "m_roadTime1": 0.8445094869,
         "m_roadTime2": 0.8555954204,
         "m_markerId": 3,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -107,9 +103,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "m_roadId": 0,
         "b": 0
       },
@@ -118,9 +112,7 @@
         "m_roadTime1": 0.994462648,
         "m_roadTime2": 0.999387088,
         "m_markerId": 5,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -155,9 +147,7 @@
         "m_roadTime1": 0.5424021347,
         "m_roadTime2": 0.5545485462,
         "m_markerId": 8,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -218,9 +208,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "m_roadId": 0,
         "b": 0
       },
@@ -229,9 +217,7 @@
         "m_roadTime1": 0.3426336539,
         "m_roadTime2": 0.3529092278,
         "m_markerId": 1,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -292,9 +278,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "m_roadId": 0,
         "b": 0
       },
@@ -329,9 +313,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "m_roadId": 0,
         "b": 0
       },
@@ -340,9 +322,7 @@
         "m_roadTime1": 0.2028625643,
         "m_roadTime2": 0.2141007347,
         "m_markerId": 11,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -403,9 +383,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "m_roadId": 0,
         "b": 0
       },
@@ -414,9 +392,7 @@
         "m_roadTime1": 0.1427389291,
         "m_roadTime2": 0.1509242136,
         "m_markerId": 13,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -451,9 +427,7 @@
         "m_roadTime1": 0.0748155787,
         "m_roadTime2": 0.0804990808,
         "m_markerId": 14,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -514,9 +488,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "m_roadId": 0,
         "b": 0
       },
@@ -525,9 +497,7 @@
         "m_roadTime1": 0.9358503369,
         "m_roadTime2": 0.9441552873,
         "m_markerId": 18,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -588,9 +558,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "m_roadId": 0,
         "b": 0
       },
@@ -599,9 +567,7 @@
         "m_roadTime1": 0.4270113864,
         "m_roadTime2": 0.4367748015,
         "m_markerId": 20,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -686,9 +652,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "m_roadId": 0,
         "b": 0
       },
@@ -697,9 +661,7 @@
         "m_roadTime1": 0.374130089,
         "m_roadTime2": 0.3850291773,
         "m_markerId": 22,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -784,9 +746,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "m_roadId": 0,
         "b": 0
       },
@@ -795,9 +755,7 @@
         "m_roadTime1": 0.7407428512,
         "m_roadTime2": 0.7512519226,
         "m_markerId": 0,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -858,9 +816,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "m_roadId": 0,
         "b": 0
       },
@@ -869,9 +825,7 @@
         "m_roadTime1": 0.0531671236,
         "m_roadTime2": 0.0638012916,
         "m_markerId": 7,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -932,9 +886,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "m_roadId": 0,
         "b": 0
       }
@@ -975,9 +927,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -986,9 +936,7 @@
         "m_roadTime2": 0.0267374398,
         "m_roadId": 1,
         "m_markerId": 10000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -1049,9 +997,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -1086,9 +1032,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -1123,9 +1067,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -1134,9 +1076,7 @@
         "m_roadTime2": 0.1070567698,
         "m_roadId": 1,
         "m_markerId": 10006,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -1171,9 +1111,7 @@
         "m_roadTime2": 0.6754020084,
         "m_roadId": 1,
         "m_markerId": 10003,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -1239,9 +1177,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -1250,9 +1186,7 @@
         "m_roadTime2": 0.3122844576,
         "m_roadId": 2,
         "m_markerId": 20001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -1360,9 +1294,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -1398,9 +1330,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -1410,9 +1340,7 @@
         "m_roadId": 4,
         "m_markerId": 40004,
         "m_bIgnoreRoadWidth": "1",
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -1448,9 +1376,7 @@
         "m_roadId": 4,
         "m_markerId": 40005,
         "m_bIgnoreRoadWidth": "1",
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -1486,9 +1412,7 @@
         "m_roadId": 4,
         "m_markerId": 40006,
         "m_bIgnoreRoadWidth": "1",
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -1523,9 +1447,7 @@
         "m_roadTime2": 0.2664148372,
         "m_roadId": 4,
         "m_markerId": 40007,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -1610,9 +1532,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -1648,9 +1568,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -1660,9 +1578,7 @@
         "m_roadId": 4,
         "m_markerId": 40010,
         "m_bIgnoreRoadWidth": "1",
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -1724,9 +1640,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -1736,9 +1650,7 @@
         "m_roadId": 4,
         "m_markerId": 40014,
         "m_bIgnoreRoadWidth": "1",
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -1774,9 +1686,7 @@
         "m_roadId": 4,
         "m_markerId": 40011,
         "m_bIgnoreRoadWidth": "1",
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -1838,9 +1748,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -1876,9 +1784,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -1887,9 +1793,7 @@
         "m_roadTime2": 0.9436105773,
         "m_roadId": 4,
         "m_markerId": 40001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -1950,9 +1854,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -2003,8 +1905,8 @@
     "intersections": [
       {
         "type": "ENTITY_TYPE_INTERSECTIONMARKER",
-        "m_roadTime1": 0.9819529875,
-        "m_roadTime2": 0.9954531564,
+        "m_roadTime1": 0.9718681038,
+        "m_roadTime2": 0.9905194355,
         "m_roadId": 6,
         "m_markerId": 60000,
         "forward": [
@@ -2014,7 +1916,7 @@
               "alt": 263,
               "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Japan_RicePaddies.tga",
               "forward": false,
-              "exitTime": 0.9954531564,
+              "exitTime": 0.9905194354881309,
               "b": "0",
               "turnText": "RICE PADDIES",
               "d": false
@@ -2026,16 +1928,14 @@
               "alt": 262,
               "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Japan_FarmBridge.tga",
               "forward": false,
-              "exitTime": 0.9954531564,
+              "exitTime": 0.9905194354881309,
               "b": "0",
               "turnText": "FARMLAND",
               "d": false
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -2045,9 +1945,7 @@
         "m_roadId": 6,
         "m_markerId": 60001,
         "m_bIgnoreRoadWidth": "1",
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -2109,9 +2007,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -2146,9 +2042,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -2157,9 +2051,7 @@
         "m_roadTime2": 0.4592534867,
         "m_roadId": 6,
         "m_markerId": 60004,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -2195,9 +2087,7 @@
         "m_roadId": 6,
         "m_markerId": 60005,
         "m_bIgnoreRoadWidth": "1",
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -2232,9 +2122,7 @@
         "m_roadTime2": 0.8356580087,
         "m_roadId": 6,
         "m_markerId": 60006,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -2271,9 +2159,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -2283,9 +2169,7 @@
         "m_roadId": 6,
         "m_markerId": 60008,
         "m_bIgnoreRoadWidth": "1",
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -2346,9 +2230,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -2403,9 +2285,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -2414,9 +2294,7 @@
         "m_roadTime2": 0.7924530989,
         "m_roadId": 8,
         "m_markerId": 80001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -2489,9 +2367,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -2501,9 +2377,7 @@
         "m_roadId": 8,
         "m_markerId": 80003,
         "m_bIgnoreRoadWidth": "1",
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -2538,9 +2412,7 @@
         "m_roadTime2": 0.5302666746,
         "m_roadId": 8,
         "m_markerId": 80004,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -2601,9 +2473,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -2690,9 +2560,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -2701,9 +2569,7 @@
         "m_roadTime2": 0.1297682272,
         "m_roadId": 12,
         "m_markerId": 120000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -2755,9 +2621,7 @@
         "m_roadTime2": 0.4665015213,
         "m_roadId": 17,
         "m_markerId": 170001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -2818,9 +2682,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -2835,9 +2697,7 @@
         "m_roadId": 18,
         "m_markerId": 180001,
         "m_bIgnoreRoadWidth": "1",
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -2899,9 +2759,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -2941,9 +2799,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -2952,9 +2808,7 @@
         "m_roadTime2": 0.3652897234,
         "m_roadId": 19,
         "m_markerId": 190001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -3015,9 +2869,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -3026,9 +2878,7 @@
         "m_roadTime2": 0.8009897903,
         "m_roadId": 19,
         "m_markerId": 190003,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -3446,9 +3296,7 @@
         "m_roadTime2": 0.1940264452,
         "m_roadId": 32,
         "m_markerId": 320000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -3509,9 +3357,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -3566,9 +3412,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -3577,9 +3421,7 @@
         "m_roadTime2": 0.7633712287,
         "m_roadId": 34,
         "m_markerId": 340001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -3664,9 +3506,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -3675,9 +3515,7 @@
         "m_roadTime2": 0.279925645,
         "m_roadId": 34,
         "m_markerId": 340003,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -3755,9 +3593,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -3766,9 +3602,7 @@
         "m_roadTime2": 0.1027473179,
         "m_roadId": 35,
         "m_markerId": 350000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -4001,9 +3835,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -4012,9 +3844,7 @@
         "m_roadTime2": 0.8900851002,
         "m_roadId": 41,
         "m_markerId": 410001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -4075,9 +3905,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -4086,9 +3914,7 @@
         "m_roadTime2": 0.8330023742,
         "m_roadId": 41,
         "m_markerId": 410003,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -4149,9 +3975,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -4160,9 +3984,7 @@
         "m_roadTime2": 0.1545849885,
         "m_roadId": 41,
         "m_markerId": 410005,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -4223,9 +4045,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -4234,9 +4054,7 @@
         "m_roadTime2": 0.0217689442,
         "m_roadId": 41,
         "m_markerId": 410007,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -5424,9 +5242,7 @@
         "m_roadTime2": 0.1667019972,
         "m_roadId": 70,
         "m_markerId": 700000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -5487,9 +5303,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -5586,9 +5400,7 @@
         "m_roadTime2": 0.1587543643,
         "m_roadId": 73,
         "m_markerId": 730001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -5611,9 +5423,7 @@
         "m_roadTime2": 0.6006260973,
         "m_roadId": 73,
         "m_markerId": 730000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -5655,9 +5465,7 @@
         "m_roadId": 74,
         "m_markerId": 740000,
         "m_bIgnoreRoadWidth": "1",
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -5680,9 +5488,7 @@
         "m_roadTime2": 0.9239454945,
         "m_roadId": 74,
         "m_markerId": 740001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -5711,9 +5517,7 @@
         "m_roadTime2": 0.9370218616,
         "m_roadId": 75,
         "m_markerId": 750000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -5742,9 +5546,7 @@
         "m_roadTime2": 0.9415000284,
         "m_roadId": 76,
         "m_markerId": 760000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -5773,9 +5575,7 @@
         "m_roadTime2": 0.8636166924,
         "m_roadId": 77,
         "m_markerId": 770000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -5804,9 +5604,7 @@
         "m_roadTime2": 0.9029432891,
         "m_roadId": 78,
         "m_markerId": 780000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -5835,9 +5633,7 @@
         "m_roadTime2": 0.3269774069,
         "m_roadId": 79,
         "m_markerId": 790000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -5860,9 +5656,7 @@
         "m_roadTime2": 0.8597679337,
         "m_roadId": 79,
         "m_markerId": 790001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -5903,9 +5697,7 @@
         "m_roadTime2": 0.3269774069,
         "m_roadId": 80,
         "m_markerId": 800000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -5928,9 +5720,7 @@
         "m_roadTime2": 0.9569536523,
         "m_roadId": 80,
         "m_markerId": 800001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -5959,9 +5749,7 @@
         "m_roadTime2": 0.8648048416,
         "m_roadId": 81,
         "m_markerId": 810001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -5990,9 +5778,7 @@
         "m_roadTime2": 0.8882448419,
         "m_roadId": 82,
         "m_markerId": 820001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -6021,9 +5807,7 @@
         "m_roadTime2": 0.9057248423,
         "m_roadId": 83,
         "m_markerId": 830001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -6052,9 +5836,7 @@
         "m_roadTime2": 0.8653298416,
         "m_roadId": 84,
         "m_markerId": 840001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -6173,7 +5955,7 @@
       {
         "type": "ENTITY_TYPE_INTERSECTIONMARKER",
         "m_roadTime1": 0.063075,
-        "m_roadTime2": 0.9614309515,
+        "m_roadTime2": 0.9923434515,
         "m_roadId": 87,
         "m_markerId": 870000,
         "forward": [
@@ -6183,7 +5965,7 @@
               "alt": 265,
               "turnFilePath": "",
               "forward": false,
-              "exitTime": 0.9614309515,
+              "exitTime": 0.9923434514999911,
               "b": "0",
               "turnText": "",
               "d": false
@@ -6214,7 +5996,7 @@
       {
         "type": "ENTITY_TYPE_INTERSECTIONMARKER",
         "m_roadTime1": 0.0520000008,
-        "m_roadTime2": 0.9363799992,
+        "m_roadTime2": 0.9944599999,
         "m_roadId": 88,
         "m_markerId": 880000,
         "forward": [
@@ -6224,7 +6006,7 @@
               "alt": 265,
               "turnFilePath": "",
               "forward": false,
-              "exitTime": 0.9363799992,
+              "exitTime": 0.9944599999174428,
               "b": "0",
               "turnText": "",
               "d": false
@@ -6681,9 +6463,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -6706,9 +6486,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -6970,9 +6748,7 @@
         "m_roadTime2": 0.4380833082,
         "m_roadId": 114,
         "m_markerId": 1140000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -7033,9 +6809,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -7146,9 +6920,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -7171,9 +6943,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -7202,9 +6972,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -7233,9 +7001,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -7264,9 +7030,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -7295,9 +7059,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -7326,9 +7088,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -7363,9 +7123,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -7394,9 +7152,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -7419,9 +7175,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -7450,9 +7204,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -7481,9 +7233,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -7512,9 +7262,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -7543,9 +7291,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -7585,9 +7331,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -7596,9 +7340,7 @@
         "m_roadTime2": 0.805302429,
         "m_roadId": 128,
         "m_markerId": 1280002,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -7659,9 +7401,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -7670,9 +7410,7 @@
         "m_roadTime2": 0.04966271,
         "m_roadId": 128,
         "m_markerId": 1280001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -7738,9 +7476,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -7749,9 +7485,7 @@
         "m_roadTime2": 0.5085800406,
         "m_roadId": 129,
         "m_markerId": 1290001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -7812,9 +7546,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -7823,9 +7555,7 @@
         "m_roadTime2": 0.944547168,
         "m_roadId": 129,
         "m_markerId": 1290003,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -7868,9 +7598,7 @@
         "m_roadTime2": 0.8625906972,
         "m_roadId": 131,
         "m_markerId": 1310000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -7931,9 +7659,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -7942,9 +7668,7 @@
         "m_roadTime2": 0.3747188677,
         "m_roadId": 131,
         "m_markerId": 1310002,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -8005,9 +7729,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -8088,9 +7810,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -8099,9 +7819,7 @@
         "m_roadTime2": 0.1820192527,
         "m_roadId": 133,
         "m_markerId": 1330001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -8136,9 +7854,7 @@
         "m_roadTime2": 0.0479352281,
         "m_roadId": 133,
         "m_markerId": 1330002,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -8199,9 +7915,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -8241,9 +7955,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -8252,9 +7964,7 @@
         "m_roadTime2": 0.3067319406,
         "m_roadId": 134,
         "m_markerId": 1340003,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -8315,9 +8025,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -8326,9 +8034,7 @@
         "m_roadTime2": 0.1364934117,
         "m_roadId": 134,
         "m_markerId": 1340001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -8394,9 +8100,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -8405,9 +8109,7 @@
         "m_roadTime2": 0.3591165496,
         "m_roadId": 135,
         "m_markerId": 1350001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -8538,9 +8240,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -8549,9 +8249,7 @@
         "m_roadTime2": 0.2257446341,
         "m_roadId": 137,
         "m_markerId": 1370001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -9224,9 +8922,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -9255,9 +8951,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -9280,9 +8974,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -9311,9 +9003,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -9348,9 +9038,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -9379,9 +9067,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -9410,9 +9096,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -9441,9 +9125,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]

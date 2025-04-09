@@ -1132,7 +1132,61 @@
         "stub": "0"
       },
       {
-        "markerId": "70014",
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70000",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70001",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70003",
+        "turn": "0",
+        "forward": "1",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "London Uprising",
+    "id": "3250904331",
+    "decisions": [
+      {
+        "markerId": "70008",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70009",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70012",
+        "turn": "1",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70007",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "240000",
         "turn": "0",
         "forward": "1",
         "stub": "0"
@@ -1157,7 +1211,67 @@
       },
       {
         "markerId": "70003",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "90000",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "0",
         "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "80000",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70005",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70013",
+        "turn": "1",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70006",
+        "turn": "3",
+        "forward": "0",
+        "stub": "0"
+      },
+      {
+        "markerId": "70011",
+        "turn": "0",
+        "forward": "0",
+        "stub": "0"
+      }
+    ]
+  },
+  {
+    "name": "ZG25 Climb Champs",
+    "id": "938096831",
+    "decisions": [
+      {
+        "markerId": "70008",
+        "turn": "3",
+        "forward": "1",
+        "stub": "0"
+      },
+      {
+        "markerId": "70009",
+        "turn": "3",
         "forward": "1",
         "stub": "0"
       }

@@ -277,9 +277,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -288,9 +286,7 @@
         "m_roadTime2": 0.6209985557,
         "m_roadId": 3,
         "m_markerId": 30003,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -458,7 +454,7 @@
               "road": 4,
               "alt": 265,
               "turnFilePath": "",
-              "forward": true,
+              "forward": false,
               "exitTime": 1000000.0,
               "b": "0",
               "turnText": "",
@@ -666,9 +662,7 @@
         "m_roadTime2": 0.9076604724,
         "m_roadId": 4,
         "m_markerId": 40007,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -849,9 +843,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -1105,9 +1097,7 @@
         "m_roadTime2": 0.2922666614,
         "m_roadId": 5,
         "m_markerId": 50000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -1195,9 +1185,7 @@
         "m_roadTime2": 0.318707,
         "m_roadId": 6,
         "m_markerId": 60000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -1213,11 +1201,11 @@
           },
           {
             "option": {
-              "road": 4,
+              "road": 14,
               "alt": 262,
               "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_NY_Carriage.tga",
               "forward": false,
-              "exitTime": 0.006182560630849092,
+              "exitTime": 0.113492,
               "b": "0",
               "turnText": "Park Loop Reverse",
               "d": false
@@ -1258,9 +1246,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -1464,11 +1450,11 @@
         "reverse": [
           {
             "option": {
-              "road": 23,
+              "road": 4,
               "alt": 265,
               "turnFilePath": "",
               "forward": false,
-              "exitTime": 1000000.0,
+              "exitTime": 0.100000001,
               "b": "0",
               "turnText": "",
               "d": false
@@ -1626,9 +1612,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -1657,9 +1641,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -1688,9 +1670,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -1719,9 +1699,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -1744,9 +1722,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -1788,9 +1764,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -1813,9 +1787,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -2798,9 +2770,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -2809,9 +2779,7 @@
         "m_roadTime2": 0.3406815944,
         "m_roadId": 30,
         "m_markerId": 300016,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -4136,9 +4104,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -4161,9 +4127,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -4193,9 +4157,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -4224,9 +4186,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -4255,9 +4215,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -4286,9 +4244,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -4317,9 +4273,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -4333,9 +4287,7 @@
         "m_roadTime2": 0.231296298,
         "m_roadId": 208,
         "m_markerId": 2080000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -4396,9 +4348,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -4412,9 +4362,7 @@
         "m_roadTime2": 0.1029375,
         "m_roadId": 209,
         "m_markerId": 2090002,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {

@@ -110,9 +110,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -208,9 +206,7 @@
         "m_roadTime2": 0.847760009,
         "m_roadId": 7,
         "m_markerId": 70000,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -245,9 +241,7 @@
         "m_roadTime2": 0.3163241233,
         "m_roadId": 7,
         "m_markerId": 70001,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -308,9 +302,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -319,12 +311,8 @@
         "m_roadTime2": 0.8939227363,
         "m_roadId": 7,
         "m_markerId": 70003,
-        "forward": [
-          {}
-        ],
-        "reverse": [
-          {}
-        ],
+        "forward": [],
+        "reverse": [],
         "b": 0
       },
       {
@@ -359,9 +347,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -370,9 +356,7 @@
         "m_roadTime2": 0.901766,
         "m_roadId": 7,
         "m_markerId": 70005,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -433,9 +417,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -444,9 +426,7 @@
         "m_roadTime2": 0.2882,
         "m_roadId": 7,
         "m_markerId": 70007,
-        "forward": [
-          {}
-        ],
+        "forward": [],
         "reverse": [
           {
             "option": {
@@ -462,10 +442,10 @@
           },
           {
             "option": {
-              "road": 16,
+              "road": 7,
               "alt": 265,
               "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_Jesuitenkirche.tga",
-              "forward": true,
+              "forward": false,
               "exitTime": 0.25322980916778476,
               "b": "0",
               "turnText": "Reverse Innsbruck",
@@ -507,9 +487,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -538,9 +516,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -569,9 +545,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -600,9 +574,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -631,9 +603,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -663,9 +633,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
@@ -707,9 +675,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       },
       {
@@ -732,9 +698,7 @@
             }
           }
         ],
-        "reverse": [
-          {}
-        ],
+        "reverse": [],
         "b": 0
       }
     ]
