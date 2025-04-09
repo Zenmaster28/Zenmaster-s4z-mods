@@ -115,13 +115,13 @@ function createZwiftMap() {
         if (ev.drag) {
             const dragging = !!(ev.drag && (ev.drag[0] || ev.drag[1]));
             if (dragging && settings.autoCenter !== false) {
-                autoCenterBtn.classList.remove('primary');
-                autoCenterBtn.classList.add('outline');
+                //autoCenterBtn.classList.remove('primary');
+                //autoCenterBtn.classList.add('outline');
             }
         } else if (ev.heading) {
             if (autoHeadingBtn.classList.contains('primary')) {
-                autoHeadingBtn.classList.remove('primary');
-                autoHeadingBtn.classList.add('outline');
+                //autoHeadingBtn.classList.remove('primary');
+                //autoHeadingBtn.classList.add('outline');
             }
         }
     });
@@ -298,6 +298,7 @@ async function applySegment() {
     }
     if (segmentId != null) {        
         const segment = await zen.getSegmentPath(segmentId);
+        console.log(segment)
         let path;
         //debugger
         if (zwiftMap.overrideDistance > 0) {
