@@ -71,6 +71,7 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
         //routeFullData.curvePath.extend(routeFullData.curvePath.slice(lapStartIdx, routeFullData.curvePath.nodes.length - routeFullData.lapFiller.curvePath?.nodes?.length));
         routeFullData.curvePath.extend(routeFullData.curvePath.slice(lapStartIdx, routeFullData.curvePath.nodes.length - lapFillerCurvePathLength));
         //debugger
+        //console.log("Lap ", lap, "curvePath", routeFullData.curvePath)
         for (let i = lapStartIdx; i < routeFullData.distances.length; i++) {
             //need to get lapFiller distances, elevations and grades
             distances.push(distances.at(-1) +
@@ -3363,4 +3364,8 @@ export function isTeammate(athlete, teamMatches, watchingTeam, options = { parti
     } else {
         return false;
     }
+}
+
+export function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
