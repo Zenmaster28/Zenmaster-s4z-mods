@@ -1161,7 +1161,7 @@ async function getPenExitRoute(route) {
     }
     if (route.eventPaddocks) { // if no eventPaddocks, just use the route data from Zwift and forget the pens
         const routePaddocks = route.eventPaddocks.toString().split(",").map(Number)
-        const paddockRoads = routePaddocks.map(key => worldPaddocks.paddockRoads[key]);        
+        const paddockRoads = routePaddocks.map(key => worldPaddocks?.paddockRoads[key]);        
         const intersections = await fetch(`data/worlds/${route.worldId}/roadIntersections.json`).then(response => response.json());
         const allRoads = await common.getRoads(route.courseId)
         const iRoads = paddockRoads.map(r => intersections.find(x => x.id == r)).filter(x => x != undefined)
@@ -1173,6 +1173,9 @@ async function getPenExitRoute(route) {
         let startRoad;
         //let possiblePaths = [];
         startRoad = iRoads.filter(x => !x.paddockExitRoadTime)[0] || iRoads[0] // don't start with an exit road unless it's the only one, possible odd results.
+        if (!startRoad) {
+            return [];
+        }
         let exitPath = findShortestExitPath(startRoad.id, true, targetRoad.roadId, targetRoad.forward, intersections, allRoads, route)
         if (exitPath) {
             return exitPath;
