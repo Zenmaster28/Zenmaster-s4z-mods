@@ -1095,8 +1095,8 @@ async function getExitPathDistance(exitPath, route, worldMeta) {
         exitRoute.roadSegments.push(seg);
         exitRoute.curvePath.extend(x.reverse ? seg.toReversed() : seg);
     }
-
-    Object.assign(exitRoute, supplimentPath(worldMeta, exitRoute.curvePath));
+    const supPath = common.supplimentPath || supplimentPath;
+    Object.assign(exitRoute, supPath(worldMeta, exitRoute.curvePath));
     if (exitRoute.distances.length > 0) {
         return {
             exitDistance: exitRoute.distances.at(-1),
@@ -1119,7 +1119,8 @@ async function measureRoadLength(manifestEntry, courseId) {
     tempCurvepath.extend(seg)
     const worldList = await common.getWorldList();
     const worldMeta = worldList.find(x => x.courseId === courseId);
-    const manifestData = supplimentPath(worldMeta, seg)
+    const supPath = common.supplimentPath || supplimentPath;
+    const manifestData = supPath(worldMeta, seg);
     return manifestData.distances.at(-1);
 }
 
@@ -1369,8 +1370,8 @@ export async function getModifiedRoute(id, disablePenRouting) {
                     route.roadSegments.push(seg);
                     route.curvePath.extend(x.reverse ? seg.toReversed() : seg);
                 }
-                Object.assign(route, supplimentPath(worldMeta, route.curvePath));
-                //debugger
+                const supPath = common.supplimentPath || supplimentPath;
+                Object.assign(route, supPath(worldMeta, route.curvePath));
             }
                        
             return route;
@@ -1432,7 +1433,8 @@ export async function getSegmentPath(id) {
             // But I've not seen portal roads used in a route either.
             //debugger
         }
-        Object.assign(segment, supplimentPath(worldMeta, segment.curvePath));        
+        const supPath = common.supplimentPath || supplimentPath;
+        Object.assign(segment, supPath(worldMeta, segment.curvePath));
     }
     return segment;
 }
@@ -2328,7 +2330,8 @@ export async function validateManifest(route) {
                 route.lapFiller.roadSegments.push(seg);
                 route.lapFiller.curvePath.extend(x.reverse ? seg.toReversed() : seg);
             }
-            Object.assign(route.lapFiller, supplimentPath(worldMeta, route.lapFiller.curvePath));
+            const supPath = common.supplimentPath || supplimentPath;
+            Object.assign(route.lapFiller, supPath(worldMeta, route.lapFiller.curvePath));
         }
         route.lapFiller.manifest = lapFiller;
         
@@ -3200,7 +3203,8 @@ export async function findPathFromAtoB(startPoint, endPoint, intersections, allR
     tempCurvepath.extend(seg)
     const worldList = await common.getWorldList();
     const worldMeta = worldList.find(x => x.courseId === courseId);
-    const manifestData = supplimentPath(worldMeta, seg)
+    const supPath = common.supplimentPath || supplimentPath;
+    const manifestData = supPath(worldMeta, seg);
     return manifestData.distances.at(-1);
 }
 
