@@ -404,7 +404,7 @@ async function getAllSegmentResults(watching, currentEventConfig) {
         segmentData = currentEventConfig.segments;
     }
     let eventRacers = allKnownRacers.filter(x => x.eventSubgroupId === eventSubgroupId).map(x => x.athleteId); // make sure we only get racers from this eventsubgroup    
-    console.log("Known racer count: ", eventRacers.length, "Event participants:", watching.eventParticipants, "racersStatus:", allKnownRacersStatus.size)
+    //console.log("Known racer count: ", eventRacers.length, "Event participants:", watching.eventParticipants, "racersStatus:", allKnownRacersStatus.size)
     //console.log(allKnownRacersStatus)
     let sg = await common.rpc.getEventSubgroup(eventSubgroupId)    
     let eventStartTime;
@@ -531,9 +531,35 @@ async function scoreResults(eventResults, currentEventConfig) {
     //let scoreFormat = settings.FTSorFAL;
     let scoreFormats = ["FTS"];
     let segmentRepeat;
+    let uniqueSegmentIds;
+    let perEventResults = [];
     //console.log("Event config", currentEventConfig)
+    //console.log(eventResults)
+    if (currentEventConfig.ftsPerEvent) {
+        uniqueSegmentIds = getUniqueValues(currentEventConfig.segments, "segmentId")
+        for (let segment of uniqueSegmentIds) {
+            //console.log(segment, eventResults)
+            const thisSegmentResults = eventResults.filter(x => x.segmentId == segment)
+            if (thisSegmentResults.length > 0) {
+                const ftsResults = thisSegmentResults.flatMap(x => x.fts);
+                ftsResults.sort((a,b) => a.elapsed - b.elapsed);
+                perEventResults.push({
+                    name: thisSegmentResults[0].name,
+                    repeat: 1,
+                    segmentId: thisSegmentResults[0].segmentId,
+                    fts: ftsResults
+                })
+            }
+        }
+        console.log("Per event results", perEventResults)
+    }
     //debugger
     for (let segRes of eventResults) {
+        //debugger
+        let segResPerEvent = [];
+        if (currentEventConfig.ftsPerEvent) {
+            segResPerEvent = perEventResults.find(x => x.segmentId == segRes.segmentId);
+        }
         if (currentEventConfig) {
             segmentRepeat = currentEventConfig.segments.find(x => x.segmentId == segRes.segmentId && x.repeat == segRes.repeat)
             //debugger
@@ -551,7 +577,11 @@ async function scoreResults(eventResults, currentEventConfig) {
                 let bonusScores = [];
                 if (scoreFormat == "fts") {
                     if (settings.femaleOnly) {
-                        segRes.fts = segRes.fts.filter(x => x.gender == "female")
+                        if (currentEventConfig.ftsPerEvent) {
+                            perEventResults.fts = perEventResults.fts.filter(x => x.gender == "female");
+                        } else {
+                            segRes.fts = segRes.fts.filter(x => x.gender == "female")
+                        }
                     }
                     scores = currentEventConfig.ftsScoreFormat;
                     scoreStep = currentEventConfig.ftsStep;
@@ -576,48 +606,90 @@ async function scoreResults(eventResults, currentEventConfig) {
                 
                 //debugger
                 //console.log("Scoring ", pointsCounter, "racers as", scorePoints)
-                for (let i = 0; i < pointsCounter; i++) {                    
-                    if (segRes[scoreFormat].length > 0 && segRes[scoreFormat][i]) {
-                    let prevScore = racerScores.find(x => x.athleteId == segRes[scoreFormat][i].athleteId)
+                for (let i = 0; i < pointsCounter; i++) {  
+                    if (currentEventConfig.ftsPerEvent && scoreFormat == "fts") {
+                        if (segRes.repeat == 1) {
+                            //console.log("segRes", segRes, "segResPerEvent", segResPerEvent)
+                            if (segResPerEvent[scoreFormat].length > 0 && segResPerEvent[scoreFormat][i]) {
+                                let prevScore = racerScores.find(x => x.athleteId == segResPerEvent[scoreFormat][i].athleteId)
 
-                    if (!prevScore) {
-                        //debugger
-                        let scoreToAdd = scorePoints[i]
-                        if (i < bonusScores.length) {
-                            //console.log("Adding", bonusScores[i], "bonus", scoreFormat, "points to",segRes[scoreFormat][i].firstName, " ", segRes[scoreFormat][i].lastName )
-                            scoreToAdd += bonusScores[i];
+                                if (!prevScore) {
+                                    //debugger
+                                    let scoreToAdd = scorePoints[i]
+                                    if (i < bonusScores.length) {
+                                        //console.log("Adding", bonusScores[i], "bonus", scoreFormat, "points to",segRes[scoreFormat][i].firstName, " ", segRes[scoreFormat][i].lastName )
+                                        scoreToAdd += bonusScores[i];
+                                    }
+                                    let score = {
+                                        athleteId: segResPerEvent[scoreFormat][i].athleteId,
+                                        name: segResPerEvent[scoreFormat][i].firstName + " " + segResPerEvent[scoreFormat][i].lastName,
+                                        ftsPointTotal: scoreToAdd,
+                                        falPointTotal: 0
+                                    } 
+                                    score.pointTotal = score.ftsPointTotal + score.falPointTotal;
+                                    if (score.pointTotal > 0) {
+                                        racerScores.push(score);
+                                    }
+                                } else {
+                                    let scoreToAdd = scorePoints[i]
+                                    if (i < bonusScores.length) {
+                                        //console.log("Adding", bonusScores[i], "bonus", scoreFormat, "points to",segRes[scoreFormat][i].firstName, " ", segRes[scoreFormat][i].lastName )
+                                        scoreToAdd += bonusScores[i];
+                                    }
+                                    if (scoreFormat == "fts") {
+                                        prevScore.ftsPointTotal += scoreToAdd;
+                                        prevScore.pointTotal = prevScore.ftsPointTotal + prevScore.falPointTotal;
+                                    } else {
+                                        prevScore.falPointTotal += scoreToAdd;
+                                        prevScore.pointTotal = prevScore.ftsPointTotal + prevScore.falPointTotal;
+                                    }
+                                }
+                                //points--;
+                            }
                         }
-                        let score = scoreFormat == "fts" ? {
-                            athleteId: segRes[scoreFormat][i].athleteId,
-                            name: segRes[scoreFormat][i].firstName + " " + segRes[scoreFormat][i].lastName,
-                            ftsPointTotal: scoreToAdd,
-                            falPointTotal: 0
-                        } : {
-                            athleteId: segRes[scoreFormat][i].athleteId,
-                            name: segRes[scoreFormat][i].firstName + " " + segRes[scoreFormat][i].lastName,
-                            ftsPointTotal: 0,
-                            falPointTotal: scoreToAdd
-                        }
-                        score.pointTotal = score.ftsPointTotal + score.falPointTotal;
-                        if (score.pointTotal > 0) {
-                            racerScores.push(score);
-                        }
-                    } else {
-                        let scoreToAdd = scorePoints[i]
-                        if (i < bonusScores.length) {
-                            //console.log("Adding", bonusScores[i], "bonus", scoreFormat, "points to",segRes[scoreFormat][i].firstName, " ", segRes[scoreFormat][i].lastName )
-                            scoreToAdd += bonusScores[i];
-                        }
-                        if (scoreFormat == "fts") {
-                            prevScore.ftsPointTotal += scoreToAdd;
-                            prevScore.pointTotal = prevScore.ftsPointTotal + prevScore.falPointTotal;
-                        } else {
-                            prevScore.falPointTotal += scoreToAdd;
-                            prevScore.pointTotal = prevScore.ftsPointTotal + prevScore.falPointTotal;
+                    } else {                 
+                        if (segRes[scoreFormat].length > 0 && segRes[scoreFormat][i]) {
+                            let prevScore = racerScores.find(x => x.athleteId == segRes[scoreFormat][i].athleteId)
+
+                            if (!prevScore) {
+                                //debugger
+                                let scoreToAdd = scorePoints[i]
+                                if (i < bonusScores.length) {
+                                    //console.log("Adding", bonusScores[i], "bonus", scoreFormat, "points to",segRes[scoreFormat][i].firstName, " ", segRes[scoreFormat][i].lastName )
+                                    scoreToAdd += bonusScores[i];
+                                }
+                                let score = scoreFormat == "fts" ? {
+                                    athleteId: segRes[scoreFormat][i].athleteId,
+                                    name: segRes[scoreFormat][i].firstName + " " + segRes[scoreFormat][i].lastName,
+                                    ftsPointTotal: scoreToAdd,
+                                    falPointTotal: 0
+                                } : {
+                                    athleteId: segRes[scoreFormat][i].athleteId,
+                                    name: segRes[scoreFormat][i].firstName + " " + segRes[scoreFormat][i].lastName,
+                                    ftsPointTotal: 0,
+                                    falPointTotal: scoreToAdd
+                                }
+                                score.pointTotal = score.ftsPointTotal + score.falPointTotal;
+                                if (score.pointTotal > 0) {
+                                    racerScores.push(score);
+                                }
+                            } else {
+                                let scoreToAdd = scorePoints[i]
+                                if (i < bonusScores.length) {
+                                    //console.log("Adding", bonusScores[i], "bonus", scoreFormat, "points to",segRes[scoreFormat][i].firstName, " ", segRes[scoreFormat][i].lastName )
+                                    scoreToAdd += bonusScores[i];
+                                }
+                                if (scoreFormat == "fts") {
+                                    prevScore.ftsPointTotal += scoreToAdd;
+                                    prevScore.pointTotal = prevScore.ftsPointTotal + prevScore.falPointTotal;
+                                } else {
+                                    prevScore.falPointTotal += scoreToAdd;
+                                    prevScore.pointTotal = prevScore.ftsPointTotal + prevScore.falPointTotal;
+                                }
+                            }
+                            //points--;
                         }
                     }
-                    //points--;
-                }
                 }
             }
         }
@@ -955,7 +1027,8 @@ async function getLeaderboard(watching) {
             let eventResults = await processResults(watching, dbResults, currentEventConfig);
             //console.log("event segment results",eventResults)
             const lastSegmentWithResults = [eventResults.filter(x => x.fal.length > 0 || x.fts.length > 0).at(-1)] 
-            const lastSegmentName = lastSegmentWithResults?.length > 0 ? lastSegmentWithResults[0].name : "";           
+            //console.log("lastSegmentWithResults", lastSegmentWithResults)
+            const lastSegmentName = lastSegmentWithResults[0] ? lastSegmentWithResults[0].name : "";           
             //console.log("segmentsWithResults", segmentsWithResults)
             let racerScores = await scoreResults(eventResults, currentEventConfig);
             racerScores.sort((a, b) => {

@@ -22,6 +22,7 @@ scoreFormatDiv.innerHTML += `
         <option value="5">-5</option>
     </select>
     <input disabled type="text" id="ftsBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">        
+    <span title="Score FTS once per segment for the whole event">FTS per event/ZRL style </span><input type="checkbox" id="ftsPerEvent" title="Score FTS once per segment for the whole event">
     <br>
     <span class="scoreLabel">FAL:</span> 
     <input disabled type="text" id="falScoreFormat" size="18" title="Examples are 10..1 which would score 10 for 1st, 9 for 2nd etc.  Comma separated values such as 15,11,9 would score as 15 for 1st, 11 for 2nd, 9 for 3rd.  Formats can be combined like 20,15,10,7..1" placeholder="Select event first">
@@ -148,6 +149,7 @@ const teamMatesDiv = document.getElementById("teamMates");
 const nonTeammatesDiv = document.getElementById("nonTeammates");
 const teamNamesSetting = document.getElementById("teamNames");
 const highlightTeammateSetting = document.getElementById("highlightTeammate");
+const ftsPerEvent = document.getElementById("ftsPerEvent");
 let allCats = false;
 
 async function loadSavedScoreFormats(action) {    
@@ -352,6 +354,7 @@ eventsSelect.addEventListener('change', async function() {
                     const sampleScoring = document.getElementById('sampleScoring');
                     sampleScoring.innerHTML = "Sample Scoring";
                     sampleScoring.innerHTML = showSampleScoring(currentEventConfig);
+                    ftsPerEvent.checked = currentEventConfig.ftsPerEvent;
                 } else {
                     ftsScoreFormatDiv.value = "";    
                     falScoreFormatDiv.value = "";
@@ -364,6 +367,7 @@ eventsSelect.addEventListener('change', async function() {
                     finStepDiv.value = 1;
                     const sampleScoring = document.getElementById('sampleScoring');
                     sampleScoring.innerHTML = "Sample Scoring";
+                    ftsPerEvent.checked = false;
                 }                            
                 ftsScoreFormatDiv.disabled = false;
                 ftsScoreFormatDiv.placeholder = "";                            
@@ -410,6 +414,7 @@ eventsSelect.addEventListener('change', async function() {
                 finBonusDiv.addEventListener('change', saveConfig);
                 const segTable = document.getElementById('segmentsTable')
                 segTable.addEventListener('change', saveConfig);
+                ftsPerEvent.addEventListener('change', saveConfig);
             }    
             const settings = common.settingsStore.get();
             if (settings.highlightTeammate && settings.teamNames != "") {
@@ -579,7 +584,8 @@ function saveConfig() {
                 segments: segData,
                 ts: sgStartTime,
                 allCats: allCats,
-                eventSubgroupIds: penValues
+                eventSubgroupIds: penValues,
+                ftsPerEvent: document.getElementById('ftsPerEvent').checked
             }
             const transaction = dbSegmentConfig.transaction("segmentConfig", "readwrite");
             const store = transaction.objectStore("segmentConfig")
