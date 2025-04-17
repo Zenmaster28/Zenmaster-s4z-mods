@@ -1027,8 +1027,8 @@ async function getLeaderboard(watching) {
             let eventResults = await processResults(watching, dbResults, currentEventConfig);
             //console.log("event segment results",eventResults)
             const lastSegmentWithResults = [eventResults.filter(x => x.fal.length > 0 || x.fts.length > 0).at(-1)] 
-            //console.log("lastSegmentWithResults", lastSegmentWithResults)
-            const lastSegmentName = lastSegmentWithResults[0] ? lastSegmentWithResults[0].name : "";           
+            console.log("lastSegmentWithResults", lastSegmentWithResults)
+            const lastSegmentName = lastSegmentWithResults[0] ? `${lastSegmentWithResults[0].name} [${lastSegmentWithResults[0].repeat}]` : "";           
             //console.log("segmentsWithResults", segmentsWithResults)
             let racerScores = await scoreResults(eventResults, currentEventConfig);
             racerScores.sort((a, b) => {
