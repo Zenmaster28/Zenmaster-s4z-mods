@@ -204,6 +204,7 @@ savedFormatsSelect.addEventListener("change", function() {
     formatName.value = selectedformatName.name;
     buttonSaveFormat.title = `Save '${formatName.value}'`
     buttonDeleteFormat.title = `Delete '${formatName.value}'`
+    ftsPerEvent.checked = selectedformatName.ftsPerEvent;
     saveConfig();
 });
 buttonSaveFormat.addEventListener("click", function() {
