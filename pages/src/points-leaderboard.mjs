@@ -73,7 +73,9 @@ common.settingsStore.setDefault({
     badgeScale: 0.7,
     femaleOnly: false,
     lineSpacing: 1.2,
-    showTeamScore: false
+    showTeamScore: false,
+    solidBackground: false,
+    backgroundColor: '#00ff00',
 });
 /*
 common.settingsStore.addEventListener('changed', ev => {
@@ -88,6 +90,7 @@ if (settings.preview) {
     common.settingsStore.set("preview", false);
 }
 changelineSpacing();
+setBackground();
 if (settings.transparentNoData) {document.body.classList = "transparent-bg"};
 
 function getUniqueValues(arr, property) {
@@ -1027,6 +1030,9 @@ export async function main() {
         }
         if (changed.has('rotateInterval')) {
             rotateTableInterval =  changed.get('rotateInterval') * 1000;
+        }
+        if (changed.has('solidBackground') || changed.has('backgroundColor')) {            
+            setBackground();
         }
         settings = common.settingsStore.get();
     });

@@ -203,6 +203,15 @@
                         <key>Theme override:</key>
                         <select is="sauce-theme" override></select>
                     </label>
+                    <label title="Mostly useful for streamers using OBS window and browser sources">
+                        <key>Solid background:</key>
+                        <input type="checkbox" name="solidBackground"/>
+                    </label>
+                    <label>
+                        <key>Background color:</key>
+                        <input type="color" name="backgroundColor" data-depends-on="solidBackground"/>
+                        <input type="text" name="backgroundColor" data-depends-on="solidBackground" size="7"/>
+                    </label>
                     <label>
                         <key>Font scaling:</key>
                         <input type="range" name="fontScale" min="0.1" max="2" step="0.05"/>
