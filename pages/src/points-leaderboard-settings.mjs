@@ -219,7 +219,8 @@ buttonSaveFormat.addEventListener("click", function() {
             falBonus: falBonusDiv.value,
             fin: finScoreFormatDiv.value,
             finStep: finStepDiv.value,
-            finBonus: finBonusDiv.value
+            finBonus: finBonusDiv.value,
+            ftsPerEvent: ftsPerEvent.checked
         };
         console.log("newFormat",newFormat);
         const transaction = dbSegmentConfig.transaction("scoringConfig", "readwrite");
