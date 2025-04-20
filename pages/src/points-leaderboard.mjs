@@ -24,6 +24,7 @@ let lastSegmentTS = Date.now() - 2000000;
 let lastRotationTS = Date.now() - 2000000;
 let busyVerifying = false;
 let lastVerification = Date.now() - 2000000;
+let ftsScoringResults = [];
 const doc = document.documentElement;
 doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  
 let allPointsTableVisible = true;
@@ -522,7 +523,7 @@ async function processResults(watching, dbResults, currentEventConfig) {
     return eventResults;    
 }
 
-async function scoreResults(eventResults, currentEventConfig) {
+async function scoreResults(eventResults, currentEventConfig, lastSegment=false) {
     if (!currentEventConfig) {
         return [];
     }
@@ -535,6 +536,11 @@ async function scoreResults(eventResults, currentEventConfig) {
     let perEventResults = [];
     //console.log("Event config", currentEventConfig)
     //console.log(eventResults)
+    if (!lastSegment) {
+        ftsScoringResults.length = 0;
+    } else {
+        console.log("ftsScoringResults", ftsScoringResults);
+    }
     if (currentEventConfig.ftsPerEvent) {
         uniqueSegmentIds = getUniqueValues(currentEventConfig.segments, "segmentId")
         for (let segment of uniqueSegmentIds) {
@@ -607,15 +613,15 @@ async function scoreResults(eventResults, currentEventConfig) {
                 //debugger
                 //console.log("Scoring ", pointsCounter, "racers as", scorePoints)
                 for (let i = 0; i < pointsCounter; i++) {  
-                    if (currentEventConfig.ftsPerEvent && scoreFormat == "fts") {
+                    if (currentEventConfig.ftsPerEvent && scoreFormat == "fts") {                        
                         if (segRes.repeat == 1) {
                             //console.log("segRes", segRes, "segResPerEvent", segResPerEvent)
                             if (segResPerEvent[scoreFormat].length > 0 && segResPerEvent[scoreFormat][i]) {
                                 let prevScore = racerScores.find(x => x.athleteId == segResPerEvent[scoreFormat][i].athleteId)
-
+                                let scoreToAdd;
                                 if (!prevScore) {
                                     //debugger
-                                    let scoreToAdd = scorePoints[i]
+                                    scoreToAdd = scorePoints[i]
                                     if (i < bonusScores.length) {
                                         //console.log("Adding", bonusScores[i], "bonus", scoreFormat, "points to",segRes[scoreFormat][i].firstName, " ", segRes[scoreFormat][i].lastName )
                                         scoreToAdd += bonusScores[i];
@@ -631,7 +637,7 @@ async function scoreResults(eventResults, currentEventConfig) {
                                         racerScores.push(score);
                                     }
                                 } else {
-                                    let scoreToAdd = scorePoints[i]
+                                    scoreToAdd = scorePoints[i]
                                     if (i < bonusScores.length) {
                                         //console.log("Adding", bonusScores[i], "bonus", scoreFormat, "points to",segRes[scoreFormat][i].firstName, " ", segRes[scoreFormat][i].lastName )
                                         scoreToAdd += bonusScores[i];
@@ -644,16 +650,65 @@ async function scoreResults(eventResults, currentEventConfig) {
                                         prevScore.pointTotal = prevScore.ftsPointTotal + prevScore.falPointTotal;
                                     }
                                 }
+                                if (scoreFormat == "fts") {
+                                    let ftsScore = segResPerEvent.fts[i];
+                                    if (ftsScore) {
+                                        ftsScore.ftsPoints = scoreToAdd;
+                                        ftsScoringResults.push(ftsScore);
+                                    }
+                                    //console.log("ftsScoringResults", ftsScoringResults);
+                                }
+                                //points--;
+                            }
+                        } else if (lastSegment) {
+                            //TODO - check if scores from this segment match the scoring fts results
+                            //debugger
+                            const checkScoreId = ftsScoringResults.find(x => x.id == segResPerEvent.fts[i]?.id);
+                            if (checkScoreId && segResPerEvent[scoreFormat].length > 0 && segResPerEvent[scoreFormat][i]) {
+                                console.log("Found a scoring FTS result", checkScoreId);
+                                let prevScore = racerScores.find(x => x.athleteId == segResPerEvent[scoreFormat][i].athleteId)
+                                let scoreToAdd;
+                                if (!prevScore) {
+                                    //debugger
+                                    scoreToAdd = checkScoreId.ftsPoints;
+                                    if (i < bonusScores.length) {
+                                        //console.log("Adding", bonusScores[i], "bonus", scoreFormat, "points to",segRes[scoreFormat][i].firstName, " ", segRes[scoreFormat][i].lastName )
+                                        scoreToAdd += bonusScores[i];
+                                    }
+                                    let score = {
+                                        athleteId: segResPerEvent[scoreFormat][i].athleteId,
+                                        name: segResPerEvent[scoreFormat][i].firstName + " " + segResPerEvent[scoreFormat][i].lastName,
+                                        ftsPointTotal: scoreToAdd,
+                                        falPointTotal: 0
+                                    } 
+                                    score.pointTotal = score.ftsPointTotal + score.falPointTotal;
+                                    if (score.pointTotal > 0) {
+                                        racerScores.push(score);
+                                    }
+                                } else {
+                                    scoreToAdd = checkScoreId.ftsPoints;
+                                    if (i < bonusScores.length) {
+                                        //console.log("Adding", bonusScores[i], "bonus", scoreFormat, "points to",segRes[scoreFormat][i].firstName, " ", segRes[scoreFormat][i].lastName )
+                                        scoreToAdd += bonusScores[i];
+                                    }
+                                    if (scoreFormat == "fts") {
+                                        prevScore.ftsPointTotal += scoreToAdd;
+                                        prevScore.pointTotal = prevScore.ftsPointTotal + prevScore.falPointTotal;
+                                    } else {
+                                        prevScore.falPointTotal += scoreToAdd;
+                                        prevScore.pointTotal = prevScore.ftsPointTotal + prevScore.falPointTotal;
+                                    }
+                                }                                
                                 //points--;
                             }
                         }
                     } else {                 
                         if (segRes[scoreFormat].length > 0 && segRes[scoreFormat][i]) {
                             let prevScore = racerScores.find(x => x.athleteId == segRes[scoreFormat][i].athleteId)
-
+                            let scoreToAdd;
                             if (!prevScore) {
                                 //debugger
-                                let scoreToAdd = scorePoints[i]
+                                scoreToAdd = scorePoints[i]
                                 if (i < bonusScores.length) {
                                     //console.log("Adding", bonusScores[i], "bonus", scoreFormat, "points to",segRes[scoreFormat][i].firstName, " ", segRes[scoreFormat][i].lastName )
                                     scoreToAdd += bonusScores[i];
@@ -674,7 +729,7 @@ async function scoreResults(eventResults, currentEventConfig) {
                                     racerScores.push(score);
                                 }
                             } else {
-                                let scoreToAdd = scorePoints[i]
+                                scoreToAdd = scorePoints[i]
                                 if (i < bonusScores.length) {
                                     //console.log("Adding", bonusScores[i], "bonus", scoreFormat, "points to",segRes[scoreFormat][i].firstName, " ", segRes[scoreFormat][i].lastName )
                                     scoreToAdd += bonusScores[i];
@@ -686,7 +741,7 @@ async function scoreResults(eventResults, currentEventConfig) {
                                     prevScore.falPointTotal += scoreToAdd;
                                     prevScore.pointTotal = prevScore.ftsPointTotal + prevScore.falPointTotal;
                                 }
-                            }
+                            }                            
                             //points--;
                         }
                     }
@@ -1030,11 +1085,12 @@ async function getLeaderboard(watching) {
             console.log("lastSegmentWithResults", lastSegmentWithResults)
             const lastSegmentName = lastSegmentWithResults[0] ? `${lastSegmentWithResults[0].name} [${lastSegmentWithResults[0].repeat}]` : "";           
             //console.log("segmentsWithResults", segmentsWithResults)
-            let racerScores = await scoreResults(eventResults, currentEventConfig);
+            let racerScores = await scoreResults(eventResults, currentEventConfig, false);
             racerScores.sort((a, b) => {
                 return b.pointTotal - a.pointTotal;
             });
-            let lastSegmentScores = await scoreResults(lastSegmentWithResults, currentEventConfig);
+            let lastSegmentScores = await scoreResults(lastSegmentWithResults, currentEventConfig, true);
+            console.log("lastSegmentScores", lastSegmentScores)
             lastSegmentScores.forEach(score => {
                 score.finPoints = 0; // don't include FIN points for the last segment display
                 score.pointTotal = score.ftsPointTotal + score.falPointTotal;
