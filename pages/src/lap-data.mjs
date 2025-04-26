@@ -44,7 +44,8 @@ common.settingsStore.setDefault({
     fields: 2,
     autoLapPower: false,
     autoLapPowerThreshold: 200,
-    autoLapPowerDuration: 1500
+    autoLapPowerDuration: 1500,
+    autoLapOverride: false
 });
 
 common.settingsStore.addEventListener('changed', ev => {
@@ -66,6 +67,7 @@ lapHotkey = settings.lapHotkey;
 setHotkey = settings.setHotkey;
 rideonBombAction = settings.rideonBombAction;
 steeringAction = settings.steeringAction;
+autoLapOverride = settings.autoLapOverride || false;
 
 function formatTime(seconds) {
     const hours = Math.floor(seconds / 3600);
@@ -260,10 +262,12 @@ export async function main() {
     }
     autoLapStatusDiv.addEventListener("click", function() {
         autoLapOverride = !autoLapOverride;
+        common.settingsStore.set("autoLapOverride", autoLapOverride);
     })
     window.addEventListener('keydown', function(event) {
         if (event.key === 'a') {
             autoLapOverride = !autoLapOverride;
+            common.settingsStore.set("autoLapOverride", autoLapOverride);
         }
     });
     common.subscribe('athlete/watching', watching => {
