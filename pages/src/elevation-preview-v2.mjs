@@ -306,7 +306,8 @@ async function applyRoute() {
         _routeHighlights.pop().elements.forEach(x => x.remove());
     }
     routeSelect.replaceChildren();
-    if (courseId != 999) {
+    const isPortal = courseId == 999 ? true : false;
+    if (!isPortal) {
         routeSelect.insertAdjacentHTML('beforeend', `<option value disabled selected>Routes (${routesList.filter(x => x.courseId == courseId).length})</option>`);  
     } else {
         routeSelect.insertAdjacentHTML('beforeend', `<option value disabled selected>Climbs (${portalClimbs.length})</option>`);  
@@ -322,7 +323,8 @@ async function applyRoute() {
                     (${common.stripHTML(((x.distanceInMeters + (x.leadinDistanceInMeters ?? 0)) / 1000).toFixed(1))}km / 
                     ${common.stripHTML((x.ascentInMeters + (x.leadinAscentInMeters ?? 0)).toFixed(0))}m)</option>`);
     }
-    if (courseId == 999) {
+    
+    if (isPortal) {
         portalClimbs.sort((a, b) => a.portalName > b.portalName)
         for (let portal of portalClimbs) {
             routeSelect.insertAdjacentHTML('beforeend', `<option ${portal.id === routeId ? 'selected' : ''} 
@@ -331,7 +333,7 @@ async function applyRoute() {
     }
     if (routeId != null) { 
         //const route = await zen.getModifiedRoute(routeId, elProfile.disablePenRouting);
-        const isPortal = courseId == 999 ? true : false;
+        
         if (elProfile && !isPortal) {
             if (settings.overrideDistance > 0 || settings.overrideLaps > 0) {
                 await elProfile.setRoute(+routeId, {laps: settings.overrideLaps, eventSubgroupId: -1, distance: settings.overrideDistance})                
@@ -379,7 +381,7 @@ async function applyRoute() {
         } else {            
             lapsSelect.disabled = true;
         }
-        if (courseId == 999) {
+        if (isPortal) {
             lapsSelect.disabled = true;
             distanceSelect.disabled = true;
         } else {
@@ -413,14 +415,15 @@ async function applyCourse() {
                     value="${x.courseId}">${common.stripHTML(x.name)}</option>`);
     }
     portalClimbs = await common.getRoads("portal");
+    const isPortal = courseId == 999 ? true : false;
     if (portalClimbs[0].portalName) {
-        courseSelect.insertAdjacentHTML('beforeend', `<option value="999" ${courseId === 999 ? 'selected' : ''}>Portal Climbs</option>`);
+        courseSelect.insertAdjacentHTML('beforeend', `<option value="999" ${isPortal ? 'selected' : ''}>Portal Climbs</option>`);
     }
     if (courseId != null) {
         const mapBackground = document.querySelector('.map-background');
         const surfacesLow = document.querySelector(".surfaces.low");
         const gutters = document.querySelector(".gutters");
-        if (courseId != 999) {
+        if (!isPortal) {
             await zwiftMap.setCourse(courseId);
             mapBackground.style.visibility = "";
             surfacesLow.style.visibility = "";
