@@ -49,6 +49,7 @@ const demoState = {};
 
 let worldList;
 let routesList;
+let portalClimbs = [];
 let watchdog;
 let inGame;
 let zwiftMap;
@@ -305,7 +306,11 @@ async function applyRoute() {
         _routeHighlights.pop().elements.forEach(x => x.remove());
     }
     routeSelect.replaceChildren();
-    routeSelect.insertAdjacentHTML('beforeend', `<option value disabled selected>Routes (${routesList.filter(x => x.courseId == courseId).length})</option>`);  
+    if (courseId != 999) {
+        routeSelect.insertAdjacentHTML('beforeend', `<option value disabled selected>Routes (${routesList.filter(x => x.courseId == courseId).length})</option>`);  
+    } else {
+        routeSelect.insertAdjacentHTML('beforeend', `<option value disabled selected>Climbs (${portalClimbs.length})</option>`);  
+    }
     //console.log(routesList)  
     for (const x of routesList) {
         if (x.courseId !== courseId) {
@@ -317,22 +322,37 @@ async function applyRoute() {
                     (${common.stripHTML(((x.distanceInMeters + (x.leadinDistanceInMeters ?? 0)) / 1000).toFixed(1))}km / 
                     ${common.stripHTML((x.ascentInMeters + (x.leadinAscentInMeters ?? 0)).toFixed(0))}m)</option>`);
     }
+    if (courseId == 999) {
+        portalClimbs.sort((a, b) => a.portalName > b.portalName)
+        for (let portal of portalClimbs) {
+            routeSelect.insertAdjacentHTML('beforeend', `<option ${portal.id === routeId ? 'selected' : ''} 
+                value="${portal.id}"> ${portal.portalName}</option>`);
+        }
+    }
     if (routeId != null) { 
         //const route = await zen.getModifiedRoute(routeId, elProfile.disablePenRouting);
-        if (elProfile) {
-            //await elProfile.setRoute(routeId);
+        const isPortal = courseId == 999 ? true : false;
+        if (elProfile && !isPortal) {
             if (settings.overrideDistance > 0 || settings.overrideLaps > 0) {
-                //console.log("overridedistance: " + settings.overrideDistance + " overridelaps: " + settings.overrideLaps)
                 await elProfile.setRoute(+routeId, {laps: settings.overrideLaps, eventSubgroupId: -1, distance: settings.overrideDistance})                
             } else {
                 await elProfile.setRoute(+routeId, {eventSubgroupId: -1});
             }
+        } else if (isPortal) {
+            const portalRoad = await common.getRoad('portal', routeId);
+            await elProfile.setSegment(portalRoad);
+            distanceSelect.value = parseInt(portalRoad.distances.at(-1));
         }
         let path;
         const distance = parseInt(distanceSelect.value) || 0
         //const fullRoute = await zen.processRoute(courseId, routeId, 1, distance, elProfile.showLoopSegments, elProfile.showAllArches, elProfile.disablePenRouting)
         //const route = fullRoute.routeFullData
-        const route = elProfile.route
+        let route;
+        if (!isPortal) {
+            route = elProfile.route
+        } else {
+            route = await common.getRoad('portal', routeId);
+        }
         //debugger
         if (zwiftMap.overrideDistance > 0) {
             let idx = common.binarySearchClosest(route.distances, zwiftMap.overrideDistance)
@@ -359,10 +379,18 @@ async function applyRoute() {
         } else {            
             lapsSelect.disabled = true;
         }
+        if (courseId == 999) {
+            lapsSelect.disabled = true;
+            distanceSelect.disabled = true;
+        } else {
+            distanceSelect.disabled = false;
+        }
     } else {
         zwiftMap.setVerticalOffset(0);
         zwiftMap.setDragOffset([0, 0]);
         zwiftMap.setZoom(0.3);
+        lapsSelect.disabled = false;
+        distanceSelect.disabled = false;
         if (elProfile) {
             elProfile.clear();
         }
@@ -384,10 +412,27 @@ async function applyCourse() {
             <option ${x.courseId === courseId ? 'selected' : ''}
                     value="${x.courseId}">${common.stripHTML(x.name)}</option>`);
     }
+    portalClimbs = await common.getRoads("portal");
+    if (portalClimbs[0].portalName) {
+        courseSelect.insertAdjacentHTML('beforeend', `<option value="999" ${courseId === 999 ? 'selected' : ''}>Portal Climbs</option>`);
+    }
     if (courseId != null) {
-        await zwiftMap.setCourse(courseId);
-        if (elProfile) {
-            await elProfile.setCourse(courseId);
+        const mapBackground = document.querySelector('.map-background');
+        const surfacesLow = document.querySelector(".surfaces.low");
+        const gutters = document.querySelector(".gutters");
+        if (courseId != 999) {
+            await zwiftMap.setCourse(courseId);
+            mapBackground.style.visibility = "";
+            surfacesLow.style.visibility = "";
+            gutters.style.visibility = "";
+            if (elProfile) {
+                await elProfile.setCourse(courseId);
+            }
+        } else {
+            await zwiftMap.setCourse(6);            
+            mapBackground.style.visibility = "hidden";
+            surfacesLow.style.visibility = "hidden";
+            gutters.style.visibility = "hidden";
         }
     }    
 }
@@ -435,7 +480,7 @@ export async function main() {
         common.settingsStore.set("overrideDistance", 0)
         common.settingsStore.set("overrideLaps", 1)
         await applyRoute();
-        if (lapsSelect.value > 0) {
+        if (lapsSelect.value > 0 && courseId != 999) {
             distanceSelect.value = parseInt(elProfile.routeDistances.at(-1))
         }
     });
@@ -474,8 +519,10 @@ export async function main() {
         //debugger      
     });
     distanceSelect.addEventListener('change', async ev => {        
-        if (!elProfile.route.supportedLaps && distanceSelect.value > elProfile.route.distances.at(-1)) {            
-            distanceSelect.value = parseInt(elProfile.route.distances.at(-1));
+        if (!elProfile.route.supportedLaps && distanceSelect.value > elProfile.route.distances.at(-1)) {   
+            if (courseId != 999) {         
+                distanceSelect.value = parseInt(elProfile.route.distances.at(-1));
+            }
             
         } else {
             common.settingsStore.set("overrideDistance", distanceSelect.value)
