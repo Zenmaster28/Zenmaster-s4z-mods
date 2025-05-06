@@ -2618,7 +2618,7 @@ async function isBannerNearby(lastManifestEntry, courseId, type) {
                 });
                 //debugger
                 //console.log("Changing", type, " manifest entry to ", closestSegment.name, "banner.  From", lastManifestEntry.start, "to", addSmallIncrement(closestSegment.roadFinish, -1))
-                if (closestSegment.roadFinish < lastManifestEntry.end) { // make sure the segment isn't behind the pen
+                if (closestSegment.roadFinish < lastManifestEntry.end && lastManifestEntry.reverse == closestSegment.reverse) { // make sure the segment isn't behind the pen and the roads are going in the same direction
                     lastManifestEntry.start = addSmallIncrement(closestSegment.roadFinish, -1) // just past the banner to avoid duplicate segment detection
                 }
             } else {                
