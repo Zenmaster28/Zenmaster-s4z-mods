@@ -269,6 +269,12 @@ export async function main() {
             autoLapOverride = !autoLapOverride;
             common.settingsStore.set("autoLapOverride", autoLapOverride);
         }
+        if (event.key === "ArrowDown" && !autoLapOverride) {
+            common.settingsStore.set("autoLapPowerThreshold", settings.autoLapPowerThreshold - 5);
+        }
+        if (event.key === "ArrowUp" && !autoLapOverride) {
+            common.settingsStore.set("autoLapPowerThreshold", settings.autoLapPowerThreshold + 5);
+        }
     });
     common.subscribe('athlete/watching', watching => {
         doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1); 
