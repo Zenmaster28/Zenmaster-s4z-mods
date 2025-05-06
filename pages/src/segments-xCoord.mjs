@@ -765,6 +765,7 @@ export function getxCoord(watching, routeInfo) {
 
 
 function supplimentPath(worldMeta, curvePath, {physicsSlopeScale}={}) {
+    console.log("using zen.supplimentPath")
     const balancedT = 1 / 125; // tests to within 0.27 meters (worst case)
     const distEpsilon = 1e-6;
     const elevations = [];
@@ -1096,6 +1097,7 @@ async function getExitPathDistance(exitPath, route, worldMeta) {
         exitRoute.curvePath.extend(x.reverse ? seg.toReversed() : seg);
     }
     const supPath = common.supplimentPath || supplimentPath;
+    console.log(supPath)
     Object.assign(exitRoute, supPath(worldMeta, exitRoute.curvePath));
     if (exitRoute.distances.length > 0) {
         return {
@@ -1120,6 +1122,7 @@ async function measureRoadLength(manifestEntry, courseId) {
     const worldList = await common.getWorldList();
     const worldMeta = worldList.find(x => x.courseId === courseId);
     const supPath = common.supplimentPath || supplimentPath;
+    console.log(supPath)
     const manifestData = supPath(worldMeta, seg);
     return manifestData.distances.at(-1);
 }
@@ -1357,7 +1360,14 @@ export async function getModifiedRoute(id, disablePenRouting) {
                 //console.log(route.manifest)
                 const worldList = await common.getWorldList();
                 const worldMeta = worldList.find(x => x.courseId === route.courseId);
+                let portalRoute = route.hasPortalRoad == 1 ? true : false;
                 //debugger
+                if (portalRoute) {
+                    console.log("Route uses a climb portal");
+                    //const portalManifest = await getPortalManifest(route);
+                    //debugger
+                }
+                console.log(route)
                 for (const [i, x] of route.manifest.entries()) {
                     const road = await common.getRoad(route.courseId, x.roadId);
                     const seg = road.curvePath.subpathAtRoadPercents(x.start, x.end);
@@ -1371,6 +1381,8 @@ export async function getModifiedRoute(id, disablePenRouting) {
                     route.curvePath.extend(x.reverse ? seg.toReversed() : seg);
                 }
                 const supPath = common.supplimentPath || supplimentPath;
+                //console.log(supPath)
+                //Object.assign(route, supPath(worldMeta, route.curvePath));
                 Object.assign(route, supPath(worldMeta, route.curvePath));
             }
                        
@@ -1434,6 +1446,7 @@ export async function getSegmentPath(id) {
             //debugger
         }
         const supPath = common.supplimentPath || supplimentPath;
+        console.log(supPath)
         Object.assign(segment, supPath(worldMeta, segment.curvePath));
     }
     return segment;
@@ -2331,6 +2344,7 @@ export async function validateManifest(route) {
                 route.lapFiller.curvePath.extend(x.reverse ? seg.toReversed() : seg);
             }
             const supPath = common.supplimentPath || supplimentPath;
+            console.log(supPath)
             Object.assign(route.lapFiller, supPath(worldMeta, route.lapFiller.curvePath));
         }
         route.lapFiller.manifest = lapFiller;
@@ -3204,6 +3218,7 @@ export async function findPathFromAtoB(startPoint, endPoint, intersections, allR
     const worldList = await common.getWorldList();
     const worldMeta = worldList.find(x => x.courseId === courseId);
     const supPath = common.supplimentPath || supplimentPath;
+    console.log(supPath)
     const manifestData = supPath(worldMeta, seg);
     return manifestData.distances.at(-1);
 }
@@ -3377,4 +3392,41 @@ export function isTeammate(athlete, teamMatches, watchingTeam, options = { parti
 
 export function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function getPortalManifest(route) {
+    const intersections = await fetch(`data/worlds/${route.worldId}/roadIntersections.json`).then(response => response.json());
+    const decisions = await fetch(`data/worlds/${route.worldId}/routeDecisions.json`).then(response => response.json()).then(routes => routes.find(x => parseInt(x.id) == route.id));
+    //route.decisions = decisions;
+    let portalRoadIntersections = intersections.filter(x => x.intersections?.some(y => y.forward.find(z => z.option.turnText == "Climb Portal") || y.reverse.find(z => z.option.turnText == "Climb Portal")))
+    let portalDecisions = [];
+    let portalIntersections = [];
+    for (let road of portalRoadIntersections) {
+        const roadPortalIntersections = road.intersections.filter(x => x.forward.some(y => y.option.turnText == "Climb Portal") || x.reverse.some(y => y.option.turnText == "Climb Portal"))
+        if (roadPortalIntersections.length > 0) {
+            portalIntersections = roadPortalIntersections;
+            for (let intersection of roadPortalIntersections) {
+                const optionForward = intersection.forward.find(x => x.option.turnText == "Climb Portal");
+                const optionReverse = intersection.reverse.find(x => x.option.turnText == "Climb Portal");
+                const option = optionForward ? optionForward : optionReverse;
+                console.log(intersection)
+                option.option.markerId = intersection.m_markerId.toString();
+                option.option.exitRoad = road.id;
+                option.option.exitForward = optionForward ? true : false;
+                /*
+                let portalIntersection = {
+                    markerId : intersection.m_markerId.toString(),
+                    forward: option.option.forward ? "1" : "0",
+                    turn: option.option.alt == 262 ? "0" : option.option.alt == 263 ? "1" : "3",
+                    road: option.option.road
+                }
+                */
+                portalDecisions.push(option.option)
+            }
+        }        
+    }
+    const portalDecision = decisions.decisions.find(x => portalDecisions.flatMap(x => x.markerId).includes(x.markerId));
+    const decisionIntersection = portalDecisions.find(x => x.markerId == portalDecision.markerId);
+    debugger
+    return portalDecisions;
 }
