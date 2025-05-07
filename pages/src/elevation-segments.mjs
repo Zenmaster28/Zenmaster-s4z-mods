@@ -733,6 +733,10 @@ export class SauceElevationProfile {
             if (distance && distances[distances.length - 1] >= distance + 200) {
                 break;
             }
+            if (distance && distances.at(-1) < distance + 200) {
+                console.log("distance is less than the leadin!")
+                break;
+            }
             if (this.showLapMarker)
             {    
                 markLines.push({
