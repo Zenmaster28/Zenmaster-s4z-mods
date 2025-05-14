@@ -523,6 +523,11 @@ export class SauceElevationProfile {
             this._roadSigs.add(`${id}-${!!reverse}`);  
             //debugger          
             this.setData(this.road.distances, this.road.elevations, this.road.grades, {reverse, markLines});
+            if (this.showXaxis) {
+                const min = 0;
+                const max = this.road.distances.at(-1);            
+                this.scaleXaxis(min, max);
+            }
         } else {
             this.reverse = undefined;
             this.curvePath = undefined;
