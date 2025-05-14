@@ -113,6 +113,7 @@ export class SauceElevationProfile {
         this.xAxisInverse = xAxisInverse;
         this.xAxisIncrements = xAxisIncrements; 
         this.courseRoads = [];   
+        this.portalRoads = [];
         el.classList.add('sauce-elevation-profile-container');
         this.chartXaxis = ec.init(document.getElementById('xAxis'));  
         this.chart = ec.init(el, 'sauce', {renderer: 'svg'});
@@ -1274,10 +1275,14 @@ export class SauceElevationProfile {
             if (watching.courseId !== this.courseId || this.courseRoads == 0) {
                 await this.setCourse(watching.courseId);
                 this.courseRoads = await common.rpc.getRoads(watching.courseId);
+                this.portalRoads = await common.rpc.getRoads('portal');
             }
             const knownRoute = allRoutes.find(x => x.id == watching.routeId)
             //this.knownRoad = await common.rpc.getRoad(watching.courseId, watching.roadId)
             this.knownRoad = this.courseRoads?.find(x => x.id == watching.roadId);
+            if (!this.knownRoad) {
+                this.knownRoad = this.portalRoads?.find(x => x.id == watching.roadId);
+            }
             this.currentAltitude = watching.altitude;
             //debugger
             if (this.preferRoute) {
