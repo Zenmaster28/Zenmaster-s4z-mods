@@ -583,10 +583,17 @@ async function scoreResults(eventResults, currentEventConfig, lastSegment=false)
                 let bonusScores = [];
                 if (scoreFormat == "fts") {
                     if (settings.femaleOnly) {
+                        console.log("Getting female only FTS results")
                         if (currentEventConfig.ftsPerEvent) {
-                            perEventResults.fts = perEventResults.fts.filter(x => x.gender == "female");
+                            console.log("Using per event FTS results")
+                            //debugger
+                            //perEventResults.fts = perEventResults.fts.filter(x => x.gender == "female");
+                            segResPerEvent.fts = segResPerEvent.fts.filter(x => x.gender == "female");
+                            console.log("female only per event FTS results", segResPerEvent.fts)
                         } else {
+                            console.log("Using per segment FTS results")
                             segRes.fts = segRes.fts.filter(x => x.gender == "female")
+                            console.log("female only per segment FTS results", segRes.fts)
                         }
                     }
                     scores = currentEventConfig.ftsScoreFormat;
@@ -596,8 +603,10 @@ async function scoreResults(eventResults, currentEventConfig, lastSegment=false)
                         bonusScores = zen.getScoreFormat(ftsBonus, 1)
                     }
                 } else if (scoreFormat == "fal") {
+                    console.log("Getting female only FAL results")
                     if (settings.femaleOnly) {
                         segRes.fal = segRes.fal.filter(x => x.gender == "female")
+                        console.log("female only FAL results", segRes.fal)
                     }
                     scores = currentEventConfig.falScoreFormat;
                     scoreStep = currentEventConfig.falStep;
