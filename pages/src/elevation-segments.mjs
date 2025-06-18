@@ -1853,7 +1853,7 @@ export class SauceElevationProfile {
                                     //let nextSegment = zen.getNextSegment(allMarkLines, xCoord)
                                     //console.log("next segment", nextSegment)
                                     //TODO: fix zoom next segment + show final km combo when in the pen
-                                    if (nextSegment != -1) {
+                                    if (nextSegment && nextSegment != -1) {
                                         let segmentMarkLines = allMarkLines.filter(x => x.id == nextSegment.id && x.repeat == nextSegment.repeat)
                                         let segmentStart = segmentMarkLines[0];
                                         let segmentFinish = segmentMarkLines[1];
