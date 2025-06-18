@@ -170,6 +170,11 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
         }
         //debugger
     }
+    if (courseId == 14 && allMarkLines.find(x => x.id == "9655158959") && allMarkLines.find(x => x.id == "1034851390")) {
+        // rename Ventoux Half KOM to Ventoux KOM when both are present.  As far as I know, this is the only overlapping segment like this.
+        let ventouxHalf = allMarkLines.find(x => x.name == "Ventoux Half KOM");
+        ventouxHalf.name = "Ventoux KOM";
+    }
     //debugger
     let segmentRepeatCheck = routeSegments.filter(x => x.repeat > 1);
     let segmentRepeats;
