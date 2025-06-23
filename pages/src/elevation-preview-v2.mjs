@@ -210,7 +210,13 @@ function createElevationProfile() {
     const gradientOpacity = settings.gradientOpacity;
     typeof(settings.disablePenRouting) == "undefined" ? common.settingsStore.set("disablePenRouting", false) : null;
     const disablePenRouting = settings.disablePenRouting;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, showAllArches, disablePenRouting});
+    typeof(settings.showXaxis) == "undefined" ? common.settingsStore.set("showXaxis", false) : null;
+    const showXaxis = settings.showXaxis;
+    typeof(settings.xAxisIncrements) == "undefined" ? common.settingsStore.set("xAxisIncrements", 0) : null;
+    const xAxisIncrements = settings.xAxisIncrements;
+    typeof(settings.xAxisInverse) == "undefined" ? common.settingsStore.set("xAxisInverse", false) : null;
+    const xAxisInverse = settings.xAxisInverse;
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, showAllArches, disablePenRouting, showXaxis, xAxisIncrements, xAxisInverse});
     //return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, colorScheme, showSegmentStart});
 }
 
@@ -386,6 +392,9 @@ async function applyRoute() {
             distanceSelect.disabled = true;
         } else {
             distanceSelect.disabled = false;
+        }
+        if (settings.showXaxis) {
+            document.getElementById("rightPanel").style.bottom = "30px"
         }
     } else {
         zwiftMap.setVerticalOffset(0);
@@ -812,7 +821,10 @@ export async function main() {
                         changed.has('showMap') ||
                         changed.has('gradientOpacity') ||
                         changed.has('showAllArches') ||
-                        changed.has('disablePenRouting')
+                        changed.has('disablePenRouting') ||
+                        changed.has('showXaxis') ||
+                        changed.has('xAxisIncrements') ||
+                        changed.has('xAxisInverse')
                     )
                 {
                     //console.log(changed);

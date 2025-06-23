@@ -90,6 +90,19 @@
                     <input type="range" name="gradientOpacity" min="0" max="1" step="0.05"/>
                     <input type="number" name="gradientOpacity" min="0" max="1" step="0.05" style="--size: 5"/>
                 </label>
+                <label title="Show distance markers along the x-axis">
+                    <key data-added="2025-03-04">Show X-Axis</key>
+                    <input type="checkbox" name="showXaxis">
+                </label>
+                <label title="The distance between km markers.  Set to 0 to auto scale.">
+                    <key data-added="2025-03-04">&nbsp;&nbsp;- Km increments</key>
+                    <input type="range" name="xAxisIncrements" min="0" max="20" step="1" data-depends-on="showXaxis">
+                    <input type="number" name="xAxisIncrements" min="0" max="20" step="1" data-depends-on="showXaxis">
+                </label>
+                <label title="Show the distance to the end of the route rather than counting up from 0">
+                    <key data-added="2025-03-12">&nbsp;&nbsp;- invert X-Axis </key>
+                    <input type="checkbox" name="xAxisInverse" data-depends-on="showXaxis">
+                </label>
                 <hr/>
                 <label>
                     <key data-added="2023-05-30">Profile height:</key>
