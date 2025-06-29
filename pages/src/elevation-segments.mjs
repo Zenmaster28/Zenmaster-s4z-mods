@@ -817,6 +817,9 @@ export class SauceElevationProfile {
             const min = 0;
             const max = this.routeDistances.at(-1);            
             this.scaleXaxis(min, max);
+            document.getElementById("xAxis").style.height = "30px";
+        } else {
+            document.getElementById("xAxis").style.height = "0px";
         }
         /*
         //figuring out axis tickmarks, for possible future use.
