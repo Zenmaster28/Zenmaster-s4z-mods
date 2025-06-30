@@ -2629,7 +2629,8 @@ async function isBannerNearby(lastManifestEntry, courseId, type) {
     let nearbySegment;
     if (roadSegments.length > 0) {  
         if (lastManifestEntry.reverse) {
-            nearbySegment = roadSegments.filter(x => x.roadFinish + 0.1 > lastManifestEntry.start && x.roadFinish - 0.1 < lastManifestEntry.start )
+            const nearbyDiff = courseId == 14 ? 0.01 : 0.1; // France oddities...
+            nearbySegment = roadSegments.filter(x => x.roadFinish + nearbyDiff > lastManifestEntry.start && x.roadFinish - nearbyDiff < lastManifestEntry.start  && x.reverse == lastManifestEntry.reverse)
             let closestSegment;
             if (nearbySegment.length > 0) {
                 closestSegment = nearbySegment.reduce((closest, segment) => {
