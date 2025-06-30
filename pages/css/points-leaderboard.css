@@ -217,3 +217,10 @@ div .pointsTitle {
   text-align: center;
   font-size: calc(var(--font-scale) * 0.6em);
 }
+
+.title {
+  font-size: calc(var(--font-scale) * 0.8em);
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}

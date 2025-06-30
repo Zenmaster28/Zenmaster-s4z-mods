@@ -563,14 +563,23 @@ async function scoreResults(eventResults, currentEventConfig, lastSegment=false)
     for (let segRes of eventResults) {
         //debugger
         let segResPerEvent = [];
+        let customScoring = false;
         if (currentEventConfig.ftsPerEvent) {
             segResPerEvent = perEventResults.find(x => x.segmentId == segRes.segmentId);
         }
         if (currentEventConfig) {
             segmentRepeat = currentEventConfig.segments.find(x => x.segmentId == segRes.segmentId && x.repeat == segRes.repeat)
-            //debugger
+            const overrideConfig = settings.configOverride ? JSON.parse(settings.configOverride) : null;
+            if (overrideConfig?.eventSubgroupId == currentEventConfig.eventSubgroupId) {
+                customScoring = true;
+                const thisSegmentConfig = overrideConfig.segments.find(x => x.segmentId == segmentRepeat.segmentId && x.repeat == segmentRepeat.repeat);
+                if (thisSegmentConfig) {
+                    segmentRepeat.enabled = thisSegmentConfig.enabled;
+                }
+                //debugger
+            }
             if (!segmentRepeat.enabled) {
-                //console.log("NOT scoring", segmentRepeat.name, "repeat", segmentRepeat.repeat)
+                console.log("NOT scoring", segmentRepeat.name, "repeat", segmentRepeat.repeat, "custom scoring?", customScoring)
                 continue; 
             }
             scoreFormats = segmentRepeat.scoreFormat.split(",");
@@ -602,9 +611,9 @@ async function scoreResults(eventResults, currentEventConfig, lastSegment=false)
                     if (ftsBonus !== "") {
                         bonusScores = zen.getScoreFormat(ftsBonus, 1)
                     }
-                } else if (scoreFormat == "fal") {
-                    console.log("Getting female only FAL results")
+                } else if (scoreFormat == "fal") {                    
                     if (settings.femaleOnly) {
+                        console.log("Getting female only FAL results")
                         segRes.fal = segRes.fal.filter(x => x.gender == "female")
                         console.log("female only FAL results", segRes.fal)
                     }
@@ -935,6 +944,13 @@ function buildPointsTable(racerScores, athletes, lastSegmentName = "", ignoreFIN
 async function displayResults(racerScores, lastSegmentScores, lastSegmentName) {
     //console.log("Scores to process:", racerScores)
     //let scoreFormat = settings.FTSorFAL;
+    let customTitle = "";
+    const overrideConfig = settings.configOverride ? JSON.parse(settings.configOverride) : null;
+    if (overrideConfig && overrideConfig.eventSubgroupId == currentEventConfig.eventSubgroupId) {
+        customTitle = overrideConfig.customTitle || "";
+        document.getElementById("customTitle").style.display = "block";
+        document.getElementById("customTitle").innerText = customTitle;
+    }
     const eventSubgroupId = currentEventConfig.eventSubgroupId;
     const pointsResultsDiv = document.getElementById("pointsResults");
     const lastSegmentPointsResultsDiv = document.getElementById("lastSegmentPointsResults");
@@ -1151,6 +1167,7 @@ export async function main() {
 
     common.settingsStore.addEventListener('changed', ev => {
         const changed = ev.data.changed; 
+        //console.log(changed)
         if (changed.has('solidBackground') || changed.has('backgroundColor')) {            
             setBackground();
         } 
@@ -1171,6 +1188,10 @@ export async function main() {
         }
         if (changed.has('solidBackground') || changed.has('backgroundColor')) {            
             setBackground();
+        }
+        if (changed.has('configOverride')) {
+            const newConfig = JSON.parse(common.settingsStore.get('configOverride'));
+            console.log("Event override changed ", newConfig)
         }
         settings = common.settingsStore.get();
     });
