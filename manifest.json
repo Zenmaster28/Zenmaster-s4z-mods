@@ -4,7 +4,7 @@
     "description": "Arend's Mod Collection for S4Z",
     "author": "Arend teRaa",
     "website_url": "https://github.com/Zenmaster28/Zenmaster-s4z-mods",
-    "version": "1.7.4",
+    "version": "1.7.5",
     "content_js": [
         "pages/src/data-fields.js"
     ],
