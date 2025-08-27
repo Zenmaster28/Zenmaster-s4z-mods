@@ -1,0 +1,8 @@
+#events {
+  display: flex;
+  flex-wrap: wrap;
+}
+#events .p-course {
+  display: flex;
+  align-items: center;
+}

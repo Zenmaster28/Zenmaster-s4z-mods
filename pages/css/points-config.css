@@ -1,0 +1,15 @@
+.customScoring {
+  width: auto;
+  max-width: 100%;
+  table-layout: auto;
+  border-collapse: collapse;
+}
+.customScoring th,
+.customScoring td {
+  padding: 4px 8px; /* small padding */
+  white-space: nowrap; /* prevent wrapping so column size depends on content */
+}
+
+.customScoring-wrapper {
+  overflow-x: auto; /* allows scrolling if content exceeds container */
+}
