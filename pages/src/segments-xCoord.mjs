@@ -1366,10 +1366,12 @@ export async function getModifiedRoute(id, disablePenRouting) {
                 const worldList = await common.getWorldList();
                 const worldMeta = worldList.find(x => x.courseId === route.courseId);
                 let portalRoute = route.hasPortalRoad == 1 ? true : false;
+                //let portalRoads;
                 //debugger
                 if (portalRoute) {
                     console.log("Route uses a climb portal");
                     //const portalManifest = await getPortalManifest(route);
+                    //portalRoads = await common.getRoads("portal")
                     //debugger
                 }
                 console.log(route)
@@ -2638,6 +2640,7 @@ async function isBannerNearby(lastManifestEntry, courseId, type) {
                 });
                 //debugger
                 //console.log("Changing", type, " manifest entry to ", closestSegment.name, "banner.  From", lastManifestEntry.start, "to", addSmallIncrement(closestSegment.roadFinish, -1))
+                //debugger
                 if (closestSegment.roadFinish < lastManifestEntry.end && lastManifestEntry.reverse == closestSegment.reverse) { // make sure the segment isn't behind the pen and the roads are going in the same direction
                     lastManifestEntry.start = addSmallIncrement(closestSegment.roadFinish, -1) // just past the banner to avoid duplicate segment detection
                 }
@@ -3433,6 +3436,66 @@ async function getPortalManifest(route) {
     }
     const portalDecision = decisions.decisions.find(x => portalDecisions.flatMap(x => x.markerId).includes(x.markerId));
     const decisionIntersection = portalDecisions.find(x => x.markerId == portalDecision.markerId);
-    debugger
+    const intersectionManifest = route.manifest.find(x => x.roadId == decisionIntersection.exitRoad && x.reverse != decisionIntersection.exitForward);
+    const intersectionManifestIdx = route.manifest.indexOf(intersectionManifest);
+    if (intersectionManifest.reverse) {
+        intersectionManifest.start = decisionIntersection.exitTime;
+    } else {
+        intersectionManifest.end = decisionIntersection.exitTime;
+    }
+    const road1 = await common.getRoad(route.courseId, decisionIntersection.exitRoad)
+    const road2 = await common.getRoad(route.courseId, decisionIntersection.road)
+    const entryPoint = getNearestPoint(road1, road2, decisionIntersection.exitTime, 5000)
+    const nextRoadIntersections = intersections.find(x => x.id == decisionIntersection.road)
+    const nextRoadOption = decisionIntersection.forward ? nextRoadIntersections.intersections[0].forward[0].option : nextRoadIntersections.intersections[0].reverse[0].option
+    const nextRoad = {
+        roadId: decisionIntersection.road,
+        reverse: decisionIntersection.forward ? false : true,
+        start: decisionIntersection.forward ? entryPoint : nextRoadOption.exitTime,
+        end: decisionIntersection.forward ? nextRoadOption.exitTime : entryPoint
+    }    
+    const road3 = await common.getRoad(route.courseId, decisionIntersection.road)
+    const road4 = await common.getRoad(route.courseId, nextRoadOption.road)
+    const entryPoint2 = getNearestPoint(road3, road4, nextRoadOption.exitTime, 5000)
+    const nextNextRoad = {
+        roadId: nextRoadOption.road,
+        reverse: nextRoadOption.forward ? false : true,
+        start: nextRoadOption.forward ? entryPoint2 : 1,
+        end: nextRoadOption.forward ? 1 : entryPoint2
+    }
+    route.manifest.splice(intersectionManifestIdx + 1, 0, nextRoad);
+    route.manifest.splice(intersectionManifestIdx + 2, 0, nextNextRoad)
+    const activePortalRoad = await getCurrentPortalRoad(route);
+    const portalRoadManifest = {
+        roadId: activePortalRoad,
+        reverse: false,
+        start: 0,
+        end: 1,
+        portalRoad: true
+    }
+    const portalRoadManifestDown = {
+        roadId: activePortalRoad,
+        reverse: true,
+        start: 0,
+        end: 1,
+        portalRoad: true
+    }
+    route.manifest.splice(intersectionManifestIdx + 3, 0, portalRoadManifest)
+    route.manifest.splice(intersectionManifestIdx + 4, 0, portalRoadManifestDown)
+    //debugger
     return portalDecisions;
+}
+
+async function getCurrentPortalRoad(route) {
+    const portalSchedule = await fetch(`data/portalSchedule.json`).then(response => response.json())
+    const thisWorldSchedule = portalSchedule.schedule.filter(x => x.world == route.worldId);
+    thisWorldSchedule.sort((a, b) => a.startTS - b.startTS);
+    let activePortalRoad;
+    const now = Date.now();
+    for (let i = 1; i < thisWorldSchedule.length; i++) {
+        if (thisWorldSchedule[i].startTS >= now && thisWorldSchedule[i - 1].startTS < now) {
+            activePortalRoad = thisWorldSchedule[i - 1].road;
+        }
+    }
+    return parseInt(activePortalRoad)
 }

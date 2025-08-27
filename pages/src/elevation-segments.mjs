@@ -524,6 +524,16 @@ export class SauceElevationProfile {
             this._roadSigs.add(`${id}-${!!reverse}`);  
             //debugger          
             this.setData(this.road.distances, this.road.elevations, this.road.grades, {reverse, markLines});
+            if (this.portalRoads.find(x => x.id == id)) {
+                console.log("Setting portal road distances")
+                this.routeDistances = Array.from(this.road.distances);
+                this.routeElevations = Array.from(this.road.elevations);
+                this.routeGrades = Array.from(this.road.grades);
+            } else {
+                this.routeDistances.length = 0;
+                this.routeElevations.length = 0;
+                this.routeGrades.length = 0;
+            }
             if (this.showXaxis) {
                 const min = 0;
                 const max = this.road.distances.at(-1);            
