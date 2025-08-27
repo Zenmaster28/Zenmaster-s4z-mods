@@ -1,0 +1,654 @@
+{
+  "climbs": [
+    {
+      "name": "Ski Lift Climb",
+      "id": "10000",
+      "distanceInCM": "863391.1250000000",
+      "elevationInCM": "68939.4140625000"
+    },
+    {
+      "name": "Climb to Hollywood Sign",
+      "id": "10001",
+      "distanceInCM": "803772.0625000000",
+      "elevationInCM": "47779.4023437500"
+    },
+    {
+      "name": "Eazy Rider",
+      "id": "10002",
+      "distanceInCM": "132117.9062500000",
+      "elevationInCM": "2188.17"
+    },
+    {
+      "name": "Cote de Pike",
+      "id": "10003",
+      "distanceInCM": "218083.1562500000",
+      "elevationInCM": "21595.3691406250"
+    },
+    {
+      "name": "Col d'Aspin",
+      "id": "10004",
+      "distanceInCM": "1353582.2500000000",
+      "elevationInCM": "81151.2421875000"
+    },
+    {
+      "name": "Col des Aravis",
+      "id": "10005",
+      "distanceInCM": "519923.7500000000",
+      "elevationInCM": "28011.6308593750"
+    },
+    {
+      "name": "Puy de Dome",
+      "id": "10006",
+      "distanceInCM": "1298933.6250000000",
+      "elevationInCM": "91354.1796875000"
+    },
+    {
+      "name": "Cote de Domancy",
+      "id": "10007",
+      "distanceInCM": "297847.5312500000",
+      "elevationInCM": "24057.1230468750"
+    },
+    {
+      "name": "Col du Platzerwasel",
+      "id": "10008",
+      "distanceInCM": "785299.5625000000",
+      "elevationInCM": "59693.2343750000"
+    },
+    {
+      "name": "Cote de Trebiac",
+      "id": "10009",
+      "distanceInCM": "459264.2187500000",
+      "elevationInCM": "20742.3691406250"
+    },
+    {
+      "name": "Col du Tourmalet",
+      "id": "10010",
+      "distanceInCM": "1711817.5000000000",
+      "elevationInCM": "121698.0703125000"
+    },
+    {
+      "name": "Bealach na Ba",
+      "id": "10011",
+      "distanceInCM": "899236.1250000000",
+      "elevationInCM": "63269.0078125000"
+    },
+    {
+      "name": "Crow Road",
+      "id": "10012",
+      "distanceInCM": "695663.1250000000",
+      "elevationInCM": "25146.2929687500"
+    },
+    {
+      "name": "Coll d'Ordino",
+      "id": "10013",
+      "distanceInCM": "1032059.6875000000",
+      "elevationInCM": "50531.3867187500"
+    },
+    {
+      "name": "La Laguna Negra",
+      "id": "10014",
+      "distanceInCM": "906204.6250000000",
+      "elevationInCM": "50992.7578125000"
+    },
+    {
+      "name": "Col de la Madone",
+      "id": "10015",
+      "distanceInCM": "1591436.7500000000",
+      "elevationInCM": "89840.9765625000"
+    },
+    {
+      "name": "Sa Calobra",
+      "id": "10016",
+      "distanceInCM": "1076702.8750000000",
+      "elevationInCM": "65862.4843750000"
+    },
+    {
+      "name": "Rocacorba",
+      "id": "10017",
+      "distanceInCM": "1183119.6250000000",
+      "elevationInCM": "75621.8984375000"
+    },
+    {
+      "name": "Old La Honda",
+      "id": "10018",
+      "distanceInCM": "557394.0000000000",
+      "elevationInCM": "39538.8046875000"
+    },
+    {
+      "name": "La Super Planche des Belles Filles",
+      "id": "10019",
+      "distanceInCM": "859359.6250000000",
+      "elevationInCM": "60297.0625000000"
+    },
+    {
+      "name": "Old Willunga Hill",
+      "id": "10020",
+      "distanceInCM": "398637.8125000000",
+      "elevationInCM": "25216.2343750000"
+    },
+    {
+      "name": "Cheddar Gorge",
+      "id": "10021",
+      "distanceInCM": "468530.1250000000",
+      "elevationInCM": "17106.9707031250"
+    },
+    {
+      "name": "Cipressa",
+      "id": "10022",
+      "distanceInCM": "643264.0000000000",
+      "elevationInCM": "22806.9609375000"
+    },
+    {
+      "name": "Col du Rosier",
+      "id": "10023",
+      "distanceInCM": "498915.6250000000",
+      "elevationInCM": "22263.1191406250"
+    },
+    {
+      "name": "Passo dello Stelvio",
+      "id": "10024",
+      "distanceInCM": "2336206.0000000000",
+      "elevationInCM": "159615.6093750000"
+    },
+    {
+      "name": "Col de la Couillole",
+      "id": "10025",
+      "distanceInCM": "1809316.3750000000",
+      "elevationInCM": "120230.8828125000"
+    },
+    {
+      "name": "Mt Fuji",
+      "id": "10026",
+      "distanceInCM": "2535069.0000000000",
+      "elevationInCM": "120858.2656250000"
+    },
+    {
+      "name": "Pla d'Adet",
+      "id": "10027",
+      "distanceInCM": "1211657.7500000000",
+      "elevationInCM": "84770.6875000000"
+    },
+    {
+      "name": "Pas de Peyrol/Puy Mary",
+      "id": "10028",
+      "distanceInCM": "1025940.8125000000",
+      "elevationInCM": "60328.9609375000"
+    },
+    {
+      "name": "Côte des Forche",
+      "id": "10029",
+      "distanceInCM": "299650.1875000000",
+      "elevationInCM": "14835.1328125000"
+    },
+    {
+      "name": "Isola 2000",
+      "id": "10030",
+      "distanceInCM": "1889089.3750000000",
+      "elevationInCM": "114569.6406250000"
+    },
+    {
+      "name": "La Turbie + Col d'Eze",
+      "id": "10031",
+      "distanceInCM": "1594093.8750000000",
+      "elevationInCM": "61606.7421875000"
+    },
+    {
+      "name": "Col du Galibier (Lautaret)",
+      "id": "10032",
+      "distanceInCM": "1035559.8750000000",
+      "elevationInCM": "53930.1484375000"
+    },
+    {
+      "name": "Col de Peyresourde (Avajan)",
+      "id": "10033",
+      "distanceInCM": "830451.5000000000",
+      "elevationInCM": "55901.5156250000"
+    },
+    {
+      "name": "Montée du Chinaillon",
+      "id": "10034",
+      "distanceInCM": "811526.6875000000",
+      "elevationInCM": "35379.8710937500"
+    },
+    {
+      "name": "Lagos de Covadonga",
+      "id": "10035",
+      "distanceInCM": "1452976.0000000000",
+      "elevationInCM": "97633.4687500000"
+    },
+    {
+      "name": "Mt. Hamilton",
+      "id": "10036",
+      "distanceInCM": "3129840.5000000000",
+      "elevationInCM": "125914.3750000000"
+    },
+    {
+      "name": "Trollstigen",
+      "id": "10037",
+      "distanceInCM": "1244672.7500000000",
+      "elevationInCM": "78443.4375000000"
+    },
+    {
+      "name": "Gotthard Pass",
+      "id": "10038",
+      "distanceInCM": "1442196.0000000000",
+      "elevationInCM": "90930.6718750000"
+    },
+    {
+      "name": "Norton Summit",
+      "id": "10039",
+      "distanceInCM": "866602.6875000000",
+      "elevationInCM": "36360.2031250000"
+    },
+    {
+      "name": "Hardknott Pass",
+      "id": "10040",
+      "distanceInCM": "269157.6250000000",
+      "elevationInCM": "30640.7050781250"
+    },
+    {
+      "name": "Poggio",
+      "id": "10041",
+      "distanceInCM": "431199.5625000000",
+      "elevationInCM": "13635.3134765625"
+    },
+    {
+      "name": "Oude Kwaremont",
+      "id": "10042",
+      "distanceInCM": "150988.1093750000",
+      "elevationInCM": "6376.9541015625"
+    },
+    {
+      "name": "Cauberg",
+      "id": "10043",
+      "distanceInCM": "80620.8125000000",
+      "elevationInCM": "5779.4667968750"
+    },
+    {
+      "name": "Côte de la Redoute",
+      "id": "10044",
+      "distanceInCM": "154292.8437500000",
+      "elevationInCM": "15314.8291015625"
+    }
+  ],
+  "schedule": [
+    {
+      "road": "10022",
+      "world": "10",
+      "portal": "0",
+      "start": "2025-03-01T00:01-04",
+      "startTS": 1740801660000
+    },
+    {
+      "road": "10010",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-03-01T00:01-04",
+      "startTS": 1740801660000
+    },
+    {
+      "road": "10021",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-03-03T00:01-04",
+      "startTS": 1740974460000
+    },
+    {
+      "road": "10032",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-03-05T00:01-04",
+      "startTS": 1741147260000
+    },
+    {
+      "road": "10037",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-03-07T00:01-04",
+      "startTS": 1741320060000
+    },
+    {
+      "road": "10030",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-03-09T00:01-04",
+      "startTS": 1741492860000
+    },
+    {
+      "road": "10012",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-03-11T00:01-04",
+      "startTS": 1741665660000
+    },
+    {
+      "road": "10003",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-03-13T00:01-04",
+      "startTS": 1741838460000
+    },
+    {
+      "road": "10027",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-03-15T00:01-04",
+      "startTS": 1742011260000
+    },
+    {
+      "road": "10041",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-03-17T00:01-04",
+      "startTS": 1742184060000
+    },
+    {
+      "road": "10009",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-03-24T00:01-04",
+      "startTS": 1742788860000
+    },
+    {
+      "road": "10023",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-03-26T00:01-04",
+      "startTS": 1742961660000
+    },
+    {
+      "road": "10025",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-03-28T00:01-04",
+      "startTS": 1743134460000
+    },
+    {
+      "road": "10042",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-03-30T00:01-04",
+      "startTS": 1743307260000
+    },
+    {
+      "road": "10041",
+      "world": "10",
+      "portal": "0",
+      "start": "2025-04-01T00:01-04",
+      "startTS": 1743480060000
+    },
+    {
+      "road": "10028",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-04-07T00:01-04",
+      "startTS": 1743998460000
+    },
+    {
+      "road": "10031",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-04-09T00:01-04",
+      "startTS": 1744171260000
+    },
+    {
+      "road": "10033",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-04-11T00:01-04",
+      "startTS": 1744344060000
+    },
+    {
+      "road": "10043",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-04-14T00:01-04",
+      "startTS": 1744603260000
+    },
+    {
+      "road": "10021",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-04-17T00:01-04",
+      "startTS": 1744862460000
+    },
+    {
+      "road": "10044",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-04-21T00:01-04",
+      "startTS": 1745208060000
+    },
+    {
+      "road": "10035",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-04-28T00:01-04",
+      "startTS": 1745812860000
+    },
+    {
+      "road": "10042",
+      "world": "10",
+      "portal": "0",
+      "start": "2025-05-01T00:01-04",
+      "startTS": 1746072060000
+    },
+    {
+      "road": "10009",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-05-01T00:01-04",
+      "startTS": 1746072060000
+    },
+    {
+      "road": "10026",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-05-03T00:01-04",
+      "startTS": 1746244860000
+    },
+    {
+      "road": "10029",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-05-05T00:01-04",
+      "startTS": 1746417660000
+    },
+    {
+      "road": "10011",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-05-07T00:01-04",
+      "startTS": 1746590460000
+    },
+    {
+      "road": "10007",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-05-09T00:01-04",
+      "startTS": 1746763260000
+    },
+    {
+      "road": "10006",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-05-11T00:01-04",
+      "startTS": 1746936060000
+    },
+    {
+      "road": "10018",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-05-13T00:01-04",
+      "startTS": 1747108860000
+    },
+    {
+      "road": "10032",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-05-15T00:01-04",
+      "startTS": 1747281660000
+    },
+    {
+      "road": "10030",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-05-17T00:01-04",
+      "startTS": 1747454460000
+    },
+    {
+      "road": "10039",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-05-19T00:01-04",
+      "startTS": 1747627260000
+    },
+    {
+      "road": "10020",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-05-21T00:01-04",
+      "startTS": 1747800060000
+    },
+    {
+      "road": "10014",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-05-23T00:01-04",
+      "startTS": 1747972860000
+    },
+    {
+      "road": "10025",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-05-25T00:01-04",
+      "startTS": 1748145660000
+    },
+    {
+      "road": "10038",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-05-27T00:01-04",
+      "startTS": 1748318460000
+    },
+    {
+      "road": "10040",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-05-29T00:01-04",
+      "startTS": 1748491260000
+    },
+    {
+      "road": "10044",
+      "world": "10",
+      "portal": "0",
+      "start": "2025-06-01T00:01-04",
+      "startTS": 1748750460000
+    },
+    {
+      "road": "10027",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-06-01T00:01-04",
+      "startTS": 1748750460000
+    },
+    {
+      "road": "10021",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-06-03T00:01-04",
+      "startTS": 1748923260000
+    },
+    {
+      "road": "10005",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-06-05T00:01-04",
+      "startTS": 1749096060000
+    },
+    {
+      "road": "10017",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-06-07T00:01-04",
+      "startTS": 1749268860000
+    },
+    {
+      "road": "10042",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-06-09T00:01-04",
+      "startTS": 1749441660000
+    },
+    {
+      "road": "10012",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-06-11T00:01-04",
+      "startTS": 1749614460000
+    },
+    {
+      "road": "10041",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-06-13T00:01-04",
+      "startTS": 1749787260000
+    },
+    {
+      "road": "10008",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-06-15T00:01-04",
+      "startTS": 1749960060000
+    },
+    {
+      "road": "10023",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-06-17T00:01-04",
+      "startTS": 1750132860000
+    },
+    {
+      "road": "10043",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-06-19T00:01-04",
+      "startTS": 1750305660000
+    },
+    {
+      "road": "10037",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-06-21T00:01-04",
+      "startTS": 1750478460000
+    },
+    {
+      "road": "10034",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-06-23T00:01-04",
+      "startTS": 1750651260000
+    },
+    {
+      "road": "10031",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-06-25T00:01-04",
+      "startTS": 1750824060000
+    },
+    {
+      "road": "10022",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-06-27T00:01-04",
+      "startTS": 1750996860000
+    },
+    {
+      "road": "10003",
+      "world": "1",
+      "portal": "0",
+      "start": "2025-06-29T00:01-04",
+      "startTS": 1751169660000
+    }
+  ]
+}
