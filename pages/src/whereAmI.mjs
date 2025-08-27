@@ -26,10 +26,11 @@ export async function main() {
     common.initInteractionListeners(); 
 
     common.subscribe('athlete/watching', processWatching);
+    debugger
 }
 
 async function processWatching(watching) {
-    
+    debugger
     if ((!routeInfo || watching.state.routeId != routeInfo.routeFullData.id) && !inProgress)
     {
         //console.log("Getting segments on route")
