@@ -569,7 +569,7 @@ async function getSegmentResults(watching) {
     refreshRate = 5000;
     const doc = document.documentElement;        
     doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);
-    if (watching.state.eventSubgroupId == 0 && settings.FTSorFAL == "FAL")
+    if (!watching.state.eventSubgroupId && settings.FTSorFAL == "FAL")
     {
         //FAL disabled outside of events
         if (settings.transparentNoData) 

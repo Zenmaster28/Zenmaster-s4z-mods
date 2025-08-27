@@ -132,7 +132,7 @@ const formatTime = (milliseconds,timePrecision) => {
 async function getKnownRacersV2(watching, currentEventConfig) {
     let eventSubgroupId;
     let segmentData;
-    if (watching.state.eventSubgroupId == 0 && lastKnownSG.eventSubgroupId > 0) {
+    if (!watching.state.eventSubgroupId && lastKnownSG.eventSubgroupId > 0) {
         eventSubgroupId = lastKnownSG.eventSubgroupId;
         segmentData = lastKnownSegmentData;
     } else {
@@ -204,7 +204,7 @@ async function verifyRacers() {
             if (!racerState) {
                 console.log("no playerState for", racer.athleteId)
                 racerStatus.noPlayerState = true;
-            } else if (racerState.eventSubgroupId != racer.eventSubgroupId || racerState.eventSubgroupId == 0) {
+            } else if (racerState.eventSubgroupId != racer.eventSubgroupId || !racerState.eventSubgroupId) {
                 const racerLeft = await common.rpc.getAthlete(racer.athleteId);
                 if (raceResults.find(x => x.profileId == racer.athleteId)) {
                     racerStatus.finishedEvent = true;
@@ -272,7 +272,7 @@ async function getKnownRacers(watching) {
     // todo - deal with sg = 0 after race is over
     let eventSubgroupId;
     let segmentData;
-    if (watching.state.eventSubgroupId == 0 && lastKnownSG.eventSubgroupId > 0) {
+    if (!watching.state.eventSubgroupId && lastKnownSG.eventSubgroupId > 0) {
         eventSubgroupId = lastKnownSG.eventSubgroupId;
         segmentData = lastKnownSegmentData;
     } else {
@@ -397,7 +397,7 @@ async function monitorAllCats(eventSubgroupId, currentEventConfig) {
 async function getAllSegmentResults(watching, currentEventConfig) {
     let eventSubgroupId;
     let segmentData;    
-    if (watching.state.eventSubgroupId == 0 && lastKnownSG.eventSubgroupId > 0) {
+    if (!watching.state.eventSubgroupId && lastKnownSG.eventSubgroupId > 0) {
         eventSubgroupId = lastKnownSG.eventSubgroupId;
         segmentData = lastKnownSegmentData;
     } else {
@@ -446,7 +446,7 @@ async function getAllSegmentResults(watching, currentEventConfig) {
 
 async function getRaceResults(watching) {
     let eventSubgroupId;
-    if (watching.state.eventSubgroupId == 0 && lastKnownSG.eventSubgroupId > 0) {
+    if (!watching.state.eventSubgroupId && lastKnownSG.eventSubgroupId > 0) {
         eventSubgroupId = lastKnownSG.eventSubgroupId;
     } else {
         eventSubgroupId = watching.state.eventSubgroupId;
@@ -469,7 +469,7 @@ async function processResults(watching, dbResults, currentEventConfig) {
     //let eventSubgroupId = watching.state.eventSubgroupId;
     let eventSubgroupId;
     let segmentData;
-    if (watching.state.eventSubgroupId == 0 && lastKnownSG.eventSubgroupId > 0) {
+    if (!watching.state.eventSubgroupId && lastKnownSG.eventSubgroupId > 0) {
         eventSubgroupId = lastKnownSG.eventSubgroupId;
         segmentData = lastKnownSegmentData;
         //console.log("Using last known segment data")
@@ -1092,7 +1092,7 @@ async function getLeaderboard(watching) {
             }
             */
             let eventSubgroupId;
-            if (watching.state.eventSubgroupId == 0 && lastKnownSG.eventSubgroupId > 0) {
+            if (!watching.state.eventSubgroupId && lastKnownSG.eventSubgroupId > 0) {
                 eventSubgroupId = lastKnownSG.eventSubgroupId;
             } else {
                 eventSubgroupId = watching.state.eventSubgroupId;

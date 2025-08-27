@@ -1360,7 +1360,7 @@ export class SauceElevationProfile {
                             }
                         }
                     }
-                    if (watching.laps != this.lapCounter && this.showLapMarker && watching.eventSubgroupId == 0 && this.showCompletedLaps) {                        
+                    if (watching.laps != this.lapCounter && this.showLapMarker && !watching.eventSubgroupId && this.showCompletedLaps) {                        
                         //if (this.routeId != null) { 
                             let chartMarkLines = [];
                             if (this.chart.getOption().series[0].markLine.data) {
@@ -1774,6 +1774,7 @@ export class SauceElevationProfile {
                                     }
                                     //debugger
                                 }
+                                //debugger
                                 if (this.profileZoom && !this.singleLapView && ((this.forwardDistance < this.routeDistances.at(-1)) || this.zoomRemainingRoute)) {
                                     //console.log(xCoord)
                                     let offsetBack = this.behindDistance || 500;
@@ -2328,7 +2329,7 @@ export class SauceElevationProfile {
                                 let lineCoord;
                                 //debugger
                                 if (!this.routeId) {
-                                    lineCoord = watching.reverse ? xCoord - parseInt(this.distanceAhead) : xCoord + parseInt(this.distanceAhead)
+                                    lineCoord = watching?.reverse ? xCoord - parseInt(this.distanceAhead) : xCoord + parseInt(this.distanceAhead)
                                 } else {
                                     lineCoord = xCoord + parseInt(this.distanceAhead)
                                 }
