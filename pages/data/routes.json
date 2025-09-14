@@ -529,6 +529,253 @@
     "worldId": 1
   },
   {
+    "ascentInMeters": 136.4929504395,
+    "blockedForClubs": 1,
+    "blockedForMeetups": 1,
+    "distanceInMeters": 23622.64453125,
+    "eventOnly": true,
+    "eventPaddocks": "21,22,23,24,25",
+    "freeRideLeadinAscentInMeters": 33.0630455017,
+    "freeRideLeadinDistanceInMeters": 29.5995960236,
+    "id": 3680493479,
+    "leadinAscentInMeters": 10.0624170303,
+    "leadinDistanceInMeters": 2669.1987304688,
+    "levelLocked": 10,
+    "locKey": "LOC_ROUTE_WATOPIA_SOUTHERN_COAST_CRUISE",
+    "manifest": [
+      {
+        "end": 0.5829928492,
+        "leadin": true,
+        "roadId": 149,
+        "start": 0.43003852603336334
+      },
+      {
+        "end": 0.9974396475,
+        "roadId": 149,
+        "start": 0.5829928492
+      },
+      {
+        "end": 0.8397666622,
+        "roadId": 155,
+        "start": 0.18555556108554197
+      },
+      {
+        "end": 0.3930555672695238,
+        "reverse": true,
+        "roadId": 78,
+        "start": 0.292639
+      },
+      {
+        "end": 0.7527911401,
+        "roadId": 83,
+        "start": 0.49000002190470693
+      },
+      {
+        "end": 0.2574446261,
+        "roadId": 81,
+        "start": 0.25583923539767817
+      },
+      {
+        "end": 0.642857171595096,
+        "reverse": true,
+        "roadId": 82,
+        "start": 0.289195
+      },
+      {
+        "end": 0.6838889092703658,
+        "reverse": true,
+        "roadId": 78,
+        "start": 0.5456047911
+      },
+      {
+        "end": 0.9144444716970129,
+        "reverse": true,
+        "roadId": 154,
+        "start": 0.01
+      },
+      {
+        "end": 0.9943930413573898,
+        "reverse": true,
+        "roadId": 149,
+        "start": 0.4224301142
+      },
+      {
+        "end": 0.8512333292,
+        "roadId": 153,
+        "start": 0.3066666758060455
+      },
+      {
+        "end": 0.5333333333333332,
+        "reverse": true,
+        "roadId": 174,
+        "start": 0
+      },
+      {
+        "end": 1,
+        "reverse": true,
+        "roadId": 174,
+        "start": 0.7517666667
+      },
+      {
+        "end": 0.984,
+        "roadId": 172,
+        "start": 0.31333333333333363
+      },
+      {
+        "end": 0.5829928492,
+        "roadId": 149,
+        "start": 0.4273795665552234
+      }
+    ],
+    "meetupLeadinAscentInMeters": 33.0630455017,
+    "meetupLeadinDistanceInMeters": 52.5448799133,
+    "name": "Southern Coast Cruise",
+    "sportType": 1,
+    "supportedLaps": true,
+    "supportsTimeTrialMode": 0,
+    "useAlternateEventRamp": true,
+    "worldId": 1,
+    "zwiftEventOnly": 1
+  },
+  {
+    "ascentInMeters": 95.3124008179,
+    "blockedForClubs": 1,
+    "blockedForMeetups": 1,
+    "distanceInMeters": 12500.646484375,
+    "eventOnly": true,
+    "eventPaddocks": "1,2,3,4",
+    "freeRideLeadinAscentInMeters": 0.348213017,
+    "freeRideLeadinDistanceInMeters": 234.4797210693,
+    "id": 2661047295,
+    "leadinAscentInMeters": 35.7421340942,
+    "leadinDistanceInMeters": 2831.1442871094,
+    "locKey": "LOC_ROUTE_WATOPIA_JARVIS_SEASIDE_SPRINT",
+    "manifest": [
+      {
+        "end": 0.9830263231135916,
+        "leadin": true,
+        "reverse": true,
+        "roadId": 0,
+        "start": 0.6046756743434152
+      },
+      {
+        "end": 0.6042982501164076,
+        "reverse": true,
+        "roadId": 0,
+        "start": 0.5539522466
+      },
+      {
+        "end": 0.8038889128466443,
+        "reverse": true,
+        "roadId": 25,
+        "start": 0.1650833383
+      },
+      {
+        "end": 0.993392,
+        "roadId": 21,
+        "start": 0.13086956765502675
+      },
+      {
+        "end": 1,
+        "roadId": 23,
+        "start": 0.9966153855435582
+      },
+      {
+        "end": 0.044018782,
+        "roadId": 23,
+        "start": 0
+      },
+      {
+        "end": 0.7155555768807734,
+        "reverse": true,
+        "roadId": 188,
+        "start": 0.2230666733
+      },
+      {
+        "end": 0.8900000265240672,
+        "reverse": true,
+        "roadId": 191,
+        "start": 0.0308333343
+      },
+      {
+        "end": 0.99,
+        "roadId": 185,
+        "start": 0.30222223122914627
+      },
+      {
+        "end": 0.7805999825522285,
+        "reverse": true,
+        "roadId": 192,
+        "start": 0
+      },
+      {
+        "end": 1,
+        "reverse": true,
+        "roadId": 192,
+        "start": 0.8263845272
+      },
+      {
+        "end": 0.7733333563804624,
+        "reverse": true,
+        "roadId": 187,
+        "start": 0.2734666748
+      },
+      {
+        "end": 0.9509333319,
+        "roadId": 191,
+        "start": 0.06000000178813936
+      },
+      {
+        "end": 0.99,
+        "roadId": 188,
+        "start": 0.28444445292154946
+      },
+      {
+        "end": 0.031230769259854796,
+        "reverse": true,
+        "roadId": 23,
+        "start": 0
+      },
+      {
+        "end": 1,
+        "reverse": true,
+        "roadId": 23,
+        "start": 0.5401208969
+      },
+      {
+        "end": 0.912927,
+        "roadId": 30,
+        "start": 0.31500000938773165
+      },
+      {
+        "end": 0.7947222459067897,
+        "reverse": true,
+        "roadId": 22,
+        "start": 0.1281991926
+      },
+      {
+        "end": 0.7816666666666664,
+        "reverse": true,
+        "roadId": 28,
+        "start": 0.254925
+      },
+      {
+        "end": 0.9035964979603897,
+        "reverse": true,
+        "roadId": 0,
+        "start": 0.6042982501164076
+      }
+    ],
+    "meetupLeadinAscentInMeters": 0.6786423326,
+    "meetupLeadinDistanceInMeters": 253.091796875,
+    "name": "Jarvis Seaside Sprint",
+    "sportType": 1,
+    "supportedLaps": true,
+    "useAlternateEventRamp": false,
+    "worldId": 1,
+    "zwiftEventOnly": 1
+  },
+  {
     "ascentInMeters": 138.3578491211,
     "distanceInMeters": 12418.53125,
     "eventOnly": true,
