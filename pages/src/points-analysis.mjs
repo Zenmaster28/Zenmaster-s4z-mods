@@ -17,6 +17,12 @@ let lastKnownSegmentData;
 let currentEventConfig;
 let watchingTeam;
 let refresh = Date.now() - 2000000;
+let lastEventResults;
+let lastEventName;
+let lastEventPen;
+let lastEventId;
+let lastEventSegmentScores;
+let lastEventRacerScores;
 const doc = document.documentElement;
 doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  
 doc.querySelector('#titlebar').classList.add('always-visible');
@@ -488,6 +494,8 @@ function evaluateVisibility(scoreType, currentEventConfig) {
 async function displayResults(racerScores, segmentScores, sgConfig, eventResults) {
     //console.log("Scores to process:", racerScores)
     //let scoreFormat = settings.FTSorFAL;
+    lastEventSegmentScores = segmentScores;
+    lastEventRacerScores = racerScores;
     const pointsResultsDiv = document.getElementById("pointsResults")
     const selectedView = document.querySelector('input[name="radioView"]:checked');
     //debugger
@@ -607,6 +615,9 @@ async function showResults(allEventConfigs) {
         });
     }
     let eventResults = await processResults(eventSubgroupId, dbResults, sgConfig)
+    lastEventResults = eventResults;
+    lastEventPen = penSelect.options[penSelect.selectedIndex].text;
+    lastEventId = sgConfig.eventId;
     console.log("eventResults", eventResults)
     let [racerScores, segmentScores] = await scoreResults(eventResults, sgConfig)
     racerScores.sort((a,b) => {
@@ -680,9 +691,33 @@ export async function main() {
         }
         selectPenList += "</select>"
         penListDiv.innerHTML = selectPenList;
+        lastEventName = eventDetails.name;
         penListDiv.addEventListener("change", function() {
             showResults(allEventConfigs)
         })
+
+    })
+    const saveJsonButton = document.getElementById("saveJson");
+    saveJsonButton.addEventListener("click", () => {
+        const exportData = {
+            Name: lastEventName,
+            EventId: lastEventId,
+            Pen: lastEventPen,
+            Points: lastEventRacerScores,
+            SegmentScores: lastEventSegmentScores,
+            AllSegmentResults: lastEventResults
+        };
+        const jsonResults = JSON.stringify(exportData, null, 2);
+        const resultsBlob = new Blob([jsonResults], { type: "application/json" });
+        const url = URL.createObjectURL(resultsBlob);
+        const a = document.createElement("a");
+        a.href = url;
+        const suggestedFileName = `${lastEventName}-${lastEventPen}-${lastEventId}-export.json`;
+        a.download = suggestedFileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     })
     //debugger
     common.settingsStore.addEventListener('changed', ev => {
