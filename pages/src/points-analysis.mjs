@@ -592,7 +592,20 @@ async function showResults(allEventConfigs) {
     let dbResults = await zen.getSegmentResults(dbSegments, eventSubgroupId)
     console.log("dbResults", dbResults)
     const sgConfig = allEventConfigs.find(x => x.eventSubgroupId == eventSubgroupId)
-    //debugger
+    const eventRacers = new Set(dbResults.map(x => x.athleteId))
+    const scoreKeys = ["falScoreFormat", "ftsScoreFormat", "finScoreFormat"];
+    let regex = /[a-z]\.\./i; //dot notation format    
+    if (scoreKeys.some(key => regex.test(sgConfig[key]))) {
+        scoreKeys.forEach(key => {
+            sgConfig[key] = sgConfig[key].replace(regex, `${eventRacers.size}..`);
+        });
+    }
+    regex = /[a-z]\:/i; //matlab format
+    if (scoreKeys.some(key => regex.test(sgConfig[key]))) {
+        scoreKeys.forEach(key => {
+            sgConfig[key] = sgConfig[key].replace(regex, `${eventRacers.size}:`);
+        });
+    }
     let eventResults = await processResults(eventSubgroupId, dbResults, sgConfig)
     console.log("eventResults", eventResults)
     let [racerScores, segmentScores] = await scoreResults(eventResults, sgConfig)
