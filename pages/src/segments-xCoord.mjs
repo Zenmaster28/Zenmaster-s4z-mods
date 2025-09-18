@@ -3317,7 +3317,7 @@ export const scoreFormats = [
         fts: "10..1",
         ftsStep: 2,
         ftsBonus: "",
-        fal: "20..1",
+        fal: "x..1",
         falStep: 1,
         falBonus: "",
         fin: "x..1",
