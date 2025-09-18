@@ -355,7 +355,7 @@ eventsSelect.addEventListener('change', async function() {
                     finBonusDiv.value = currentEventConfig.finBonus;
                     const sampleScoring = document.getElementById('sampleScoring');
                     sampleScoring.innerHTML = "Sample Scoring";
-                    sampleScoring.innerHTML = showSampleScoring(currentEventConfig);
+                    sampleScoring.innerHTML = await showSampleScoring(currentEventConfig);
                     ftsPerEvent.checked = currentEventConfig.ftsPerEvent;
                 } else {
                     ftsScoreFormatDiv.value = "";    
@@ -593,8 +593,10 @@ function saveConfig() {
             const store = transaction.objectStore("segmentConfig")
             const request = store.put(eventConfig);
             request.onsuccess = function () {                    
-                console.log("Event config saved:", eventConfig.eventSubgroupId, eventConfig);                        
-                sampleScoring.innerHTML = showSampleScoring(eventConfig);
+                console.log("Event config saved:", eventConfig.eventSubgroupId, eventConfig);
+                showSampleScoring(eventConfig).then(result => {
+                    sampleScoring.innerHTML = result;
+                })
             };
             request.onerror = function (event) {
                 console.error("Failed to save event config:", event.target.error);
@@ -605,7 +607,22 @@ function saveConfig() {
     }
     //debugger
 }
-function showSampleScoring(eventConfig) {
+async function showSampleScoring(eventConfig) {
+    const scoreKeys = ["falScoreFormat", "ftsScoreFormat", "finScoreFormat"];
+    let regex = /[a-z]\.\./i; //dot notation format
+    if (scoreKeys.some(key => regex.test(eventConfig[key]))) {
+        const sgEntrants = (await common.rpc.getEventSubgroupEntrants(eventConfig.eventSubgroupId)).length;
+        scoreKeys.forEach(key => {
+            eventConfig[key] = eventConfig[key].replace(regex, `${sgEntrants}..`);
+        });
+    }
+    regex = /[a-z]\:/i; //matlab format
+    if (scoreKeys.some(key => regex.test(eventConfig[key]))) {
+        const sgEntrants = (await common.rpc.getEventSubgroupEntrants(eventConfig.eventSubgroupId)).length;
+        scoreKeys.forEach(key => {
+            eventConfig[key] = eventConfig[key].replace(regex, `${sgEntrants}:`);
+        });
+    }
     const falScoreFormat = zen.getScoreFormat(eventConfig.falScoreFormat, eventConfig.falStep)
     const falBonus = zen.getScoreFormat(eventConfig.falBonus, 1)
     const ftsScoreFormat = zen.getScoreFormat(eventConfig.ftsScoreFormat, eventConfig.ftsStep)
