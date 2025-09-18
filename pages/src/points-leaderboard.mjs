@@ -625,12 +625,13 @@ async function scoreResults(eventResults, currentEventConfig, lastSegment=false)
                     }
                 }
                 let regex = /[a-z]\.\./i; //dot notation format
+                const eventRacers = allKnownRacers.filter(x => x.eventSubgroupId == currentEventConfig.eventSubgroupId)
                 if (regex.test(scores)) {
-                    scores = scores.replace(regex, `${allKnownRacers.length}..`)
+                    scores = scores.replace(regex, `${eventRacers.length}..`)
                 }
                 regex = /[a-z]\:/i; //matlab format
                 if (regex.test(scores)) {
-                    scores = scores.replace(regex, `${allKnownRacers.length}:`)
+                    scores = scores.replace(regex, `${eventRacers.length}:`)
                 }
                 let scorePoints = zen.getScoreFormat(scores, scoreStep);        
                 let pointsCounter = scorePoints.length
@@ -786,12 +787,13 @@ async function scoreResults(eventResults, currentEventConfig, lastSegment=false)
             //console.log("FIN bonus points",bonusScores)
         }
         let regex = /[a-z]\.\./i; //dot notation format
+        const eventRacers = allKnownRacers.filter(x => x.eventSubgroupId == currentEventConfig.eventSubgroupId)
         if (regex.test(finScores)) {
-            finScores = finScores.replace(regex, `${allKnownRacers.length}..`)
+            finScores = finScores.replace(regex, `${eventRacers.length}..`)
         }
         regex = /[a-z]\:/i; //matlab format
         if (regex.test(finScores)) {
-            finScores = finScores.replace(regex, `${allKnownRacers.length}:`)
+            finScores = finScores.replace(regex, `${eventRacers.length}:`)
         }
         scorePoints = zen.getScoreFormat(finScores, finScoreStep);  
         //console.log("FIN score points",scorePoints)
