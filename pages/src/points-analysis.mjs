@@ -44,7 +44,8 @@ common.settingsStore.setDefault({
         eventSubgroupStart: 0
     },
     showTeamBadges: true,
-    badgeScale: 0.7
+    badgeScale: 0.7,
+    fontScale: 1
 });
 
 let settings = common.settingsStore.get();
