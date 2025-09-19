@@ -263,12 +263,21 @@ async function scoreResults(eventResults, currentEventConfig) {
                                         ftsScore.ftsPoints = scoreToAdd;
                                         ftsScoringResults.push(ftsScore);
                                     }
-                                    segmentPointBreakdown.fts.push({
-                                        athleteId: segRes[scoreFormat][i].athleteId,
-                                        name: segRes[scoreFormat][i].firstName + " " + segRes[scoreFormat][i].lastName,
-                                        points: scoreToAdd,
-                                        id: segRes.fts[i].id
-                                    })                                
+                                    if (segRes.fts.length > i) {
+                                        segmentPointBreakdown.fts.push({
+                                            athleteId: segRes[scoreFormat][i].athleteId,
+                                            name: segRes[scoreFormat][i].firstName + " " + segRes[scoreFormat][i].lastName,
+                                            points: scoreToAdd,
+                                            id: segRes.fts[i].id
+                                        })                          
+                                    } else {
+                                        segmentPointBreakdown.fts.push({
+                                            athleteId: "n/a",
+                                            name: "n/a",
+                                            points: "n/a",
+                                            id: null
+                                        })
+                                    }
                                     //console.log("ftsScoringResults", ftsScoringResults);
                                 }
                                 //points--;
@@ -299,12 +308,21 @@ async function scoreResults(eventResults, currentEventConfig) {
                                         ftsScore.ftsPoints = scoreToAdd;
                                         ftsScoringResults.push(ftsScore);
                                     }
-                                    segmentPointBreakdown.fts.push({
-                                        athleteId: segRes[scoreFormat][i]?.athleteId,
-                                        name: segRes[scoreFormat][i]?.firstName + " " + segRes[scoreFormat][i]?.lastName,
-                                        points: scoreToAdd,
-                                        id: segRes.fts[i].id
-                                    })
+                                    if (segRes.fts.length > i) {
+                                        segmentPointBreakdown.fts.push({
+                                            athleteId: segRes[scoreFormat][i]?.athleteId,
+                                            name: segRes[scoreFormat][i]?.firstName + " " + segRes[scoreFormat][i]?.lastName,
+                                            points: scoreToAdd,
+                                            id: segRes.fts.length > i ? segRes.fts[i].id : null
+                                        })
+                                    } else {
+                                        segmentPointBreakdown.fts.push({
+                                            athleteId: "n/a",
+                                            name: "n/a",
+                                            points: "n/a",
+                                            id: null
+                                        })
+                                    }
                                     //console.log("ftsScoringResults", ftsScoringResults);
                                 }
                                 //points--;
