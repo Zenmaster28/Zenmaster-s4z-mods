@@ -342,11 +342,13 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching, eventS
             prevSegmentResults = !eventSubgroupId ? [] : await zen.getSegmentResults(dbSegments, eventSubgroupId, {live: true})
             prevSegmentResults = prevSegmentResults.filter(x => x.segmentId == activeSegment)
             segmentResults = await common.rpc.getSegmentResults(activeSegment,{live:true})
-            //segmentResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
-            segmentResults = segmentResults.filter(x => x.eventSubgroupId === 0);
-            //console.log("segmentResults after filter", segmentResults)
-            //eventResults = prevSegmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
-            eventResults = prevSegmentResults.filter(x => x.eventSubgroupId === 0);
+            segmentResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
+            //segmentResults = segmentResults.filter(x => x.eventSubgroupId === 0);
+            console.log("segmentResults after filter", segmentResults)
+            
+            eventResults = prevSegmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
+            //eventResults = prevSegmentResults.filter(x => x.eventSubgroupId === 0);
+            //debugger
             const prevIds = new Set(prevSegmentResults.map(res => res.id))
             for (let res of segmentResults) {
                 if (!prevIds.has(res.id)) {
@@ -458,10 +460,10 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching, even
             prevSegmentResults = !eventSubgroupId ? [] : await zen.getSegmentResults(dbSegments, eventSubgroupId, {live: true})
             prevSegmentResults = prevSegmentResults.filter(x => x.segmentId == activeSegment)
             segmentResults = await common.rpc.getSegmentResults(activeSegment,{live:true})
-            //segmentResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
-            segmentResults = segmentResults.filter(x => x.eventSubgroupId === 0);
-            //eventResults = prevSegmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
-            eventResults = prevSegmentResults.filter(x => x.eventSubgroupId === 0);
+            segmentResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
+            //segmentResults = segmentResults.filter(x => x.eventSubgroupId === 0);
+            eventResults = prevSegmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
+            //eventResults = prevSegmentResults.filter(x => x.eventSubgroupId === 0);
             const prevIds = new Set(prevSegmentResults.map(res => res.id))
             for (let res of segmentResults) {
                 if (!prevIds.has(res.id)) {
@@ -566,10 +568,10 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching, even
             prevSegmentResults = !eventSubgroupId ? [] : await zen.getSegmentResults(dbSegments, eventSubgroupId, {live: true})
             prevSegmentResults = prevSegmentResults.filter(x => x.segmentId == activeSegment)
             segmentResults = await common.rpc.getSegmentResults(activeSegment,{live:true})
-            //segmentResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
-            segmentResults = segmentResults.filter(x => x.eventSubgroupId === 0);
-            //eventResults = prevSegmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
-            eventResults = prevSegmentResults.filter(x => x.eventSubgroupId === 0);
+            segmentResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
+            //segmentResults = segmentResults.filter(x => x.eventSubgroupId === 0);
+            eventResults = prevSegmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
+            //eventResults = prevSegmentResults.filter(x => x.eventSubgroupId === 0);
             const prevIds = new Set(prevSegmentResults.map(res => res.id))
             for (let res of segmentResults) {
                 if (!prevIds.has(res.id)) {
