@@ -95,7 +95,7 @@ tr.shown {
   display: table-row;
 }
 table .table-racers {
-  width: fit-content;
+  width: max-content;
   max-width: 100%;
   table-layout: auto;
   border-collapse: collapse;
