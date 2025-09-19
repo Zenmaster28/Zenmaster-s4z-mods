@@ -544,8 +544,8 @@ async function scoreResults(eventResults, currentEventConfig, lastSegment=false)
     if (currentEventConfig.ftsPerEvent) {
         uniqueSegmentIds = getUniqueValues(currentEventConfig.segments, "segmentId")
         for (let segment of uniqueSegmentIds) {
-            //console.log(segment, eventResults)
-            const thisSegmentResults = eventResults.filter(x => x.segmentId == segment)
+            console.log(segment, eventResults)
+            const thisSegmentResults = eventResults[0] ? eventResults.filter(x => x.segmentId == segment) : []
             if (thisSegmentResults.length > 0) {
                 const ftsResults = thisSegmentResults.flatMap(x => x.fts);
                 ftsResults.sort((a,b) => a.elapsed - b.elapsed);
@@ -568,7 +568,7 @@ async function scoreResults(eventResults, currentEventConfig, lastSegment=false)
             segResPerEvent = perEventResults.find(x => x.segmentId == segRes.segmentId);
         }
         if (currentEventConfig) {
-            segmentRepeat = currentEventConfig.segments.find(x => x.segmentId == segRes.segmentId && x.repeat == segRes.repeat)
+            segmentRepeat = segRes ? currentEventConfig.segments.find(x => x.segmentId == segRes.segmentId && x.repeat == segRes.repeat) : []
             const overrideConfig = settings.configOverride ? JSON.parse(settings.configOverride) : null;
             if (overrideConfig?.eventSubgroupId == currentEventConfig.eventSubgroupId) {
                 customScoring = true;
