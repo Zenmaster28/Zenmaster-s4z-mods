@@ -4,7 +4,7 @@
     "description": "Arend's Mod Collection for S4Z",
     "author": "Arend teRaa",
     "website_url": "https://github.com/Zenmaster28/Zenmaster-s4z-mods",
-    "version": "1.7.7",
+    "version": "1.7.8",
     "content_js": [
         "pages/src/data-fields.js"
     ],
@@ -172,6 +172,20 @@
             "id": "Segment results multilap",
             "name": "Segment results Multilap",
             "description": "Show FTS or FAL results for the segments on a route.",
+            "overlay": true,
+            "frame": false,
+            "default_bounds": {
+                "width": 300,
+                "height": 500,
+                "x": -300,
+                "y": 100
+            }
+        },        
+        {
+            "file": "pages/points-leaderboard.html",
+            "id": "points-leaderboard",
+            "name": "Points leaderboard",
+            "description": "Show FTS, FAL and FIN point totals for a race.",
             "overlay": true,
             "frame": false,
             "default_bounds": {
