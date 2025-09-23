@@ -3291,12 +3291,19 @@ export function getScoreFormat(scoreFormat, scoreStep) {
 
 export async function openTeamsDB() {
     return new Promise((resolve, reject) => {
-        const teamsDB = indexedDB.open("teamsDatabase", 1)
+        const teamsDB = indexedDB.open("teamsDatabase", 2)
         teamsDB.onupgradeneeded = function(event) {
             const db = event.target.result;
             if (!db.objectStoreNames.contains("teamsDatabase")) {
                 console.log("Creating teamsDatabase store")
-                const store = db.createObjectStore("teams", {keyPath: "team"});                
+                const store = db.createObjectStore("teams", {keyPath: "team"});
+                store.createIndex("name", "name", {unique: false});
+                store.createIndex("badge", "badge", {unique: false})
+            }
+            if (!db.objectStoreNames.contains("athleteIds")) {
+                console.log("Creating athleteIds store");
+                const store = db.createObjectStore("athleteIds", {keyPath: "athleteId"});
+                store.createIndex("team", "team", {unique: false});
             }
         };
         teamsDB.onsuccess = async function(event) {
