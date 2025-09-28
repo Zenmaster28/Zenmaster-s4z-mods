@@ -216,7 +216,32 @@ async function scoreResults(eventResults, currentEventConfig) {
                 let scorePoints = zen.getScoreFormat(scores, scoreStep);        
                 let pointsCounter = scorePoints.length
                 
-                
+                let ties;
+                if (currentEventConfig.ftsPerEvent && scoreFormat == "fts") {
+                    //console.log("Checking FTS per event ties in ", segResPerEvent[scoreFormat])
+                    ties = zen.findTies(segResPerEvent[scoreFormat], scoreFormat)
+                } else {
+                    //console.log(`Checking ${scoreFormat} ties in `, segRes[scoreFormat])
+                    ties = zen.findTies(segRes[scoreFormat], scoreFormat)
+                }
+                if (ties.length > 0) {
+                    //found a tie, adjust the scoring to reflect the tie
+                    console.log(`Found one or more ${scoreFormat} ties!`, ties)
+                    for (let tie of ties) {  
+                        if (tie.idxTie <= pointsCounter) {
+                            scorePoints[tie.idxTie] = scorePoints[tie.idxTiedWith]
+                            if (currentEventConfig.ftsPerEvent && scoreFormat == "fts") {
+                                console.log(segResPerEvent[scoreFormat][tie.idxTie], segResPerEvent[scoreFormat][tie.idxTiedWith])
+                                console.log("Adjusted scorePoints", scorePoints)
+                                //debugger
+                            } else {
+                                console.log(segRes[scoreFormat][tie.idxTie], segRes[scoreFormat][tie.idxTiedWith])
+                                console.log("Adjusted scorePoints", scorePoints)
+                            }
+                        }
+                    }
+                    //debugger
+                }
                 //debugger
                 //console.log("Scoring ", pointsCounter, "racers as", scorePoints)
                 for (let i = 0; i < pointsCounter; i++) { 
@@ -410,10 +435,10 @@ async function scoreResults(eventResults, currentEventConfig) {
         const finBonus = currentEventConfig.finBonus;
         if (finBonus !== "") {
             bonusScores = zen.getScoreFormat(finBonus, 1);
-            console.log("FIN bonus points",bonusScores)
+            //console.log("FIN bonus points",bonusScores)
         }
         scorePoints = zen.getScoreFormat(finScores, finScoreStep); 
-        console.log("FIN score points",scorePoints)
+        //console.log("FIN score points",scorePoints)
     }
     let res = await common.rpc.getEventSubgroupResults(currentEventConfig.eventSubgroupId);
     raceResults = [...res];
@@ -427,7 +452,7 @@ async function scoreResults(eventResults, currentEventConfig) {
     });
     */
     if (raceResults.length > 0) {
-        console.log("raceResults",raceResults)
+        //console.log("raceResults",raceResults)
         const femaleOnly = document.getElementById("femaleOnly").checked;
         if (femaleOnly) {
             raceResults = raceResults.filter(x => x.athlete.gender == "female");
@@ -467,7 +492,7 @@ async function scoreResults(eventResults, currentEventConfig) {
                     racer.finPoints = 0;
                 }
                 if (racerResult.rank <= bonusPointsCounter) {
-                    console.log("Adding", bonusScores[racerResult.rank - 1], "bonus FIN points to",racer.name )
+                    //console.log("Adding", bonusScores[racerResult.rank - 1], "bonus FIN points to",racer.name )
                     racer.finPoints += bonusScores[racerResult.rank - 1];
                 }
                 //debugger
@@ -555,6 +580,17 @@ async function displayResults(racerScores, segmentScores, sgConfig, eventResults
                 if (sgConfig.ftsPerEvent && ftsScore) {
                     const thisSegmentEventResults = perEventResults.find(x => x.segmentId == segScore.segmentId)
                     const ftsScoring = zen.getScoreFormat(sgConfig.ftsScoreFormat, sgConfig.ftsStep);
+                    const ties = zen.findTies(thisSegmentEventResults.fts, "fts")
+                    if (ties.length > 0) {
+                        //console.log("Found one or more ties when displaying per event fts results", ties)
+                        for (let tie of ties) {
+                            if (tie.idxTie <= ftsScoring.length) {
+                                ftsScoring[tie.idxTie] = ftsScoring[tie.idxTiedWith]
+                                //debugger
+                            }
+                        }
+                        
+                    }
                     const thisResultScore = ftsScoring[thisSegmentEventResults.fts.indexOf(thisSegmentEventResults.fts.find(x => x.id == ftsScore.id))]
                     const ftsPoints = thisResultScore;
                     ftsScore.points = ftsPoints;
@@ -588,6 +624,17 @@ async function displayResults(racerScores, segmentScores, sgConfig, eventResults
                     const eventFTSScores = thisSegmentEventResults.fts.sort((a,b) => a.elapsed - b.elapsed).slice(0, segment.fts.length);
                     if (eventFTSScores.find(x => x.id == thisRacerFTS.id)) {
                         const ftsScoring = zen.getScoreFormat(sgConfig.ftsScoreFormat, sgConfig.ftsStep);
+                        const ties = zen.findTies(eventFTSScores, "fts")
+                    if (ties.length > 0) {
+                        //console.log("Found one or more ties when displaying per event fts results", ties)
+                        for (let tie of ties) {
+                            if (tie.idxTie <= ftsScoring.length) {
+                                ftsScoring[tie.idxTie] = ftsScoring[tie.idxTiedWith]
+                                //debugger
+                            }
+                        }
+                        
+                    }
                         const thisResultScore = ftsScoring[eventFTSScores.indexOf(eventFTSScores.find(x => x.id == thisRacerFTS.id))]
                         ftsPoints = thisResultScore;
                     } else {

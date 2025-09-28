@@ -636,7 +636,16 @@ async function scoreResults(eventResults, currentEventConfig, lastSegment=false)
                 let scorePoints = zen.getScoreFormat(scores, scoreStep);        
                 let pointsCounter = scorePoints.length
                 
-                
+                const ties = zen.findTies(segRes[scoreFormat], scoreFormat)
+                if (ties.length > 0) {
+                    //found a tie, adjust the scoring to reflect the tie
+                    console.log(`Found one or more ${scoreFormat} ties!`, ties)
+                    for (let tie of ties) {                                
+                        scorePoints[tie.idxTie] = scorePoints[tie.idxTiedWith]
+                        console.log(segRes[scoreFormat][tie.idxTie], segRes[scoreFormat][tie.idxTiedWith])
+                    }
+                    //debugger
+                }
                 //debugger
                 //console.log("Scoring ", pointsCounter, "racers as", scorePoints)
                 for (let i = 0; i < pointsCounter; i++) {  
@@ -729,7 +738,7 @@ async function scoreResults(eventResults, currentEventConfig, lastSegment=false)
                                 //points--;
                             }
                         }
-                    } else {                 
+                    } else {
                         if (segRes[scoreFormat].length > 0 && segRes[scoreFormat][i]) {
                             let prevScore = racerScores.find(x => x.athleteId == segRes[scoreFormat][i].athleteId)
                             let scoreToAdd;
