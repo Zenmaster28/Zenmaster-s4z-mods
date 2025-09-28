@@ -3506,3 +3506,19 @@ async function getCurrentPortalRoad(route) {
     }
     return parseInt(activePortalRoad)
 }
+
+export function findTies(segRes, scoreFormat) {
+  const results = [];
+  let groupStart = 0;
+  const propName = scoreFormat == "fal" ? "ts" : "elapsed"
+
+  for (let i = 1; i < segRes.length; i++) {
+    if (segRes[i][propName] === segRes[groupStart][propName]) {
+      results.push({ idxTie: i, idxTiedWith: groupStart });
+    } else {
+      groupStart = i;
+    }
+  }
+
+  return results;
+}
