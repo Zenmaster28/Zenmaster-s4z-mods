@@ -3294,11 +3294,11 @@ export async function openTeamsDB() {
         const teamsDB = indexedDB.open("teamsDatabase", 2)
         teamsDB.onupgradeneeded = function(event) {
             const db = event.target.result;
-            if (!db.objectStoreNames.contains("teamsDatabase")) {
-                console.log("Creating teamsDatabase store")
-                const store = db.createObjectStore("teams", {keyPath: "team"});
-                store.createIndex("name", "name", {unique: false});
-                store.createIndex("badge", "badge", {unique: false})
+            if (!db.objectStoreNames.contains("teams")) {
+                console.log("Creating teams store")
+                const store = db.createObjectStore("teams", {keyPath: "id", autoIncrement: true});
+                store.createIndex("team", "team", {unique: false});
+                //store.createIndex("badge", {unique: false})
             }
             if (!db.objectStoreNames.contains("athleteIds")) {
                 console.log("Creating athleteIds store");
@@ -3315,6 +3315,140 @@ export async function openTeamsDB() {
             console.log("Config Database failed to open:", event.target.error);
             reject(event.target.error)
         };
+    });
+}
+
+export async function addNewTeam(dbTeams, teamName) {
+    return new Promise((resolve, reject) => {
+        const storeName = "teams";
+        const transaction = dbTeams.transaction(storeName, "readwrite");
+        const store = transaction.objectStore(storeName);
+        const newTeam = {
+            team: teamName,
+            badge: ""
+        }
+        const request = store.add(newTeam);
+        request.onsuccess = function () {            
+            console.log("New team added:", teamName);
+        };
+        request.onerror = function (event) {
+            console.error("Failed to add new team:", event.target.error);
+        };
+        
+        transaction.oncomplete = function () {
+            //console.log("All segment results processed.");
+            resolve();
+        };
+
+        transaction.onerror = function (event) {
+            console.error("Transaction error:", event.target.error);
+            reject(event.target.error);
+        };
+    });
+}
+
+export async function assignAthlete(dbTeams, id, athleteId) {
+    return new Promise((resolve, reject) => {
+        const storeName = "athleteIds";
+        const transaction = dbTeams.transaction(storeName, "readwrite");
+        const store = transaction.objectStore(storeName);
+        const assignment = {
+            athleteId: athleteId,
+            team: id
+        }
+        let request;
+        console.log("assignment", assignment)
+        if (id != "-1") {
+            request = store.put(assignment);
+        } else {
+            request = store.delete(athleteId)
+        }
+        request.onsuccess = function () {            
+            console.log("Team assignment complete:", assignment);
+        };
+        request.onerror = function (event) {
+            console.error("Failed to assign athlete to team:", event.target.error);
+        };
+        
+        transaction.oncomplete = function () {
+            //console.log("All segment results processed.");
+            resolve();
+        };
+
+        transaction.onerror = function (event) {
+            console.error("Transaction error:", event.target.error);
+            reject(event.target.error);
+        };
+    });
+}
+
+export async function getExistingTeams(teamsDb) {
+    const storeName = "teams"
+    return new Promise((resolve, reject) => {
+        try {
+            const transaction = teamsDb.transaction(storeName, "readonly");
+            const store = transaction.objectStore(storeName);
+            const index = store.index("team");
+            //console.log("Starting query for eventSubgroupId:", eventSubgroupId);
+
+            const request = index.getAll();
+            request.onsuccess = function () {                
+                //console.log("Query success. Retrieved", request.result.length, "entries");
+                resolve(request.result);
+            };
+
+            request.onerror = function (event) {
+                console.error("Error fetching teams", event.target.error);
+                reject(event.target.error);
+            };
+
+            transaction.oncomplete = function () {
+                //console.log("Transaction completed successfully.");
+            };
+
+            transaction.onerror = function (event) {
+                console.error("Transaction error:", event.target.error);
+                reject(event.target.error);
+            };
+        } catch (error) {
+            console.error("Unexpected error in getExistingTeams:", error);
+            reject(error);
+        }
+    });
+}
+
+export async function getTeamAssignments(teamsDb) {
+    const storeName = "athleteIds"
+    return new Promise((resolve, reject) => {
+        try {
+            const transaction = teamsDb.transaction(storeName, "readonly");
+            const store = transaction.objectStore(storeName);
+            const index = store.index("team");
+            //console.log("Starting query for eventSubgroupId:", eventSubgroupId);
+
+            const request = index.getAll();
+            request.onsuccess = function () {                
+                //console.log("Query success. Retrieved", request.result.length, "entries");
+                resolve(request.result);
+            };
+
+            request.onerror = function (event) {
+                console.error("Error fetching athleteids", event.target.error);
+                reject(event.target.error);
+            };
+
+            transaction.oncomplete = function () {
+                //console.log("Transaction completed successfully.");
+            };
+
+            transaction.onerror = function (event) {
+                console.error("Transaction error:", event.target.error);
+                reject(event.target.error);
+            };
+        } catch (error) {
+            console.error("Unexpected error in getTeamAssignments:", error);
+            reject(error);
+        }
     });
 }
 

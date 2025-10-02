@@ -4,8 +4,8 @@ import * as zen from './segments-xCoord.mjs';
 //zen.buildSegmentsTable()
 let sgStartTime;
 let dbTeams = await zen.openTeamsDB();
-import {settingsMain} from './points-leaderboard.mjs';
-settingsMain();
+//import {settingsMain} from './points-leaderboard.mjs';
+//settingsMain();
 document.body.classList.remove("transparent-bg");
 const scoreFormatDiv = document.getElementById("scoreFormats");
 
@@ -76,36 +76,12 @@ eventText.addEventListener("change", async function() {
 const watching = await common.rpc.getAthleteData("watching")
 
 const penListDiv = document.getElementById('penList');
-const segmentsSaveDiv = document.getElementById('segmentsSave');
-const segmentsTableDiv = document.getElementById('segmentsList');
-const segmentsHeaderDiv = document.getElementById('segmentsHeader');
-//const ftsScoreFormatDiv = document.getElementById('ftsScoreFormat');
-//const ftsStepDiv = document.getElementById('ftsStep');
-//const ftsBonusDiv = document.getElementById('ftsBonus');
-//const falScoreFormatDiv = document.getElementById('falScoreFormat');
-//const falStepDiv = document.getElementById('falStep');
-//const falBonusDiv = document.getElementById('falBonus');
-//const finScoreFormatDiv = document.getElementById('finScoreFormat');
-//const finStepDiv = document.getElementById('finStep');
-//const finBonusDiv = document.getElementById('finBonus');
 const eventTextDiv = document.getElementById('eventText'); 
 
 eventsSelect.addEventListener('change', async function() {
-    segmentsTableDiv.innerHTML = "";
-    penListDiv.innerHTML = "";
-    segmentsSaveDiv.innerHTML = "";
-    segmentsHeaderDiv.innerHTML = "";
-    //ftsScoreFormatDiv.value = "";
-    //falScoreFormatDiv.value = "";
-    //finScoreFormatDiv.value = "";
+    
+    penListDiv.innerHTML = "";    
     eventTextDiv.value = "";
-    //ftsBonusDiv.value = "";
-    //falBonusDiv.value = "";
-    //finBonusDiv.value = "";
-    //ftsStepDiv.value = 1;
-    //falStepDiv.value = 1;
-    //finStepDiv.value = 1;
-    //sampleScoring.innerHTML = "Sample Scoring";
     if (this.value != -1) {
         eventInfo = await common.rpc.getEvent(parseInt(this.value))
         eventInfo.eventSubgroups.sort((a,b) => {
@@ -134,9 +110,47 @@ eventsSelect.addEventListener('change', async function() {
         }
         penSelect.addEventListener('change', async function() {
             const sg = eventInfo.eventSubgroups.find(x => x.id == this.value)
+            const outputDiv = document.getElementById("outputDiv")
             if (sg) {   
-                const sgEntrants = await common.rpc.getEventSubgroupEntrants(sg.id)                         
-                debugger
+                const sgEntrants = await common.rpc.getEventSubgroupEntrants(sg.id)  
+                sgEntrants.sort((a,b) => {
+                    if (a.athlete.sanitizedFullname < b.athlete.sanitizedFullname) {
+                        return -1
+                    } else {
+                        return 1
+                    }
+                })
+                console.log("sgEntrants", sgEntrants)
+                //debugger
+                let tableOutput = "<table><th>Name</th><th>Team</th><th>Custom Team</th>"
+                const customTeams = await zen.getExistingTeams(dbTeams);
+                const teamAssignments = await zen.getTeamAssignments(dbTeams);
+                console.log("customTeams", customTeams)
+                console.log("teamAssignments", teamAssignments)
+                for (let entrant of sgEntrants) {
+                    //debugger
+                    const zenTeam = teamAssignments.find(x => x.athleteId == entrant.athlete.id) // todo - find custom team                    
+                    let select = `<select name='customTeamSelect'><option value='-1,${entrant.athlete.id}'>---</option>`
+                    for (let team of customTeams) {
+                        if (zenTeam && zenTeam.team == team.id && zenTeam.athleteId == entrant.athlete.id) {
+                            select += `<option value='${team.id},${entrant.athlete.id}' selected>${team.team}</option>`
+                        } else {
+                            select += `<option value='${team.id},${entrant.athlete.id}'>${team.team}</option>`
+                        }
+                    }
+                    select += "</select>"
+                    
+                    tableOutput += `<tr><td>${entrant.athlete.sanitizedFullname}</td><td>${entrant.athlete.team || ""}</td><td>${select}</td></tr>`
+                }
+                tableOutput += "</table>"
+                outputDiv.innerHTML = tableOutput;
+                const teamSelects = document.querySelectorAll('select[name="customTeamSelect"]');
+                teamSelects.forEach(select => {
+                    select.addEventListener('change', event => {
+                        const [id, athleteId] = event.target.value.split(",");
+                        zen.assignAthlete(dbTeams, id, athleteId);
+                    });
+                });
             }
             //debugger
         })
@@ -168,6 +182,59 @@ eventsSelect.addEventListener('change', async function() {
         }
     }
 });
+
+const newTeamInput = document.getElementById("newTeamName");
+const addNewTeamButton = document.getElementById("addNewTeam");
+addNewTeamButton.addEventListener("click", async function() {
+    const teamName = newTeamInput.value.trim();
+    await zen.addNewTeam(dbTeams, teamName);
+    existingTeamsDiv.innerHTML = await getExistingTeams();
+});
+const existingTeamsDiv = document.getElementById("existingTeamsDiv")
+async function getExistingTeams() {
+    const existingTeams = await zen.getExistingTeams(dbTeams);   
+    console.log("existingTeams", existingTeams) 
+    let existingTeamsTable = "<table id='existingTeamsTable'><th>Id</th><th>Name</th><th>Badge</th>"
+    for (let team of existingTeams) {
+        existingTeamsTable += `<tr><td>${team.id}</td><td>${team.team}</td><td>${team.badge}</td></tr>`
+    }
+    existingTeamsTable += "</table>"
+    return existingTeamsTable
+}
+existingTeamsDiv.innerHTML = await getExistingTeams();
+async function showTeamMembers(team, teamName) {
+    const teamAssignments = await zen.getTeamAssignments(dbTeams);
+    console.log("teamAssignments", teamAssignments)
+    const thisTeam = teamAssignments.filter(x => x.team == team)
+    //debugger
+    console.log("This team:", thisTeam)
+    outputDiv.innerHTML = "";
+    let thisTeamTable = `<table id='thisTeamTable'><th>Name</th><th>Team from Zwift</th><th>athleteId</th><th>Remove from ${teamName}</th>`
+    for (let athlete of thisTeam) {
+        const athleteData = await common.rpc.getAthlete(athlete.athleteId);
+        thisTeamTable += `<tr><td>${athleteData.sanitizedFullname}</td><td>${athleteData.team || ""}</td><td>${athlete.athleteId}</td><td>X</td></tr>`
+    }
+    thisTeamTable += "</table>";
+    outputDiv.innerHTML = thisTeamTable;
+    const teamTable = document.getElementById("thisTeamTable");
+    for (let row of teamTable.rows) {
+        row.cells[3].addEventListener("click", function () {
+            const athleteId = this.parentElement.cells[2].textContent;
+            const id = "-1";
+            zen.assignAthlete(dbTeams, id, athleteId);
+            showTeamMembers(team);
+        })
+    }
+};
+const teamsTable = document.getElementById("existingTeamsTable");
+for (let row of teamsTable.rows) {
+    row.addEventListener("click", function () {
+        const id = this.cells[0].textContent;
+        const team = this.cells[1].textContent;
+        showTeamMembers(id, team)
+    })
+}
+//debugger
 if (watching) {
     const eventSubgroupId = watching.state.eventSubgroupId;
     if (eventSubgroupId > 0) {
@@ -234,19 +301,4 @@ function saveConfig() {
         console.log("No segments defined / no pen selected")
     }
     //debugger
-}
-function showSampleScoring(eventConfig) {
-    const falScoreFormat = zen.getScoreFormat(eventConfig.falScoreFormat, eventConfig.falStep)
-    const falBonus = zen.getScoreFormat(eventConfig.falBonus, 1)
-    const ftsScoreFormat = zen.getScoreFormat(eventConfig.ftsScoreFormat, eventConfig.ftsStep)
-    const ftsBonus = zen.getScoreFormat(eventConfig.ftsBonus, 1)
-    const finScoreFormat = zen.getScoreFormat(eventConfig.finScoreFormat, eventConfig.finStep)
-    const finBonus = zen.getScoreFormat(eventConfig.finBonus, 1)
-    const maxScoring = Math.max(falScoreFormat.length, ftsScoreFormat.length, finScoreFormat.length)
-    let sampleOutput = "Sample Scoring<br><table><tr><th>Rank</th><th>FTS</th><th>FAL</th><th>FIN</th></tr>";
-    for (let i = 0; i < maxScoring; i++) {
-        sampleOutput += `<tr><td>${i + 1}</td><td>${(ftsScoreFormat[i] || 0) + (ftsBonus[i] || 0)}</td><td>${(falScoreFormat[i] || 0) + (falBonus[i] || 0)}</td><td>${(finScoreFormat[i] || 0) + (finBonus[i] || 0)}</td></tr>`
-    }
-    sampleOutput += "</table>"
-    return sampleOutput;
 }
