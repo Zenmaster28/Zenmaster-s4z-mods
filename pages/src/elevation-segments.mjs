@@ -245,7 +245,16 @@ export class SauceElevationProfile {
                     //debugger
                 }
             })
-            rightPanel.addEventListener('click', ev => {                 
+            rightPanel.addEventListener('click', ev => {
+                if (ev.target.textContent) {
+                    const segmentInfo = this.routeInfo.segments.find(x => x.name == ev.target.textContent);
+                    if (segmentInfo) {
+                        window.open(`./segment-data.html?course=${this.courseId}&segment=${segmentInfo.id}`, "segmentData")
+                    } else {
+                        console.log("No segment found for ", ev.target.textContent)
+                    }                
+
+                }                
                 if (ev.ctrlKey) {
                     this.createPOI(ev, self, this.hoverPoint[0]);
                     
