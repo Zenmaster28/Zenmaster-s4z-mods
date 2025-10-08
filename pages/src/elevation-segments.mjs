@@ -722,11 +722,13 @@ export class SauceElevationProfile {
                     color: this.lineTextColor
                 },
                 label: {
-                    distance: 7,
-                    position: 'insideMiddleBottom',
+                    distance: this.invertSegmentBool ? 10 : 8,
+                    position: this.invertSegmentBool ? 'insideMiddleTop' : 'insideMiddleBottom',
                     formatter: `LAP`,
                     color: this.lineTextColor,
-                    rotate: 90
+                    rotate: this.invertSegmentBool ? -90 : 90, 
+                    align: this.invertSegmentBool ? 'left' : 'right',
+                    verticalAlign: 'middle'
                 }
             });            
             this._routeLeadinDistance = distances[lapStartIdx];
@@ -777,11 +779,13 @@ export class SauceElevationProfile {
                         color: this.lineTextColor
                     },
                     label: {
-                        distance: 7,
-                        position: 'insideMiddleBottom',
+                        distance: this.invertSegmentBool ? 10 : 8,
+                        position: this.invertSegmentBool ? 'insideMiddleTop' : 'insideMiddleBottom',
                         formatter: `LAP ${lap + 1}`,
                         color: this.lineTextColor,
-                        rotate: 90
+                        rotate: this.invertSegmentBool ? -90 : 90, 
+                        align: this.invertSegmentBool ? 'left' : 'right',
+                        verticalAlign: 'middle'
                     }
                 });
             }
