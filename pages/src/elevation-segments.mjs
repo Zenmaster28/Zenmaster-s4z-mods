@@ -15,7 +15,7 @@ let beaconSubs = [];
 const allRoutes = await zen.getAllRoutes();
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showNextSegmentFinish, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showRobopacersGap, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, showCurrentAltitude, showRouteMaxElevation, showXaxis, xAxisIncrements, xAxisInverse, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showNextSegmentFinish, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showRobopacersGap, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, showCurrentAltitude, showRouteMaxElevation, showXaxis, xAxisIncrements, xAxisInverse, invertSegmentBool, refresh=1000}) {
         this.debugXcoord = false;
         this.debugXcoordDistance = null;
         this.debugPinPlacement = false;
@@ -57,6 +57,7 @@ export class SauceElevationProfile {
         this.lineType = lineType;
         this.lineTypeFinish = lineTypeFinish;
         this.lineSize = lineSize;
+        this.invertSegmentBool = invertSegmentBool;
         this.pinSize = pinSize;
         this.pinColor = pinColor;
         this.pinColorMarked = pinColorMarked;
@@ -683,11 +684,14 @@ export class SauceElevationProfile {
                             color: this.lineTextColor
                         },
                         label: {
-                            distance: 7,
-                            position: 'insideEndTop',                    
+                            distance: this.invertSegmentBool ? 8 : 10,
+                            position: this.invertSegmentBool ? 'insideEndBottom' : 'insideEndTop',
                             formatter: marklineName,
                             color: this.lineTextColor,
-                            rotate: 90
+                            rotate: this.invertSegmentBool ? -90 : 90,
+                            align: this.invertSegmentBool ? 'left' : 'right',
+                            verticalAlign: 'middle',
+                            offset: this.invertSegmentBool ? [-5, 0] : [-15, 0]
                         }
                     });
                 }

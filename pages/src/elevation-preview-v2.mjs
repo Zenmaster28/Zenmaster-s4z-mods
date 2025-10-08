@@ -216,7 +216,11 @@ function createElevationProfile() {
     const xAxisIncrements = settings.xAxisIncrements;
     typeof(settings.xAxisInverse) == "undefined" ? common.settingsStore.set("xAxisInverse", false) : null;
     const xAxisInverse = settings.xAxisInverse;
-    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, showAllArches, disablePenRouting, showXaxis, xAxisIncrements, xAxisInverse});
+    typeof(settings.invertSegmentText) == "undefined" ? common.settingsStore.set("invertSegmentText", "false") : null;
+    const invertSegmentText = settings.invertSegmentText;
+    typeof(settings.invertSegmentBool) == "undefined" ? common.settingsStore.set("invertSegmentBool", false) : null;
+    const invertSegmentBool = settings.invertSegmentBool;
+    return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, showAllArches, disablePenRouting, showXaxis, xAxisIncrements, xAxisInverse, invertSegmentBool});
     //return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, colorScheme, showSegmentStart});
 }
 
@@ -848,6 +852,10 @@ export async function main() {
         } else if (changed.has('overrideDistance')) {
             elProfile.overrideDistance = changed.get('overrideDistance')
             applyRoute();
+        } else if (changed.has('invertSegmentText')) {
+            const invertBool = changed.get('invertSegmentText') === "true";
+            common.settingsStore.set('invertSegmentBool', invertBool);
+            location.reload();
         }
     });
     
