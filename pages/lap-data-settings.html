@@ -87,6 +87,35 @@
             import {settingsMain} from './src/lap-data.mjs';
             settingsMain();
             document.body.classList.remove("transparent-bg");
+            document.addEventListener("DOMContentLoaded", () => {
+                const minGap = 10;
+                const lowInputs = document.querySelectorAll('input[name="autoLapRangeLow"]');
+                const highInputs = document.querySelectorAll('input[name="autoLapRangeHigh"]');
+                
+                function ensureGap(changedLow) {
+                    let low = parseFloat(lowInputs[0].value);
+                    let high = parseFloat(highInputs[0].value);
+
+                    if (high - low < minGap) {
+                    if (changedLow) {
+                        high = low + minGap;
+                        highInputs.forEach(x => x.value = high);
+                        highInputs.forEach(x => x.dispatchEvent(new Event('input', {bubbles: true})));
+                    } else {
+                        low = high - minGap;
+                        lowInputs.forEach(x => x.value = low);
+                        lowInputs.forEach(x => x.dispatchEvent(new Event('input', {bubbles: true})));
+                    }
+                    }
+                }                
+                lowInputs.forEach(input => {
+                    input.addEventListener('input', () => ensureGap(true));
+                });
+
+                highInputs.forEach(input => {
+                    input.addEventListener('input', () => ensureGap(false));
+                });
+            })
         </script>
     </head>
     <body>
@@ -105,7 +134,7 @@
                 <div class="title">Window Settings</div>
                 <label>
                     <key>Auto-lap on power:</key>
-                    <input type="checkbox" name="autoLapPower">
+                    <input type="checkbox" name="autoLapPower" data-depends-on="!autoLapRanges">
                 </label>
                 <label title="The power threshold that determines when to trigger a lap">
                     <key>&nbsp;&nbsp;- Threshold (w):</key>
@@ -116,6 +145,25 @@
                     <key>&nbsp;&nbsp;- Duration (ms):</key>
                     <input type="range" name="autoLapPowerDuration" min="500" max="2500" step="100"/ data-depends-on="autoLapPower">
                     <input type="number" name="autoLapPowerDuration" min="500" max="2500" step="100" style="--size: 7"/ data-depends-on="autoLapPower">
+                </label>
+                <label title="Automatically trigger a lap with power leaves one range for another.  eg. if power is less than the low range threshold and changes to either between the low and high or above the high, then trigger a lap.">
+                    <key>Auto-lap on ranges:</key>
+                    <input type="checkbox" name="autoLapRanges" data-depends-on="!autoLapPower">
+                </label>
+                <label title="The low power threshold that determines when to trigger a lap">
+                    <key>&nbsp;&nbsp;- Low range threshold: </key>
+                    <input type="range" name="autoLapRangeLow" min="10" max="1000" step="5"/ data-depends-on="autoLapRanges">
+                    <input type="number" name="autoLapRangeLow" min="10" max="1000" step="5" style="--size: 5"/ data-depends-on="autoLapRanges">
+                </label>
+                <label title="The high power threshold that determines when to trigger a lap">
+                    <key>&nbsp;&nbsp;- High range threshold: </key>
+                    <input type="range" name="autoLapRangeHigh" min="10" max="1000" step="5"/ data-depends-on="autoLapRanges">
+                    <input type="number" name="autoLapRangeHigh" min="10" max="1000" step="5" style="--size: 5"/ data-depends-on="autoLapRanges">
+                </label>
+                <label title="How long power needs to go above or below the threshold before triggering a lap">
+                    <key>&nbsp;&nbsp;- Duration (ms):</key>
+                    <input type="range" name="autoLapRangesDuration" min="500" max="2500" step="100"/ data-depends-on="autoLapRanges">
+                    <input type="number" name="autoLapRangesDuration" min="500" max="2500" step="100" style="--size: 7"/ data-depends-on="autoLapRanges">
                 </label>
                 <label>
                     <key>Secondary Data fields:</key>

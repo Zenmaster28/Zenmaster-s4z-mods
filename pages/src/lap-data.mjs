@@ -355,7 +355,6 @@ export async function main() {
                 }
 
             }
-
         } else {
             autoLapStatusDiv.innerHTML = "";
         }
