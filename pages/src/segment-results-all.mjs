@@ -344,7 +344,7 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching, eventS
             segmentResults = await common.rpc.getSegmentResults(activeSegment,{live:true})
             segmentResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
             //segmentResults = segmentResults.filter(x => x.eventSubgroupId === 0);
-            console.log("segmentResults after filter", segmentResults)
+            //console.log("segmentResults after filter", segmentResults)
             
             eventResults = prevSegmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
             //eventResults = prevSegmentResults.filter(x => x.eventSubgroupId === 0);

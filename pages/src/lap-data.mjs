@@ -21,6 +21,11 @@ let intervalRecovery = true;
 let intervalTS = Date.now() + 1000000; //way in the future
 let intervalTransition = false;
 let autoLapOverride = false;
+const autoLapRanges = {
+    currentRange: null,
+    rangeTS: Date.now() + 1000000,
+    transition: false
+}
 
 function setBackground() {
     const {solidBackground, backgroundColor} = common.settingsStore.get();
@@ -327,6 +332,30 @@ export async function main() {
             } else {
                 autoLapStatusDiv.innerHTML = "Auto Lap Power: Disabled"
             }
+        } else if (settings.autoLapRanges) {
+            if (!autoLapOverride) {
+                const currentRange = watching.state.power >= settings.autoLapRangeHigh ? "high" : watching.state.power >= settings.autoLapRangeLow ? "mid" : "low";
+                if (!autoLapRanges.currentRange) { //initialize
+                    autoLapRanges.currentRange = currentRange;
+                    autoLapRanges.rangeTS = Date.now();
+                    autoLapRanges.transition = false;
+                } else if (currentRange != autoLapRanges.currentRange) {
+                    if (!autoLapRanges.transition) { // not already in a transition state, enable it
+                        autoLapRanges.rangeTS = Date.now();
+                        autoLapRanges.transition = true;
+                    } else if (Date.now() - autoLapRanges.rangeTS > settings.autoLapRangesDuration) { // exceeded the transition time threshold, trigger a lap
+                        common.rpc.startLap();
+                        autoLapRanges.transition = false;
+                        autoLapRanges.rangeTS = Date.now();
+                        autoLapRanges.currentRange = currentRange;
+                    }
+                } else {
+                    autoLapRanges.rangeTS = Date.now();
+                    autoLapRanges.transition = false;
+                }
+
+            }
+
         } else {
             autoLapStatusDiv.innerHTML = "";
         }
