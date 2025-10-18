@@ -4,10 +4,13 @@ import * as zen from './segments-xCoord.mjs';
 //zen.buildSegmentsTable()
 let sgStartTime;
 let dbTeams = await zen.openTeamsDB();
-//import {settingsMain} from './points-leaderboard.mjs';
-//settingsMain();
+import {settingsMain} from './points-leaderboard.mjs';
+settingsMain();
 document.body.classList.remove("transparent-bg");
 const scoreFormatDiv = document.getElementById("scoreFormats");
+const doc = document.documentElement;
+//doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  
+doc.style.setProperty('--font-scale', 1.5);  
 
 
 const eventsListDiv = document.getElementById("eventsList");
@@ -16,7 +19,7 @@ const eventsSelect = document.createElement('select')
 eventsSelect.id = "eventsSelect"
 eventsSelect.style.maxWidth = '27em';
 const optChoose = document.createElement('option')
-optChoose.textContent = "Click to select an event to configure";
+optChoose.textContent = "Click to select an event";
 optChoose.value = -1;
 eventsSelect.appendChild(optChoose);
 let eventInfo;
@@ -38,7 +41,7 @@ const eventText = document.createElement('input');
 eventText.type = "text";
 eventText.id = "eventText";
 eventText.title = "Enter an event ID (from the URL on Zwiftpower) to find an event not in the list"
-eventText.style.width = "8em"
+eventText.style.width = "6em"
 eventText.placeholder = "or event ID"
 eventsListDiv.appendChild(eventText);
 eventText.addEventListener("change", async function() {
@@ -122,7 +125,7 @@ eventsSelect.addEventListener('change', async function() {
                 })
                 console.log("sgEntrants", sgEntrants)
                 //debugger
-                let tableOutput = "<table><th>Name</th><th>Team</th><th>Custom Team</th>"
+                let tableOutput = "<table id='sgEntrantsTable'><th>Name</th><th>Team</th><th>Custom Team</th>"
                 const customTeams = await zen.getExistingTeams(dbTeams);
                 const teamAssignments = await zen.getTeamAssignments(dbTeams);
                 console.log("customTeams", customTeams)
@@ -146,9 +149,18 @@ eventsSelect.addEventListener('change', async function() {
                 outputDiv.innerHTML = tableOutput;
                 const teamSelects = document.querySelectorAll('select[name="customTeamSelect"]');
                 teamSelects.forEach(select => {
-                    select.addEventListener('change', event => {
+                    select.addEventListener('change', async event => {
                         const [id, athleteId] = event.target.value.split(",");
                         zen.assignAthlete(dbTeams, id, athleteId);
+                        existingTeamsDiv.innerHTML = await getExistingTeams();
+                        const teamsTable = document.getElementById("existingTeamsTable");
+                        for (let row of teamsTable.rows) {
+                            row.addEventListener("click", function () {
+                                const id = this.cells[0].textContent;
+                                const team = this.cells[1].textContent.replace(/\(\d+\)/, '').trim();
+                                showTeamMembers(id, team)
+                            })
+                        }
                     });
                 });
             }
@@ -185,55 +197,162 @@ eventsSelect.addEventListener('change', async function() {
 
 const newTeamInput = document.getElementById("newTeamName");
 const addNewTeamButton = document.getElementById("addNewTeam");
-addNewTeamButton.addEventListener("click", async function() {
+async function newTeam() {
     const teamName = newTeamInput.value.trim();
     await zen.addNewTeam(dbTeams, teamName);
     existingTeamsDiv.innerHTML = await getExistingTeams();
+    const teamsTable = document.getElementById("existingTeamsTable");
+    for (let row of teamsTable.rows) {
+        row.addEventListener("click", function () {
+            const id = this.cells[0].textContent;
+            const team = this.cells[1].textContent.replace(/\(\d+\)/, '').trim();
+            showTeamMembers(id, team)
+        })
+    }
+}
+addNewTeamButton.addEventListener("click", async function() {
+    await newTeam();
 });
+newTeamInput.addEventListener("keydown", async function(event) {
+    if (event.key === "Enter") {
+        await newTeam();
+    }
+})
 const existingTeamsDiv = document.getElementById("existingTeamsDiv")
 async function getExistingTeams() {
-    const existingTeams = await zen.getExistingTeams(dbTeams);   
+    const existingTeams = await zen.getExistingTeams(dbTeams);  
+    const teamAssignments = await zen.getTeamAssignments(dbTeams); 
     console.log("existingTeams", existingTeams) 
-    let existingTeamsTable = "<table id='existingTeamsTable'><th>Id</th><th>Name</th><th>Badge</th>"
+    let existingTeamsTable = "<table id='existingTeamsTable'><th>Id</th><th>Name</th><th></th>"
     for (let team of existingTeams) {
-        existingTeamsTable += `<tr><td>${team.id}</td><td>${team.team}</td><td>${team.badge}</td></tr>`
+        const teamMemberCount = (teamAssignments.filter(x => x.team == team.id)).length
+        existingTeamsTable += `<tr><td>${team.id}</td><td class="teamName">${team.team} (${teamMemberCount})</td><td>${team.badge}</td></tr>`
     }
     existingTeamsTable += "</table>"
     return existingTeamsTable
 }
 existingTeamsDiv.innerHTML = await getExistingTeams();
+const teamsTable = document.getElementById("existingTeamsTable");
+for (let row of teamsTable.rows) {
+    row.addEventListener("click", function () {
+        const id = this.cells[0].textContent;
+        const team = this.cells[1].textContent.replace(/\(\d+\)/, '').trim();
+        showTeamMembers(id, team)
+    })
+}
+async function addNewMember(team, teamName) {
+    const athleteId = document.getElementById("newTeamMember").value;
+    zen.assignAthlete(dbTeams, team, athleteId);
+    showTeamMembers(team, teamName);
+    const existingTeamsDiv = document.getElementById("existingTeamsDiv");
+    existingTeamsDiv.innerHTML = await getExistingTeams();
+    const teamsTable = document.getElementById("existingTeamsTable");
+    for (let row of teamsTable.rows) {
+        row.addEventListener("click", function () {
+            const id = this.cells[0].textContent;
+            const team = this.cells[1].textContent.replace(/\(\d+\)/, '').trim();
+            showTeamMembers(id, team)
+        })
+    }
+}
+
 async function showTeamMembers(team, teamName) {
+    //const penSelect = document.getElementById('penSelect');
+    //penSelect.value = "-1"
+    const eventSelect = document.getElementById('eventsSelect');
+    eventsSelect.value = "-1"
+    const event = new Event('change')
+    eventsSelect.dispatchEvent(event)
     const teamAssignments = await zen.getTeamAssignments(dbTeams);
     console.log("teamAssignments", teamAssignments)
     const thisTeam = teamAssignments.filter(x => x.team == team)
     //debugger
     console.log("This team:", thisTeam)
-    outputDiv.innerHTML = "";
-    let thisTeamTable = `<table id='thisTeamTable'><th>Name</th><th>Team from Zwift</th><th>athleteId</th><th>Remove from ${teamName}</th>`
+    outputDiv.innerHTML = `<input type="text" id="newTeamMember" placeholder="Zwift ID to add"/>
+        <button id="addNewTeamMember">Add to ${teamName}</button>
+        <button id="clearTeamButton">Remove All</button>
+        <button id="deleteTeamButton">Delete ${teamName}</button>
+        `;
+    let thisTeamTable = `<hr><table id='thisTeamTable'><th>Name</th><th>Team from Zwift</th><th>athleteId</th><th>Remove from ${teamName}</th>`
     for (let athlete of thisTeam) {
         const athleteData = await common.rpc.getAthlete(athlete.athleteId);
-        thisTeamTable += `<tr><td>${athleteData.sanitizedFullname}</td><td>${athleteData.team || ""}</td><td>${athlete.athleteId}</td><td>X</td></tr>`
+        thisTeamTable += `<tr><td>${athleteData?.sanitizedFullname}</td><td>${athleteData?.team || ""}</td><td>${athlete.athleteId}</td><td>X</td></tr>`
     }
     thisTeamTable += "</table>";
-    outputDiv.innerHTML = thisTeamTable;
+    outputDiv.innerHTML += thisTeamTable;
+    const addNewMemberButton = document.getElementById("addNewTeamMember");
+    const removeAllButton = document.getElementById("clearTeamButton");
+    const deleteTeamButton = document.getElementById("deleteTeamButton");
+    
+    addNewMemberButton.addEventListener("click", async function () {
+        await addNewMember(team, teamName)
+    });
+    const addNewMemberInput = document.getElementById('newTeamMember');
+    addNewMemberInput.addEventListener("keydown", async function(event) {
+        if (event.key === "Enter") {
+            await addNewMember(team, teamName)
+        }
+    });
+    removeAllButton.addEventListener("click", async function () {
+        if (confirm(`Delete all members from ${teamName}?`)) {
+            const teamAssignments = await zen.getTeamAssignments(dbTeams);        
+            const thisTeam = teamAssignments.filter(x => x.team == team)
+            for (let member of thisTeam) {
+                zen.assignAthlete(dbTeams, "-1", member.athleteId)
+            }
+            existingTeamsDiv.innerHTML = await getExistingTeams();
+            const teamsTable = document.getElementById("existingTeamsTable");
+            for (let row of teamsTable.rows) {
+                row.addEventListener("click", function () {
+                    const id = this.cells[0].textContent;
+                    const team = this.cells[1].textContent.replace(/\(\d+\)/, '').trim();
+                    showTeamMembers(id, team)
+                })
+            }
+            showTeamMembers(team, teamName);
+        }
+    });
+    deleteTeamButton.addEventListener("click", async function () {
+        if (confirm(`Completely remove team ${teamName}?`)) {
+            const teamAssignments = await zen.getTeamAssignments(dbTeams);        
+            const thisTeam = teamAssignments.filter(x => x.team == team)
+            for (let member of thisTeam) {
+                zen.assignAthlete(dbTeams, "-1", member.athleteId)
+            }
+            await zen.deleteTeam(dbTeams, team);
+            existingTeamsDiv.innerHTML = await getExistingTeams();
+            const teamsTable = document.getElementById("existingTeamsTable");
+            for (let row of teamsTable.rows) {
+                row.addEventListener("click", function () {
+                    const id = this.cells[0].textContent;
+                    const team = this.cells[1].textContent.replace(/\(\d+\)/, '').trim();
+                    showTeamMembers(id, team)
+                })
+            }
+            outputDiv.innerHTML = "";
+        }
+    })
     const teamTable = document.getElementById("thisTeamTable");
     for (let row of teamTable.rows) {
-        row.cells[3].addEventListener("click", function () {
+        row.cells[3].addEventListener("click", async function () {
             const athleteId = this.parentElement.cells[2].textContent;
             const id = "-1";
             zen.assignAthlete(dbTeams, id, athleteId);
-            showTeamMembers(team);
+            showTeamMembers(team, teamName);
+            const existingTeamsDiv = document.getElementById("existingTeamsDiv");
+            existingTeamsDiv.innerHTML = await getExistingTeams();
+            const teamsTable = document.getElementById("existingTeamsTable");
+            for (let row of teamsTable.rows) {
+                row.addEventListener("click", function () {
+                    const id = this.cells[0].textContent;
+                    const team = this.cells[1].textContent.replace(/\(\d+\)/, '').trim();
+                    showTeamMembers(id, team)
+                })
+            }
         })
     }
 };
-const teamsTable = document.getElementById("existingTeamsTable");
-for (let row of teamsTable.rows) {
-    row.addEventListener("click", function () {
-        const id = this.cells[0].textContent;
-        const team = this.cells[1].textContent;
-        showTeamMembers(id, team)
-    })
-}
+
 //debugger
 if (watching) {
     const eventSubgroupId = watching.state.eventSubgroupId;

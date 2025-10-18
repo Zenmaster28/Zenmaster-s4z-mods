@@ -3,6 +3,7 @@ import * as common from '/pages/src/common.mjs';
 import * as zen from './segments-xCoord.mjs';
 let dbSegments = await zen.openSegmentsDB();
 let dbSegmentConfig = await zen.openSegmentConfigDB();
+let dbTeams = await zen.openTeamsDB();
 await zen.cleanupSegmentsDB(dbSegments);
 await zen.cleanupSegmentsDB(dbSegments, {live: true});
 await zen.cleanupSegmentConfigDB(dbSegmentConfig);
@@ -75,6 +76,7 @@ common.settingsStore.setDefault({
     femaleOnly: false,
     lineSpacing: 1.2,
     showTeamScore: false,
+    useCustomTeams: false,
     solidBackground: false,
     backgroundColor: '#00ff00',
 });
@@ -544,7 +546,7 @@ async function scoreResults(eventResults, currentEventConfig, lastSegment=false)
     if (currentEventConfig.ftsPerEvent) {
         uniqueSegmentIds = getUniqueValues(currentEventConfig.segments, "segmentId")
         for (let segment of uniqueSegmentIds) {
-            console.log(segment, eventResults)
+            //console.log(segment, eventResults)
             const thisSegmentResults = eventResults[0] ? eventResults.filter(x => x.segmentId == segment) : []
             if (thisSegmentResults.length > 0) {
                 const ftsResults = thisSegmentResults.flatMap(x => x.fts);
@@ -639,10 +641,10 @@ async function scoreResults(eventResults, currentEventConfig, lastSegment=false)
                 const ties = zen.findTies(segRes[scoreFormat], scoreFormat)
                 if (ties.length > 0) {
                     //found a tie, adjust the scoring to reflect the tie
-                    console.log(`Found one or more ${scoreFormat} ties!`, ties)
+                    //console.log(`Found one or more ${scoreFormat} ties!`, ties)
                     for (let tie of ties) {                                
                         scorePoints[tie.idxTie] = scorePoints[tie.idxTiedWith]
-                        console.log(segRes[scoreFormat][tie.idxTie], segRes[scoreFormat][tie.idxTiedWith])
+                        //console.log(segRes[scoreFormat][tie.idxTie], segRes[scoreFormat][tie.idxTiedWith])
                     }
                     //debugger
                 }
@@ -892,17 +894,20 @@ function evaluateVisibility(scoreType, ignoreFIN = false) {
     //debugger
 }
 
-function buildPointsTable(racerScores, athletes, lastSegmentName = "", ignoreFIN = false) {
+async function buildPointsTable(racerScores, athletes, lastSegmentName = "", ignoreFIN = false) {
     pointsTitleDiv.innerHTML = lastSegmentName;
     let tableFinalOutput = `<table id='pointsTable'><thead><th>Rank</th><th>Name</th><th ${evaluateVisibility('FAL')}>FAL</th><th ${evaluateVisibility('FTS')}>FTS</th><th ${evaluateVisibility('FIN', ignoreFIN)}>FIN</th><th>Total</th></thead><tbody>`;
     let tableOutput = "";
     let rank = 1;
+    let teamRank = 1;
     let maxRacers = settings.maxRacersToDisplay;
     if (maxRacers == 0 || maxRacers == null) {
         maxRacers = Infinity;
     }
     //console.log("Max racers to display:", maxRacers)
-    
+    const allTeamScores = [];
+    const customTeams = settings.useCustomTeams ? await zen.getExistingTeams(dbTeams) : [];
+    const teamAssignments = settings.useCustomTeams ? await zen.getTeamAssignments(dbTeams) : [];
     const teamScore = {
         ftsPoints: 0,
         falPoints: 0,
@@ -945,6 +950,61 @@ function buildPointsTable(racerScores, athletes, lastSegmentName = "", ignoreFIN
             teamScore.finPoints += racer.finPoints;
             teamScore.totalPoints += racer.pointTotal;
         }
+        if (settings.useCustomTeams) {
+            //console.log("Checking custom teams")
+            const customTeam = teamAssignments.find(x => x.athleteId == racer.athleteId)
+            let customTeamName = customTeam ? (customTeams.find(x => x.id == parseInt(customTeam.team))).team : "";
+            if (!customTeamName) {
+                customTeamName = athlete?.athlete?.team || null;
+            }
+            teamBadge = customTeam ? common.teamBadge(customTeamName) : teamBadge;
+            let currentTeamScore = allTeamScores.find(x => x.name == customTeamName);
+            
+            if (currentTeamScore) {
+                //console.log("Found previous score for", customTeamName, currentTeamScore)
+                //console.log("Adding racer scores of ", racer)
+                currentTeamScore.ftsPoints += racer.ftsPointTotal;
+                currentTeamScore.falPoints += racer.falPointTotal;
+                currentTeamScore.finPoints += racer.finPoints;
+                currentTeamScore.totalPoints += racer.pointTotal;
+                //console.log("Scores after changes", currentTeamScore)
+            } else {
+                //console.log("Adding new team score for", customTeamName)  
+                
+                const newTeamScore = {
+                    name: customTeamName || "Unknown",
+                    ftsPoints: racer.ftsPointTotal,
+                    falPoints: racer.falPointTotal,
+                    finPoints: racer.finPoints,
+                    totalPoints: racer.pointTotal
+                };
+                console.log("New team score for", customTeamName, newTeamScore)
+                if (newTeamScore.name == "Unknown") {
+                    const unknownTeam = allTeamScores.find(x => x.name == "Unknown")
+                    if (unknownTeam) {
+                        //console.log("Unknown team before", unknownTeam)
+                        //console.log("new team score", newTeamScore)
+                        unknownTeam.ftsPoints += newTeamScore.ftsPoints;
+                        unknownTeam.falPoints += newTeamScore.falPoints;
+                        unknownTeam.finPoints += newTeamScore.finPoints;
+                        unknownTeam.totalPoints += newTeamScore.totalPoints;
+                    } else {
+                        //console.log("Creating new team", newTeamScore)
+                        allTeamScores.push(newTeamScore);
+                    }
+                    //console.log("Unknown team after", unknownTeam)
+                } else {
+                    allTeamScores.push(newTeamScore);
+                }
+                
+            
+            }
+            if (lastSegmentName == "") {
+                //console.log("allTeamScores", allTeamScores);
+            } else {
+                //console.log("allTeamScores for segment", lastSegmentName, allTeamScores)
+            }
+        }
         const racerStatus = allKnownRacersStatus.get(racer.athleteId);
         let status = "";
         if (racerStatus && racerStatus.leftEvent) {
@@ -955,8 +1015,20 @@ function buildPointsTable(racerScores, athletes, lastSegmentName = "", ignoreFIN
         tableOutput += isWatching ? "<tr class=watching>" : isTeamMate ? "<tr class=teammate>" : isMarked ? "<tr class=marked>" : "<tr>"
         tableOutput += `<td>${rank}</td><td><span id="riderName"><a href="/pages/profile.html?id=${racer.athleteId}&windowType=profile" target="profile">${sanitizedName}${status}</a></span><div id="info-item-team">${teamBadge}</div></td><td ${evaluateVisibility('FAL')}>${racer.falPointTotal}</td><td ${evaluateVisibility('FTS')}>${racer.ftsPointTotal}</td><td ${evaluateVisibility('FIN', ignoreFIN)}>${racer.finPoints}</td><td>${racer.pointTotal}</td></tr>`
         rank++;
-    }    
-    if (settings.showTeamScore) {
+    }  
+    if (settings.useCustomTeams && lastSegmentName == "") {
+        console.log("Event Team scores after all racers", allTeamScores)
+    } else {
+        console.log("Team scores after all racers for segment",lastSegmentName, allTeamScores)
+    }
+    if (settings.useCustomTeams) {
+        allTeamScores.sort((a,b) => b.totalPoints - a.totalPoints)
+        for (let teamScore of allTeamScores) {
+            let teamScoreOutput = `<tr><td>${teamRank}</td><td><div id="info-item-team-l">${common.teamBadge(teamScore.name)}</div></td><td ${evaluateVisibility('FAL')}>${teamScore.falPoints}</td><td ${evaluateVisibility('FTS')}>${teamScore.ftsPoints}</td><td ${evaluateVisibility('FIN', ignoreFIN)}>${teamScore.finPoints}</td><td>${teamScore.totalPoints}</td></tr>`;
+            tableFinalOutput += teamScoreOutput;
+            teamRank++;
+        }
+    } else if (settings.showTeamScore) {
         let teamScoreOutput = `<tr class=teammate><td></td><td>Team<div id="info-item-team">${common.teamBadge(watchingTeam)}</div></td><td ${evaluateVisibility('FAL')}>${teamScore.falPoints}</td><td ${evaluateVisibility('FTS')}>${teamScore.ftsPoints}</td><td ${evaluateVisibility('FIN', ignoreFIN)}>${teamScore.finPoints}</td><td>${teamScore.totalPoints}</td></tr>`;
         tableFinalOutput += teamScoreOutput;
     }
@@ -984,8 +1056,9 @@ async function displayResults(racerScores, lastSegmentScores, lastSegmentName) {
     const athleteIds = racerScores.map(x => x.athleteId);
     const athletes = await common.rpc.getAthletesData(athleteIds);
     //pointsResultsDiv.innerHTML = "";
-    const tableFinalOutput = buildPointsTable(racerScores, athletes);
-    const tableLastSegmentOutput = buildPointsTable(lastSegmentScores, athletes, lastSegmentName, true);
+    const tableFinalOutput = await buildPointsTable(racerScores, athletes);
+    const tableLastSegmentOutput = await buildPointsTable(lastSegmentScores, athletes, lastSegmentName, true);
+    //const tableLastSegmentOutput = "";
     pointsResultsDiv.innerHTML = tableFinalOutput;
     lastSegmentPointsResultsDiv.innerHTML = tableLastSegmentOutput;
     

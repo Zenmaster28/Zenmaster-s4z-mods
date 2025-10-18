@@ -55,6 +55,12 @@ td {
   white-space: nowrap; 
   
 }
+td.teamName {
+  cursor: pointer
+}
+td.teamName:hover {
+  text-decoration: underline;
+}
 th {
   text-align: left;
   white-space: nowrap; 
@@ -172,6 +178,31 @@ div .info-item-team span {
   color: var(--o101c);
   zoom: var(--badge-scale);
 }
+#info-item-team-l {
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+  z-index: 1;
+  background-image: linear-gradient(var(--o101lg1), var(--o101lg2));
+  border-radius: 4px;
+  font-weight: var(--weight);
+  padding: 0 0.4em;
+  color: var(--o101c);
+  /*zoom: var(--badge-scale);*/
+  zoom: 1;
+}
+#badgePreview {
+  white-space: nowrap;
+  z-index: 1;
+  background-image: linear-gradient(var(--o101lg1), var(--o101lg2));
+  border-radius: 4px;
+  font-weight: var(--weight);
+  padding: 0 0.4em;
+  color: var(--o101c);
+  zoom: var(--badge-scale);
+  width: fit-content;
+}
 #riderName {
   position: absolute;
   bottom: 0;
@@ -223,4 +254,16 @@ div .pointsTitle {
   font-weight: bold;
   text-align: center;
   margin-bottom: 10px;
+}
+#thisTeamTable td:not(:nth-child(4)), th:not(:nth-child(4)) {
+  text-align: left;
+}
+#thisTeamTable td:nth-child(4) {
+  text-align: center;
+  cursor: pointer;}
+#thisTeamTable td:nth-child(4):hover {
+  text-decoration: underline;
+}
+#sgEntrantsTable td:not(:nth-child(4)), th:not(:nth-child(4)){
+  text-align: left;
 }
