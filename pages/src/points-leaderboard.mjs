@@ -33,6 +33,7 @@ let rotateTableInterval = settings.rotateInterval * 1000 || 10000;
 const pointsResultsDiv = document.getElementById("pointsResults");
 if (pointsResultsDiv) {
     pointsResultsDiv.addEventListener('scroll', showTeamMateRows);
+    window.addEventListener('resize', showTeamMateRows);
 }
 const lastSegmentPointsResultsDiv = document.getElementById("lastSegmentPointsResults");
 const pointsTitleDiv = document.getElementById("pointsTitle");
