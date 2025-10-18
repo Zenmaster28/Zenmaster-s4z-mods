@@ -31,6 +31,9 @@ doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1
 let allPointsTableVisible = true;
 let rotateTableInterval = settings.rotateInterval * 1000 || 10000;
 const pointsResultsDiv = document.getElementById("pointsResults");
+if (pointsResultsDiv) {
+    pointsResultsDiv.addEventListener('scroll', showTeamMateRows);
+}
 const lastSegmentPointsResultsDiv = document.getElementById("lastSegmentPointsResults");
 const pointsTitleDiv = document.getElementById("pointsTitle");
 function rotateVisibleTable(options) {
@@ -1051,8 +1054,9 @@ async function displayResults(racerScores, lastSegmentScores, lastSegmentName) {
         document.getElementById("customTitle").innerText = customTitle;
     }
     const eventSubgroupId = currentEventConfig.eventSubgroupId;
-    const pointsResultsDiv = document.getElementById("pointsResults");
+    
     const lastSegmentPointsResultsDiv = document.getElementById("lastSegmentPointsResults");
+    
     const athleteIds = racerScores.map(x => x.athleteId);
     const athletes = await common.rpc.getAthletesData(athleteIds);
     //pointsResultsDiv.innerHTML = "";
@@ -1061,7 +1065,37 @@ async function displayResults(racerScores, lastSegmentScores, lastSegmentName) {
     //const tableLastSegmentOutput = "";
     pointsResultsDiv.innerHTML = tableFinalOutput;
     lastSegmentPointsResultsDiv.innerHTML = tableLastSegmentOutput;
+    showTeamMateRows();
     
+}
+
+function isRowVisible(row, div) {
+    const rect = row.getBoundingClientRect();
+    const divRect = div.getBoundingClientRect();
+    return rect.bottom > divRect.top && rect.top < divRect.bottom;
+}
+
+function showTeamMateRows() {
+    const pointsTable = document.getElementById("pointsTable");
+    const importantScores = document.getElementById("importantScores")
+    const teammateRows = Array.from(pointsTable.querySelectorAll('tr.teammate,tr.watching,tr.marked'));
+    const hiddenTeammates = teammateRows.filter(row => !isRowVisible(row, pointsResultsDiv));
+    //console.log("hiddenTeamates", hiddenTeammates)
+    let teamMateTableOutput;
+    if (hiddenTeammates.length == 0) {
+        importantScores.innerHTML = 0;
+    } else {
+        teamMateTableOutput = "<table>";
+        for (let teamMate of hiddenTeammates) {
+            teamMateTableOutput += `<tr class=${teamMate.classList[0]}>`;
+            for (let cell of teamMate.cells) {
+                teamMateTableOutput += `<td style=display:${cell.style.display}>${cell.innerHTML}</td>`;
+            }
+            teamMateTableOutput += "</tr>";
+        }
+        teamMateTableOutput += "</table>";
+    }
+    importantScores.innerHTML = teamMateTableOutput || "";
 }
 
 function getPreviewData() {
