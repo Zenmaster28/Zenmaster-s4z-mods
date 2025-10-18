@@ -3346,6 +3346,27 @@ export async function addNewTeam(dbTeams, teamName) {
         };
     });
 }
+export async function deleteTeam(dbTeams, id) {
+    return new Promise((resolve, reject) => {
+        const storeName = "teams";
+        const transaction = dbTeams.transaction(storeName, "readwrite");
+        const store = transaction.objectStore(storeName);
+        const request = store.delete(parseInt(id));
+        request.onsuccess = function () {
+            console.log("Deleted team id", id)
+        };
+        request.onerror = function () {
+            console.error("Failed to delete team", id, event.target.error)
+        };
+        transaction.oncomplete = function () {
+            resolve();
+        };
+        transaction.onerror = function (event) {
+            console.error("Transaction error:", event.target.error);
+            reject(event.target.error);
+        };
+    })
+}
 
 export async function assignAthlete(dbTeams, id, athleteId) {
     return new Promise((resolve, reject) => {
