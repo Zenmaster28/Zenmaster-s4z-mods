@@ -639,9 +639,7 @@ async function showSampleScoring(eventConfig) {
 }
 common.settingsStore.addEventListener('changed', async ev => {
         const changed = ev.data.changed;
-        console.log(changed)
         if (changed.has('formatsChanged') && changed.get('formatsChanged')) {
-            console.log("formatsChanged: true")
             scoreFormats = await loadSavedScoreFormats("save");
             common.settingsStore.set("formatsChanged", false)
         }
