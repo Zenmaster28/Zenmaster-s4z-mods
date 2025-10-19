@@ -1129,7 +1129,7 @@ function showTeamMateRows() {
     let teammateRows = [];
     if (importantClasses != "" && pointsTable) {
         importantClasses = importantClasses.replace(/,$/, '');
-        teammateRows = Array.from(pointsTable.querySelectorAll(importantClasses));
+        teammateRows = Array.from(pointsTable.querySelectorAll(importantClasses));        
     }
     const hiddenTeammates = teammateRows.filter(row => !isRowVisible(row, pointsDiv));
     //console.log("hiddenTeamates", hiddenTeammates)
@@ -1137,7 +1137,8 @@ function showTeamMateRows() {
     if (hiddenTeammates.length == 0) {
         importantScores.innerHTML = 0;
     } else {
-        teamMateTableOutput = "<table>";
+        teamMateTableOutput = "<table id='stickyTable'>";        
+        
         for (let teamMate of hiddenTeammates) {
             teamMateTableOutput += `<tr class=${teamMate.classList[0]}>`;
             for (let cell of teamMate.cells) {
@@ -1319,6 +1320,10 @@ async function getLeaderboard(watching) {
                 await monitorAllCats(eventSubgroupId, currentEventConfig)
             }
             //debugger
+        }
+        if (Date.now() - lastVerification > 30000 && !busyVerifying && allKnownRacers.length > 0) {
+            //console.log("Verifying racers")
+            verifyRacers();
         }
     } else {
         

@@ -267,3 +267,25 @@ div .pointsTitle {
 #sgEntrantsTable td:not(:nth-child(4)), th:not(:nth-child(4)){
   text-align: left;
 }
+#pointsTable th {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  /* background-color: black; */
+  background-color: hsl(var(--theme-bg-hue), var(--theme-bg-sat), var(--theme-bg-light), 100%);
+}
+#pointsTableLast th {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  /* background-color: black; */
+  background-color: hsl(var(--theme-bg-hue), var(--theme-bg-sat), var(--theme-bg-light), 100%);
+}
+#importantScores {
+  font-variant: small-caps tabular-nums;
+  font-size: calc(var(--font-scale) * 0.8em);
+}
+#lastSegmentImportantScores {
+  font-variant: small-caps tabular-nums;
+  font-size: calc(var(--font-scale) * 0.8em);
+}
