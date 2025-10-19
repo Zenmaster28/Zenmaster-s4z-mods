@@ -1246,10 +1246,7 @@ async function getLeaderboard(watching) {
                 }
             }
         }
-        if (Date.now() - lastVerification > 30000 && !busyVerifying && allKnownRacers.length > 0) {
-            //console.log("Verifying racers")
-            verifyRacers();
-        }
+        
         if ((Date.now() - refresh) > refreshRate) {
             //console.log("not in an event")
             refresh = Date.now();
