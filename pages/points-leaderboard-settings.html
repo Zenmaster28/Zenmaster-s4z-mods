@@ -243,12 +243,22 @@
                         <input type="checkbox" name="showTeamBadges">
                     </label>
                     <label>
-                        <key>Show team score:</key>
+                        <key>Show my team score:</key>
                         <input type="checkbox" name="showTeamScore">
                     </label>
                     <label>
-                        <key>Use custom teams:</key>
-                        <input type="checkbox" name="useCustomTeams">
+                        <key>Show all team scores:</key>
+                        <input type="checkbox" name="useCustomTeams">                        
+                    </label>
+                    <label>
+                        <key>&nbsp;&nbsp;- include Unknown teams</key>
+                        <input type="checkbox" name="showUnknownTeam" data-depends-on="useCustomTeams">
+                    </label>
+                    <label title="Always show these scores if outside of the view window">
+                        <key>Sticky scores:</key>
+                        <input type="checkbox" name="stickyWatching" checked>My score&nbsp;
+                        <input type="checkbox" name="stickyTeammate" checked>Teammates&nbsp;
+                        <input type="checkbox" name="stickyMarked" checked >Marked
                     </label>
                     <label title="Rotate between the total points and the last segment points">
                         <key>Rotate Total/Last Segment</key>

@@ -31,15 +31,21 @@ doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1
 let allPointsTableVisible = true;
 let rotateTableInterval = settings.rotateInterval * 1000 || 10000;
 const pointsResultsDiv = document.getElementById("pointsResults");
-if (pointsResultsDiv) {
-    pointsResultsDiv.addEventListener('scroll', showTeamMateRows);
-    window.addEventListener('resize', showTeamMateRows);
-}
 const lastSegmentPointsResultsDiv = document.getElementById("lastSegmentPointsResults");
+if (pointsResultsDiv) {
+    console.log("Adding resize and scroll listeners")
+    pointsResultsDiv.addEventListener('scroll', showTeamMateRows);
+    lastSegmentPointsResultsDiv.addEventListener('scroll', showTeamMateRows);
+    window.addEventListener('resize', showTeamMateRows);
+    
+}
+const lastSegmentImportantScoresDiv = document.getElementById("lastSegmentImportantScores");
+const importantScoresDiv = document.getElementById("importantScores");
 const pointsTitleDiv = document.getElementById("pointsTitle");
 function rotateVisibleTable(options) {
     
     if (settings.rotateTotalLast) {
+        showTeamMateRows();
         lastRotationTS = Date.now();
         //console.log("Rotating table at ", new Date())
         if (options.forceLast) {
@@ -50,11 +56,15 @@ function rotateVisibleTable(options) {
         pointsResultsDiv.style.display = allPointsTableVisible ? "" : "none";
         lastSegmentPointsResultsDiv.style.display = allPointsTableVisible ? "none" : "";
         pointsTitleDiv.style.display = allPointsTableVisible ? "none" : "";
+        lastSegmentImportantScoresDiv.style.display = allPointsTableVisible ? "none" : "";
+        importantScoresDiv.style.display = allPointsTableVisible ? "" : "none";
     } else {
         //console.log("Rotation disabled")
         pointsResultsDiv.style.display = "";
         lastSegmentPointsResultsDiv.style.display = "none";   
-        pointsTitleDiv.style.display = "none";     
+        pointsTitleDiv.style.display = "none";   
+        lastSegmentImportantScoresDiv.style.display = "none";  
+        importantScoresDiv.style.display = "";
     }
 }
 //let rotationInterval = setInterval(rotateVisibleTable, rotateTableInterval);
@@ -83,6 +93,10 @@ common.settingsStore.setDefault({
     useCustomTeams: false,
     solidBackground: false,
     backgroundColor: '#00ff00',
+    stickyWatching: true,
+    stickyTeammate: true,
+    stickyMarked: true,
+    showUnknownTeam: false
 });
 /*
 common.settingsStore.addEventListener('changed', ev => {
@@ -900,7 +914,8 @@ function evaluateVisibility(scoreType, ignoreFIN = false) {
 
 async function buildPointsTable(racerScores, athletes, lastSegmentName = "", ignoreFIN = false) {
     pointsTitleDiv.innerHTML = lastSegmentName;
-    let tableFinalOutput = `<table id='pointsTable'><thead><th>Rank</th><th>Name</th><th ${evaluateVisibility('FAL')}>FAL</th><th ${evaluateVisibility('FTS')}>FTS</th><th ${evaluateVisibility('FIN', ignoreFIN)}>FIN</th><th>Total</th></thead><tbody>`;
+    const pointsTableId = lastSegmentName == "" ? "pointsTable" : "pointsTableLast"
+    let tableFinalOutput = `<table id=${pointsTableId}><thead><th>Rank</th><th>Name</th><th ${evaluateVisibility('FAL')}>FAL</th><th ${evaluateVisibility('FTS')}>FTS</th><th ${evaluateVisibility('FIN', ignoreFIN)}>FIN</th><th>Total</th></thead><tbody>`;
     let tableOutput = "";
     let rank = 1;
     let teamRank = 1;
@@ -982,7 +997,7 @@ async function buildPointsTable(racerScores, athletes, lastSegmentName = "", ign
                     finPoints: racer.finPoints,
                     totalPoints: racer.pointTotal
                 };
-                console.log("New team score for", customTeamName, newTeamScore)
+                //console.log("New team score for", customTeamName, newTeamScore)
                 if (newTeamScore.name == "Unknown") {
                     const unknownTeam = allTeamScores.find(x => x.name == "Unknown")
                     if (unknownTeam) {
@@ -1025,9 +1040,16 @@ async function buildPointsTable(racerScores, athletes, lastSegmentName = "", ign
     } else {
         console.log("Team scores after all racers for segment",lastSegmentName, allTeamScores)
     }
-    if (settings.useCustomTeams) {
+    if (settings.useCustomTeams) {        
+        if (settings.showTeamScore) {
+            teamScore.name = "My team"
+            allTeamScores.push(teamScore)
+        }
         allTeamScores.sort((a,b) => b.totalPoints - a.totalPoints)
         for (let teamScore of allTeamScores) {
+            if (teamScore.name == "Unknown" && !settings.showUnknownTeam) {
+                continue;
+            }
             let teamScoreOutput = `<tr><td>${teamRank}</td><td><div id="info-item-team-l">${common.teamBadge(teamScore.name)}</div></td><td ${evaluateVisibility('FAL')}>${teamScore.falPoints}</td><td ${evaluateVisibility('FTS')}>${teamScore.ftsPoints}</td><td ${evaluateVisibility('FIN', ignoreFIN)}>${teamScore.finPoints}</td><td>${teamScore.totalPoints}</td></tr>`;
             tableFinalOutput += teamScoreOutput;
             teamRank++;
@@ -1066,6 +1088,8 @@ async function displayResults(racerScores, lastSegmentScores, lastSegmentName) {
     //const tableLastSegmentOutput = "";
     pointsResultsDiv.innerHTML = tableFinalOutput;
     lastSegmentPointsResultsDiv.innerHTML = tableLastSegmentOutput;
+    //showTeamMateRows({lastSegment: false});
+    //showTeamMateRows({lastSegment: true});
     showTeamMateRows();
     
 }
@@ -1077,10 +1101,37 @@ function isRowVisible(row, div) {
 }
 
 function showTeamMateRows() {
-    const pointsTable = document.getElementById("pointsTable");
-    const importantScores = document.getElementById("importantScores")
-    const teammateRows = Array.from(pointsTable.querySelectorAll('tr.teammate,tr.watching,tr.marked'));
-    const hiddenTeammates = teammateRows.filter(row => !isRowVisible(row, pointsResultsDiv));
+    //console.log("lastSegment?", options.lastSegment)
+    //const pointsDivName = options.lastSegment ? "lastSegmentPointsResults" : "pointsResults";
+    //console.log("pointsDivName", pointsDivName)
+    let pointsTable = document.getElementById("pointsTable");
+    let importantScores = document.getElementById("importantScores")
+    let pointsDiv = document.getElementById("pointsResults");
+    
+    if (pointsDiv.style.display == "none") {
+        pointsTable = document.getElementById("pointsTableLast");
+        importantScores = document.getElementById("lastSegmentImportantScores")
+        pointsDiv = document.getElementById("lastSegmentPointsResults");
+    }
+    
+    //const importantScoresDivName = options.lastSegment ? "lastSegmentImportantScores" : "importantScores";
+    //const importantScores = document.getElementById(importantScoresDivName)
+    let importantClasses = '';
+    if (settings.stickyWatching) {
+        importantClasses = 'tr.watching,'
+    }
+    if (settings.stickyMarked) {
+        importantClasses += 'tr.marked,'
+    }
+    if (settings.stickyTeammate) {
+        importantClasses += 'tr.teammate'
+    }
+    let teammateRows = [];
+    if (importantClasses != "" && pointsTable) {
+        importantClasses = importantClasses.replace(/,$/, '');
+        teammateRows = Array.from(pointsTable.querySelectorAll(importantClasses));
+    }
+    const hiddenTeammates = teammateRows.filter(row => !isRowVisible(row, pointsDiv));
     //console.log("hiddenTeamates", hiddenTeammates)
     let teamMateTableOutput;
     if (hiddenTeammates.length == 0) {
