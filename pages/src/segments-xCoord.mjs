@@ -768,7 +768,7 @@ export function getxCoord(watching, routeInfo) {
     }
 }
 
-
+/* no need for this now that it is exported from common
 function supplimentPath(worldMeta, curvePath, {physicsSlopeScale}={}) {
     console.log("using zen.supplimentPath")
     const balancedT = 1 / 125; // tests to within 0.27 meters (worst case)
@@ -810,6 +810,7 @@ function supplimentPath(worldMeta, curvePath, {physicsSlopeScale}={}) {
         distances,
     };
 }
+*/
 
 function zToAltitude(worldMeta, z, {physicsSlopeScale}={}) {
     return worldMeta ? (z + worldMeta.waterPlaneLevel) / 100 *
@@ -1101,9 +1102,8 @@ async function getExitPathDistance(exitPath, route, worldMeta) {
         exitRoute.roadSegments.push(seg);
         exitRoute.curvePath.extend(x.reverse ? seg.toReversed() : seg);
     }
-    const supPath = common.supplimentPath || supplimentPath;
-    console.log(supPath)
-    Object.assign(exitRoute, supPath(worldMeta, exitRoute.curvePath));
+    //const supPath = common.supplimentPath || supplimentPath;
+    Object.assign(exitRoute, common.supplimentPath(worldMeta, exitRoute.curvePath));
     if (exitRoute.distances.length > 0) {
         return {
             exitDistance: exitRoute.distances.at(-1),
@@ -1126,9 +1126,8 @@ async function measureRoadLength(manifestEntry, courseId) {
     tempCurvepath.extend(seg)
     const worldList = await common.getWorldList();
     const worldMeta = worldList.find(x => x.courseId === courseId);
-    const supPath = common.supplimentPath || supplimentPath;
-    console.log(supPath)
-    const manifestData = supPath(worldMeta, seg);
+    //const supPath = common.supplimentPath || supplimentPath;
+    const manifestData = common.supplimentPath(worldMeta, seg);
     return manifestData.distances.at(-1);
 }
 
@@ -1387,10 +1386,9 @@ export async function getModifiedRoute(id, disablePenRouting) {
                     route.roadSegments.push(seg);
                     route.curvePath.extend(x.reverse ? seg.toReversed() : seg);
                 }
-                const supPath = common.supplimentPath || supplimentPath;
-                //console.log(supPath)
+                //const supPath = common.supplimentPath || supplimentPath;
                 //Object.assign(route, supPath(worldMeta, route.curvePath));
-                Object.assign(route, supPath(worldMeta, route.curvePath));
+                Object.assign(route, common.supplimentPath(worldMeta, route.curvePath));
             }
                        
             return route;
@@ -1452,9 +1450,8 @@ export async function getSegmentPath(id) {
             // But I've not seen portal roads used in a route either.
             //debugger
         }
-        const supPath = common.supplimentPath || supplimentPath;
-        console.log(supPath)
-        Object.assign(segment, supPath(worldMeta, segment.curvePath));
+        //const supPath = common.supplimentPath || supplimentPath;
+        Object.assign(segment, common.supplimentPath(worldMeta, segment.curvePath));
     }
     return segment;
 }
@@ -2350,9 +2347,8 @@ export async function validateManifest(route) {
                 route.lapFiller.roadSegments.push(seg);
                 route.lapFiller.curvePath.extend(x.reverse ? seg.toReversed() : seg);
             }
-            const supPath = common.supplimentPath || supplimentPath;
-            console.log(supPath)
-            Object.assign(route.lapFiller, supPath(worldMeta, route.lapFiller.curvePath));
+            //const supPath = common.supplimentPath || supplimentPath;
+            Object.assign(route.lapFiller, common.supplimentPath(worldMeta, route.lapFiller.curvePath));
         }
         route.lapFiller.manifest = lapFiller;
         
@@ -3226,9 +3222,8 @@ export async function findPathFromAtoB(startPoint, endPoint, intersections, allR
     tempCurvepath.extend(seg)
     const worldList = await common.getWorldList();
     const worldMeta = worldList.find(x => x.courseId === courseId);
-    const supPath = common.supplimentPath || supplimentPath;
-    console.log(supPath)
-    const manifestData = supPath(worldMeta, seg);
+    //const supPath = common.supplimentPath || supplimentPath;
+    const manifestData = common.supplimentPath(worldMeta, seg);
     return manifestData.distances.at(-1);
 }
 
