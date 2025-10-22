@@ -712,7 +712,7 @@ async function doPostEvent(routeSegments,segIdx, eventSubgroupId, watching) {
         if (activeSegmentRepeat == 1) {
             prevSegmentResults = !eventSubgroupId ? [] : await zen.getSegmentResults(dbSegments, eventSubgroupId, {live: true})
             prevSegmentResults = prevSegmentResults.filter(x => x.segmentId == activeSegment)
-            console.log("PostEvent: prevSegmentResults count (live)", prevSegmentResults.length, prevSegmentResults)
+            //console.log("PostEvent: prevSegmentResults count (live)", prevSegmentResults.length, prevSegmentResults)
             segmentResults = await common.rpc.getSegmentResults(activeSegment,{live:true})
             segmentResults = segmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
             eventResults = prevSegmentResults.filter(x => x.eventSubgroupId === eventSubgroupId);
@@ -1002,7 +1002,7 @@ async function getSegmentResults(watching) {
     if (!watching.state.eventSubgroupId && lastKnownSG.eventSubgroupId > 0) {
         eventSubgroupId = lastKnownSG.eventSubgroupId;
         postEventUpdates = true;
-        console.log("Using last known eventSubgroupId", lastKnownSG.eventSubgroupId)
+        //console.log("Using last known eventSubgroupId", lastKnownSG.eventSubgroupId)
         //TODO: show last segment results after the event if it ends at a segment.
     } else {
         postEventUpdates = false;
