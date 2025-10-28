@@ -87,35 +87,67 @@
             import {settingsMain} from './src/lap-data.mjs';
             settingsMain();
             document.body.classList.remove("transparent-bg");
-            document.addEventListener("DOMContentLoaded", () => {
-                const minGap = 10;
-                const lowInputs = document.querySelectorAll('input[name="autoLapRangeLow"]');
-                const highInputs = document.querySelectorAll('input[name="autoLapRangeHigh"]');
+            document.addEventListener('DOMContentLoaded', () => {
+                const MIN_GAP = 10;
+                const low  = document.querySelectorAll('input[name="autoLapRangeLow"]');
+                const high = document.querySelectorAll('input[name="autoLapRangeHigh"]');
                 
-                function ensureGap(changedLow) {
-                    let low = parseFloat(lowInputs[0].value);
-                    let high = parseFloat(highInputs[0].value);
+                const sync = (group, value) => {
+                    group.forEach(el => {
+                    el.value = value;
+                    el.dispatchEvent(new Event('input', { bubbles: true }));
+                    });
+                };
 
-                    if (high - low < minGap) {
-                    if (changedLow) {
-                        high = low + minGap;
-                        highInputs.forEach(x => x.value = high);
-                        highInputs.forEach(x => x.dispatchEvent(new Event('input', {bubbles: true})));
+                const enforce = (lowChanged) => {
+                    let l = parseInt(low[0].value)  || 0;
+                    let h = parseInt(high[0].value) || 0;
+
+                    if (h - l < MIN_GAP) {
+                    if (lowChanged) {
+                        h = l + MIN_GAP;
+                        sync(high, h);
                     } else {
-                        low = high - minGap;
-                        lowInputs.forEach(x => x.value = low);
-                        lowInputs.forEach(x => x.dispatchEvent(new Event('input', {bubbles: true})));
+                        l = h - MIN_GAP;
+                        sync(low, l);
                     }
                     }
-                }                
-                lowInputs.forEach(input => {
-                    input.addEventListener('input', () => ensureGap(true));
-                });
+                };
+                
+                const attach = (group, lowChanged) => {
+                    group.forEach(input => {
+                    let lastCause = null;               // 'type' | 'arrow' | null
 
-                highInputs.forEach(input => {
-                    input.addEventListener('input', () => ensureGap(false));
-                });
-            })
+                    // Track whether the change came from keyboard or mouse
+                    input.addEventListener('keydown',  e => { lastCause = 'type';  if (e.key === 'Enter') enforce(lowChanged); });
+                    input.addEventListener('mousedown',() => { lastCause = 'arrow'; });
+                    
+                    input.addEventListener('input', e => {
+                        if (e.inputType) {
+                        if (e.inputType.startsWith('delete') || e.inputType === 'insertText') lastCause = 'type';
+                        else if (e.inputType.includes('Increment') || e.inputType === 'insertReplacementText') lastCause = 'arrow';
+                        }
+
+                        const isTyped = lastCause === 'type';
+                        lastCause = null;
+
+                        if (isTyped) {                        
+                            if (e.target.value.trim().length >= 3) {
+                                enforce(lowChanged);
+                            }
+                        } else {                        
+                            enforce(lowChanged);
+                        }
+                    });
+
+                    // Always enforce when the field loses focus
+                    input.addEventListener('blur', () => enforce(lowChanged));
+                    });
+                };
+
+                attach(low,  true);
+                attach(high, false);
+            });
         </script>
     </head>
     <body>
