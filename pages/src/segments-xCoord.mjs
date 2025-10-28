@@ -2467,7 +2467,7 @@ async function fixManifestGap(first, next, intersections, allRoads, route) {
             //console.log("Why are we going to the same road but not switching from leadin to route?")
         }
     } else {
-        const roadIntersections = intersections.find(int => int.id === first.roadId); 
+        const roadIntersections = intersections.find(int => int.id === first.roadId) || []; 
         const direction = first.reverse ? "reverse" : "forward";
         next.reverse = next.reverse ? true : false; // make sure reverse has a value
         let validIntersections = roadIntersections.intersections?.flatMap(i => i[direction]?.map(option => ({ option: option.option, intersection: i }))).filter(o => o.option?.road == next.roadId && o.option?.forward != next.reverse);
