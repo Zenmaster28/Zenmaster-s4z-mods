@@ -231,6 +231,7 @@ function findSegmentsOnRoadSection(thisRoad, cpIndex, rsIdx, showAllArches) {
             }         
             let foundSegmentStart = wrongWay ? false : thisRoad.includesRoadPercent(segment.roadStart);  // does the roadSection go through the start of the segment
             let foundSegmentEnd = thisRoad.includesRoadPercent(segment.roadFinish); // does the roadSection go through the end of the segment
+            let stubSegment = segment.distance < 15 ? true : false; // find short stubby segments that should just be flagged as an arch
             //debugger
             // let showAllArches = true;
             if (zwiftSegmentsRequireStartEnd.includes(segment.id)) {
@@ -238,8 +239,9 @@ function findSegmentsOnRoadSection(thisRoad, cpIndex, rsIdx, showAllArches) {
                     // segment is flagged as requiring the roadSection to go through both the start and end of segment and it does!                    
                     includeSegment = true;                            
                 } 
-            }
-            else if (foundSegmentStart || foundSegmentEnd) {
+            } else if (stubSegment) {
+                includeSegment = false;
+            } else if (foundSegmentStart || foundSegmentEnd) {
                 // segment only requires going through start or end and it does                
                 includeSegment = wrongWay ? false : true;
             }
