@@ -2,6 +2,7 @@ import * as common from '/pages/src/common.mjs';
 import * as zen from './segments-xCoord.mjs';
 import * as ec from '/pages/deps/src/echarts.mjs';
 import * as theme from '/pages/src/echarts-sauce-theme.mjs';
+import * as fields from '/pages/src/fields.mjs';
 
 let availableMods = await common.rpc.getAvailableMods();
 let o101Mod = availableMods.find(x => x.id == "o101_s4z_mods");
