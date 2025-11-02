@@ -54,6 +54,9 @@ let lastKnownSG = {
 };
 let postEventUpdates = false;
 let tsLastSegment = Date.now() - 60000;
+let doApproachRunning = false;
+let doInSegmentRunning = false;
+let doDepartingRunning = false;
 async function getTeamColors() {
     try {
         teamColors = await fetch("/mods/o101_s4z_mods/pages/src/o101/teamcolors.json").then((response) => response.json());
@@ -294,12 +297,18 @@ async function getFullSegmentResults(dbSegments, eventSubgroupId, activeSegment,
 }
 
 async function doApproach(routeSegments,segIdx, currentLocation,watching, eventSubgroupId) {
+    if (doApproachRunning) {
+        return;
+    } else {
+        doApproachRunning = true;
+    }
     if (routeSegments[segIdx].exclude) {
         infoLeftDiv.innerHTML = "";
         infoRightDiv.innerHTML = "";
         segNameDiv.innerHTML = "";
         segmentDiv.innerHTML = "";
         if (settings.transparentNoData) {document.body.classList = "transparent-bg"};
+        doApproachRunning = false;
         return null;
     }
     document.body.classList.remove("transparent-bg");
@@ -404,15 +413,22 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching, eventS
         const savedResultsCount =  !eventSubgroupId ? 0 : await zen.storeSegmentResults(dbSegments, segmentResults, {live: liveResults});        
         approachingRefresh = Date.now();                            
     }
+    doApproachRunning = false;
 }
 
 async function doInSegment(routeSegments,segIdx, currentLocation, watching, eventSubgroupId) {
+    if (doInSegmentRunning) {
+        return;
+    } else {
+        doInSegmentRunning = true;
+    }
     if (routeSegments[segIdx].exclude) {
         infoLeftDiv.innerHTML = "";
         infoRightDiv.innerHTML = "";
         segNameDiv.innerHTML = "";
         segmentDiv.innerHTML = "";
         if (settings.transparentNoData) {document.body.classList = "transparent-bg"};
+        doInSegmentRunning = false;
         return null;
     }
     document.body.classList.remove("transparent-bg");
@@ -520,15 +536,22 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching, even
         inSegmentRefresh = Date.now();          
         const savedResultsCount = !eventSubgroupId ? 0 : await zen.storeSegmentResults(dbSegments, segmentResults, {live: liveResults});                  
     }
+    doInSegmentRunning = false;
 }
 
 async function doDeparting(routeSegments,segIdx, currentLocation, watching, eventSubgroupId) {
+    if (doDepartingRunning) {
+        return;
+    } else {
+        doDepartingRunning = true;
+    }
     if (routeSegments[segIdx].exclude) {
         infoLeftDiv.innerHTML = "";
         infoRightDiv.innerHTML = "";
         segNameDiv.innerHTML = "";
         segmentDiv.innerHTML = "";
         if (settings.transparentNoData) {document.body.classList = "transparent-bg"};
+        doDepartingRunning = false;
         return null;
     }
     if (segTimer > 0)
@@ -670,6 +693,7 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching, even
         await buildTable(eventResults,watching);
         const savedResultsCount = !eventSubgroupId ? 0 : await zen.storeSegmentResults(dbSegments, segmentResults, {live: liveResults});
     }
+    doDepartingRunning = false;
 }
 
 async function doPostEvent(routeSegments,segIdx, eventSubgroupId, watching) {
@@ -958,7 +982,9 @@ async function getKnownRacers(eventSubgroupId, watching) {
     //console.log("Previous segment results racers", prevResultsRacers)
     const uniqueSegmentIds = getUniqueValues(routeInfo.segments, "id")
     for (let segId of uniqueSegmentIds) {
+        const t = Date.now();
         const resultsLive = await common.rpc.getSegmentResults(segId, {live: true});    
+        console.log(`Segment ${segId} results retrieved in ${Date.now() - t}ms`)
         const eventRes = resultsLive.filter(x => x.eventSubgroupId == eventSubgroupId);  
         const savedResultsCount =  !eventSubgroupId ? 0 : await zen.storeSegmentResults(dbSegments, eventRes, {live: true});
         if (eventRes.length > 0)  // don't bother getting the full leaderboard if no live results for the event yet
@@ -984,7 +1010,7 @@ async function getKnownRacers(eventSubgroupId, watching) {
             result.segmentId = segId; 
         });
         const savedResultsCountAll = !eventSubgroupId ? 0 : await zen.storeSegmentResults(dbSegments, segmentResults, {live: false});
-        
+        await new Promise(resolve => setTimeout(resolve, 1000));
     }
     
    //console.log("Known racer count from segment results: ",allKnownRacers.length)
@@ -1093,7 +1119,7 @@ async function getSegmentResults(watching) {
             });
             
         }
-        if (Date.now() - allRacerRefresh > 30000 && eventSubgroupId) {
+        if (Date.now() - allRacerRefresh > 55000 && eventSubgroupId) {
             //TODO: gather full results in background for saving
             getKnownRacers(eventSubgroupId, watching);
         }
