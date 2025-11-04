@@ -416,19 +416,25 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching, eventS
     doApproachRunning = false;
 }
 
-async function doInSegment(routeSegments,segIdx, currentLocation, watching, eventSubgroupId) {
+async function doInSegment() {
     if (doInSegmentRunning) {
         return;
-    } else {
-        doInSegmentRunning = true;
     }
+    doInSegmentRunning = true;
+    try {
+        return await _doInSegment.apply(this, arguments);
+    } finally {
+        doInSegmentRunning = false;
+    }
+}
+
+async function _doInSegment(routeSegments,segIdx, currentLocation, watching, eventSubgroupId) {
     if (routeSegments[segIdx].exclude) {
         infoLeftDiv.innerHTML = "";
         infoRightDiv.innerHTML = "";
         segNameDiv.innerHTML = "";
         segmentDiv.innerHTML = "";
         if (settings.transparentNoData) {document.body.classList = "transparent-bg"};
-        doInSegmentRunning = false;
         return null;
     }
     document.body.classList.remove("transparent-bg");
@@ -536,7 +542,6 @@ async function doInSegment(routeSegments,segIdx, currentLocation, watching, even
         inSegmentRefresh = Date.now();          
         const savedResultsCount = !eventSubgroupId ? 0 : await zen.storeSegmentResults(dbSegments, segmentResults, {live: liveResults});                  
     }
-    doInSegmentRunning = false;
 }
 
 async function doDeparting(routeSegments,segIdx, currentLocation, watching, eventSubgroupId) {

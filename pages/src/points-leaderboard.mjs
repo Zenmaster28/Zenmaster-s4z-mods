@@ -464,7 +464,6 @@ async function getAllSegmentResults(watching, currentEventConfig) {
     //console.log("New saved results:", savedResultsCount)
     //console.log("segment results:",segmentResults)
     //console.log("results to store:", resultsToStore)
-    await new Promise(resolve => setTimeout(resolve, 1000));
 }
 
 async function getRaceResults(watching) {
@@ -1221,7 +1220,21 @@ async function updateRacerStatus(states) {
     }
 }
 
-async function getLeaderboard(watching) {
+let _getLeaderboardBusy;
+async function getLeaderboard() {
+    if (_getLeaderboardBusy) {
+        return;
+    }
+    _getLeaderboardBusy = true;
+    try {
+        return await _getLeaderboard.apply(this, arguments);
+    } finally {
+        _getLeaderboardBusy = false;
+    }
+}
+
+
+async function _getLeaderboard(watching) {
     if (watching.state.eventSubgroupId != 0 || lastKnownSG.eventSubgroupId > 0) {        
         let refreshRate = 30000;
         if (watching.segmentData?.routeSegments) {
