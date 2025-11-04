@@ -57,6 +57,7 @@ let tsLastSegment = Date.now() - 60000;
 let doApproachRunning = false;
 let doInSegmentRunning = false;
 let doDepartingRunning = false;
+let doPostEventRunning = false;
 async function getTeamColors() {
     try {
         teamColors = await fetch("/mods/o101_s4z_mods/pages/src/o101/teamcolors.json").then((response) => response.json());
@@ -296,19 +297,25 @@ async function getFullSegmentResults(dbSegments, eventSubgroupId, activeSegment,
     return segmentResults;
 }
 
-async function doApproach(routeSegments,segIdx, currentLocation,watching, eventSubgroupId) {
+async function doApproach() {
     if (doApproachRunning) {
         return;
-    } else {
-        doApproachRunning = true;
     }
+    doApproachRunning = true;
+    try {
+        return await _doApproach.apply(this, arguments);
+    } finally {
+        doApproachRunning = false;
+    }
+}
+
+async function _doApproach(routeSegments,segIdx, currentLocation,watching, eventSubgroupId) {
     if (routeSegments[segIdx].exclude) {
         infoLeftDiv.innerHTML = "";
         infoRightDiv.innerHTML = "";
         segNameDiv.innerHTML = "";
         segmentDiv.innerHTML = "";
         if (settings.transparentNoData) {document.body.classList = "transparent-bg"};
-        doApproachRunning = false;
         return null;
     }
     document.body.classList.remove("transparent-bg");
@@ -413,7 +420,6 @@ async function doApproach(routeSegments,segIdx, currentLocation,watching, eventS
         const savedResultsCount =  !eventSubgroupId ? 0 : await zen.storeSegmentResults(dbSegments, segmentResults, {live: liveResults});        
         approachingRefresh = Date.now();                            
     }
-    doApproachRunning = false;
 }
 
 async function doInSegment() {
@@ -544,19 +550,25 @@ async function _doInSegment(routeSegments,segIdx, currentLocation, watching, eve
     }
 }
 
-async function doDeparting(routeSegments,segIdx, currentLocation, watching, eventSubgroupId) {
+async function doDeparting() {
     if (doDepartingRunning) {
         return;
-    } else {
-        doDepartingRunning = true;
     }
+    doDepartingRunning = true;
+    try {
+        return await _doDeparting.apply(this, arguments);
+    } finally {
+        doDepartingRunning = false;
+    }
+}
+
+async function _doDeparting(routeSegments,segIdx, currentLocation, watching, eventSubgroupId) {
     if (routeSegments[segIdx].exclude) {
         infoLeftDiv.innerHTML = "";
         infoRightDiv.innerHTML = "";
         segNameDiv.innerHTML = "";
         segmentDiv.innerHTML = "";
         if (settings.transparentNoData) {document.body.classList = "transparent-bg"};
-        doDepartingRunning = false;
         return null;
     }
     if (segTimer > 0)
@@ -698,10 +710,21 @@ async function doDeparting(routeSegments,segIdx, currentLocation, watching, even
         await buildTable(eventResults,watching);
         const savedResultsCount = !eventSubgroupId ? 0 : await zen.storeSegmentResults(dbSegments, segmentResults, {live: liveResults});
     }
-    doDepartingRunning = false;
 }
 
-async function doPostEvent(routeSegments,segIdx, eventSubgroupId, watching) {
+async function doPostEvent() {
+    if (doPostEventRunning) {
+        return;
+    }
+    doPostEventRunning = true;
+    try {
+        return await _doPostEvent.apply(this, arguments);
+    } finally {
+        doPostEventRunning = false;
+    }
+}
+
+async function _doPostEvent(routeSegments,segIdx, eventSubgroupId, watching) {
     if (routeSegments.at(segIdx).exclude) {
         infoLeftDiv.innerHTML = "";
         infoRightDiv.innerHTML = "";
@@ -986,6 +1009,7 @@ async function getKnownRacers(eventSubgroupId, watching) {
     const prevResultsRacers = new Set(prevSegmentResults.map(res => res.athleteId))
     //console.log("Previous segment results racers", prevResultsRacers)
     const uniqueSegmentIds = getUniqueValues(routeInfo.segments, "id")
+    console.log("Updating known event racers")
     for (let segId of uniqueSegmentIds) {
         const t = Date.now();
         const resultsLive = await common.rpc.getSegmentResults(segId, {live: true});    
