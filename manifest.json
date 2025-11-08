@@ -91,10 +91,10 @@
             "overlay": true,
             "frame": false,
             "default_bounds": {
-                "width": 300,
-                "height": 225,
-                "x": -300,
-                "y": 100
+                "width": 600,
+                "height": 300,
+                "x": 300,
+                "y": 200
             }
         },
         {
@@ -133,10 +133,10 @@
             "overlay": true,
             "frame": false,
             "default_bounds": {
-                "width": 300,
-                "height": 225,
-                "x": -300,
-                "y": 100
+                "width": 600,
+                "height": 300,
+                "x": 300,
+                "y": 200
             }
         },
         {
