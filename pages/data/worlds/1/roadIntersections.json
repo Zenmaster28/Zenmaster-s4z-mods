@@ -6170,8 +6170,8 @@
     "intersections": [
       {
         "type": "ENTITY_TYPE_INTERSECTIONMARKER",
-        "m_roadTime1": 0.3490995,
-        "m_roadTime2": 0.7254166667,
+        "m_roadTime1": 0.3274245,
+        "m_roadTime2": 0.7861291667,
         "m_roadId": 84,
         "m_markerId": 840000,
         "forward": [
@@ -6181,7 +6181,7 @@
               "alt": 265,
               "turnFilePath": "",
               "forward": true,
-              "exitTime": 0.7254166667,
+              "exitTime": 0.7861291666999864,
               "b": "0",
               "turnText": "",
               "d": false
@@ -6195,7 +6195,7 @@
               "alt": 265,
               "turnFilePath": "",
               "forward": false,
-              "exitTime": 0.3490995,
+              "exitTime": 0.3274245000000006,
               "b": "0",
               "turnText": "",
               "d": false
@@ -6212,7 +6212,7 @@
       {
         "type": "ENTITY_TYPE_INTERSECTIONMARKER",
         "m_roadTime1": 0.280302,
-        "m_roadTime2": 0.589617,
+        "m_roadTime2": 0.640442,
         "m_roadId": 85,
         "m_markerId": 850000,
         "forward": [
@@ -6222,7 +6222,7 @@
               "alt": 265,
               "turnFilePath": "",
               "forward": true,
-              "exitTime": 0.6121179495727179,
+              "exitTime": 0.640441999999988,
               "b": "0",
               "turnText": "",
               "d": false
@@ -6819,7 +6819,7 @@
       {
         "type": "ENTITY_TYPE_INTERSECTIONMARKER",
         "m_roadTime1": 0.044951,
-        "m_roadTime2": 0.904887,
+        "m_roadTime2": 0.9476899992,
         "m_roadId": 103,
         "m_markerId": 1030000,
         "forward": [
@@ -6829,7 +6829,7 @@
               "alt": 265,
               "turnFilePath": "",
               "forward": true,
-              "exitTime": 0.904887,
+              "exitTime": 0.9476899992205436,
               "b": "0",
               "turnText": "",
               "d": false

@@ -398,7 +398,7 @@
   {
     "id": 6,
     "roadIsPaddock": true,
-    "paddockExitRoadTime": 0.4,
+    "paddockExitRoadTime": 0.4000000059604645,
     "intersections": [
       {
         "type": "ENTITY_TYPE_INTERSECTIONMARKER",

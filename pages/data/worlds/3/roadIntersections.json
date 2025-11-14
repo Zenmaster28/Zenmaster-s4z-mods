@@ -1323,7 +1323,7 @@
               "road": 7,
               "alt": 265,
               "turnFilePath": "",
-              "forward": false,
+              "forward": true,
               "exitTime": 1000000.0,
               "b": "0",
               "turnText": "",

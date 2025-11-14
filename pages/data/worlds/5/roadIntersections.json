@@ -446,7 +446,7 @@
               "alt": 265,
               "turnFilePath": "UI\\WhiteOrangeTheme\\HUD\\Route_Navigation\\Route_Select_Jesuitenkirche.tga",
               "forward": false,
-              "exitTime": 0.25322980916778476,
+              "exitTime": 1000000.0,
               "b": "0",
               "turnText": "Reverse Innsbruck",
               "d": false

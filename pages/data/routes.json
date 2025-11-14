@@ -1,2117 +1,268 @@
 [
   {
-    "ascentInMeters": 205.3355560303,
+    "ascentInMeters": 260.8303222656,
     "blockedForClubs": 1,
     "blockedForMeetups": 1,
-    "blockedForTimeTrial": 1,
-    "distanceInMeters": 23479.732421875,
+    "distanceInMeters": 24154.66796875,
     "eventOnly": true,
-    "eventPaddocks": "1,2,3,4",
-    "freeRideLeadinDistanceInMeters": 15.204916954,
-    "id": 1201172818,
-    "leadinAscentInMeters": 0,
-    "leadinDistanceInMeters": 190.3039550781,
-    "locKey": "LOC_ROUTE_WATOPIA_PUNCH_YOUR_POWER",
+    "eventPaddocks": "11,12,13,14,15",
+    "freeRideLeadinAscentInMeters": 0,
+    "freeRideLeadinDistanceInMeters": 25.4374732971,
+    "id": 1671282746,
+    "leadinAscentInMeters": 4.7677035332,
+    "leadinDistanceInMeters": 1823.5837402344,
+    "locKey": "LOC_ROUTE_NEWYORK_EMPIRE_ELEVATION",
     "manifest": [
       {
-        "end": 0.98311404241249,
+        "end": 0.3407292867,
+        "leadin": true,
+        "roadId": 215,
+        "start": 0.12
+      },
+      {
+        "end": 0.9000000268220906,
+        "leadin": true,
         "reverse": true,
-        "roadId": 0,
-        "start": 0.5539522466
+        "roadId": 348,
+        "start": 0.0408333346
       },
       {
-        "end": 0.8038889128466443,
+        "end": 0.5487500477456657,
+        "leadin": true,
+        "roadId": 346,
+        "start": 0.08800000131130227
+      },
+      {
+        "end": 0.9669003337,
+        "roadId": 346,
+        "start": 0.5502280592918396
+      },
+      {
+        "end": 0.7242666587,
+        "roadId": 347,
+        "start": 0.22333333998918523
+      },
+      {
+        "end": 0.7591534829884772,
         "reverse": true,
-        "roadId": 25,
-        "start": 0.1650833383
+        "roadId": 215,
+        "start": 0.3728947431
       },
       {
-        "end": 0.952359,
-        "roadId": 21,
-        "start": 0.13086956765502675
-      },
-      {
-        "end": 0.7070370423048734,
+        "end": 0.831111135880153,
         "reverse": true,
-        "roadId": 33,
-        "start": 0.1963680554
+        "roadId": 349,
+        "start": 0.0520333349
       },
       {
-        "end": 0.9295897444554946,
+        "end": 0.9669003337,
+        "roadId": 346,
+        "start": 0.0846666679282984
+      },
+      {
+        "end": 0.8501666625,
+        "roadId": 345,
+        "start": 0.24777778516213086
+      },
+      {
+        "end": 0.9739539438,
+        "roadId": 215,
+        "start": 0.7865079819224778
+      },
+      {
+        "end": 0.8800000262260439,
         "reverse": true,
-        "roadId": 23,
-        "start": 0.0621072881
+        "roadId": 228,
+        "start": 0.01
       },
       {
-        "end": 0.7827999938,
-        "roadId": 189,
+        "end": 0.9060683099,
+        "roadId": 216,
+        "start": 0.3233333429694175
+      },
+      {
+        "end": 0.99,
+        "roadId": 226,
+        "start": 0.2388888960083325
+      },
+      {
+        "end": 0.277560353,
+        "roadId": 2,
+        "start": 0.08083333574235496
+      },
+      {
+        "end": 0.8900000265240666,
+        "reverse": true,
+        "roadId": 225,
+        "start": 0.2181000065
+      },
+      {
+        "end": 0.9618518590182064,
+        "reverse": true,
+        "roadId": 252,
+        "start": 0.0026777778
+      },
+      {
+        "end": 0.99,
+        "roadId": 262,
         "start": 0.3188888983925183
       },
       {
-        "end": 0.8922222488125168,
+        "end": 0.9191666940599674,
         "reverse": true,
-        "roadId": 191,
-        "start": 0.0308333343
+        "roadId": 254,
+        "start": 0.0464500014
       },
       {
-        "end": 0.99,
-        "roadId": 185,
-        "start": 0.30222223122914627
-      },
-      {
-        "end": 0.7805999825522285,
+        "end": 0.8522222476204238,
         "reverse": true,
-        "roadId": 192,
-        "start": 0
+        "roadId": 260,
+        "start": 0.01
       },
       {
-        "end": 1,
+        "end": 0.861428609937429,
         "reverse": true,
-        "roadId": 192,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "reverse": true,
-        "roadId": 192,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "reverse": true,
-        "roadId": 192,
-        "start": 0.7267690045
-      }
-    ],
-    "meetupLeadinDistanceInMeters": 30.3981342316,
-    "name": "Power Punches",
-    "useAlternateEventRamp": false,
-    "worldId": 1,
-    "zwiftEventOnly": 1
-  },
-  {
-    "ascentInMeters": 190.5013122559,
-    "blockedForClubs": 1,
-    "blockedForMeetups": 1,
-    "blockedForTimeTrial": 1,
-    "distanceInMeters": 23672.037109375,
-    "eventOnly": true,
-    "eventPaddocks": "21,22,23,24,25",
-    "freeRideLeadinAscentInMeters": 0.0197070017,
-    "freeRideLeadinDistanceInMeters": 65.2001190186,
-    "id": 1464561389,
-    "leadinAscentInMeters": 0.0069921939,
-    "leadinDistanceInMeters": 301.1654663086,
-    "locKey": "LOC_ROUTE_WATOPIA_CLIMB_THE_CURVE",
-    "manifest": [
-      {
-        "end": 0.3942350998,
-        "reverse": true,
-        "roadId": 149,
-        "start": 0.0037115607
-      },
-      {
-        "end": 0.9925,
-        "roadId": 147,
-        "start": 0.0891666666666667
-      },
-      {
-        "end": 1,
-        "roadId": 35,
-        "start": 0.5248087138434272
-      },
-      {
-        "end": 1,
-        "roadId": 35,
-        "start": 0
-      },
-      {
-        "end": 0.541788,
-        "roadId": 35,
-        "start": 0
-      }
-    ],
-    "meetupLeadinAscentInMeters": 0.0197558291,
-    "meetupLeadinDistanceInMeters": 80.2344436646,
-    "name": "Climb Control",
-    "useAlternateEventRamp": false,
-    "worldId": 1,
-    "zwiftEventOnly": 1
-  },
-  {
-    "ascentInMeters": 45.7612380981,
-    "blockedForClubs": 1,
-    "blockedForMeetups": 1,
-    "blockedForTimeTrial": 1,
-    "distanceInMeters": 21381.82421875,
-    "eventOnly": true,
-    "eventPaddocks": "1,2,3,4",
-    "freeRideLeadinAscentInMeters": 2.3747410774,
-    "freeRideLeadinDistanceInMeters": 465.7765197754,
-    "id": 1258526800,
-    "leadinAscentInMeters": 3.0440323353,
-    "leadinDistanceInMeters": 949.3284301758,
-    "locKey": "LOC_ROUTE_WATOPIA_TIME_TO_BURN",
-    "manifest": [
-      {
-        "end": 0.0288596493,
-        "leadin": true,
-        "roadId": 0,
-        "start": 0.007280701808632273
-      },
-      {
-        "end": 0.8303519983,
-        "leadin": true,
-        "roadId": 3,
-        "start": 0.23444445143143325
-      },
-      {
-        "end": 0.08367639710621554,
-        "leadin": true,
-        "roadId": 1,
-        "start": 0.005968992225825785
-      },
-      {
-        "end": 0.109843,
-        "roadId": 1,
-        "start": 0.08500377088785172
-      },
-      {
-        "end": 0.7254166667,
-        "roadId": 84,
-        "start": 0.36375
-      },
-      {
-        "end": 0.9038591466,
-        "roadId": 79,
-        "start": 0.04685185220092532
-      },
-      {
-        "end": 1,
-        "roadId": 81,
-        "start": 0.9191607273959974
-      },
-      {
-        "end": 0.2574446261,
-        "roadId": 81,
-        "start": 0
-      },
-      {
-        "end": 0.642857171595096,
-        "reverse": true,
-        "roadId": 82,
-        "start": 0.289195
-      },
-      {
-        "end": 0.6838889092703658,
-        "reverse": true,
-        "roadId": 78,
-        "start": 0.054783335
-      },
-      {
-        "end": 0.2509928998537365,
-        "reverse": true,
-        "roadId": 81,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "reverse": true,
-        "roadId": 81,
-        "start": 0.979862244
-      },
-      {
-        "end": 0.862512,
-        "roadId": 95,
-        "start": 0.27433333742121824
-      },
-      {
-        "end": 0.0256,
-        "roadId": 81,
-        "start": 0.009326240839437006
-      }
-    ],
-    "meetupLeadinAscentInMeters": 2.5421133041,
-    "meetupLeadinDistanceInMeters": 481.6727294922,
-    "name": "Flat Out Fast",
-    "worldId": 1,
-    "zwiftEventOnly": 1
-  },
-  {
-    "ascentInMeters": 308.8671264648,
-    "distanceInMeters": 42023.37109375,
-    "eventOnly": true,
-    "eventPaddocks": "1,2,3,4",
-    "excludeFromGameDictionary": 1,
-    "freeRideLeadinAscentInMeters": 0,
-    "freeRideLeadinDistanceInMeters": 13.6123390198,
-    "id": 979250573,
-    "leadinAscentInMeters": 0,
-    "leadinDistanceInMeters": 193.9167175293,
-    "locKey": "LOC_ROUTE_WATOPIA_WATTS_OF_THE_WILD",
-    "manifest": [
-      {
-        "end": 0.9828947442,
-        "reverse": true,
-        "roadId": 0,
-        "start": 0.5539522466
-      },
-      {
-        "end": 0.8038889128466443,
-        "reverse": true,
-        "roadId": 25,
-        "start": 0.1650833383
-      },
-      {
-        "end": 0.993392,
-        "roadId": 21,
-        "start": 0.13086956765502675
-      },
-      {
-        "end": 1,
-        "roadId": 23,
-        "start": 0.9966153855435582
-      },
-      {
-        "end": 0.044018782,
-        "roadId": 23,
-        "start": 0
-      },
-      {
-        "end": 0.7155555768807734,
-        "reverse": true,
-        "roadId": 188,
-        "start": 0.2230666733
-      },
-      {
-        "end": 0.8900000265240672,
-        "reverse": true,
-        "roadId": 191,
-        "start": 0.0308333343
-      },
-      {
-        "end": 0.99,
-        "roadId": 187,
-        "start": 0.30222223122914627
-      },
-      {
-        "end": 1,
-        "roadId": 192,
-        "start": 0.8393999812379462
-      },
-      {
-        "end": 0.7947140951,
-        "roadId": 192,
-        "start": 0
-      },
-      {
-        "end": 0.7544444669286412,
-        "reverse": true,
-        "roadId": 185,
-        "start": 0.2640333412
-      },
-      {
-        "end": 0.9509333319,
-        "roadId": 191,
-        "start": 0.06888889094193773
-      },
-      {
-        "end": 0.99,
-        "roadId": 188,
-        "start": 0.28444445292154946
-      },
-      {
-        "end": 0.031230769259854796,
-        "reverse": true,
-        "roadId": 23,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "reverse": true,
-        "roadId": 23,
-        "start": 0.9835917958
-      },
-      {
-        "end": 0.9876811778172853,
-        "reverse": true,
-        "roadId": 21,
-        "start": 0.1140303841
-      },
-      {
-        "end": 0.7157143177092069,
-        "reverse": true,
-        "roadId": 26,
-        "start": 0.2859708572
-      },
-      {
-        "end": 0.5341228109970686,
-        "reverse": true,
-        "roadId": 0,
-        "start": 0.4446750034
-      },
-      {
-        "end": 0.8786666797598197,
-        "reverse": true,
-        "roadId": 4,
-        "start": 0.0147800002
-      },
-      {
-        "end": 0.9978294536471362,
-        "reverse": true,
-        "roadId": 1,
-        "start": 0.129557
-      },
-      {
-        "end": 0.589617,
-        "roadId": 85,
-        "start": 0.28500000000000003
-      },
-      {
-        "end": 0.9038591466,
-        "roadId": 79,
-        "start": 0.05444444485008712
-      },
-      {
-        "end": 1,
-        "roadId": 81,
-        "start": 0.9191607273959974
-      },
-      {
-        "end": 0.9111542188,
-        "roadId": 81,
-        "start": 0
-      },
-      {
-        "end": 0.816627,
-        "roadId": 80,
-        "start": 0.26714286908507323
-      },
-      {
-        "end": 0.7546296352520584,
-        "reverse": true,
-        "roadId": 79,
-        "start": 0.052519
-      },
-      {
-        "end": 0.7479166666666657,
-        "reverse": true,
-        "roadId": 84,
-        "start": 0.3490995
-      },
-      {
-        "end": 0.10883720889687534,
-        "reverse": true,
-        "roadId": 1,
-        "start": 0.0036697674
+        "roadId": 253,
+        "start": 0.0587428598
       },
       {
         "end": 0.8033333572745327,
         "reverse": true,
-        "roadId": 3,
-        "start": 0.0989000029
+        "roadId": 257,
+        "start": 0.0833666692
       },
       {
-        "end": 0.027938596699387475,
+        "end": 0.9779411801137017,
         "reverse": true,
-        "roadId": 0,
-        "start": 0
+        "roadId": 220,
+        "start": 0.0084823532
       },
       {
-        "end": 1,
+        "end": 0.7633333560824397,
         "reverse": true,
-        "roadId": 0,
-        "start": 0.9828947442
-      }
-    ],
-    "meetupLeadinAscentInMeters": 0.0001220703,
-    "meetupLeadinDistanceInMeters": 28.6870994568,
-    "name": "Watts of the Wild",
-    "supportedLaps": true,
-    "useAlternateEventRamp": false,
-    "worldId": 1
-  },
-  {
-    "ascentInMeters": 21.8800640106,
-    "distanceInMeters": 6072.822265625,
-    "eventOnly": true,
-    "eventPaddocks": "101,102,103,104,105",
-    "excludeFromGameDictionary": 1,
-    "freeRideLeadinAscentInMeters": 0.4049220383,
-    "freeRideLeadinDistanceInMeters": 49.3489532471,
-    "id": 3871332877,
-    "leadinAscentInMeters": 2.5989768505,
-    "leadinDistanceInMeters": 462.1184692383,
-    "locKey": "LOC_ROUTE_WATOPIA_TRACK_MEET",
-    "manifest": [
-      {
-        "end": 1,
-        "roadId": 47,
-        "start": 0.5685555657
-      },
-      {
-        "end": 0.2387555613,
-        "roadId": 47,
-        "start": 0
-      },
-      {
-        "end": 0.7608333333333327,
-        "reverse": true,
-        "roadId": 57,
-        "start": 0.223244
-      },
-      {
-        "end": 1,
-        "roadId": 0,
-        "start": 0.9826315862685444
-      },
-      {
-        "end": 0.0288596493,
-        "roadId": 0,
-        "start": 0
-      },
-      {
-        "end": 0.8303519983,
-        "roadId": 3,
-        "start": 0.23444445143143325
-      },
-      {
-        "end": 0.033974,
-        "roadId": 1,
-        "start": 0.005968992225825785
-      },
-      {
-        "end": 0.7563333446035787,
-        "reverse": true,
-        "roadId": 104,
-        "start": 0.1363087067
-      },
-      {
-        "end": 0.7166666666666668,
-        "reverse": true,
-        "roadId": 99,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "reverse": true,
-        "roadId": 99,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "reverse": true,
-        "roadId": 99,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "reverse": true,
-        "roadId": 99,
-        "start": 0.77374375
-      },
-      {
-        "end": 0.9476899992,
-        "roadId": 103,
-        "start": 0.3003333378086484
-      },
-      {
-        "end": 0.085,
-        "roadId": 1,
-        "start": 0.060930232331156714
-      }
-    ],
-    "meetupLeadinAscentInMeters": 0.4044629335,
-    "meetupLeadinDistanceInMeters": 54.2554092407,
-    "name": "Track Meet",
-    "sportType": 2,
-    "useAlternateEventRamp": false,
-    "worldId": 1
-  },
-  {
-    "ascentInMeters": 136.4929504395,
-    "blockedForClubs": 1,
-    "blockedForMeetups": 1,
-    "distanceInMeters": 23622.64453125,
-    "eventOnly": true,
-    "eventPaddocks": "21,22,23,24,25",
-    "freeRideLeadinAscentInMeters": 33.0630455017,
-    "freeRideLeadinDistanceInMeters": 29.5995960236,
-    "id": 3680493479,
-    "leadinAscentInMeters": 10.0624170303,
-    "leadinDistanceInMeters": 2669.1987304688,
-    "levelLocked": 10,
-    "locKey": "LOC_ROUTE_WATOPIA_SOUTHERN_COAST_CRUISE",
-    "manifest": [
-      {
-        "end": 0.5829928492,
-        "leadin": true,
-        "roadId": 149,
-        "start": 0.43003852603336334
-      },
-      {
-        "end": 0.9974396475,
-        "roadId": 149,
-        "start": 0.5829928492
-      },
-      {
-        "end": 0.8397666622,
-        "roadId": 155,
-        "start": 0.18555556108554197
-      },
-      {
-        "end": 0.3930555672695238,
-        "reverse": true,
-        "roadId": 78,
-        "start": 0.292639
-      },
-      {
-        "end": 0.7527911401,
-        "roadId": 83,
-        "start": 0.49000002190470693
-      },
-      {
-        "end": 0.2574446261,
-        "roadId": 81,
-        "start": 0.25583923539767817
-      },
-      {
-        "end": 0.642857171595096,
-        "reverse": true,
-        "roadId": 82,
-        "start": 0.289195
-      },
-      {
-        "end": 0.6838889092703658,
-        "reverse": true,
-        "roadId": 78,
-        "start": 0.5456047911
-      },
-      {
-        "end": 0.9144444716970129,
-        "reverse": true,
-        "roadId": 154,
+        "roadId": 258,
         "start": 0.01
       },
       {
-        "end": 0.9943930413573898,
+        "end": 0.8787499999999991,
         "reverse": true,
-        "roadId": 149,
-        "start": 0.4224301142
+        "roadId": 240,
+        "start": 0.06945
       },
       {
-        "end": 0.8512333292,
-        "roadId": 153,
-        "start": 0.3066666758060455
-      },
-      {
-        "end": 0.5333333333333332,
+        "end": 0.8522222476204238,
         "reverse": true,
-        "roadId": 174,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "reverse": true,
-        "roadId": 174,
-        "start": 0.7517666667
-      },
-      {
-        "end": 0.984,
-        "roadId": 172,
-        "start": 0.31333333333333363
-      },
-      {
-        "end": 0.5829928492,
-        "roadId": 149,
-        "start": 0.4273795665552234
-      }
-    ],
-    "meetupLeadinAscentInMeters": 33.0630455017,
-    "meetupLeadinDistanceInMeters": 52.5448799133,
-    "name": "Southern Coast Cruise",
-    "sportType": 1,
-    "supportedLaps": true,
-    "supportsTimeTrialMode": 0,
-    "useAlternateEventRamp": true,
-    "worldId": 1,
-    "zwiftEventOnly": 1
-  },
-  {
-    "ascentInMeters": 95.3124008179,
-    "blockedForClubs": 1,
-    "blockedForMeetups": 1,
-    "distanceInMeters": 12500.646484375,
-    "eventOnly": true,
-    "eventPaddocks": "1,2,3,4",
-    "freeRideLeadinAscentInMeters": 0.348213017,
-    "freeRideLeadinDistanceInMeters": 234.4797210693,
-    "id": 2661047295,
-    "leadinAscentInMeters": 35.7421340942,
-    "leadinDistanceInMeters": 2831.1442871094,
-    "locKey": "LOC_ROUTE_WATOPIA_JARVIS_SEASIDE_SPRINT",
-    "manifest": [
-      {
-        "end": 0.9830263231135916,
-        "leadin": true,
-        "reverse": true,
-        "roadId": 0,
-        "start": 0.6046756743434152
-      },
-      {
-        "end": 0.6042982501164076,
-        "reverse": true,
-        "roadId": 0,
-        "start": 0.5539522466
-      },
-      {
-        "end": 0.8038889128466443,
-        "reverse": true,
-        "roadId": 25,
-        "start": 0.1650833383
-      },
-      {
-        "end": 0.993392,
-        "roadId": 21,
-        "start": 0.13086956765502675
-      },
-      {
-        "end": 1,
-        "roadId": 23,
-        "start": 0.9966153855435582
-      },
-      {
-        "end": 0.044018782,
-        "roadId": 23,
-        "start": 0
-      },
-      {
-        "end": 0.7155555768807734,
-        "reverse": true,
-        "roadId": 188,
-        "start": 0.2230666733
-      },
-      {
-        "end": 0.8900000265240672,
-        "reverse": true,
-        "roadId": 191,
-        "start": 0.0308333343
-      },
-      {
-        "end": 0.99,
-        "roadId": 185,
-        "start": 0.30222223122914627
-      },
-      {
-        "end": 0.7805999825522285,
-        "reverse": true,
-        "roadId": 192,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "reverse": true,
-        "roadId": 192,
-        "start": 0.8263845272
-      },
-      {
-        "end": 0.7733333563804624,
-        "reverse": true,
-        "roadId": 187,
-        "start": 0.2734666748
-      },
-      {
-        "end": 0.9509333319,
-        "roadId": 191,
-        "start": 0.06000000178813936
-      },
-      {
-        "end": 0.99,
-        "roadId": 188,
-        "start": 0.28444445292154946
-      },
-      {
-        "end": 0.031230769259854796,
-        "reverse": true,
-        "roadId": 23,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "reverse": true,
-        "roadId": 23,
-        "start": 0.5401208969
-      },
-      {
-        "end": 0.912927,
-        "roadId": 30,
-        "start": 0.31500000938773165
-      },
-      {
-        "end": 0.7947222459067897,
-        "reverse": true,
-        "roadId": 22,
-        "start": 0.1281991926
-      },
-      {
-        "end": 0.7816666666666664,
-        "reverse": true,
-        "roadId": 28,
-        "start": 0.254925
-      },
-      {
-        "end": 0.9035964979603897,
-        "reverse": true,
-        "roadId": 0,
-        "start": 0.6042982501164076
-      }
-    ],
-    "meetupLeadinAscentInMeters": 0.6786423326,
-    "meetupLeadinDistanceInMeters": 253.091796875,
-    "name": "Jarvis Seaside Sprint",
-    "sportType": 1,
-    "supportedLaps": true,
-    "useAlternateEventRamp": false,
-    "worldId": 1,
-    "zwiftEventOnly": 1
-  },
-  {
-    "ascentInMeters": 138.3578491211,
-    "distanceInMeters": 12418.53125,
-    "eventOnly": true,
-    "eventPaddocks": "6,7,8,9",
-    "excludeFromGameDictionary": 1,
-    "freeRideLeadinAscentInMeters": 22.9391212463,
-    "freeRideLeadinDistanceInMeters": 15.0048894882,
-    "id": 2312882507,
-    "leadinAscentInMeters": 0,
-    "leadinDistanceInMeters": 47.8429374695,
-    "locKey": "LOC_ROUTE_SCOTLAND_DN_DASH",
-    "manifest": [
-      {
-        "end": 0.9000300518237054,
-        "reverse": true,
-        "roadId": 2,
-        "start": 0.6603215638
-      },
-      {
-        "end": 0.8241666666666666,
-        "reverse": true,
-        "roadId": 12,
-        "start": 0.024575
-      },
-      {
-        "end": 0.2112365528444453,
-        "reverse": true,
-        "roadId": 9,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "reverse": true,
-        "roadId": 9,
-        "start": 0.2492859726
-      },
-      {
-        "end": 0.9539,
-        "roadId": 14,
-        "start": 0.13583333333333322
-      },
-      {
-        "end": 0.6412913068197668,
-        "reverse": true,
-        "roadId": 2,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "reverse": true,
-        "roadId": 2,
-        "start": 0.8863045604
-      },
-      {
-        "end": 0.8441666666666666,
-        "reverse": true,
-        "roadId": 18,
-        "start": 0.0075
-      },
-      {
-        "end": 0.360630967,
-        "roadId": 3,
-        "start": 0.021086956914514298
-      }
-    ],
-    "meetupLeadinAscentInMeters": 0.0027832012,
-    "meetupLeadinDistanceInMeters": 30.5868797302,
-    "name": "Dùn Dash",
-    "sportType": 1,
-    "worldId": 13
-  },
-  {
-    "ascentInMeters": 52.283706665,
-    "distanceInMeters": 5728.5610351562,
-    "eventOnly": true,
-    "eventPaddocks": "1,2,3,4,5",
-    "excludeFromGameDictionary": 1,
-    "freeRideLeadinAscentInMeters": 0.0045898436,
-    "freeRideLeadinDistanceInMeters": 33.8735237122,
-    "id": 2773927650,
-    "leadinAscentInMeters": 6.4413671494,
-    "leadinDistanceInMeters": 1138.0936279297,
-    "locKey": "LOC_ROUTE_SCOTLAND_HIGHLAND_RUN",
-    "manifest": [
-      {
-        "end": 0.32177418395876956,
-        "leadin": true,
-        "reverse": true,
-        "roadId": 9,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "leadin": true,
-        "reverse": true,
-        "roadId": 9,
-        "start": 1
-      },
-      {
-        "end": 0.9969,
-        "reverse": true,
-        "roadId": 9,
-        "start": 0.2492859726
-      },
-      {
-        "end": 0.9539,
-        "roadId": 14,
-        "start": 0.13583333333333322
-      },
-      {
-        "end": 0.6412913068197668,
-        "reverse": true,
-        "roadId": 2,
-        "start": 0.3828178453
-      },
-      {
-        "end": 0.99,
-        "roadId": 5,
-        "start": 0.1688888939221699
+        "roadId": 244,
+        "start": 0.01
       },
       {
         "end": 0.9118182089924821,
         "reverse": true,
-        "roadId": 6,
-        "start": 0.045936365
-      },
-      {
-        "end": 0.8400000250339509,
-        "reverse": true,
-        "roadId": 4,
-        "start": 0.01
-      },
-      {
-        "end": 0.2468,
-        "roadId": 2,
-        "start": 0.15288288658484817
-      }
-    ],
-    "meetupLeadinAscentInMeters": 0.0045898436,
-    "meetupLeadinDistanceInMeters": 28.8106555939,
-    "name": "Highland Run",
-    "sportType": 2,
-    "useAlternateEventRamp": false,
-    "worldId": 13
-  },
-  {
-    "ascentInMeters": 189.3475952148,
-    "distanceInMeters": 13634.404296875,
-    "eventOnly": true,
-    "eventPaddocks": "1,2,3,4,5",
-    "excludeFromGameDictionary": 1,
-    "freeRideLeadinAscentInMeters": 0.0045898436,
-    "freeRideLeadinDistanceInMeters": 42.6634025574,
-    "id": 4227232797,
-    "leadinAscentInMeters": 6.3560400009,
-    "leadinDistanceInMeters": 1138.3177490234,
-    "locKey": "LOC_ROUTE_SCOTLAND_SCOTLAND_AFTER_PARTY",
-    "manifest": [
-      {
-        "end": 0.3189784851173556,
-        "leadin": true,
-        "reverse": true,
-        "roadId": 9,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "leadin": true,
-        "reverse": true,
-        "roadId": 9,
-        "start": 0.9969
-      },
-      {
-        "end": 0.9969,
-        "reverse": true,
-        "roadId": 9,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "reverse": true,
-        "roadId": 9,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "reverse": true,
-        "roadId": 9,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "reverse": true,
-        "roadId": 9,
-        "start": 0.2492859726
-      },
-      {
-        "end": 0.9539,
-        "roadId": 14,
-        "start": 0.13583333333333322
-      },
-      {
-        "end": 0.6412913068197668,
-        "reverse": true,
-        "roadId": 2,
-        "start": 0.5883578968
-      },
-      {
-        "end": 0.96935,
-        "roadId": 17,
-        "start": 0.17333333333333326
-      },
-      {
-        "end": 0.9813768298737698,
-        "reverse": true,
-        "roadId": 3,
-        "start": 0.360630967
-      }
-    ],
-    "meetupLeadinAscentInMeters": 0.0045898436,
-    "meetupLeadinDistanceInMeters": 42.930393219,
-    "name": "Scotland After Party",
-    "sportType": 1,
-    "useAlternateEventRamp": false,
-    "worldId": 13
-  },
-  {
-    "ascentInMeters": 207.070022583,
-    "blockedForClubs": 1,
-    "blockedForMeetups": 1,
-    "distanceInMeters": 31228.1328125,
-    "eventOnly": true,
-    "eventPaddocks": "1,2,3,4",
-    "excludeFromGameDictionary": 1,
-    "freeRideLeadinAscentInMeters": 0.9928514361,
-    "freeRideLeadinDistanceInMeters": 52.1679077148,
-    "id": 2836167073,
-    "leadinAscentInMeters": 4.3915715218,
-    "leadinDistanceInMeters": 462.0547485352,
-    "locKey": "LOC_ROUTE_LONDON_LONDON_CALLING",
-    "manifest": [
-      {
-        "end": 0.8040615123,
-        "reverse": true,
-        "roadId": 7,
-        "start": 0.5602328876
-      },
-      {
-        "end": 0.8613333461681997,
-        "reverse": true,
-        "roadId": 20,
-        "start": 0.0799200012
-      },
-      {
-        "end": 0.9781751747,
-        "roadId": 6,
-        "start": 0.0043795620091259466
-      },
-      {
-        "end": 0.7865005624,
-        "roadId": 10,
-        "start": 0.001428571492433541
-      },
-      {
-        "end": 0.6469653518466885,
-        "reverse": true,
-        "roadId": 7,
-        "start": 0.6115225807
-      },
-      {
-        "end": 0.8315428501,
-        "roadId": 5,
-        "start": 0.19380953247348467
-      },
-      {
-        "end": 0.571017,
-        "roadId": 0,
-        "start": 0.011081081349402666
-      },
-      {
-        "end": 0.948666680802901,
-        "reverse": true,
-        "roadId": 38,
-        "start": 0.0096600001
-      },
-      {
-        "end": 0.9857420846540479,
-        "reverse": true,
-        "roadId": 6,
-        "start": 0.0044576642
-      },
-      {
-        "end": 0.9231150006,
-        "roadId": 21,
-        "start": 0.07800000116229057
-      },
-      {
-        "end": 0.5461768214746101,
-        "reverse": true,
-        "roadId": 7,
-        "start": 0.3517661957
-      },
-      {
-        "end": 0.937532,
-        "roadId": 35,
-        "start": 0.17133333588639904
-      },
-      {
-        "end": 0.9110526383668185,
-        "reverse": true,
-        "roadId": 27,
-        "start": 0.0617760383
-      },
-      {
-        "end": 0.9928571872,
-        "roadId": 28,
-        "start": 0.14380953023831053
-      },
-      {
-        "end": 0.025256869749476607,
-        "reverse": true,
-        "roadId": 7,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "reverse": true,
-        "roadId": 7,
-        "start": 0.8040615123
-      }
-    ],
-    "meetupLeadinAscentInMeters": 0.5554394722,
-    "meetupLeadinDistanceInMeters": 34.6026000977,
-    "name": "London Calling",
-    "supportedLaps": true,
-    "worldId": 3,
-    "zwiftEventOnly": 1
-  },
-  {
-    "ascentInMeters": 87.085319519,
-    "blockedForClubs": 1,
-    "blockedForMeetups": 1,
-    "blockedForTimeTrial": 1,
-    "distanceInMeters": 19388.2890625,
-    "eventOnly": true,
-    "eventPaddocks": "1,2,3,4",
-    "freeRideLeadinAscentInMeters": 0.0703515708,
-    "freeRideLeadinDistanceInMeters": 150.1013641357,
-    "id": 2892858917,
-    "leadinAscentInMeters": 0,
-    "leadinDistanceInMeters": 206.5208740234,
-    "locKey": "LOC_ROUTE_MAKURIISLANDS_SMASH_THE_SPRINT",
-    "manifest": [
-      {
-        "end": 0.8842986808298097,
-        "leadin": true,
-        "reverse": true,
-        "roadId": 0,
-        "start": 0.8759246502471267
-      },
-      {
-        "end": 0.8755751252174377,
-        "reverse": true,
-        "roadId": 0,
-        "start": 0.7407428512
-      },
-      {
-        "end": 0.9944599999,
-        "roadId": 88,
-        "start": 0.30133333782354965
-      },
-      {
-        "end": 0.9886821668595074,
-        "reverse": true,
-        "roadId": 6,
-        "start": 0.7927370374
-      },
-      {
-        "end": 0.9936833334,
-        "roadId": 3,
-        "start": 0.23125000000000018
-      },
-      {
-        "end": 0.7328294546343385,
-        "reverse": true,
-        "roadId": 6,
-        "start": 0.0151705426
-      },
-      {
-        "end": 0.9,
-        "roadId": 111,
-        "start": 0.13416666666666657
-      },
-      {
-        "end": 0.4297297136,
-        "roadId": 4,
-        "start": 0.3351407488559691
+        "roadId": 217,
+        "start": 0.069409093
       },
       {
         "end": 0.99,
-        "roadId": 5,
-        "start": 0.08066666786869366
+        "roadId": 245,
+        "start": 0.07000000208616253
       },
       {
-        "end": 0.9912889128923316,
+        "end": 0.903000013455749,
         "reverse": true,
-        "roadId": 4,
-        "start": 0.4554998385
+        "roadId": 221,
+        "start": 0.0430200006
       },
       {
-        "end": 0.9606666809817148,
+        "end": 0.8100000241398816,
         "reverse": true,
-        "roadId": 24,
-        "start": 0.01
-      },
-      {
-        "end": 0.991274098077158,
-        "reverse": true,
-        "roadId": 4,
-        "start": 0.4554998385
-      },
-      {
-        "end": 0.9606666809817148,
-        "reverse": true,
-        "roadId": 24,
-        "start": 0.01
-      },
-      {
-        "end": 0.991274098077158,
-        "reverse": true,
-        "roadId": 4,
-        "start": 0.3382581935
-      },
-      {
-        "end": 0.9508333333333332,
-        "reverse": true,
-        "roadId": 111,
-        "start": 0.1
-      },
-      {
-        "end": 0.2130466684,
-        "roadId": 6,
-        "start": 0.0162790697067976
-      }
-    ],
-    "meetupLeadinAscentInMeters": 0.1312304586,
-    "meetupLeadinDistanceInMeters": 166.3374633789,
-    "name": "Red Zone Repeats",
-    "useAlternateEventRamp": false,
-    "worldId": 9,
-    "zwiftEventOnly": 1
-  },
-  {
-    "ascentInMeters": 144.5709228516,
-    "blockedForMeetups": 1,
-    "distanceInMeters": 21988.6484375,
-    "eventOnly": true,
-    "eventPaddocks": "21,22,23,24,25",
-    "excludeFromGameDictionary": 1,
-    "freeRideLeadinAscentInMeters": 155.6870727539,
-    "freeRideLeadinDistanceInMeters": 13.0526714325,
-    "id": 334944296,
-    "leadinAscentInMeters": 10.990562439,
-    "leadinDistanceInMeters": 1922.9895019531,
-    "locKey": "LOC_ROUTE_MAKURIISLANDS_LIMINAL_LOOP",
-    "manifest": [
-      {
-        "end": 0.15241830604771778,
-        "leadin": true,
-        "reverse": true,
-        "roadId": 129,
-        "start": 0
+        "roadId": 248,
+        "start": 0.0417333346
       },
       {
         "end": 1,
-        "leadin": true,
-        "reverse": true,
-        "roadId": 129,
-        "start": 0.9124148959
+        "roadId": 230,
+        "start": 0.4860740858440593
       },
       {
-        "end": 0.7368222144,
-        "leadin": true,
-        "roadId": 144,
-        "start": 0.15555556019147235
-      },
-      {
-        "end": 0.8644444702068966,
-        "leadin": true,
-        "reverse": true,
-        "roadId": 136,
-        "start": 0.077066669
-      },
-      {
-        "end": 0.7400000220537187,
-        "leadin": true,
-        "reverse": true,
-        "roadId": 156,
-        "start": 0.01
-      },
-      {
-        "end": 0.16737240563656997,
-        "leadin": true,
-        "roadId": 134,
-        "start": 0.11616667272522996
-      },
-      {
-        "end": 0.2613052247,
-        "roadId": 134,
-        "start": 0.1677
-      },
-      {
-        "end": 0.9636333325,
-        "roadId": 150,
-        "start": 0.22555556227763482
-      },
-      {
-        "end": 0.9258333609253162,
-        "reverse": true,
-        "roadId": 137,
-        "start": 0.0352666677
-      },
-      {
-        "end": 0.9654666659,
-        "roadId": 148,
-        "start": 0.1977777836720148
-      },
-      {
-        "end": 1,
-        "roadId": 131,
-        "start": 0.8290278024847311
-      },
-      {
-        "end": 0.1933417719,
-        "roadId": 131,
+        "end": 0.6286962665,
+        "roadId": 230,
         "start": 0
       },
       {
-        "end": 0.7866666901111606,
+        "end": 0.8888889153798419,
         "reverse": true,
-        "roadId": 138,
+        "roadId": 239,
+        "start": 0.0344999986
+      },
+      {
+        "end": 0.8505555809040861,
+        "reverse": true,
+        "roadId": 234,
+        "start": 0.06365
+      },
+      {
+        "end": 0.99,
+        "roadId": 236,
+        "start": 0.20555556168158842
+      },
+      {
+        "end": 0.8930765798,
+        "roadId": 223,
+        "start": 0.13857143476605419
+      },
+      {
+        "end": 0.9166666939854625,
+        "reverse": true,
+        "roadId": 233,
+        "start": 0.1315666706
+      },
+      {
+        "end": 0.9566667094329989,
+        "reverse": true,
+        "roadId": 218,
+        "start": 0.0958642886
+      },
+      {
+        "end": 0.778888912101587,
+        "reverse": true,
+        "roadId": 238,
         "start": 0.01
       },
       {
-        "end": 0.0895697852,
-        "roadId": 133,
-        "start": 0.023095238525420416
-      },
-      {
-        "end": 0.7455555777748427,
+        "end": 0.9815321093797671,
         "reverse": true,
-        "roadId": 151,
-        "start": 0.01
-      },
-      {
-        "end": 0.9876793497304159,
-        "reverse": true,
-        "roadId": 128,
-        "start": 0.0063949369
-      },
-      {
-        "end": 0.8355555804570516,
-        "reverse": true,
-        "roadId": 9,
-        "start": 0.0294333342
-      },
-      {
-        "end": 0.9905194355,
-        "roadId": 6,
-        "start": 0.9524806166067716
-      },
-      {
-        "end": 0.9733333333333325,
-        "reverse": true,
-        "roadId": 87,
-        "start": 0.063075
-      },
-      {
-        "end": 0.7301357782259554,
-        "reverse": true,
-        "roadId": 0,
-        "start": 0.5424021347
-      },
-      {
-        "end": 0.863455353,
-        "roadId": 48,
-        "start": 0.4014285893738269
-      },
-      {
-        "end": 0.078038559,
-        "roadId": 1,
-        "start": 0.018244048434620092
+        "roadId": 4,
+        "start": 0.9767738909
       },
       {
         "end": 0.8660000129044051,
         "reverse": true,
-        "roadId": 85,
-        "start": 0.0332000005
+        "roadId": 33,
+        "start": 0.069580001
       },
       {
-        "end": 0.9438964992,
-        "roadId": 12,
-        "start": 0.0885416666666666
+        "end": 0.0743532321,
+        "roadId": 30,
+        "start": 0.012761193732731027
       },
       {
-        "end": 0.858275567,
-        "roadId": 37,
-        "start": 0.12435897899170709
-      },
-      {
-        "end": 0.8316139123340385,
+        "end": 0.7200000107288357,
         "reverse": true,
-        "roadId": 0,
-        "start": 0.7407428512
+        "roadId": 38,
+        "start": 0.0852600013
       },
       {
-        "end": 0.9944599999,
-        "roadId": 88,
-        "start": 0.30133333782354965
-      },
-      {
-        "end": 0.9886821668595074,
-        "reverse": true,
-        "roadId": 6,
-        "start": 0.9472493142
-      },
-      {
-        "end": 0.99,
-        "roadId": 9,
-        "start": 0.17888889422019313
-      },
-      {
-        "end": 0.7548045088,
-        "roadId": 128,
-        "start": 0.012278481321409334
-      },
-      {
-        "end": 0.790000023543835,
-        "reverse": true,
-        "roadId": 140,
-        "start": 0.0100000003
-      },
-      {
-        "end": 0.6053333423535022,
-        "reverse": true,
-        "roadId": 135,
-        "start": 0.1397800021
-      },
-      {
-        "end": 0.9588666654,
-        "roadId": 142,
-        "start": 0.10000000298023222
-      },
-      {
-        "end": 0.8773308132,
-        "roadId": 129,
-        "start": 0.4877777950403601
-      },
-      {
-        "end": 0.7343777699,
-        "roadId": 154,
-        "start": 0.24777778516213086
-      },
-      {
-        "end": 0.867777803639571,
-        "reverse": true,
-        "roadId": 136,
-        "start": 0.077066669
-      },
-      {
-        "end": 0.7400000220537187,
-        "reverse": true,
-        "roadId": 156,
-        "start": 0.01
-      },
-      {
-        "end": 0.1677,
-        "roadId": 134,
-        "start": 0.11616667272522996
-      }
-    ],
-    "meetupLeadinAscentInMeters": 155.6870727539,
-    "meetupLeadinDistanceInMeters": 19.1923351288,
-    "name": "Liminal Loop",
-    "sportType": 1,
-    "useAlternateEventRamp": false,
-    "worldId": 9,
-    "zwiftEventOnly": 1
-  },
-  {
-    "ascentInMeters": 32.029838562,
-    "distanceInMeters": 6889.7138671875,
-    "eventOnly": true,
-    "eventPaddocks": "16,17,18,19,20",
-    "excludeFromGameDictionary": 1,
-    "freeRideLeadinAscentInMeters": 0,
-    "freeRideLeadinDistanceInMeters": 23.6579608917,
-    "id": 152965568,
-    "leadinAscentInMeters": 4.8508000374,
-    "leadinDistanceInMeters": 1123.9208984375,
-    "locKey": "LOC_ROUTE_MAKURIISLANDS_YARU_RUN",
-    "manifest": [
-      {
-        "end": 0.8670666876621477,
-        "leadin": true,
-        "reverse": true,
-        "roadId": 4,
-        "start": 0.7275550071687338
-      },
-      {
-        "end": 0.7269605643,
-        "reverse": true,
-        "roadId": 4,
-        "start": 0.5454805587
-      },
-      {
-        "end": 0.9414125,
-        "roadId": 22,
-        "start": 0.08166666666666664
-      },
-      {
-        "end": 0.964844185,
-        "roadId": 8,
-        "start": 0.03754717037081718
-      },
-      {
-        "end": 0.9873333480457461,
-        "reverse": true,
-        "roadId": 110,
-        "start": 0.0100000001
-      },
-      {
-        "end": 0.36112402966245993,
-        "reverse": true,
-        "roadId": 6,
-        "start": 0.0151705426
-      },
-      {
-        "end": 0.9,
-        "roadId": 111,
-        "start": 0.13416666666666657
-      },
-      {
-        "end": 0.482746495,
-        "roadId": 4,
-        "start": 0.3351407488559691
-      },
-      {
-        "end": 0.9724199997,
-        "roadId": 103,
-        "start": 0.3213333381215729
-      },
-      {
-        "end": 0.9602898729592559,
-        "reverse": true,
-        "roadId": 18,
-        "start": 0.0121695654
-      },
-      {
-        "end": 0.7713333448270954,
-        "reverse": true,
-        "roadId": 104,
-        "start": 0.0434800006
-      },
-      {
-        "end": 0.7881926116781879,
-        "reverse": true,
-        "roadId": 4,
-        "start": 0.7269605643
+        "end": 0.5492857388,
+        "roadId": 24,
+        "start": 0.06297619329144555
       }
     ],
     "meetupLeadinAscentInMeters": 0,
-    "meetupLeadinDistanceInMeters": 40.1756362915,
-    "name": "Yoru Run",
-    "sportType": 2,
-    "supportedLaps": true,
-    "useAlternateEventRamp": false,
-    "worldId": 9
-  },
-  {
-    "ascentInMeters": 327.0883483887,
-    "distanceInMeters": 41266.55078125,
-    "eventOnly": true,
-    "eventPaddocks": "11,12,13,14,15",
-    "excludeFromGameDictionary": 1,
-    "freeRideLeadinAscentInMeters": 0.3198046386,
-    "freeRideLeadinDistanceInMeters": 15.5130176544,
-    "id": 3636436865,
-    "leadinAscentInMeters": 6.0444369316,
-    "leadinDistanceInMeters": 1605.9002685547,
-    "locKey": "LOC_ROUTE_MAKURIISLANDS_TROPIC_RUSH",
-    "manifest": [
-      {
-        "end": 0.049851853058983875,
-        "leadin": true,
-        "reverse": true,
-        "roadId": 4,
-        "start": 0.0058165356
-      },
-      {
-        "end": 0.9376900004,
-        "leadin": true,
-        "roadId": 109,
-        "start": 0.12250000000000003
-      },
-      {
-        "end": 0.5839147265069186,
-        "leadin": true,
-        "reverse": true,
-        "roadId": 6,
-        "start": 0.2136745877009023
-      },
-      {
-        "end": 0.2130466684,
-        "reverse": true,
-        "roadId": 6,
-        "start": 0.0151705426
-      },
-      {
-        "end": 0.9,
-        "roadId": 111,
-        "start": 0.13416666666666657
-      },
-      {
-        "end": 0.4297297136,
-        "roadId": 4,
-        "start": 0.3351407488559691
-      },
-      {
-        "end": 0.99,
-        "roadId": 5,
-        "start": 0.08066666786869366
-      },
-      {
-        "end": 0.9912889128923316,
-        "reverse": true,
-        "roadId": 4,
-        "start": 0.5454805587
-      },
-      {
-        "end": 0.9414125,
-        "roadId": 22,
-        "start": 0.08166666666666664
-      },
-      {
-        "end": 0.408070309,
-        "roadId": 8,
-        "start": 0.03754717037081718
-      },
-      {
-        "end": 0.6746666767199827,
-        "reverse": true,
-        "roadId": 116,
-        "start": 0.01
-      },
-      {
-        "end": 0.8633333719273405,
-        "reverse": true,
-        "roadId": 114,
-        "start": 0.0605214313
-      },
-      {
-        "end": 0.99004,
-        "roadId": 102,
-        "start": 0.21000000312924394
-      },
-      {
-        "end": 1,
-        "roadId": 19,
-        "start": 0.7081481652955226
-      },
-      {
-        "end": 0.6119148382,
-        "roadId": 19,
-        "start": 0
-      },
-      {
-        "end": 0.9673333477477225,
-        "reverse": true,
-        "roadId": 101,
-        "start": 0.0106800002
-      },
-      {
-        "end": 0.8737515897,
-        "roadId": 114,
-        "start": 0.12690476757784674
-      },
-      {
-        "end": 0.9913,
-        "roadId": 115,
-        "start": 0.02600000038743021
-      },
-      {
-        "end": 0.964844185,
-        "roadId": 8,
-        "start": 0.469937113920847
-      },
-      {
-        "end": 0.9324333328,
-        "roadId": 26,
-        "start": 0.1270370379835366
-      },
-      {
-        "end": 0.9154674218,
-        "roadId": 6,
-        "start": 0.42054263409227133
-      },
-      {
-        "end": 0.99,
-        "roadId": 106,
-        "start": 0.24333334058523168
-      },
-      {
-        "end": 0.7548045088,
-        "roadId": 128,
-        "start": 0.012278481321409334
-      },
-      {
-        "end": 0.790000023543835,
-        "reverse": true,
-        "roadId": 140,
-        "start": 0.0100000003
-      },
-      {
-        "end": 0.6053333423535022,
-        "reverse": true,
-        "roadId": 135,
-        "start": 0.1397800021
-      },
-      {
-        "end": 0.9644333323,
-        "roadId": 141,
-        "start": 0.10000000298023222
-      },
-      {
-        "end": 0.4334640676279857,
-        "reverse": true,
-        "roadId": 129,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "reverse": true,
-        "roadId": 129,
-        "start": 0.9124148959
-      },
-      {
-        "end": 0.7368222144,
-        "roadId": 144,
-        "start": 0.15555556019147235
-      },
-      {
-        "end": 0.8644444702068966,
-        "reverse": true,
-        "roadId": 136,
-        "start": 0.077066669
-      },
-      {
-        "end": 0.7400000220537187,
-        "reverse": true,
-        "roadId": 155,
-        "start": 0.0293333342
-      },
-      {
-        "end": 0.06811111466338282,
-        "reverse": true,
-        "roadId": 134,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "reverse": true,
-        "roadId": 134,
-        "start": 0.2904623767
-      },
-      {
-        "end": 0.9845999995,
-        "roadId": 149,
-        "start": 0.19111111680666595
-      },
-      {
-        "end": 0.9205555829902484,
-        "reverse": true,
-        "roadId": 137,
-        "start": 0.0352666677
-      },
-      {
-        "end": 0.9654666659,
-        "roadId": 148,
-        "start": 0.1977777836720148
-      },
-      {
-        "end": 1,
-        "roadId": 131,
-        "start": 0.8290278024847311
-      },
-      {
-        "end": 0.1933417719,
-        "roadId": 131,
-        "start": 0
-      },
-      {
-        "end": 0.7866666901111606,
-        "reverse": true,
-        "roadId": 138,
-        "start": 0.01
-      },
-      {
-        "end": 0.9646406587,
-        "roadId": 133,
-        "start": 0.023095238525420416
-      },
-      {
-        "end": 0.8911666634,
-        "roadId": 91,
-        "start": 0.1711111162106195
-      },
-      {
-        "end": 0.9125629850601077,
-        "reverse": true,
-        "roadId": 4,
-        "start": 0.8008886758
-      },
-      {
-        "end": 0.9326199991,
-        "roadId": 21,
-        "start": 0.360000005364418
-      },
-      {
-        "end": 0.9724383845,
-        "roadId": 18,
-        "start": 0.03500000065192583
-      },
-      {
-        "end": 0.8586666794617966,
-        "reverse": true,
-        "roadId": 23,
-        "start": 0.0259200004
-      },
-      {
-        "end": 0.5253505235,
-        "roadId": 4,
-        "start": 0.5056148270579698
-      },
-      {
-        "end": 0.9780000145733354,
-        "reverse": true,
-        "roadId": 113,
-        "start": 0.1656800025
-      },
-      {
-        "end": 0.408070309,
-        "roadId": 8,
-        "start": 0.021572327365477876
-      },
-      {
-        "end": 0.6746666767199827,
-        "reverse": true,
-        "roadId": 116,
-        "start": 0.01
-      },
-      {
-        "end": 0.8633333719273405,
-        "reverse": true,
-        "roadId": 114,
-        "start": 0.0605214313
-      },
-      {
-        "end": 0.98985,
-        "roadId": 101,
-        "start": 0.1660000024735929
-      },
-      {
-        "end": 0.6043703850048274,
-        "reverse": true,
-        "roadId": 19,
-        "start": 0.300831484
-      },
-      {
-        "end": 0.9666666810711219,
-        "reverse": true,
-        "roadId": 71,
-        "start": 0.0515000008
-      },
-      {
-        "end": 1,
-        "roadId": 70,
-        "start": 0.12882113341242096
-      },
-      {
-        "end": 0.0708382421,
-        "roadId": 70,
-        "start": 0
-      },
-      {
-        "end": 0.9577066662,
-        "roadId": 72,
-        "start": 0.03933333391944564
-      },
-      {
-        "end": 0.20829630134006294,
-        "reverse": true,
-        "roadId": 19,
-        "start": 0
-      },
-      {
-        "end": 1,
-        "reverse": true,
-        "roadId": 19,
-        "start": 0.6955200168
-      },
-      {
-        "end": 0.9100000135600564,
-        "reverse": true,
-        "roadId": 102,
-        "start": 0.01
-      },
-      {
-        "end": 0.8737515897,
-        "roadId": 114,
-        "start": 0.12809524382154136
-      },
-      {
-        "end": 0.9913,
-        "roadId": 115,
-        "start": 0.02600000038743021
-      },
-      {
-        "end": 0.964844185,
-        "roadId": 8,
-        "start": 0.469937113920847
-      },
-      {
-        "end": 0.9873333480457461,
-        "reverse": true,
-        "roadId": 110,
-        "start": 0.0100000001
-      },
-      {
-        "end": 0.36112402966245993,
-        "reverse": true,
-        "roadId": 6,
-        "start": 0.2130466684
-      }
-    ],
-    "meetupLeadinAscentInMeters": 0.758046329,
-    "meetupLeadinDistanceInMeters": 36.3202323914,
-    "name": "Tropic Rush",
-    "sportType": 1,
-    "supportedLaps": true,
-    "useAlternateEventRamp": false,
-    "worldId": 9
-  },
-  {
-    "ascentInMeters": 190.2864532471,
-    "distanceInMeters": 17760.177734375,
-    "eventOnly": true,
-    "eventPaddocks": "16,17,18,19,20",
-    "excludeFromGameDictionary": 1,
-    "freeRideLeadinAscentInMeters": 208.0216369629,
-    "freeRideLeadinDistanceInMeters": 10.0291423798,
-    "id": 65777922,
-    "leadinAscentInMeters": 13.2099533081,
-    "leadinDistanceInMeters": 1838.7584228516,
-    "locKey": "LOC_ROUTE_MAKURIISLANDS_ELECTRIC_BREAK",
-    "manifest": [
-      {
-        "end": 0.8682222432456843,
-        "leadin": true,
-        "reverse": true,
-        "roadId": 4,
-        "start": 0.8008886758
-      },
-      {
-        "end": 0.9326199991,
-        "leadin": true,
-        "roadId": 21,
-        "start": 0.360000005364418
-      },
-      {
-        "end": 0.683606194722127,
-        "leadin": true,
-        "roadId": 18,
-        "start": 0.03500000065192583
-      },
-      {
-        "end": 0.9724383845,
-        "roadId": 18,
-        "start": 0.6855761013
-      },
-      {
-        "end": 0.854666679402192,
-        "reverse": true,
-        "roadId": 103,
-        "start": 0.0233800003
-      },
-      {
-        "end": 0.47731853007649633,
-        "reverse": true,
-        "roadId": 4,
-        "start": 0.4554998385
-      },
-      {
-        "end": 0.9606666809817148,
-        "reverse": true,
-        "roadId": 24,
-        "start": 0.01
-      },
-      {
-        "end": 0.991274098077158,
-        "reverse": true,
-        "roadId": 4,
-        "start": 0.9269912314
-      },
-      {
-        "end": 0.8577778033415477,
-        "reverse": true,
-        "roadId": 27,
-        "start": 0.0100000003
-      },
-      {
-        "end": 0.9530952558480194,
-        "reverse": true,
-        "roadId": 133,
-        "start": 0.0053952382
-      },
-      {
-        "end": 0.9580999988,
-        "roadId": 132,
-        "start": 0.2577777854601541
-      },
-      {
-        "end": 1,
-        "roadId": 131,
-        "start": 0.3320833432301882
-      },
-      {
-        "end": 0.1933417719,
-        "roadId": 131,
-        "start": 0
-      },
-      {
-        "end": 0.7866666901111606,
-        "reverse": true,
-        "roadId": 138,
-        "start": 0.01
-      },
-      {
-        "end": 0.9646406587,
-        "roadId": 133,
-        "start": 0.023095238525420416
-      },
-      {
-        "end": 0.8911666634,
-        "roadId": 91,
-        "start": 0.1711111162106195
-      },
-      {
-        "end": 0.9125629850601077,
-        "reverse": true,
-        "roadId": 4,
-        "start": 0.8008886758
-      },
-      {
-        "end": 0.9326199991,
-        "roadId": 21,
-        "start": 0.360000005364418
-      },
-      {
-        "end": 0.9724383845,
-        "roadId": 18,
-        "start": 0.03500000065192583
-      },
-      {
-        "end": 0.8586666794617966,
-        "reverse": true,
-        "roadId": 23,
-        "start": 0.0259200004
-      },
-      {
-        "end": 0.5253505235,
-        "roadId": 4,
-        "start": 0.5056148270579698
-      },
-      {
-        "end": 0.9780000145733354,
-        "reverse": true,
-        "roadId": 113,
-        "start": 0.1656800025
-      },
-      {
-        "end": 0.408070309,
-        "roadId": 8,
-        "start": 0.021572327365477876
-      },
-      {
-        "end": 0.6746666767199827,
-        "reverse": true,
-        "roadId": 116,
-        "start": 0.01
-      },
-      {
-        "end": 0.8633333719273405,
-        "reverse": true,
-        "roadId": 114,
-        "start": 0.0605214313
-      },
-      {
-        "end": 0.98985,
-        "roadId": 101,
-        "start": 0.1660000024735929
-      },
-      {
-        "end": 0.6043703850048274,
-        "reverse": true,
-        "roadId": 19,
-        "start": 0.300831484
-      },
-      {
-        "end": 0.9666666810711219,
-        "reverse": true,
-        "roadId": 71,
-        "start": 0.0515000008
-      },
-      {
-        "end": 0.6506578889,
-        "roadId": 70,
-        "start": 0.12882113341242096
-      }
-    ],
-    "meetupLeadinAscentInMeters": 208.1850738525,
-    "meetupLeadinDistanceInMeters": 23.6147403717,
-    "name": "Electric Break",
+    "meetupLeadinDistanceInMeters": 39.657459259,
+    "name": "Empire Elevation",
     "sportType": 1,
     "useAlternateEventRamp": false,
-    "worldId": 9,
-    "zwiftEventOnly": 0
+    "worldId": 4,
+    "zwiftEventOnly": 1
   }
 ]
