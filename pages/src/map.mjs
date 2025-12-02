@@ -1066,7 +1066,7 @@ export class SauceZwiftMap extends EventTarget {
         return this.addHighlightPath(this._createCurvePath(points, options.loop), id, options);
     }
 
-    addPoint(point, extraClass) {
+    addPoint(point, extraClass, id) {
         if (!this._pointIdSeq) {
             this._pointIdSeq = 1;
         }
@@ -1075,6 +1075,9 @@ export class SauceZwiftMap extends EventTarget {
         ent.setPosition(point);
         if (extraClass) {
             ent.el.classList.add(extraClass);
+        }
+        if (id) {
+            ent.el.id = id;
         }
         this.addEntity(ent);
         return ent;
@@ -1351,6 +1354,7 @@ export class SauceZwiftMap extends EventTarget {
             y *= this._mapScale * this._layerScale;
             const scale = zoom / this._layerScale / this._canvasScale;
             this._rotate = rotate;
+            //debugger
             this._elements.map.style.setProperty('transform-origin', `${x}px ${y}px`);
             this._elements.map.style.setProperty('transform', `
                 translate(${-x}px, ${-y}px)
@@ -1368,8 +1372,16 @@ export class SauceZwiftMap extends EventTarget {
             for (const ent of this._pendingEntityUpdates) {
                 const pos = ent.transition.getStep();
                 if (pos) {
-                    ent.el.style.setProperty('transform', `translate(${pos[0] * scale}px,
-                                                                     ${pos[1] * scale}px)`);
+                    const match = ent.el.style.transform.match(/rotate\(([^)]+)\)/);
+                    let rotate;
+                    if (match) {
+                        rotate = match[1];
+                        ent.el.style.setProperty('transform', `translate(${pos[0] * scale}px,
+                                                                         ${pos[1] * scale}px) rotate(${rotate})`);
+                    } else {                    
+                        ent.el.style.setProperty('transform', `translate(${pos[0] * scale}px,
+                                                                         ${pos[1] * scale}px)`);
+                    }
                     if (!transform && ent.pin) {
                         affectedPins.push({ent});
                     }

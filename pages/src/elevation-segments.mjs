@@ -564,6 +564,150 @@ export class SauceElevationProfile {
         //debugger
     })
 
+    setPath = common.asyncSerialize(async function(id, {laps=1, eventSubgroupId, distance}={}) {         
+        distance = parseFloat(distance);        
+        if (distance) {
+            this.customDistance = distance
+        } else {
+            this.customDistance = 0;
+        };          
+        this.road = null;
+        this.reverse = null;
+        routeSegments.length = 0;
+        allMarkLines.length = 0;
+        this.routeId = id;
+        this.lastRouteId = id;
+        this.lapCounter = 0;
+        const markLines = [];
+        //let routeDistances;
+        //let routeElevations;
+        //let routeGrades;
+        //let segmentsOnRoute = await zen.processRoute(this.courseId, this.routeId, laps, distance, this.showLoopSegments, this.showAllArches)
+        let segmentsOnRoute = this.sectionRouteData;
+        this.routeInfo = segmentsOnRoute;
+        this.routeDistances = Array.from(segmentsOnRoute.distances);                    
+        this.routeElevations = Array.from(segmentsOnRoute.elevations);        
+        this.routeGrades = Array.from(segmentsOnRoute.grades);          
+        this._roadSigs = new Set();
+        this.curvePath = null;        
+        //this.route = await zen.getModifiedRoute(id);
+        this.route = this.sectionRouteData
+        console.log("this.sectionRouteData", this.sectionRouteData)
+        //debugger
+        for (const {roadId, reverse} of this.route.manifest) {
+            this._roadSigs.add(`${roadId}-${!!reverse}`);
+        }        
+        this.curvePath = this.route.curvePath.slice();
+        const distances = Array.from(this.route.distances);
+        const elevations = Array.from(this.route.elevations);
+        const grades = Array.from(this.route.grades);        
+        const markAreas = [];
+        const notLeadin = this.route.manifest.findIndex(x => !x.leadin);
+        const lapStartIdx = notLeadin === -1 ? 0 : this.curvePath.nodes.findIndex(x => x.index === notLeadin);        
+        if ((lapStartIdx || this.showCompletedLaps) && this.showLapMarker) {
+            markLines.push({
+                xAxis: distances[lapStartIdx],
+                lineStyle: {
+                    width: this.lineSize, 
+                    type: this.lineType,
+                    color: this.lineTextColor
+                },
+                label: {
+                    distance: 7,
+                    position: 'insideMiddleBottom',
+                    formatter: `LAP`,
+                    color: this.lineTextColor,
+                    rotate: 90
+                }
+            });            
+            this._routeLeadinDistance = distances[lapStartIdx];
+        } else {
+            this._routeLeadinDistance = 0;
+        }
+        
+        const lapDistance = distances.at(-1) - distances[lapStartIdx];
+        if (distance) {
+            laps = this.route.supportedLaps ? Infinity : 1;            
+        }
+        for (let lap = 1; lap < laps; lap++) {            
+            this.curvePath.extend(this.route.curvePath.slice(lapStartIdx));
+            for (let i = lapStartIdx; i < this.route.distances.length; i++) {
+                distances.push(distances.at(-1) +
+                    (this.route.distances[i] - (this.route.distances[i - 1] || 0)));
+                elevations.push(this.route.elevations[i]);
+                grades.push(this.route.grades[i]);
+            }            
+            
+            if (distance && distances[distances.length - 1] >= distance + 200) {
+                break;
+            }
+            if (this.showLapMarker)
+            {                
+                markLines.push({
+                    xAxis: this._routeLeadinDistance + lapDistance * lap,
+                    lineStyle: {
+                        width: this.lineSize, 
+                        type: this.lineType,
+                        color: this.lineTextColor
+                    },
+                    label: {
+                        distance: 7,
+                        position: 'insideMiddleBottom',
+                        formatter: `LAP ${lap + 1}`,
+                        color: this.lineTextColor,
+                        rotate: 90
+                    }
+                });
+            }
+            }          
+            if (distance) {
+                while (distances[distances.length - 1] > distance + 200) {
+                    distances.pop();
+                    elevations.pop();
+                    grades.pop();
+                }
+            }
+            
+        
+        if (this.routeOffset)
+            {
+                let offsetIdx = distances.findIndex(x => x > this.customDistance - this.routeOffset)                
+                console.log("offset index: " + offsetIdx + " offset distance: " + (this.customDistance - this.routeOffset))
+                let xDist = (this.customDistance - this.routeOffset).toFixed(0);
+                this.customFinishLine = xDist;
+                
+                markLines.push({
+                    xAxis: xDist,
+                    lineStyle: {
+                        width: this.lineSize, 
+                        type: this.lineTypeFinish,
+                        color: this.lineTextColor
+                    },
+                    label: {
+                        distance: 7,
+                        position: 'insideEndTop',
+                        formatter: `Finish`,
+                        color: this.lineTextColor
+                    }
+                });
+                //if (!isNaN(markLineIndex)) {   
+                    //allMarkLines.push({name: "Finish", markLine: xDist, id: null})
+                //}
+            }
+            if (this.customDistance > 0) {
+                
+                allMarkLines = allMarkLines.filter(x => x.markLine < distances.at(-1))
+            }
+            
+        allMarkLines.sort((a, b) => {
+            return a.markLine - b.markLine;
+        });
+                        
+        this.setData(this.routeDistances, this.routeElevations, this.routeGrades, {markLines, markAreas});
+        
+        return this.route;
+    });
+
     setRoute = common.asyncSerialize(async function(id, {laps=1, eventSubgroupId, distance}={}) {         
         distance = parseFloat(distance);        
         if (distance) {
@@ -589,7 +733,7 @@ export class SauceElevationProfile {
         }
         //debugger
         //let segmentsOnRoute = await zen.processRoute(this.courseId, this.routeId, laps, distance, this.showLoopSegments, this.showAllArches, this.disablePenRouting)
-        let segmentsOnRoute = await zen.processRoute(this.courseId, this.routeId, laps, distance, this.showLoopSegments, this.showAllArches, disableRouteOptimization)
+        let segmentsOnRoute = await zen.processRoute(this.courseId, this.routeId, laps, distance, this.showLoopSegments, this.showAllArches, disableRouteOptimization, this.sectionRouteData)
         this.routeInfo = segmentsOnRoute;
         this.routeDistances = Array.from(segmentsOnRoute.routeFullData.distances);                    
         this.routeElevations = Array.from(segmentsOnRoute.routeFullData.elevations);        
