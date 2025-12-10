@@ -4411,7 +4411,8 @@ function measureRoadSectionV2(section, courseId, allRoads) {
 }
 
 export async function buildRouteData(route, courseId) {
-    
+    let totalDistance = 0;
+    route.manifestDistances = [];
     route.curvePath = new curves.CurvePath();
     route.roadSegments = [];
     route.courseId = courseId;
@@ -4422,6 +4423,14 @@ export async function buildRouteData(route, courseId) {
     for (const [i, x] of route.manifest.entries()) {
         const road = await common.getRoad(courseId, x.roadId);
         const seg = road.curvePath.subpathAtRoadPercents(x.start, x.end);
+        const segDist = (road.curvePath.distanceBetweenRoadPercents(x.start, x.end, 4e-2)) / 100;
+        route.manifestDistances.push({
+            i: i,
+            roadId: x.roadId,
+            start: totalDistance,
+            end: totalDistance + segDist
+        });
+        totalDistance += segDist;
         seg.reverse = x.reverse;
         seg.leadin = x.leadin;
         seg.roadId = x.roadId;

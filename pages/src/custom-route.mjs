@@ -756,30 +756,12 @@ export async function main() {
                 elProfile.el.style.setProperty('--profile-height', changed.get('profileHeight') / 100);
                 elProfile.chart.resize();
             }
-        } else if (changed.has('profileOverlay'))
-                {
-                    //console.log(changed);
-                    //location.reload();
-        } else if(changed.has('pinSize'))
-        {   
-            elProfile.pinSize = changed.get('pinSize');            
-        } else if (changed.has('pinColor'))
-        {
-            //console.log(changed)
-            elProfile.pinColor = changed.get('pinColor');
-        } else if (changed.has('showNextSegment'))
-        {
-            elProfile.showNextSegment = changed.get('showNextSegment')
-        } else if (changed.has('showOnlyMyPin'))
-        {
-            //console.log(changed);            
-            elProfile.showOnlyMyPin = changed.get('showOnlyMyPin')
         } else if (changed.has('avoidRepackRush')) {
             avoidRepackRush = changed.get('avoidRepackRush')
-        } else if (changed.has('showDebugStats')) {
-            showDebugStats = changed.get('showDebugStats')
         } else if (changed.has('fontScale')) {
             changeFontScale();
+        } else if (changed.has('showElevationMaxLine')) {
+            elProfile.showElevationMaxLine = changed.get('showElevationMaxLine')
         }
         
     });

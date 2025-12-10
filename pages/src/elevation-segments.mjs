@@ -115,6 +115,7 @@ export class SauceElevationProfile {
         this.xAxisIncrements = xAxisIncrements; 
         this.courseRoads = [];   
         this.portalRoads = [];
+        this.customRouteTs = Date.now();
         el.classList.add('sauce-elevation-profile-container');
         this.chartXaxis = ec.init(document.getElementById('xAxis'));  
         this.chart = ec.init(el, 'sauce', {renderer: 'svg'});
@@ -1463,17 +1464,30 @@ export class SauceElevationProfile {
                 if ((!watching.routeId && !this.routeOverride && (Date.now() - this.routeOverrideTS > 5000)) || (!watching.routeId && (Date.now() - this.routeOverrideTS > 5000)) || !knownRoute) {
                     //console.log("No route on watching, looking for a PP in group")
                     this.routeOverrideTS = Date.now();
-                    this.routeOverride = await this.getPpRoute();
+                    if (this.routeOverride != 999999999) {
+                        this.routeOverride = await this.getPpRoute();
+                    }
+                }  
+                const ad = common.getAthleteDataCacheEntry(watching.athleteId);
+                //debugger
+                if (ad && ad.zenCustomRoute && this.customRouteTs != ad.zenCustomRoute.ts) {
+                    this.customRouteTs = ad.zenCustomRoute.ts;
+                    this.routeOverride = 999999999;
+                    this.sectionRouteData = ad.zenCustomRoute
+                    this.customRouteActive = true;
+                    this.customRouteLoaded = false;
                 }
-                
+                if (watching.routeId && !this.customRouteActive) {
+                    this.routeOverride = false;
+                } else {
+                    //debugger
+                }
                 if ((watching.routeId && knownRoute) || this.routeOverride) {
                     
-                    if (watching.routeId) {
-                        this.routeOverride = false;
-                    } 
-                    if (this.routeOverride && (this.routeOverride != this.routeId)) {                        
+                    if (this.routeOverride && ((this.routeOverride != this.routeId) || !this.customRouteLoaded)) {                        
                         console.log("Overriding routeId to: " + this.routeOverride)                        
                         await this.setRoute(this.routeOverride);
+                        this.customRouteLoaded = true;
                     } else if (this.routeId !== watching.routeId ||
                         (this._eventSubgroupId || null) !== (watching.eventSubgroupId || null)) {
                         if (!this.routeOverride) {
@@ -1481,21 +1495,7 @@ export class SauceElevationProfile {
                             if (watching.eventSubgroupId) {
                                 sg = await common.rpc.getEventSubgroup(watching.eventSubgroupId);
                                 console.log(sg) 
-                                //debugger
                                 this.eventPowerups = zen.getEventPowerups(sg)
-                                /* test dummy data for designated powerups at arches
-                                this.eventPowerups = {
-                                    type: "arch_powerup",
-                                    powerups: {
-                                        1: "aero",
-                                        2: "burrito",
-                                        3: "draft",
-                                        4: "feather",
-                                        0: "ghost"
-                                    }
-                                }
-                                */
-                                //console.log(this.eventPowerups)
                             } 
                             
                             // Note sg.routeId is sometimes out of sync with state.routeId; avoid thrash
@@ -1577,7 +1577,7 @@ export class SauceElevationProfile {
                 }
             }
             
-            if (!this.routeId || !knownRoute && !this.routeOverride) {                
+            if ((!this.routeId || !knownRoute) && !this.routeOverride) {  
                 if (this.knownRoad) {
                     
                     if (!this.road || this.road.id !== watching.roadId || this.reverse !== watching.reverse) {
@@ -1706,7 +1706,7 @@ export class SauceElevationProfile {
                             if (this.routeId != null) {                                
                                 
                                 //console.log("route not null")
-                                if (state.routeId === this.routeId) {
+                                if (state.routeId === this.routeId || this.routeOverride) {
                                     let distance;
                                     if (this._eventSubgroupId != null) {
                                         deemphasize = state.eventSubgroupId !== this._eventSubgroupId;
@@ -1718,6 +1718,8 @@ export class SauceElevationProfile {
                                             distance = state.eventDistance;
                                         }
                                     
+                                    } else if (this.routeOverride && this.routeId == 999999999) {
+                                        distance = state.eventDistance;
                                     } else {
                                         // Outside of events state.progress represents the progress of single lap.
                                         // However, if the lap counter is > 0 then the progress % does not include
@@ -1738,6 +1740,10 @@ export class SauceElevationProfile {
                                         console.log("nodes[nearIdx] is undefined!")
                                     }
                                     const nearRoadSegIdx = nodes[nearIdx].index;
+                                    if (isWatching) {
+                                        //console.log("nearRoadSegIdx", nearRoadSegIdx)
+                                        //debugger
+                                    }
                                     //debugger
                                     // NOTE: This technique does not work for bots or people who joined a bot.
                                     // I don't know why but progress and eventDistance are completely wrong.
