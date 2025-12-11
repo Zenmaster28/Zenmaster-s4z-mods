@@ -4,6 +4,7 @@
   right: 0;
   padding: 10px;
   font-size: 1em;
+  width: 20%
 }
 .sauce-map-container > .sauce-map > svg.paths .surfaces .clickableRoad:hover {
   stroke: lime;

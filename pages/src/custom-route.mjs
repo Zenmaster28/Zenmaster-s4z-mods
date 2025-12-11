@@ -408,6 +408,7 @@ async function applyRouteV3(undo=false) {
                     customRouteSteps[i + 1].forward = !routeManifest.manifest.at(-1).reverse
                 } else {
                     console.log("No route found")
+                    alert(`Unable to find a path to that point.  It could be too far away or an unreachable road.`)
                     customRouteSteps.pop();
                 }
             } else {
@@ -435,7 +436,8 @@ async function applyRouteV3(undo=false) {
             const matchingRoutes = startingSpawnPoint.routes;
             matchingRoutes.sort((a,b) => a.distance - b.distance)
             if (matchingRoutes.length > 0) {
-                let routeList = "Start a free ride on one of these routes<br>";
+                let routeList = `When you are ready to begin, start a free ride on one of these routes and then once you are in the world, click the Publish Route button.<br><br>
+                                ***It is important that you wait until Zwift is loaded and you are in the world.***<br><hr>`;
                 for (let route of matchingRoutes) {
                     routeList += `${route.name}<br>`;
                 }
@@ -548,7 +550,11 @@ async function applyCourse() {
                     spawnPoint.style.visibility = "hidden"
                 }
                 setupMap();
-                
+                infoPanel.innerHTML = `Build your route by clicking on roads.  When the pointer changes to crosshairs and the road is highlighted in green, you have a valid place to click.  
+                                        It will attempt to find the shortest path between points.<br>  
+                                        - clicking Undo will go back 1 step (there is no redo)<br>
+                                        - clicking Reset will reset to the beginning
+                                        `
             })
         }
     }    
@@ -654,6 +660,7 @@ async function resetMap() {
     await applyCourse();
     //setupMap();
     await elProfile.clear()
+    infoPanel.innerHTML = "To begin, choose a spawn point by clicking on one of the red arrows.  Note that some have arrows pointing in both directions, be sure to choose the one facing in the direction that you want to start."
 }
 export async function main() {
     common.initInteractionListeners();
@@ -741,6 +748,7 @@ export async function main() {
         //distanceSelect.value = settings.overrideDistance || "";        
         distanceSelect.value = "";        
         await applyCourse();
+        infoPanel.innerHTML = "To begin, choose a spawn point by clicking on one of the red arrows.  Note that some have arrows pointing in both directions, be sure to choose the one facing in the direction that you want to start."
         //setupMap();
         
     } else {
