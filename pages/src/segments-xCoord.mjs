@@ -4544,7 +4544,7 @@ export async function getManifestIntersections(manifest, courseId) {
             return m.reverse
                 ? b.m_roadTime2 - a.m_roadTime2
                 : a.m_roadTime2 - b.m_roadTime2;
-        });        
+        });
         if (manifestIntersections.length > 1) {
             //debugger
             for (let j = 0; j < manifestIntersections.length - 1; j++) {                

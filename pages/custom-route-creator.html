@@ -30,12 +30,13 @@
                 <div class="course"><select required name="course"></select></div>
                 <div class="route"></div>
                 
-                <div id="undoDiv"><input type="button" id="undoButton" value="Undo"></div>
-                <div id="resetDiv"><input type="button" id="resetButton" value="Reset"></div>
-                <div id="publishRoute"><input type="button" id="publishButton" value="Publish Route"></div>
+                <div id="undoDiv"><input type="button" id="undoButton" value="Undo" class="button"></div>
+                <div id="resetDiv"><input type="button" id="resetButton" value="Reset" class="button"></div>
+                <div id="clearSauce"><input type="button" id="clearButton" value="Clear from Sauce" class="button"></div>
                 <div class="filler"></div>
                 <div class="buttons">
-                    <a class="button open-settings" href="custom-route-creator-settings.html?width=450&height=630&child-window"
+                    <a class="button" onClick="window.location.reload()" title="Reload">&#x21bb;</a>
+                    <a class="button open-settings" href="custom-route-creator-settings.html?width=550&height=730&child-window"
                        title="Open settings window" target="custom-route-settings"><ms>settings</ms></a>
                     <div title="Minimize" class="button minimize electron-only"><ms>minimize</ms></div>
                     <div title="Close this window" class="button close electron-only"><ms>close</ms></div>
@@ -54,6 +55,12 @@
                 <div class="map" id="mapDiv"></div>                
             </div>
             <div id="infoPanel">
+            </div>
+            <div id="routeSetup" class="routeSetup hidden">   
+                <div id="routeSetupInfo" class="routeSetupInfo">
+                    <input type="button" id="routeSetupClose" class="routeSetupClose" value="X">
+                    <div id="routeSetupContent"></div>
+                </div>
             </div>
         
         <div id="xAxis">

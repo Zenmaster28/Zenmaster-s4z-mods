@@ -42,7 +42,32 @@ const courseSelect = document.querySelector('#titlebar select[name="course"]');
 const penSelect = document.querySelector('#titlebar select[name="startPen"]');
 const distanceSelect = document.getElementById("customDistance");
 const elevationSelect = document.getElementById("customElevation");
-const infoPanel = document.getElementById('infoPanel')
+const infoPanel = document.getElementById('infoPanel');
+const routeSetup = document.getElementById('routeSetup');
+const routeSetupInfo = document.getElementById('routeSetupInfo');
+const routeSetupContent = document.getElementById('routeSetupContent');
+const routeSetupClose = document.getElementById('routeSetupClose');
+if (routeSetupClose) {
+    routeSetupClose.addEventListener('click', (e) => {
+    if (e.target === routeSetupClose) {
+        common.unsubscribe('athlete/self', updateRouteData);
+        const routeSetupStatus = document.getElementById('routeSetupStatus');
+        if (routeSetupStatus) {
+            routeSetupStatus.innerHTML = "";
+        }
+        routeSetupContent.innerHTML = "";
+        routeSetup.classList.add('hidden');
+    }
+    });
+};
+const clearButton = document.getElementById('clearButton');
+if (clearButton) {
+    clearButton.addEventListener("click", (e) => {
+        if (e.target == clearButton) {
+            common.rpc.updateAthleteData('self', {'zenCustomRoute': {}});
+        }
+    });
+}
 if (elevationSelect) {
     elevationSelect.value = null;
 }
@@ -436,12 +461,16 @@ async function applyRouteV3(undo=false) {
             const matchingRoutes = startingSpawnPoint.routes;
             matchingRoutes.sort((a,b) => a.distance - b.distance)
             if (matchingRoutes.length > 0) {
+                /*
                 let routeList = `When you are ready to begin, start a free ride on one of these routes and then once you are in the world, click the Publish Route button.<br><br>
                                 ***It is important that you wait until Zwift is loaded and you are in the world.***<br><hr>`;
+                
                 for (let route of matchingRoutes) {
                     routeList += `${route.name}<br>`;
                 }
-                infoPanel.innerHTML = routeList
+                */
+                //infoPanel.innerHTML = routeList;
+                
             } else {
                 infoPanel.innerHTML = "Unable to find a matching route..."
             }
@@ -554,11 +583,69 @@ async function applyCourse() {
                                         It will attempt to find the shortest path between points.<br>  
                                         - clicking Undo will go back 1 step (there is no redo)<br>
                                         - clicking Reset will reset to the beginning
+                                        `   
+                infoPanel.innerHTML += `<hr>When your route is complete, click the Finish button.<br>
+                                        <input type=button id="finishButton" value=Finish></button>
                                         `
+                document.getElementById("finishButton").addEventListener("click", publishRoute);             
             })
         }
     }    
 }
+async function publishRoute() {  
+    const spawnPointRoutes = startingSpawnPoint.routes; 
+    console.log("spawnPointRoutes", spawnPointRoutes);
+    routeSetupContent.innerHTML = `<br>Start a freeride on one of the following routes.<br>
+                                Once Zwift is loaded and on one of the proper routes, this custom route will be applied to Sauce.<br>
+                                Game connection needs to be enabled and connected and you need to have a "Custom route follower" window open.
+                                <hr style="width: 100%;">
+                                `
+    let routeList = "";
+    let i = 1;
+    for (let route of spawnPointRoutes) {
+        if (i > 5) {
+            break;
+        }
+        routeList += `${route.name}<br>`;
+        i++;
+    }
+    routeSetupContent.innerHTML += routeList;
+    routeSetupContent.innerHTML += `<div id=routeSetupStatus></div>`
+    routeSetup.classList.remove('hidden'); 
+    common.subscribe('athlete/self', updateRouteData);
+}
+async function updateRouteData(self) {   
+
+    const spawnPointRoutes = startingSpawnPoint.routes;
+    const matchingRoute = spawnPointRoutes.find(x => x.id == self.state.routeId);
+    const rp = (self.state.roadTime - 5000) / 1e6;
+    const low = Math.min(routeData.manifest[0].start, routeData.manifest[0].end);
+    const high = Math.max(routeData.manifest[0].start, routeData.manifest[0].end);
+    const inManifestStart = (self.state.roadId == routeData.manifest[0].roadId && 
+                            rp >= low &&
+                            rp <= high
+    );
+    if (matchingRoute && inManifestStart) {
+        //debugger
+        const result = await common.rpc.updateAthleteData('self', {'zenCustomRoute': {'ts': Date.now(), 'courseId': courseId, 'manifest': routeData.manifest}});
+        console.log("publish result", result);
+        if (result) {
+            common.unsubscribe('athlete/self', updateRouteData);
+            const routeSetupStatus = document.getElementById('routeSetupStatus');
+            if (routeSetupStatus) {
+                routeSetupStatus.innerHTML = "";
+            }
+            routeSetupContent.innerHTML = "";
+            routeSetup.classList.add("hidden");
+        }
+    } else {
+        const routeSetupStatus = document.getElementById('routeSetupStatus');
+        routeSetupStatus.innerHTML = "<hr>Currently loaded route is not correct or you have moved too far from the initial spawn point";
+        console.log("Not on a proper route.  Should be one of ", spawnPointRoutes)
+        //not on a route that matches the spawnPoint or outside of the first manifest entry
+    }
+}
+
 async function setupMap() {
     
     const svgPath = document.querySelector('svg.paths');
@@ -660,14 +747,14 @@ async function resetMap() {
     await applyCourse();
     //setupMap();
     await elProfile.clear()
-    infoPanel.innerHTML = "To begin, choose a spawn point by clicking on one of the red arrows.  Note that some have arrows pointing in both directions, be sure to choose the one facing in the direction that you want to start."
+    infoPanel.innerHTML = "To begin, choose a spawn point by clicking on one of the red arrows.<br><br>Note that some have arrows pointing in both directions, be sure to choose the one facing in the direction that you want to start."
 }
 export async function main() {
     common.initInteractionListeners();
     common.setBackground(settings);
     doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1); 
     const undoButton = document.getElementById("undoButton");
-    const publishButton = document.getElementById("publishButton");
+    //const publishButton = document.getElementById("publishButton");
     const resetButton = document.getElementById("resetButton")
     undoButton.addEventListener('click', async undo => {
         customRouteSteps.pop()
@@ -675,6 +762,7 @@ export async function main() {
         
         await applyRouteV3(true);
     });
+    /*
     publishButton.addEventListener('click', async publish => {
         if (routeData.intersections?.length > 0) {
             //const result = await common.rpc.updateAthleteData('self', {'zenCustomRoute': {'intersections': routeData.intersections, 'manifest': routeData.manifest}})
@@ -682,6 +770,7 @@ export async function main() {
             console.log("publish result", result)
         }
     })
+    */
     
     resetButton.addEventListener('click', async ev => {
         resetMap();
@@ -748,7 +837,7 @@ export async function main() {
         //distanceSelect.value = settings.overrideDistance || "";        
         distanceSelect.value = "";        
         await applyCourse();
-        infoPanel.innerHTML = "To begin, choose a spawn point by clicking on one of the red arrows.  Note that some have arrows pointing in both directions, be sure to choose the one facing in the direction that you want to start."
+        infoPanel.innerHTML = "To begin, choose a spawn point by clicking on one of the red arrows.<br><br>Note that some have arrows pointing in both directions, be sure to choose the one facing in the direction that you want to start."
         //setupMap();
         
     } else {

@@ -113,3 +113,49 @@
   background-image: linear-gradient(135deg, hsl(var(--theme-primary-hue) var(--theme-primary-sat) var(--theme-primary-light)/85%), hsl(var(--theme-primary-hue) var(--theme-primary-sat) calc(var(--theme-primary-light) + -10% * var(--theme-primary-shade-dir))/80%));
   color: hsl(var(--theme-primary-hue) var(--theme-primary-sat) calc(var(--theme-primary-light) + 100% * var(--theme-primary-shade-dir))/100%);
 }
+.routeSetup {
+  position: fixed;
+  top: 75px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 10vh;
+  z-index: 9999;
+}
+.routeSetupInfo {
+  padding: 10px;
+  background: black;
+  width: 60vw;
+  height: 55vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+.routeSetupClose {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #111;
+  color: #fff;
+  border-color: rgba(51, 51, 51, 0.5);
+  cursor: pointer;
+  font-size: calc(var(--font-scale) * 1.3em);
+}
+#routeSetupStatus {
+  background-color: red;
+}
+.hidden {
+  display: none;
+}
+#finishButton {
+  width: 100%
+}
+.zenButton {
+  cursor: pointer;
+  opacity: 0.8;
+}
