@@ -618,7 +618,8 @@ async function applyCourse() {
 async function publishRoute() {  
     const spawnPointRoutes = startingSpawnPoint.routes; 
     console.log("spawnPointRoutes", spawnPointRoutes);
-    routeSetupContent.innerHTML = `<br>- Start a freeride on one of the routes below.<br>
+    routeSetupContent.innerHTML = `<h1>*** Do not close this window unless you want to cancel!! ***</h1>
+                                - Start a freeride on one of the routes below.<br>
                                 - Once Zwift is loaded and on one of the proper routes, this custom route will be applied to Sauce.<br>
                                 - Game connection needs to be enabled and connected and you need to have a "Custom Route Chauffeur" window open.<br>
                                 - This window will close automatically once the route has been applied. (Clicking the X will prevent it from applying)
