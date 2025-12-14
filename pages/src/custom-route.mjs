@@ -33,7 +33,12 @@ common.settingsStore.setDefault({
     // v1.1+
     disableChat: false,
     showMap: true,
-    showAllArches: false
+    showAllArches: true,
+    showSegmentFinish: true,
+    showSegmentStart: true,
+    fontScale: 1,
+    minSegmentLength: 100,
+    showFunFacts: true
 });
 
 let settings = common.settingsStore.get();
@@ -47,6 +52,7 @@ const routeSetup = document.getElementById('routeSetup');
 const routeSetupInfo = document.getElementById('routeSetupInfo');
 const routeSetupContent = document.getElementById('routeSetupContent');
 const routeSetupClose = document.getElementById('routeSetupClose');
+const funFactsDiv = document.getElementById("funFacts");
 if (routeSetupClose) {
     routeSetupClose.addEventListener('click', (e) => {
     if (e.target === routeSetupClose) {
@@ -369,8 +375,25 @@ async function applyRouteV3(undo=false) {
             intersections = await fetch(`data/worlds/${worldId}/roadIntersections.json`).then(response => response.json());
             const roadData = intersections.find(x => x.id == endPoint.roadId)
             if (!roadData.roadIsPaddock) {             
-                
-                let shortestPath = await zen.findPathFromAtoBv5(startPoint, endPoint, intersections, allCyclingRoads, courseId, avoidRepackRush)
+                let paths = await zen.findPathFromAtoBv5(startPoint, endPoint, intersections, allCyclingRoads, courseId, avoidRepackRush);
+                let shortestPath = paths.bestPath;
+                let stats = paths.stats;
+                console.log("stats", stats)
+                if (settings.showFunFacts) {
+                    let funFactsContent = `Fun Facts:<br>`
+                    funFactsContent += `Possible paths found: ${stats.allPaths}<br>
+                                        Shortest: ${parseInt(stats.shortestDistance)}m<br>
+                                        Elapsed time finding a path: ${stats.timeSpentFindingPaths}ms<br>
+                                        Abandoned paths:<br>
+                                        - Too long: ${stats.exceedMaxLength}<br>
+                                        - Longer than shortest path so far: ${stats.pathsTooLong} <br>
+                                        - Too many hops: ${stats.tooManyHops}<br>
+                    `
+                    funFactsDiv.innerHTML = funFactsContent;
+                } else {
+                    funFactsDiv.innerHTML = "";
+                }
+                //let shortestPath = await zen.findPathFromAtoBv5(startPoint, endPoint, intersections, allCyclingRoads, courseId, avoidRepackRush)
                 //if (shortestPath.testIntersections) {
                 //    routeIntersections.testIntersections = shortestPath.testIntersections;
                 //}
@@ -579,8 +602,8 @@ async function applyCourse() {
                     spawnPoint.style.visibility = "hidden"
                 }
                 setupMap();
-                infoPanel.innerHTML = `Build your route by clicking on roads.  When the pointer changes to crosshairs and the road is highlighted in green, you have a valid place to click.  
-                                        It will attempt to find the shortest path between points.<br>  
+                infoPanel.innerHTML = `- Build your route by clicking on roads.<br>
+                                        - When the pointer changes to crosshairs and the road is highlighted in green, you have a valid place to click.<br> 
                                         - clicking Undo will go back 1 step (there is no redo)<br>
                                         - clicking Reset will reset to the beginning
                                         `   
@@ -595,9 +618,10 @@ async function applyCourse() {
 async function publishRoute() {  
     const spawnPointRoutes = startingSpawnPoint.routes; 
     console.log("spawnPointRoutes", spawnPointRoutes);
-    routeSetupContent.innerHTML = `<br>Start a freeride on one of the following routes.<br>
-                                Once Zwift is loaded and on one of the proper routes, this custom route will be applied to Sauce.<br>
-                                Game connection needs to be enabled and connected and you need to have a "Custom route follower" window open.
+    routeSetupContent.innerHTML = `<br>- Start a freeride on one of the routes below.<br>
+                                - Once Zwift is loaded and on one of the proper routes, this custom route will be applied to Sauce.<br>
+                                - Game connection needs to be enabled and connected and you need to have a "Custom Route Chauffeur" window open.<br>
+                                - This window will close automatically once the route has been applied. (Clicking the X will prevent it from applying)
                                 <hr style="width: 100%;">
                                 `
     let routeList = "";

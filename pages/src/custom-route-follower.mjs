@@ -43,6 +43,16 @@ function changeFontScale() {
     const doc = document.documentElement;
     doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  
 }
+function setBackground() {
+    const {solidBackground, backgroundColor} = common.settingsStore.get();
+    doc.classList.toggle('solid-background', !!solidBackground);
+    if (solidBackground) {        
+        doc.style.setProperty('--background-color', backgroundColor);
+    } else {
+        doc.style.removeProperty('--background-color');
+    }
+}
+
 
 export async function main() {
     common.initInteractionListeners(); 
@@ -63,6 +73,9 @@ export async function main() {
             settings = common.settingsStore.get()
             if (changed.has('fontScale')) {
                 changeFontScale();
+            };
+            if (changed.has('solidBackground') || changed.has('backgroundColor')) {            
+                setBackground();
             }
     })
 }
@@ -214,7 +227,9 @@ async function _processWatching(watching) {
     const distanceTarget = watching.state.eventDistance + spawnDistance;
     for (let variance of varianceOptions) {        
         manifestIdx = customRouteData.manifestDistances.find(x => (x.start - variance) <= distanceTarget && 
-            (x.end + variance) >= distanceTarget && x.roadId == watching.state.roadId); //check forward/reverse as well?
+            (x.end + variance) >= distanceTarget && 
+            x.roadId == watching.state.roadId && 
+            x.reverse == watching.state.reverse); 
         if (manifestIdx) {
             break;
         }
@@ -355,15 +370,27 @@ async function _processWatching(watching) {
             distanceToNextIntersection = getDistanceToIntersection(watching, nextRoadIntersection, rp, true);
             if (watching.state.reverse) {
                 if (nextRoadIntersection.reverse.length > 1) {
-                    nextOption = (nextRoadIntersection.reverse.find(x => x.option.road == watching.state.roadId)).option
+                    nextOption = nextRoadIntersection.reverse.find(x => x.option.road == watching.state.roadId);
+                    if (nextOption) {
+                        nextOption = nextOption.option;
+                    }
                 } else {
-                    nextOption = (nextRoadIntersection.reverse[0]).option
+                    nextOption = nextRoadIntersection.reverse[0]
+                    if (nextOption) {
+                        nextOption = nextOption.option;
+                    }
                 }
             } else {
                 if (nextRoadIntersection.forward.length > 1) {
-                    nextOption = (nextRoadIntersection.forward.find(x => x.option.road == watching.state.roadId)).option
+                    nextOption = nextRoadIntersection.forward.find(x => x.option.road == watching.state.roadId);
+                    if (nextOption) {
+                        nextOption = nextOption.option;
+                    }
                 } else {
-                    nextOption = (nextRoadIntersection.forward[0]).option
+                    nextOption = nextRoadIntersection.forward[0]
+                    if (nextOption) {
+                        nextOption = nextOption.option;
+                    }
                 }
             }
         }          
@@ -374,21 +401,21 @@ async function _processWatching(watching) {
         
         if (left) {
             let optClass = "";
-            if (nextOption.alt == 263) {
+            if (nextOption?.alt == 263) {
                 optClass = "nextOption";
             }
             optionsText += `<div class="${optClass}"<font size='+2'>&#x21B0;</font> ${left.option?.turnText}</div>`;
         }
         if (straight) {
             let optClass = "";
-            if (nextOption.alt == 265) {
+            if (nextOption?.alt == 265) {
                 optClass = "nextOption";
             }
             optionsText += `<div class="${optClass}"<font size='+2'>&#x2191;</font> ${straight.option?.turnText}</div>`;
         }
         if (right) {
             let optClass = "";
-            if (nextOption.alt == 262) {
+            if (nextOption?.alt == 262) {
                 optClass = "nextOption";
             }
             optionsText += `<div class="${optClass}"<font size='+2'>&#x21B1;</font> ${right.option?.turnText}</div>`;

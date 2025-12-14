@@ -3703,6 +3703,7 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
     let shortestPathSoFar = Infinity;
     let thisPathSoFar = 0;
     let repeatIntersections = 0;
+    let stats = {};
     //const allRoads = await common.getRoads(courseId);
     if (startPoint.roadId == endPoint.roadId) {
         const roadInfo = allRoads.find(x => x.id == startPoint.roadId)
@@ -4204,12 +4205,24 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
         }
         //path = allPaths[2]
         //console.log(`Found the shortest path in ${Date.now() - s}ms`)
+        const timeSpentFindingPaths = Date.now() - t;
         console.log(`Found ${allPaths.length} possible paths in ${Date.now() - t}ms.  The shortest one was ${shortestDistance}`)
         console.log(`Encountered ${repeatIntersections} repeated intersections`)
         console.log(`Abandoned ${pathsTooLong} for being longer than a previously found path`)
         console.log(`Abandoned ${tooManyHops} for too many hops`)
         console.log(`Abandoned ${pathsOver25k} paths exceeding ${maxLength / 1000}k`)
         console.log(`Spent ${timeSpentMeasuring}ms measuring validPaths`)
+        if (!stats.init) {
+            stats.allPaths = allPaths.length,
+            stats.shortestDistance = shortestDistance,
+            stats.pathsTooLong = pathsTooLong,
+            stats.tooManyHops = tooManyHops,
+            stats.exceedMaxLength = pathsOver25k,
+            stats.timeSpentMeasuring = timeSpentMeasuring,
+            stats.timeSpentFindingPaths = timeSpentFindingPaths,
+            stats.init = true
+            console.log("Recorded stats", stats)
+        }
         /*
         if (showDebugStats) {
             const debugStatsDiv = document.getElementById("debugStats");
@@ -4311,7 +4324,19 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
     //const bestPathIntersections = await getManifestIntersections(bestPath.manifest, courseId)
     //bestPath.testIntersections = bestPathIntersections;
     //console.log("bestPathIntersections", bestPathIntersections)
-    return found ? bestPath : null;
+    if (found) {
+        return {
+            bestPath: bestPath,
+            stats: stats
+        }
+    } else {
+        return {
+            bestPath: null,
+            stats: stats
+        }
+    }
+    //return found ? bestPath : null;
+
 }
 
 function getPassedIntersections(roadId, forward, entryTime, targetRP, intersections, allRoads) {
@@ -4427,6 +4452,7 @@ export async function buildRouteData(route, courseId) {
         route.manifestDistances.push({
             i: i,
             roadId: x.roadId,
+            reverse: x.reverse,
             start: totalDistance,
             end: totalDistance + segDist
         });

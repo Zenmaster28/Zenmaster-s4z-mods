@@ -6,7 +6,7 @@
         <meta name="apple-mobile-web-app-capable" content="yes"/>
         <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval';"/>
 
-        <title>Custom Route Creator</title>
+        <title>Custom Route Builder</title>
 
         <script src="/pages/src/preloads.js"></script>
 
@@ -22,11 +22,11 @@
             main();
         </script>
     </head>
-    <body class="transparent-bg"><!-- XXX meh, dont like this but need to make sure tansparency setting works -->
+    <body><!-- XXX meh, dont like this but need to make sure tansparency setting works -->
         <div id="titlebar">
             <header>
                 <div class="logo"><img src="/pages/images/icon128.png"/></div>
-                <div class="title">Custom Route Creator</div>
+                <div class="title">Custom Route Builder</div>
                 <div class="course"><select required name="course"></select></div>
                 <div class="route"></div>
                 
@@ -55,6 +55,9 @@
                 <div class="map" id="mapDiv"></div>                
             </div>
             <div id="infoPanel">
+            </div>
+            <div id="funFacts">
+                
             </div>
             <div id="routeSetup" class="routeSetup hidden">   
                 <div id="routeSetupInfo" class="routeSetupInfo">

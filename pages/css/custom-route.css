@@ -2,9 +2,17 @@
   position: absolute;
   top: 23mm;  
   right: 0;
+  padding: 10px;  
+  width: 20%;
+  font-size: calc(var(--font-scale) * 0.8em);
+}
+#funFacts {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 20%;
+  font-size: calc(var(--font-scale) * 0.8em);
   padding: 10px;
-  font-size: 1em;
-  width: 20%
 }
 .sauce-map-container > .sauce-map > svg.paths .surfaces .clickableRoad:hover {
   stroke: lime;
@@ -48,7 +56,14 @@
   --fill: lime;
   z-index: 5;
 }
-
+#chauffeur {
+  font-size: calc(var(--font-scale) * 0.9em);
+  padding: 10px;
+  scroll-behavior: smooth;
+  overflow: auto;
+  font-variant: small-caps tabular-nums;
+  width: 100%;
+}
 #content {
   font-size: calc(var(--font-scale) * 0.9em);
   padding: 10px;
@@ -59,6 +74,8 @@
 }
 #content > .elevation-profile {
   width: 80%;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 #intersectionsTable {
   width: 100%;
@@ -130,11 +147,12 @@
   padding: 10px;
   background: black;
   width: 60vw;
-  height: 55vh;
+  height: 60vh;
   position: relative;
   display: flex;
   flex-direction: column;
   overflow: auto;
+  font-size: calc(var(--font-scale) * 0.8em);
 }
 .routeSetupClose {
   position: absolute;
@@ -158,4 +176,15 @@
 .zenButton {
   cursor: pointer;
   opacity: 0.8;
+}
+html.solid-background {
+  background: var(--background-color);
+}
+html.solid-background body {
+  background: transparent !important;
+}
+#bmac {
+  position: absolute;
+  top: 55px;
+  right: 8px;
 }
