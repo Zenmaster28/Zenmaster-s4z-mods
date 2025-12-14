@@ -189,3 +189,8 @@ th:last-child, td:last-child {
   width: 100%;
   height: 30px;
 }
+#bmac {
+  position: absolute;
+  top: 55px;
+  right: 12px;
+}

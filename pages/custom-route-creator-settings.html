@@ -14,6 +14,7 @@
         <link id="favicon" rel="shortcut icon" href="/pages/images/favicon.png"/>
         <link rel="stylesheet" href="/pages/css/common.css"/>
         <link rel="stylesheet" href="./css/elevation-segments.css"/>
+        <link rel="stylesheet" href="./css/custom-route.css"/>
 
         <script type="module">
             import {settingsMain} from './src/custom-route.mjs';
@@ -33,11 +34,12 @@
         </div>
         <div id="settings">
             <form class="section">  
+                <!--
                 <label title="Don't route into Repack Rush unless you explicitly click on the road for it.">
                     <key>Avoid Repack Rush:</key>
                     <input type="checkbox" name="avoidRepackRush">
                 </label>
-                
+            -->
                 <label title="Indicate what the max elevation is with a horizontal line on the chart">
                     <key data-added="2023-11-01">Show max elevation:</key>
                     <input type="checkbox" name="showElevationMaxLine" checked/>
@@ -145,6 +147,9 @@
                 </label> 
                 -->               
             </form>
+            <div id="bmac">
+                <a href="https://www.buymeacoffee.com/zenmaster28" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 108px !important;" ></a>
+            </div>
         </div>
     </body>
 </html>
