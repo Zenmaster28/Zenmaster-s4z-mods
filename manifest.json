@@ -4,7 +4,7 @@
     "description": "Arend's Mod Collection for S4Z",
     "author": "Arend teRaa",
     "website_url": "https://github.com/Zenmaster28/Zenmaster-s4z-mods",
-    "version": "1.8.0",
+    "version": "1.8.1",
     "content_js": [
         "pages/src/data-fields.js"
     ],
@@ -25,6 +25,34 @@
                 "height": 450,
                 "x": -300,
                 "y": 100
+            }
+        },        
+        {
+            "file": "pages/custom-route-creator.html",
+            "id": "custom-route-creator",
+            "name": "Custom Route Builder",
+            "description": "Create your own route and use the route follower to ride it in Zwift",
+            "overlay": true,
+            "frame": false,
+            "default_bounds": {
+                "width": 1000,
+                "height": 800,
+                "x": 100,
+                "y": 100
+            }
+        },        
+        {
+            "file": "pages/custom-route-follower.html",
+            "id": "custom-route-follower",
+            "name": "Custom Route Chauffeur",
+            "description": "Follow a custom route.  Game connection required!",
+            "overlay": true,
+            "frame": false,
+            "default_bounds": {
+                "width": 300,
+                "height": 250,
+                "x": -200,
+                "y": 200
             }
         },        
         {
