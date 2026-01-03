@@ -299,15 +299,16 @@ async function _processWatching(watching) {
                     Right: ${right?.option?.turnText || "n/a"}<br>
                 `
             */
-            const nextRouteIntersection = customRouteIntersections.find(int => !int.found)
-            if (nextRouteIntersection && currentIntersection.m_markerId == nextRouteIntersection.m_markerId) {
-                //found the next intersection on the route
+            const nextRouteIntersection = customRouteIntersections.find(int => !int.found)            
+            if (nextRouteIntersection && currentIntersection.m_markerId == nextRouteIntersection.m_markerId && nextRouteIntersection.idx == manifestIdx.i) {
+                //found the next intersection on the route                
                 const turnDir = nextRouteIntersection.option.alt == 263 ? "Left" : nextRouteIntersection.option.alt == 262 ? "Right" : "Straight"                
                 if (turnDir.toLowerCase() != direction.toLowerCase()) {
                     //debugger
                     console.log("Turning ", turnDir)
                     await common.rpc[turnComands[turnDir]]([]);
                 }
+            
                 
             } else {
                 let intOptions = [];
@@ -361,7 +362,7 @@ async function _processWatching(watching) {
     //debugger
     if (nextRoadIntersection) {  
         //if (nextIntersection) {
-        if (nextRoadIntersection.m_markerId == nextIntersection?.m_markerId) {
+        if (nextRoadIntersection.m_markerId == nextIntersection?.m_markerId && nextIntersection.idx == manifestIdx.i) {
             //get distance to option exit
             distanceToNextIntersection = getDistanceToIntersection(watching, nextIntersection, rp, true);
             nextOption = nextIntersection.option;
