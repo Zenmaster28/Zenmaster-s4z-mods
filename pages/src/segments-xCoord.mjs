@@ -6832,12 +6832,13 @@ export async function generateRoadData(courseId) {
             const forwardEntryPoints = road.entryPoints.filter(x => !x.reverse);
             forwardEntryPoints.sort((a,b) => a.entryTime - b.entryTime);
             const reverseEntryPoints = road.entryPoints.filter(x => x.reverse);
-            reverseEntryPoints.sort((a,b) => b.entryTime - a.entryTime);
+            reverseEntryPoints.sort((a,b) => b.entryTime - a.entryTime);            
             if (validForwardIntersections.length > 0) {
                 if (forwardEntryPoints.length > 1) {
                     const first = forwardEntryPoints[0];
                     const second = forwardEntryPoints[1];
-                    if (second.entryTime < validForwardIntersections[0].m_roadTime1) {
+                    const distance = road.curvePath.distanceBetweenRoadPercents(first.entryTime, second.entryTime, 4e-2) / 100;
+                    if (second.entryTime < validForwardIntersections[0].m_roadTime1 && distance < 200) {
                         road.safeTargets.forward.start = second.entryTime + epsilon;
                     } else {
                         road.safeTargets.forward.start = first.entryTime + epsilon;
@@ -6851,7 +6852,8 @@ export async function generateRoadData(courseId) {
                 if (reverseEntryPoints.length > 1) {
                     const first = reverseEntryPoints[0];
                     const second = reverseEntryPoints[1];
-                    if (second.entryTime > validReverseIntersections.at(-1).m_roadTime2) {
+                    const distance = road.curvePath.distanceBetweenRoadPercents(second.entryTime, first.entryTime, 4e-2) / 100;
+                    if (second.entryTime > validReverseIntersections.at(-1).m_roadTime2 && distance < 200) {
                         road.safeTargets.reverse.end = second.entryTime - epsilon;
                     } else {
                         road.safeTargets.reverse.end = first.entryTime - epsilon;
