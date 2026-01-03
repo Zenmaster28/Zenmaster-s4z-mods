@@ -14,6 +14,11 @@
   font-size: calc(var(--font-scale) * 0.8em);
   padding: 10px;
 }
+.sauce-map-container > .sauce-map > svg.paths .surfaces .clickableRoad {
+  stroke-width: 22em;
+  stroke: #e9e9e9;
+  pointer-events: stroke;
+}
 .sauce-map-container > .sauce-map > svg.paths .surfaces .clickableRoad:hover {
   stroke: lime;
   stroke-width: 30em;
@@ -167,9 +172,7 @@
 #routeSetupStatus {
   background-color: red;
 }
-.hidden {
-  display: none;
-}
+
 #finishButton {
   width: 100%
 }
@@ -187,4 +190,39 @@ html.solid-background body {
   position: absolute;
   top: 55px;
   right: 8px;
+}
+.importExport {
+  position: fixed;
+  top: 75px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 10vh;
+  z-index: 9999;
+}
+.importExportInfo {
+  padding: 10px;
+  background: black;
+  width: 60vw;
+  height: 60vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  font-size: calc(var(--font-scale) * 0.8em);
+}
+#importExportContent {
+  height: 100%;
+  width: 100%;
+}
+#importExportText {
+  width: 100%;
+  height: 100%;
+}
+.hidden {
+  display: none;
 }

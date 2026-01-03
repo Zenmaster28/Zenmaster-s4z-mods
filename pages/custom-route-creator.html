@@ -38,6 +38,7 @@
                     <a class="button" onClick="window.location.reload()" title="Reload">&#x21bb;</a>
                     <a class="button open-settings" href="custom-route-creator-settings.html?width=550&height=730&child-window"
                        title="Open settings window" target="custom-route-settings"><ms>settings</ms></a>
+                    <a class="button" title="Import" id="importExportButton">&#x21B9;</a>
                     <div title="Minimize" class="button minimize electron-only"><ms>minimize</ms></div>
                     <div title="Close this window" class="button close electron-only"><ms>close</ms></div>
                 </div>
@@ -63,6 +64,15 @@
                 <div id="routeSetupInfo" class="routeSetupInfo">
                     <input type="button" id="routeSetupClose" class="routeSetupClose" value="X">
                     <div id="routeSetupContent"></div>
+                </div>
+            </div>
+            <div id="importExport" class="importExport hidden">   
+                <div id="inportExportInfo" class="importExportInfo">                    
+                    <div id="importExportContent">
+                        <a class="button" title="Import Route" id="importRouteButton">&#x1F4BE;</a>
+                        <input type="button" id="importExportClose" class="routeSetupClose" value="X">
+                        <textarea id="importExportText"  spellcheck="false" autocomplete="off"></textarea>
+                    </div>
                 </div>
             </div>
         
