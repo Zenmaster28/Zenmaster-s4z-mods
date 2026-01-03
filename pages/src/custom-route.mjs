@@ -3,7 +3,7 @@ import * as map from './map.mjs';
 import * as elevation from './elevation-segments.mjs';
 import * as data from '/shared/sauce/data.mjs';
 import * as zen from './segments-xCoord.mjs';
-
+import * as curves from '/shared/curves.mjs';
 
 const doc = document.documentElement;
 
@@ -38,7 +38,9 @@ common.settingsStore.setDefault({
     showSegmentStart: true,
     fontScale: 1,
     minSegmentLength: 100,
-    showFunFacts: true
+    showFunFacts: true,
+    maxHops: 6,
+    maxDistance: 15000
 });
 
 let settings = common.settingsStore.get();
@@ -74,6 +76,122 @@ if (clearButton) {
         }
     });
 }
+const importExport = document.getElementById("importExport");
+const importExportInfo = document.getElementById("importExportInfo");
+const importExportButton = document.getElementById("importExportButton");
+if (importExportButton) {
+    importExportButton.addEventListener("click", (e) => {
+        importExport.classList.remove('hidden'); 
+    })
+}
+const importExportText = document.getElementById("importExportText");
+const importExportClose = document.getElementById("importExportClose");
+if (importExportClose) {
+    importExportClose.addEventListener('click', (e) => {
+    if (e.target === importExportClose) {        
+        importExportText.value = "";
+        importExport.classList.add('hidden');
+    }
+    });
+};
+const importRouteButton = document.getElementById("importRouteButton");
+if (importRouteButton) {
+    importRouteButton.addEventListener("click", async (e) => {
+        if (e.target == importRouteButton) {
+            const worldList = await common.getWorldList();
+            const worldMeta = worldList.find(x => x.courseId == courseId);
+            const worldId = common.courseToWorldIds[courseId]
+            const worldIntersections = await fetch(`data/worlds/${worldId}/roadIntersections.json`).then(response => response.json());
+            const intersections = zen.fixBadIntersections(worldIntersections);
+            //const courseRoads = await common.getRoads(courseId);
+            //const allCyclingRoads = courseRoads.filter(x => x.sports.includes("cycling"));
+            /*
+            const singleIntersectionRoads = intersections.filter(road => road.intersections?.length <= 2 && road.intersections?.every(int => int.forward?.length <= 1 && int.reverse?.length <= 1))
+            console.log("singleIntersectionRoads", singleIntersectionRoads);
+            */
+            /*
+            let t = Date.now()
+            for (let road of allCyclingRoads) {
+                const thisRoadIntersections = intersections.find(x => x.id == road.id);
+                if (thisRoadIntersections) {
+                    thisRoadIntersections.intersections?.sort((a,b) => a.m_roadTime1 - b.m_roadTime2);
+                    road.intersections = thisRoadIntersections.intersections || [];
+                } else {
+                    road.intersections = [];
+                }
+                road.roadIsPaddock = thisRoadIntersections.roadIsPaddock || false;
+                const singleIntersection = singleIntersectionRoads.find(x => x.id == road.id);
+                road.singleIntersection = singleIntersection ? true : false;
+                road.points = zen.getRoadPoints(road);
+            }
+            */
+            //console.log("allCyclingRoads", allCyclingRoads)
+            const routeableRoads = courseRoads.filter(x => !x.singleIntersection)
+            /*
+            const routeableRoads = allCyclingRoads.filter(x => {                
+                const roadIntersections = intersections.find(int => int.id == x.id);
+                if (courseId == 8) {
+                    if (roadIntersections.id == 249 || roadIntersections.id == 250) { //incorrectly marked roads as paddocks
+                        return true;
+                    }
+                }
+                if (roadIntersections?.roadIsPaddock) {
+                    return false;
+                } else {
+                    return true;
+                }
+            });
+            /*
+            const mappableRoads = routeableRoads.filter(x => {
+                const singleRoad = singleIntersectionRoads.find(road => road.id == x.id);
+                if (singleRoad) {
+                    return false;
+                } else {
+                    return true;
+                }
+            });
+            mappableRoads.sort((a,b) => a.id - b.id);
+            */
+            //debugger
+            
+            //console.log("mappableRoads", mappableRoads)
+            const csvText = importExportText.value;
+            const csvData = zen.importSauceCSV(csvText);
+            const csvKms = zen.getKmPts(csvData);
+            console.log("csvKms", csvKms)
+            const rdPts = [];
+            for (let pt of csvKms) {
+                const rpData = zen.pointToRoad(pt, worldMeta, routeableRoads);
+                //const rpData = zen.pointToRoad(pt, worldMeta, mappableRoads);
+                if (rpData) {
+                    rdPts.push(rpData);
+                }
+            }
+            console.log("rdPts", rdPts)
+            //debugger
+            const manifestPts = zen.summarizeRdPts(rdPts, courseId, courseRoads, true);
+            console.log("manifestPts", manifestPts)
+            const customManifest = await zen.buildCustomManifest(manifestPts, intersections, courseRoads, courseId);
+            customManifest.manifest = zen.mergeManifest(customManifest.manifest);
+            //routeData = await zen.buildRouteData(manifestPts, courseId);
+            routeData = await zen.buildRouteData(customManifest, courseId);
+            elProfile.sectionRouteData = routeData;
+            elProfile.routeId = 999999999;
+            //await elProfile.setPath();
+            
+            await elProfile.setRoute(999999999);
+            let path;
+            path = routeData.curvePath;
+            
+            _routeHighlights.push(
+                zwiftMap.addHighlightPath(path, `route-3-section`, {width: 0.5, color: 'red'}),
+            );
+            importExportText.value = "";
+            importExport.classList.add('hidden');
+            //debugger
+        }
+    });
+}
 if (elevationSelect) {
     elevationSelect.value = null;
 }
@@ -87,6 +205,7 @@ let zwiftMap;
 let spawnPointArrow;
 let elProfile;
 let courseId = Number(url.searchParams.get('course')) || 6;
+let courseRoads;
 let courseSpawnPoints = [];
 let startingSpawnPoint;
 //let routeId = Number(url.searchParams.get('route')) || undefined;
@@ -309,7 +428,88 @@ function centerMap(positions, options) {
 
 
 const _routeHighlights = [];
-
+async function getPath(nextTarget) {
+    let startPoint;
+    if (!customRouteSteps.manifest) {
+        customRouteSteps.manifest = [];
+        startPoint = {
+            roadId: startingSpawnPoint.roadId,
+            reverse: startingSpawnPoint.reverse,
+            rp: startingSpawnPoint.reverse ? startingSpawnPoint.end : startingSpawnPoint.start
+        }
+    } else {
+        const lastManifest = customRouteSteps.manifest.at(-1);
+        const lastManifestEntry = lastManifest.at(-1);
+        startPoint = {
+            roadId: lastManifestEntry.roadId,
+            reverse: lastManifestEntry.reverse,
+            rp: lastManifestEntry.reverse ? lastManifestEntry.start : lastManifestEntry.end
+        }
+    }
+    const options = {
+        maxHops: settings.maxHops || 6,
+        maxDistance: settings.maxDistance || 15000,        
+    }
+    let paths = zen.findPathFromAtoBv7(startPoint, nextTarget, courseRoads, courseId, options);
+    let shortestPath = paths.allPaths[0];
+    let stats = paths.stats;
+    //console.log("stats", stats)
+    if (settings.showFunFacts) {
+        let funFactsContent = `Fun Facts:<br>`
+        funFactsContent += `Possible paths found: ${stats.allPaths}<br>
+                            Shortest: ${parseInt(stats.shortestDistance)}m<br>
+                            Elapsed time finding a path: ${stats.timeSpentFindingPaths}ms<br>
+                            Abandoned paths:<br>
+                            - Too long: ${stats.exceedMaxLength}<br>
+                            - Longer than shortest path so far: ${stats.pathsTooLong} <br>
+                            - Too many hops: ${stats.tooManyHops}<br>
+        `
+        funFactsDiv.innerHTML = funFactsContent;
+    } else {
+        funFactsDiv.innerHTML = "";
+    }
+    if (shortestPath) {
+        customRouteSteps.manifest.push(shortestPath.manifest);
+        await applyRoutev4();
+    } else {
+        console.log("No route found")
+        alert(`Unable to find a path to that point.  It could be too far away or an unreachable road.`)
+    }
+}
+async function applyRoutev4() {
+    history.replaceState({}, '', url);
+    while (_routeHighlights.length) {
+        _routeHighlights.pop().elements.forEach(x => x.remove());
+    }
+    const routeManifest = {
+        manifest: []
+    };
+    for (let manifestStep of customRouteSteps.manifest) {
+        for (let m of manifestStep) {
+            routeManifest.manifest.push(m);
+        }
+    }
+    //debugger    
+    routeData = await zen.buildRouteData(routeManifest, courseId);
+    //routeData.manifest = zen.mergeManifest(routeData.manifest); // merge any consecutive manifest entries on the same road
+    
+    
+    //console.log("RouteData",routeData)
+    //console.log("customRouteSteps", customRouteSteps)
+    const routeElevation = zen.calcElevationGain(routeData.elevations)
+    distanceSelect.value = parseInt(routeData.distances.at(-1));
+    elevationSelect.value = parseInt(routeElevation)
+    elProfile.sectionRouteData = routeData;
+    elProfile.routeId = 999999999;
+    
+    await elProfile.setRoute(999999999);
+    let path;
+    path = routeData.curvePath;
+    
+    _routeHighlights.push(
+        zwiftMap.addHighlightPath(path, `route-3-section`, {width: 0.5, color: 'red'}),
+    );
+}
 async function applyRouteV3(undo=false) {
     /*
     if (routeId != null) {
@@ -318,6 +518,11 @@ async function applyRouteV3(undo=false) {
         url.searchParams.delete('route');
     }
     */
+   debugger
+    const options = {
+        maxHops: settings.maxHops || 6,
+        maxDistance: settings.maxDistance || 15000,        
+    }
     history.replaceState({}, '', url);
     while (_routeHighlights.length) {
         _routeHighlights.pop().elements.forEach(x => x.remove());
@@ -332,7 +537,7 @@ async function applyRouteV3(undo=false) {
         intersections: [],
         testIntersections: []
        }
-       //console.log("customRouteSteps", customRouteSteps)
+       console.log("customRouteSteps", customRouteSteps)
        for (let i = 0; i < customRouteSteps.length - 1; i++) {            
             let breakOut = false;
             if (!undo && customRouteSteps.at(-2).pathToHere) {
@@ -375,8 +580,10 @@ async function applyRouteV3(undo=false) {
             intersections = await fetch(`data/worlds/${worldId}/roadIntersections.json`).then(response => response.json());
             const roadData = intersections.find(x => x.id == endPoint.roadId)
             if (!roadData.roadIsPaddock) {             
-                let paths = await zen.findPathFromAtoBv5(startPoint, endPoint, intersections, allCyclingRoads, courseId, avoidRepackRush);
-                let shortestPath = paths.bestPath;
+                //let paths = zen.findPathFromAtoBv6(startPoint, endPoint, intersections, allCyclingRoads, courseId, avoidRepackRush);
+                let paths = zen.findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, options);
+                //let shortestPath = paths.bestPath;
+                let shortestPath = paths.allPaths[0];
                 let stats = paths.stats;
                 console.log("stats", stats)
                 if (settings.showFunFacts) {
@@ -397,13 +604,14 @@ async function applyRouteV3(undo=false) {
                 //if (shortestPath.testIntersections) {
                 //    routeIntersections.testIntersections = shortestPath.testIntersections;
                 //}
-                if (shortestPath.path.length > 0) {
+                if (shortestPath && shortestPath.manifest.length > 0) {
                     console.log("shortestPath",shortestPath)
                     //debugger
                     routePath.push(shortestPath)
                     shortestPath.manifest.forEach(path => {
                         routeManifest.manifest.push(path)
                     })
+                    /*
                     shortestPath.path.forEach(int => {
                         //debugger
                         if (int.passedIntersections?.length > 0) {
@@ -453,6 +661,7 @@ async function applyRouteV3(undo=false) {
                         }
                         
                     })
+                    */
                     customRouteSteps[i + 1].forward = !routeManifest.manifest.at(-1).reverse
                 } else {
                     console.log("No route found")
@@ -480,23 +689,24 @@ async function applyRouteV3(undo=false) {
             let calcIntersections = await zen.getManifestIntersections(routeData.manifest, courseId);
             routeData.pathIntersections = routeIntersections.intersections; //determined while exploring
             routeData.intersections = calcIntersections; // calculated from the manifest
-            
+            /*
             const matchingRoutes = startingSpawnPoint.routes;
             matchingRoutes.sort((a,b) => a.distance - b.distance)
             if (matchingRoutes.length > 0) {
-                /*
+                
                 let routeList = `When you are ready to begin, start a free ride on one of these routes and then once you are in the world, click the Publish Route button.<br><br>
                                 ***It is important that you wait until Zwift is loaded and you are in the world.***<br><hr>`;
                 
                 for (let route of matchingRoutes) {
                     routeList += `${route.name}<br>`;
                 }
-                */
+                
                 //infoPanel.innerHTML = routeList;
                 
             } else {
                 infoPanel.innerHTML = "Unable to find a matching route..."
             }
+            */
             console.log("RouteData",routeData)
             console.log("customRouteSteps", customRouteSteps)
             const routeElevation = zen.calcElevationGain(routeData.elevations)
@@ -550,10 +760,16 @@ async function applyCourse() {
             spawnPoint.remove();
         }
         courseSpawnPoints = await zen.getRouteSpawnAreas(courseId);
+        
+        //courseRoads = await common.getRoads(courseId);
+        courseRoads = await zen.generateRoadData(courseId);
         console.log("courseSpawnPoints", courseSpawnPoints)
+        console.log("courseRoads", courseRoads)
         for (let spawnPoint of courseSpawnPoints) {
             const spArrow = zwiftMap.addPoint([0, 0], 'spawnPoint', spawnPoint.name);
-            const spRoad = await common.getRoad(courseId, spawnPoint.roadId);
+            //const spRoad = await common.getRoad(courseId, spawnPoint.roadId);
+            //const spRoad = courseRoads.find(x => x.id == spawnPoint.roadId);
+            const spRoad = courseRoads[spawnPoint.roadId];
             let subPath = spRoad.curvePath.subpathAtRoadPercents(Math.min(spawnPoint.start, spawnPoint.end), Math.max(spawnPoint.start,spawnPoint.end));
             const pos = subPath.nodes[parseInt(subPath.nodes.length / 2)]?.end;
             spArrow.toggleHidden(!pos);
@@ -563,7 +779,8 @@ async function applyCourse() {
         
         for (let spawnPoint of courseSpawnPoints) {
             
-            const spRoad = await common.getRoad(courseId, spawnPoint.roadId);
+            //const spRoad = await common.getRoad(courseId, spawnPoint.roadId);
+            const spRoad = courseRoads[spawnPoint.roadId];
             const p1 = spRoad.curvePath.pointAtRoadPercent(Math.min(spawnPoint.start, spawnPoint.end));
             const p2 = spRoad.curvePath.pointAtRoadPercent(Math.max(spawnPoint.start, spawnPoint.end));           
             
@@ -644,11 +861,22 @@ async function updateRouteData(self) {
     const spawnPointRoutes = startingSpawnPoint.routes;
     const matchingRoute = spawnPointRoutes.find(x => x.id == self.state.routeId);
     const rp = (self.state.roadTime - 5000) / 1e6;
+    const thisRoad = courseRoads.find(x => x.id == self.state.roadId);
+      
     const low = Math.min(routeData.manifest[0].start, routeData.manifest[0].end);
     const high = Math.max(routeData.manifest[0].start, routeData.manifest[0].end);
+    let distanceToSp;
+    const midSp = (low + high) / 2;
+    if (rp < midSp) {
+        distanceToSp = thisRoad.curvePath.distanceBetweenRoadPercents(rp, midSp, 4e-2) / 100;  
+    } else {
+        distanceToSp = thisRoad.curvePath.distanceBetweenRoadPercents(midSp, rp, 4e-2) / 100;  
+    }
     const inManifestStart = (self.state.roadId == routeData.manifest[0].roadId && 
-                            rp >= low &&
-                            rp <= high
+                            self.state.reverse == routeData.manifest[0].reverse &&
+                            ((rp >= low &&
+                            rp <= high) ||
+                            distanceToSp < 600 )
     );
     if (matchingRoute && inManifestStart) {
         //debugger
@@ -664,6 +892,7 @@ async function updateRouteData(self) {
             routeSetup.classList.add("hidden");
         }
     } else {
+        debugger
         const routeSetupStatus = document.getElementById('routeSetupStatus');
         routeSetupStatus.innerHTML = "<hr>Currently loaded route is not correct or you have moved too far from the initial spawn point";
         console.log("Not on a proper route.  Should be one of ", spawnPointRoutes)
@@ -680,14 +909,15 @@ async function setupMap() {
     const useElements = svgPath.querySelectorAll('use');
     const worldId = common.courseToWorldIds[courseId]
     intersections = await fetch(`data/worlds/${worldId}/roadIntersections.json`).then(response => response.json());
-    const courseRoads = await common.getRoads(courseId);
-    const cyclingRoads = courseRoads.filter(x => x.sports.includes("cycling"));
+    //courseRoads = await common.getRoads(courseId);
+    //const cyclingRoads = courseRoads.filter(x => x.sports.includes("cycling"));
     
     useElements.forEach((useElement) => {
         const elementRoad = parseInt(useElement.dataset.id);
-        const roadData = intersections.find(x => x.id == elementRoad);
-        const roadDataSauce = cyclingRoads.find(x => x.id == elementRoad);
-        if (roadData.roadIsPaddock || !roadDataSauce) {   
+        //const roadData = intersections.find(x => x.id == elementRoad);
+        const roadData = courseRoads[elementRoad];
+        //const roadDataSauce = cyclingRoads.find(x => x.id == elementRoad);
+        if (!roadData || roadData.roadIsPaddock) {   
             return;
         }
         useElement.addEventListener('click', async (event) => {
@@ -704,15 +934,29 @@ async function setupMap() {
                     return null;
                 }
                 const cursorPosition = zen.getCursorCoordinates(svg, event)
-                let pointToFind = [cursorPosition.x, cursorPosition.y, 10000]
+                let pointToFind = [cursorPosition.x, cursorPosition.y]
                 if (svgRotated) {
-                    pointToFind = [cursorPosition.y * -1, cursorPosition.x, 10000]
+                    pointToFind = [cursorPosition.y * -1, cursorPosition.x]
                 }
                 
                 let thisRoad = parseInt(pathElement.id.replace("road-path-",""))
-                console.log("Clicked road",thisRoad)
-                let roadData = await common.getRoad(courseId, thisRoad)
-                
+                console.log("Clicked road",thisRoad, "pointToFind", pointToFind)
+                //let roadData = await common.getRoad(courseId, thisRoad)
+                let roadData = courseRoads[thisRoad];
+                let minDistance = Infinity;
+                let nearestPoint;
+                let rp;
+                for (let point of roadData.points) {                    
+                    const distance = curves.vecDist2d(pointToFind, point.point);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        nearestPoint = point.point;
+                        rp = point.rp;
+                    }
+
+                }
+                //debugger
+                /*
                 const points = [];
                 let steps = 1000
                 const step = 1 / (steps - 1); // Calculate the step size
@@ -732,12 +976,17 @@ async function setupMap() {
                             rp = t;
                         } 
                     }                
-                
+                */
+                const nextTarget = {
+                    roadId: thisRoad,
+                    rp: rp
+                }
                 customRouteSteps.push({
                     roadId: thisRoad,
                     roadPercent: rp
                 })
-                await applyRouteV3();
+                await getPath(nextTarget);
+                //await applyRouteV3();
                 
             }
         });
@@ -746,6 +995,7 @@ async function setupMap() {
     //await applyRoute();
         
 }
+
 async function resetMap() {
     const id = Number(courseSelect.value);
     
@@ -782,10 +1032,13 @@ export async function main() {
     //const publishButton = document.getElementById("publishButton");
     const resetButton = document.getElementById("resetButton")
     undoButton.addEventListener('click', async undo => {
-        customRouteSteps.pop()
-        customRouteSteps.at(-1).pathToHere?.pop();
+        customRouteSteps.manifest.pop();
+        await applyRoutev4();
+        //customRouteSteps.pop()
+        //customRouteSteps.at(-1).pathToHere?.pop();
         
-        await applyRouteV3(true);
+        //await applyRouteV3(true);
+        //debugger
     });
     /*
     publishButton.addEventListener('click', async publish => {

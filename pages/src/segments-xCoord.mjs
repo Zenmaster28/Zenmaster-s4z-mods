@@ -1278,7 +1278,7 @@ export async function getModifiedRoute(id, disablePenRouting, customRouteData) {
             }
             
         } else {
-            console.log("No pen exit route found!")            
+            //console.log("No pen exit route found!")            
             missing = []; //bypass the missing leadins for routes where the pen exit couldn't be found 
         }
         let leadin = [];        
@@ -3681,15 +3681,15 @@ export function findTies(segRes, scoreFormat) {
   return results;
 }
 
-export async function findPathFromAtoBv5(startPoint, endPoint, intersections, allRoads, courseId, avoidRepackRush) {
+export function findPathFromAtoBv5(startPoint, endPoint, intersections, allRoads, courseId, avoidRepackRush, maxDepthOverride) {
     let maxDepth;
     let maxLength;
     if (courseId == 6) {
         //try a bit harder in Watopia
-        maxDepth = 8;
+        maxDepth = maxDepthOverride || 8;
         maxLength = 30000;
     } else {
-        maxDepth = 6;
+        maxDepth = maxDepthOverride || 6;
         maxLength = 20000
     }
     
@@ -3732,6 +3732,9 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
     function explore(roadId, forward, depth, currentPath, thisPathSoFar) {
         //console.log("exploring", roadId)
         //console.log("currentPath", currentPath)
+        if (roadId == 250) {
+            //debugger
+        }
         const l = Date.now();        
         /*
         for (let section of currentPath) {            
@@ -3772,6 +3775,9 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
             //thisPathSoFar = 0;
             return;
         } 
+        if (timeSpentMeasuring > 20000) {
+            return;
+        }
         const maxPaths = 1000
         if (allPaths.length > maxPaths) {
             console.log("Found more than", maxPaths, "paths, that's enough for now.")
@@ -3797,17 +3803,22 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
         const nextIntEnd = roadId == targetRoad ? targetRP : forward ? 1 : 0
         //const nextIntersection = getNextIntersection(roadId, forward, entryTime, targetRP, allRoads, intersections)
         const nextIntersection = getNextIntersection(roadId, forward, entryTime, nextIntEnd, allRoads, intersections)
-        
+        if (roadId == 250) {
+            //debugger
+            //we are entering beyond the targetRp - set some safe road 5 boundaries!
+        }
         //NEED to deal with a looped road properly, especially if the target is before the next intersection
         //if (roadId == targetRoad && nextIntersection.length == 0) {
         if (roadId == targetRoad) { 
             //console.log("Found the target road")           
             let usePath = false;
             let useIntersection = false;
-            const targetRoadData = allRoads.find(x => x.id == roadId) 
+            const targetRoadData = allRoads.find(x => x.id == roadId)
             if (targetRoadData.looped) {
                 //console.log(`Target is looped, entryTime: ${entryTime}, targetRP: ${targetRP}`, "nextIntersection:", nextIntersection )
                 
+                // ********** TODO - fix getting onto volcano cirsuit forward from 21
+
                 if ((forward && entryTime > nextIntersection.m_roadTime1) && (nextIntersection.m_roadTime1 > targetRP)) {
                     //looped road and we have to cross the 0/1 line going forward and the targetRP is before the next intersection
                 } else if ((!forward && entryTime < nextIntersection.m_roadTime1) && nextIntersection.m_roadTime1 < targetRP) {
@@ -3816,15 +3827,21 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
                 } else if (!forward && entryTime > targetRP) {
                 } else if (!forward && entryTime > targetRP && entryTime > nextIntersection.m_roadTime2) {
                     //looped road in reverse and we find the targetRP before the next intersection
-                } else if (forward && entryTime < nextIntersection.m_roadTime1) {
+                } else if (forward && entryTime < targetRP && (targetRP <= nextIntersection.m_roadTime1 || entryTime >= nextIntersection.m_roadTime2)) {
                     //looped road forward and we find the targetRP before the next intersection 
                     //debugger
+                } else if (courseId == 6 && avoidRepackRush && targetRoad != 135 && roadId == 81 && 
+                        (nextIntersection.forward.find(x => x.option.road == 137) ||
+                        nextIntersection.reverse.find(x => x.option.road == 97)) )
+                {
+                    //don't go into Repack Rush unless explicitly clicking on the road for it
+                    
                 } else {                    
-                    useIntersection = true;
+                    //useIntersection = true;
                 }
                 //console.log("useIntersection", useIntersection)
             }  
-            //debugger 
+            
             if (!useIntersection) {
                 if (forward && targetRP < entryTime) {
                     if (targetRoadData.looped) {
@@ -3867,7 +3884,6 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
                     //get any passed intersections between entryTime and targetRP
                     const passedIntersections = getPassedIntersections(roadId, forward, entryTime, targetRP, intersections, allRoads)
                     
-                    //debugger              
                     currentPath.push({
                         roadId: roadId,
                         forward: forward,
@@ -3902,6 +3918,7 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
                         shortestPathSoFar = validPathLength;
                     }
                 }
+                  
                 return;
             }
             
@@ -3915,6 +3932,7 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
             //we hit a dead end
             return;
         }
+        
         let directionIntersections = [];
         let validDirectionIntersections = [];
         if (forward) {
@@ -3935,7 +3953,8 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
                   });
                 
             } else {
-                validDirectionIntersections = directionIntersections.filter(x => x.m_roadTime2 > entryTime)
+                
+                validDirectionIntersections = directionIntersections.filter(x => Math.max(x.m_roadTime2, x.m_roadTime1) > entryTime)
                 validDirectionIntersections.sort((a,b) => {
                     return a.m_roadTime2 > b.m_roadTime2;
                 })
@@ -3951,21 +3970,19 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
                     return a.m_roadTime1 < b.m_roadTime1;
                 });
             } else {                
-                validDirectionIntersections = directionIntersections.filter(x => x.m_roadTime1 < entryTime)
+                validDirectionIntersections = directionIntersections.filter(x => Math.min(x.m_roadTime1, x.m_roadTime2) < entryTime)
                 validDirectionIntersections.sort((a,b) => {
                     return a.m_roadTime1 < b.m_roadTime1;
                 })
             }
         }
-        if (thisRoadData.id == 192 && !forward) {
-            //debugger
-        }
+        
         
         let depthInc = 1;
         if (validDirectionIntersections.length == 1) {
             // this is road with a single intersection, don't count it in the depth.
             depthInc = 0;
-        }
+        }        
         for (let int in validDirectionIntersections) {
             if (currentPath.some(pathEntry => pathEntry.intersection?.m_markerId === validDirectionIntersections[int].m_markerId))
             {
@@ -3975,6 +3992,7 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
             if (forward) {                
                 for (let option of validDirectionIntersections[int].forward) {
                     let nextPath = [...currentPath]
+                    
                     if (option.option) {
                         //debugger
                         
@@ -4040,7 +4058,7 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
                                 exitTime: 0
                             });
                             lineCrossed = true;
-                        }
+                        } 
                         nextPath.push({
                             roadId: roadId,
                             forward: forward,
@@ -4096,7 +4114,7 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
                 })
             }
         }
-        if (startRoad == 149) {
+        if (startRoad == 1) {
             //debugger
         }
         //debugger
@@ -4206,12 +4224,12 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
         //path = allPaths[2]
         //console.log(`Found the shortest path in ${Date.now() - s}ms`)
         const timeSpentFindingPaths = Date.now() - t;
-        console.log(`Found ${allPaths.length} possible paths in ${Date.now() - t}ms.  The shortest one was ${shortestDistance}`)
-        console.log(`Encountered ${repeatIntersections} repeated intersections`)
-        console.log(`Abandoned ${pathsTooLong} for being longer than a previously found path`)
-        console.log(`Abandoned ${tooManyHops} for too many hops`)
-        console.log(`Abandoned ${pathsOver25k} paths exceeding ${maxLength / 1000}k`)
-        console.log(`Spent ${timeSpentMeasuring}ms measuring validPaths`)
+        //console.log(`Found ${allPaths.length} possible paths in ${Date.now() - t}ms.  The shortest one was ${shortestDistance}`)
+        //console.log(`Encountered ${repeatIntersections} repeated intersections`)
+        //console.log(`Abandoned ${pathsTooLong} for being longer than a previously found path`)
+        //console.log(`Abandoned ${tooManyHops} for too many hops`)
+        //console.log(`Abandoned ${pathsOver25k} paths exceeding ${maxLength / 1000}k`)
+        //console.log(`Spent ${timeSpentMeasuring}ms measuring validPaths`)
         if (!stats.init) {
             stats.allPaths = allPaths.length,
             stats.shortestDistance = shortestDistance,
@@ -4221,7 +4239,7 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
             stats.timeSpentMeasuring = timeSpentMeasuring,
             stats.timeSpentFindingPaths = timeSpentFindingPaths,
             stats.init = true
-            console.log("Recorded stats", stats)
+            //console.log("Recorded stats", stats)
         }
         /*
         if (showDebugStats) {
@@ -4239,7 +4257,7 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
         //debugger
     } else {
         //debugger
-        console.log("Target road is the same as the start road")
+        console.log("Target road is the same as the start road", startPoint, endPoint, startDirection)
         const roadData = allRoads.find(x => x.id == startPoint.roadId)
         if (roadData.looped) {
                 if (startDirection) {
@@ -4313,12 +4331,16 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
         bestPath.distance = shortestDistance;
         bestPath.manifest = [];
         path.forEach(road => {
-            bestPath.manifest.push({
+            const m = {
                 start: road.forward ? road.entryTime : road.exitTime,
                 end: road.forward ? road.exitTime : road.entryTime,
                 reverse: !road.forward,
                 roadId: road.roadId
-            })
+            }
+            if (m.start > m.end) {
+                debugger
+            }
+            bestPath.manifest.push(m);
         })
     }
     //const bestPathIntersections = await getManifestIntersections(bestPath.manifest, courseId)
@@ -4327,7 +4349,8 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
     if (found) {
         return {
             bestPath: bestPath,
-            stats: stats
+            stats: stats, 
+            allPaths: allPaths
         }
     } else {
         return {
@@ -4337,6 +4360,1208 @@ export async function findPathFromAtoBv5(startPoint, endPoint, intersections, al
     }
     //return found ? bestPath : null;
 
+}
+export function findPathFromAtoBv6(startPoint, endPoint, intersections, allRoads, courseId, avoidRepackRush, maxDepthOverride) {
+    let maxDepth;
+    let maxLength;
+    if (courseId == 6) {
+        //try a bit harder in Watopia
+        maxDepth = maxDepthOverride || 8;
+        maxLength = 30000;
+    } else {
+        maxDepth = maxDepthOverride || 6;
+        maxLength = 20000
+    }
+    
+    const t = Date.now();
+    const targetRoad = endPoint.roadId;
+    const targetRP = endPoint.rp;
+    const startRoad = startPoint.roadId;
+    const startDirection = !startPoint.reverse;
+    let startRP = startPoint.rp
+    let sameRoad = false;
+    let shortestPathSoFar = Infinity;
+    let thisPathSoFar = 0;
+    let repeatIntersections = 0;
+    let stats = {};
+    //const allRoads = await common.getRoads(courseId);
+    if (startPoint.roadId == endPoint.roadId) {
+        const roadInfo = allRoads.find(x => x.id == startPoint.roadId)
+        if (roadInfo.looped) {
+            //debugger
+            sameRoad = true;
+        } else if (startPoint.reverse && startPoint.rp > endPoint.rp) {
+            //debugger
+            if (endPoint.reverse == true || !('reverse' in endPoint)) {
+                sameRoad = true;
+            }
+        } else if (!startPoint.reverse && startPoint.rp < endPoint.rp) {
+            //debugger
+            if (endPoint.reverse == false || !('reverse' in endPoint)) {
+                sameRoad = true;
+            }
+        }
+        //debugger
+    }
+    //console.log("maxDepth", maxDepth)
+    //let startPath = [];
+    let path = [];
+    let allPaths = [];
+    let found = false;
+    let leastHops = Infinity;
+    let pathsTooLong = 0;
+    let tooManyHops = 0;
+    let pathsOver25k = 0;
+    let timeSpentMeasuring = 0;
+    function explore(roadId, forward, depth, currentPath, thisPathSoFar) {
+        //console.log("exploring", roadId)
+        //console.log("currentPath", currentPath)
+        if (roadId == 250) {
+            //debugger
+        }
+        const l = Date.now();        
+        /*
+        for (let section of currentPath) {            
+            const sectionLength = measureRoadSectionV2(section, courseId, allRoads);
+            thisPathSoFar += sectionLength;
+            //console.log("Current path length is ", thisPathSoFar, "shortest path so far is", shortestPathSoFar)
+        }
+        timeSpentMeasuring += Date.now() - l;
+        */
+        //const l = Date.now();
+        if (courseId == 6 && avoidRepackRush && (roadId == 97 || roadId == 137) && targetRoad != 135) {
+            //don't go into Repack Rush unless explicitly clicking on the road for it
+            return;
+        }
+        const lastSectionLength = measureRoadSectionV2(currentPath.at(-1), courseId, allRoads)
+        timeSpentMeasuring += Date.now() - l;
+        thisPathSoFar += lastSectionLength;
+        //debugger
+        if (thisPathSoFar > shortestPathSoFar) {
+            // this path is longer than a previously found one, abandon it
+            //console.log(`This path is longer ${thisPathSoFar} than a previously found shorter one ${shortestPathSoFar}, abandoning it`)
+            pathsTooLong++;
+            //thisPathSoFar = 0;
+            return;
+        }
+        if (thisPathSoFar > maxLength) {
+            // path is more than 25k, abandon it
+            pathsOver25k++;
+            //thisPathSoFar = 0;
+            return;
+        }
+        if (!allRoads.find(x => x.id == roadId)) {
+            //console.log("Found a roadId that Sauce doesn't know about, ignoring roadId", roadId)
+            return
+        }
+        if (depth > maxDepth) {
+            //console.log("max depth exceeded")
+            //thisPathSoFar = 0;
+            return;
+        } 
+        if (timeSpentMeasuring > 20000) {
+            return;
+        }
+        const maxPaths = 1000
+        if (allPaths.length > maxPaths) {
+            console.log("Found more than", maxPaths, "paths, that's enough for now.")
+            return;
+        }
+        if (currentPath.some(pathEntry => pathEntry.roadId === roadId && pathEntry.forward === forward)) {
+            //we've already been here, don't record it again
+            //console.log("We've gone full circle back to an road we were on before...",currentPath, roadId, forward)
+            //debugger
+            // **** Maybe revisit this...
+            //return;
+        }
+        if (currentPath.length > leastHops + 2) {
+            //console.log("This path is 2 more hops than the lowest count, skip the rest")
+            //debugger
+            // consider doing this by measuing the length on the fly
+            tooManyHops++;
+            return;
+        }        
+        const rd1 = allRoads.find(x => x.id == currentPath.at(-1).roadId)
+        const rd2 = allRoads.find(x => x.id == roadId)                     
+        let entryTime = getNearestPoint(rd1, rd2, currentPath.at(-1).exitTime, 10000) 
+        const nextIntEnd = roadId == targetRoad ? targetRP : forward ? 1 : 0
+        //const nextIntersection = getNextIntersection(roadId, forward, entryTime, targetRP, allRoads, intersections)
+        const nextIntersection = getNextIntersection(roadId, forward, entryTime, nextIntEnd, allRoads, intersections)
+        if (roadId == 0 && forward) {
+            //debugger
+            //we are entering beyond the targetRp - set some safe road 5 boundaries!
+        }
+        //NEED to deal with a looped road properly, especially if the target is before the next intersection
+        //if (roadId == targetRoad && nextIntersection.length == 0) {
+        if (roadId == targetRoad) { 
+            //console.log("Found the target road")           
+            let usePath = false;
+            let useIntersection = false;
+            const targetRoadData = allRoads.find(x => x.id == roadId)
+            if (targetRoadData.looped) {
+                //console.log(`Target is looped, entryTime: ${entryTime}, targetRP: ${targetRP}`, "nextIntersection:", nextIntersection )
+                
+                // ********** TODO - fix getting onto volcano cirsuit forward from 21
+
+                if ((forward && entryTime > nextIntersection.m_roadTime1) && (nextIntersection.m_roadTime1 > targetRP)) {
+                    //looped road and we have to cross the 0/1 line going forward and the targetRP is before the next intersection
+                } else if ((!forward && entryTime < nextIntersection.m_roadTime1) && nextIntersection.m_roadTime1 < targetRP) {
+                    //looped road and we have to cross the 0/1 line going reverse and the targetRP is before the next intersection
+                    //debugger
+                } else if (!forward && entryTime > targetRP) {
+                } else if (!forward && entryTime > targetRP && entryTime > nextIntersection.m_roadTime2) {
+                    //looped road in reverse and we find the targetRP before the next intersection
+                } else if (forward && entryTime < targetRP && (targetRP <= nextIntersection.m_roadTime1 || entryTime >= nextIntersection.m_roadTime2)) {
+                    //looped road forward and we find the targetRP before the next intersection 
+                    //debugger
+                } else if (courseId == 6 && avoidRepackRush && targetRoad != 135 && roadId == 81 && 
+                        (nextIntersection.forward.find(x => x.option.road == 137) ||
+                        nextIntersection.reverse.find(x => x.option.road == 97)) )
+                {
+                    //don't go into Repack Rush unless explicitly clicking on the road for it
+                    
+                } else {                    
+                    //useIntersection = true;
+                }
+                //console.log("useIntersection", useIntersection)
+            }  
+            
+            if (!useIntersection) {
+                if (forward && targetRP < entryTime) {
+                    if (targetRoadData.looped) {
+                        currentPath.push({
+                            roadId: roadId,
+                            forward: forward,
+                            entryTime: entryTime,
+                            exitTime: 1
+                        },{
+                            roadId: roadId,
+                            forward: forward,
+                            entryTime: 0,
+                            exitTime: targetRP
+                        });
+                        //debugger
+                        usePath = true;
+                    } else {
+                        // entered the target road beyond the target and it's not a looped road, are we close enough?
+                        const testProximity = targetRoadData.curvePath.distanceBetweenRoadPercents(targetRP, entryTime, 4e-2) / 100;
+                        if (testProximity <= 50) {
+                            console.warn(`Entered the target road beyong the targetRp but within 50m (${testProximity}) - using it anyway`)
+                            currentPath.push({
+                                roadId: roadId,
+                                forward: forward,
+                                entryTime: entryTime,
+                                exitTime: entryTime + 1e-10,
+                                passedIntersections: []
+                            });
+                            usePath = true;
+                        } else {
+                            console.warn(`Entered the target road beyong the targetRp and beyond 50m (${testProximity}) - abandoning path`)
+                            usePath = false;
+                        }
+                    }
+                } else if (!forward && targetRP > entryTime) {
+                    if (targetRoadData.looped) {
+                        currentPath.push({
+                            roadId: roadId,
+                            forward: forward,
+                            entryTime: entryTime,
+                            exitTime: 0
+                        },{
+                            roadId: roadId,
+                            forward: forward,
+                            entryTime: 1,
+                            exitTime: targetRP
+                        });
+                        usePath = true;
+                    } else {
+                        // entered the target road beyond the target and it's not a looped road, are we close enough?
+                        const testProximity = targetRoadData.curvePath.distanceBetweenRoadPercents(entryTime, targetRP, 4e-2) / 100;
+                        if (testProximity <= 50) {
+                            console.warn(`Entered the target road beyong the targetRp but within 50m (${testProximity}) - using it anyway`)
+                            currentPath.push({
+                                roadId: roadId,
+                                forward: forward,
+                                entryTime: entryTime,
+                                exitTime: entryTime - 1e-10,
+                                passedIntersections: []
+                            });
+                            usePath = true;
+                        } else {
+                            console.warn(`Entered the target road beyong the targetRp and beyond 50m (${testProximity}) - abandoning path`)
+                            usePath = false;
+                        }
+                    }
+                } else {  
+                    //get any passed intersections between entryTime and targetRP
+                    const passedIntersections = getPassedIntersections(roadId, forward, entryTime, targetRP, intersections, allRoads)
+                    
+                    currentPath.push({
+                        roadId: roadId,
+                        forward: forward,
+                        entryTime: entryTime,
+                        exitTime: targetRP,
+                        passedIntersections: passedIntersections
+                    });
+                    usePath = true;
+                }
+                if (usePath) {
+                    if (currentPath.length < leastHops) {
+                        leastHops = currentPath.length;
+                    }
+                    const validPath = JSON.parse(JSON.stringify(currentPath)) // not sure I need to do this but...
+                    allPaths.push(validPath)
+                    
+                    let validPathLength = 0;
+                    //let m = Date.now()
+                    
+                    for (let section of validPath) {                        
+                        const sectionLength = measureRoadSectionV2(section, courseId, allRoads);
+                        validPathLength += sectionLength;
+                        //console.log("Current path length is ", validPathLength)
+                    }
+                    
+                    //timeSpentMeasuring += Date.now() - m;
+                    //const lastSectionLength = measureRoadSectionV2(currentPath.at(-1), courseId, allRoads)
+                    
+                    //thisPathSoFar += lastSectionLength;
+                    //console.log("Found a valid path", validPath, " of length ", validPathLength, "thisPathSoFar", thisPathSoFar)
+                    if (validPathLength < shortestPathSoFar) {
+                        shortestPathSoFar = validPathLength;
+                    }
+                }
+                  
+                return;
+            }
+            
+
+        } else if (roadId == targetRoad && forward) {
+            //debugger
+        }
+        const thisRoadData = allRoads.find(x => x.id == roadId)
+        const thisRoadIntersections = intersections.find(int => int.id === roadId)
+        if (!thisRoadIntersections.intersections) {
+            //we hit a dead end
+            return;
+        }
+        
+        let directionIntersections = [];
+        let validDirectionIntersections = [];
+        if (forward) {
+            directionIntersections = thisRoadIntersections.intersections.filter(int => int.forward.some(x => Object.keys(x).length > 0));
+            if (thisRoadData.looped) {
+                
+                validDirectionIntersections = directionIntersections.sort((a, b) => {
+                    const aAbove = a.m_roadTime2 > entryTime;
+                    const bAbove = b.m_roadTime2 > entryTime;
+                  
+                    // Sort by grouping first (above vs below entryTime)
+                    if (aAbove !== bAbove) {
+                      return aAbove ? -1 : 1;
+                    }
+                  
+                    // Then sort within each group by m_roadTime2 in ascending order
+                    return a.m_roadTime2 - b.m_roadTime2;
+                  });
+                
+            } else {
+                
+                validDirectionIntersections = directionIntersections.filter(x => Math.max(x.m_roadTime2, x.m_roadTime1) > entryTime)
+                validDirectionIntersections.sort((a,b) => {
+                    return a.m_roadTime2 > b.m_roadTime2;
+                })
+            }            
+        } else {
+            directionIntersections = thisRoadIntersections.intersections.filter(int => int.reverse.some(x => Object.keys(x).length > 0));
+            if (thisRoadData.looped) {
+                validDirectionIntersections = directionIntersections.sort((a,b) => {
+                    const aLess = a.m_roadTime1 < entryTime;
+                    const bLess = b.m_roadTime1 < entryTime;
+                    if (aLess && !bLess) return -1;
+                    if (!aLess && bLess) return 1;
+                    return a.m_roadTime1 < b.m_roadTime1;
+                });
+            } else {                
+                validDirectionIntersections = directionIntersections.filter(x => Math.min(x.m_roadTime1, x.m_roadTime2) < entryTime)
+                validDirectionIntersections.sort((a,b) => {
+                    return a.m_roadTime1 < b.m_roadTime1;
+                })
+            }
+        }
+        
+        
+        let depthInc = 1;
+        if (validDirectionIntersections.length == 1) {
+            // this is road with a single intersection, don't count it in the depth.
+            depthInc = 0;
+        }        
+        for (let int in validDirectionIntersections) {
+            if (currentPath.some(pathEntry => pathEntry.intersection?.m_markerId === validDirectionIntersections[int].m_markerId))
+            {
+                //console.log("We've been to this intersection already", intersection)
+                return; // we've been to this intersection already so we went in a circle - abandon the path
+            }            
+            if (forward) {                
+                for (let option of validDirectionIntersections[int].forward) {
+                    let nextPath = [...currentPath]
+                    
+                    if (option.option) {
+                        //debugger
+                        
+                        if (option.option.road == roadId) {
+                            //don't care about options that stay on the road.
+                            continue;
+                        }
+                        if (nextPath.length > 20) {
+                            //debugger
+                        }
+                        if (nextPath.find(x => x.intersection?.m_markerId == validDirectionIntersections[int].m_markerId)) {
+                            //we've been here before...
+                            repeatIntersections ++;
+                            //debugger
+                        }
+                        let lineCrossed = false;
+                        if (entryTime > option.option.exitTime) {
+                            // crossed the 0/1 line
+                            nextPath.push({
+                                roadId: roadId,
+                                forward: forward,
+                                entryTime: entryTime,
+                                exitTime: 1
+                            });
+                            lineCrossed = true;
+                        }
+                        nextPath.push({
+                            roadId: roadId,
+                            forward: forward,
+                            entryTime: lineCrossed ? 0 : entryTime,
+                            exitTime: option.option.exitTime,
+                            passedIntersections: validDirectionIntersections.slice(0, int),
+                            intersection: validDirectionIntersections[int],
+                            option: option.option
+                        });
+                        
+                        
+                        explore(option.option.road, option.option.forward, depth + depthInc, nextPath, thisPathSoFar)
+                    }
+                }
+            } else {                      
+                for (let option of validDirectionIntersections[int].reverse) {
+                    //debugger                    
+                    let nextPath = [...currentPath]
+                    if (option.option) {   
+                        
+                        if (option.option.road == roadId) {
+                            //don't care about options that stay on the road.
+                            continue;
+                        }
+                        if (nextPath.find(x => x.intersection?.m_markerId == validDirectionIntersections[int].m_markerId)) {
+                            //we've been here before...
+                            repeatIntersections++;
+                            //debugger
+                        }
+                        let lineCrossed = false;
+                        if (entryTime < option.option.exitTime) {
+                            // crossed the 0/1 line
+                            nextPath.push({
+                                roadId: roadId,
+                                forward: forward,
+                                entryTime: entryTime,
+                                exitTime: 0
+                            });
+                            lineCrossed = true;
+                        } 
+                        nextPath.push({
+                            roadId: roadId,
+                            forward: forward,
+                            entryTime: lineCrossed ? 1 : entryTime,
+                            exitTime: option.option.exitTime,
+                            passedIntersections: validDirectionIntersections.slice(0, int),
+                            intersection: validDirectionIntersections[int],
+                            option: option.option
+                        });
+                        
+                        explore(option.option.road, option.option.forward, depth + depthInc, nextPath, thisPathSoFar)
+                    }
+                }
+            }
+        }
+    } 
+    let shortestDistance = Infinity 
+    if (!sameRoad)  {
+        const startRoadData = allRoads.find(x => x.id == startRoad)
+        const roadIntersections = intersections.find(int => int.id === startRoad);
+        let directionIntersections = [];
+        let validDirectionIntersections = [];
+        if (startDirection) {
+            directionIntersections = roadIntersections.intersections.filter(intersection => intersection.forward.some(item => Object.keys(item).length > 0));
+            if (startRoadData.looped) {            
+                validDirectionIntersections = directionIntersections.sort((a,b) => {
+                    const aGreater = a.m_roadTime1 > startRP;
+                    const bGreater = b.m_roadTime1 > startRP;
+                    if (aGreater && !bGreater) return -1;
+                    if (!aGreater && bGreater) return 1;
+                    return a.m_roadTime1 > b.m_roadTime1;
+                });
+            } else {
+                validDirectionIntersections = directionIntersections.filter(x => x.m_roadTime2 > startRP)
+                validDirectionIntersections.sort((a,b) => {
+                    return a.m_roadTime2 > b.m_roadTime2
+                })
+            }
+        } else {
+            directionIntersections = roadIntersections.intersections.filter(intersection => intersection.reverse.some(item => Object.keys(item).length > 0));
+            if (startRoadData.looped) {            
+                validDirectionIntersections = directionIntersections.sort((a,b) => {
+                    const aLess = a.m_roadTime1 < startRP;
+                    const bLess = b.m_roadTime1 < startRP;
+                    if (aLess && !bLess) return -1;
+                    if (!aLess && bLess) return 1;
+                    return a.m_roadTime1 < b.m_roadTime1;
+                });
+            } else {
+                validDirectionIntersections = directionIntersections.filter(x => x.m_roadTime1 < startRP)
+                validDirectionIntersections.sort((a,b) => {
+                    return a.m_roadTime1 < b.m_roadTime1
+                })
+            }
+        }
+        if (startRoad == 1) {
+            //debugger
+        }
+        //debugger
+        //for (let intersection of validDirectionIntersections) {
+        for (let int in validDirectionIntersections) {
+            if (startDirection) {
+                for (let option of validDirectionIntersections[int].forward) {
+                    let startPath = [];
+                    //TODO - check if crossing 0/1 line
+                    
+                    if (option.option) {
+                        if (option.option.road == startRoad) {
+                            continue
+                        }
+                        //TODO - make sure this is a known road (ie. not a running road)
+                        let lineCrossed = false;
+                        if (startRP > option.option.exitTime) {
+                            // we have to cross the 0/1 line to get to this intersection
+                            startPath.push({
+                                roadId: startRoad,
+                                forward: startDirection,
+                                entryTime: startRP,
+                                exitTime: 1
+                            });
+                            lineCrossed = true;
+                        }
+                        //debugger
+                        startPath.push({
+                            roadId: startRoad,
+                            forward: startDirection,
+                            entryTime: lineCrossed ? 0 : startRP,
+                            exitTime: option.option.exitTime,
+                            passedIntersections: validDirectionIntersections.slice(0, int),
+                            intersection: validDirectionIntersections[int],
+                            option: option.option
+                        })
+                        
+                        explore(option.option.road, option.option.forward, 0, startPath, thisPathSoFar)
+                    }
+                    //debugger
+                }
+            } else {
+                for (let option of validDirectionIntersections[int].reverse) {
+                    let startPath = [];
+                    //TODO - check if crossing 0/1 line
+                    if (option.option) {
+                        
+                        if (option.option.road == startRoad) {
+                            continue
+                        }
+                        //debugger
+                        let lineCrossed = false;
+                        if (startRP < option.option.exitTime) {
+                            // we have to cross the 0/1 line to get to this intersection
+                            startPath.push({
+                                roadId: startRoad,
+                                forward: startDirection,
+                                entryTime: startRP,
+                                exitTime: 0
+                            });
+                            lineCrossed = true;
+                        }
+                        startPath.push({
+                            roadId: startRoad,
+                            forward: startDirection,
+                            entryTime: lineCrossed ? 1 : startRP,
+                            exitTime: option.option.exitTime,
+                            passedIntersections: validDirectionIntersections.slice(0, int),
+                            intersection: validDirectionIntersections[int],
+                            option: option.option
+                        })
+                        //debugger
+                        
+                        explore(option.option.road, option.option.forward, 0, startPath, thisPathSoFar)
+                    }
+                    //debugger
+                    
+                }
+            }
+            
+        }
+        //debugger
+        shortestDistance = Infinity;
+        //console.log("allPaths", allPaths)
+        //console.log("Least number of hops", leastHops)
+        //debugger
+        const s = Date.now();
+        for (let thisPath of allPaths) {
+            if (thisPath.find(x => x.intersection?.m_markerId == 1190003)) {
+                console.log("Ignoring path with m_markerId 1190003")
+                continue;
+            }
+            let pathLength = 0;
+            for (let section of thisPath) {
+                const thisLength = measureRoadSectionV2(section, courseId, allRoads);
+                if (isNaN(thisLength)) {
+                    console.log("Length is NaN!", section)
+                } else {
+                    pathLength += thisLength
+                }
+            }
+            if (pathLength < shortestDistance) {
+                shortestDistance = pathLength;
+                path = thisPath;
+            }
+        }
+        //path = allPaths[2]
+        //console.log(`Found the shortest path in ${Date.now() - s}ms`)
+        const timeSpentFindingPaths = Date.now() - t;
+        //console.log(`Found ${allPaths.length} possible paths in ${Date.now() - t}ms.  The shortest one was ${shortestDistance}`)
+        //console.log(`Encountered ${repeatIntersections} repeated intersections`)
+        //console.log(`Abandoned ${pathsTooLong} for being longer than a previously found path`)
+        //console.log(`Abandoned ${tooManyHops} for too many hops`)
+        //console.log(`Abandoned ${pathsOver25k} paths exceeding ${maxLength / 1000}k`)
+        //console.log(`Spent ${timeSpentMeasuring}ms measuring validPaths`)
+        if (!stats.init) {
+            stats.allPaths = allPaths.length,
+            stats.shortestDistance = shortestDistance,
+            stats.pathsTooLong = pathsTooLong,
+            stats.tooManyHops = tooManyHops,
+            stats.exceedMaxLength = pathsOver25k,
+            stats.timeSpentMeasuring = timeSpentMeasuring,
+            stats.timeSpentFindingPaths = timeSpentFindingPaths,
+            stats.init = true
+            //console.log("Recorded stats", stats)
+        }
+        /*
+        if (showDebugStats) {
+            const debugStatsDiv = document.getElementById("debugStats");
+            debugStatsDiv.innerHTML = "";
+            let output = `Found ${allPaths.length} possible paths in ${Date.now() - t}ms.<br>The shortest one was ${parseInt(shortestDistance)}m<br>`            
+            output += "Abandoned:<br>"
+            output += `- ${pathsTooLong} longer than a previous path<br>`
+            output += `- ${tooManyHops} for too many hops<br>`
+            output += `- ${pathsOver25k} paths exceeding ${maxLength / 1000}k<br>`
+            output += `Spent ${timeSpentMeasuring}ms measuring validPaths`
+            debugStatsDiv.innerHTML = output;
+        }
+        */
+        //debugger
+    } else {
+        //debugger
+        console.log("Target road is the same as the start road", startPoint, endPoint, startDirection)
+        const roadData = allRoads.find(x => x.id == startPoint.roadId)
+        if (roadData.looped) {
+                if (startDirection) {
+                    if (startPoint.rp > endPoint.rp) {
+                        // crossed the 0/1 line
+                        path.push({
+                            entryTime: startPoint.rp,
+                            exitTime: 1,
+                            forward: startDirection,
+                            roadId: startPoint.roadId,
+                            passedIntersections: getPassedIntersections(startPoint.roadId, startDirection, startPoint.rp, 1, intersections, allRoads)
+                        },
+                        {
+                            entryTime: 0,
+                            exitTime: endPoint.rp,
+                            forward: startDirection,
+                            roadId: startPoint.roadId,
+                            passedIntersections: getPassedIntersections(startPoint.roadId, startDirection, 0, endPoint.rp, intersections, allRoads)
+                        })
+                    } else {
+                        path.push({
+                            entryTime: startPoint.rp,
+                            exitTime: endPoint.rp,
+                            forward: startDirection,
+                            roadId: startPoint.roadId,
+                            passedIntersections: getPassedIntersections(startPoint.roadId, startDirection, startPoint.rp, endPoint.rp, intersections, allRoads)
+                        })
+                    }
+                } else {
+                    if (startPoint.rp < endPoint.rp) {
+                        // crossed the 0/1 line
+                        path.push({
+                            entryTime: startPoint.rp,
+                            exitTime: 0,
+                            forward: startDirection,
+                            roadId: startPoint.roadId,
+                            passedIntersections: getPassedIntersections(startPoint.roadId, startDirection, startPoint.rp, 0, intersections, allRoads)
+                        },
+                        {
+                            entryTime: 1,
+                            exitTime: endPoint.rp,
+                            forward: startDirection,
+                            roadId: startPoint.roadId,
+                            passedIntersections: getPassedIntersections(startPoint.roadId, startDirection, 1, endPoint.rp, intersections, allRoads)
+                        })
+                    } else {
+                        path.push({
+                            entryTime: startPoint.rp,
+                            exitTime: endPoint.rp,
+                            forward: startDirection,
+                            roadId: startPoint.roadId,
+                            passedIntersections: getPassedIntersections(startPoint.roadId, startDirection, startPoint.rp, endPoint.rp, intersections, allRoads)
+                        })
+                    }
+                }
+        } else {            
+            path.push({
+                entryTime: startPoint.rp,
+                exitTime: endPoint.rp,
+                forward: startDirection,
+                roadId: startPoint.roadId,
+                passedIntersections: getPassedIntersections(startPoint.roadId, startDirection, startPoint.rp, endPoint.rp, intersections, allRoads)
+            })
+        }
+    }
+    //debugger
+    let bestPath = {};
+    if (path) {
+        found = true;
+        bestPath.path = path;
+        bestPath.distance = shortestDistance;
+        bestPath.manifest = [];
+        path.forEach(road => {
+            const m = {
+                start: road.forward ? road.entryTime : road.exitTime,
+                end: road.forward ? road.exitTime : road.entryTime,
+                reverse: !road.forward,
+                roadId: road.roadId
+            }
+            if (m.start > m.end) {
+                debugger
+            }
+            bestPath.manifest.push(m);
+        })
+    }
+    //const bestPathIntersections = await getManifestIntersections(bestPath.manifest, courseId)
+    //bestPath.testIntersections = bestPathIntersections;
+    //console.log("bestPathIntersections", bestPathIntersections)
+    if (found) {
+        return {
+            bestPath: bestPath,
+            stats: stats, 
+            allPaths: allPaths
+        }
+    } else {
+        return {
+            bestPath: null,
+            stats: stats
+        }
+    }
+    //return found ? bestPath : null;
+
+}
+export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, options={}) {
+    const t = Date.now();
+    const maxDepth = options.maxDepthOverride || options.maxHops || 6;
+    const maxLength = options.maxDistance || 15000;
+    let shortestPathSoFar = Infinity;
+    let stats = {};
+    let allPaths = [];
+    let leastHops = Infinity;
+    let pathsTooLong = 0;
+    let tooManyHops = 0;
+    let pathsOverMaxDistance = 0;
+    let timeSpentMeasuring = 0;        
+    const startRoad = courseRoads[startPoint.roadId];
+    const endRoad = courseRoads[endPoint.roadId];
+    const epsilon = 1e-9;    
+    const startingIntersections = findValidIntersections(startPoint, startRoad);
+    let exploreNeeded = true;
+    const noEndPointDirection = 'reverse' in endPoint ? false : true;
+    console.log("startPoint", startPoint, "endPoint", endPoint)
+    if (startPoint.roadId == endPoint.roadId && (noEndPointDirection || endPoint.reverse == startPoint.reverse)) {
+        if (startPoint.reverse) {
+            if (startRoad.looped) {
+                if (endPoint.rp < startPoint.rp && endPoint.rp >= startingIntersections[0].m_roadTime1) { //we are on the same road and no intersections to pass through to get to the endPoint
+                    exploreNeeded = false;
+                };
+                if (endPoint.rp < startPoint.rp) {
+                    const startDist = startRoad.curvePath.distanceBetweenRoadPercents(endPoint.rp, startPoint.rp, 4e-2) / 100;
+                    allPaths.push({
+                        distance: startDist,
+                        manifest: [{
+                            start: endPoint.rp,
+                            end: startPoint.rp,
+                            reverse: startPoint.reverse,
+                            roadId: startPoint.roadId
+                        }]
+                    });
+                } else {
+                    const initPath = [{
+                        start: 0,
+                        end: startPoint.rp,
+                        reverse: true,
+                        roadId: startPoint.roadId
+                    },
+                    {
+                        start: endPoint.rp,
+                        end: 1,
+                        reverse: true,
+                        roadId: startPoint.roadId
+                    }];
+                    const startDist = startRoad.curvePath.distanceBetweenRoadPercents(initPath[0].start, initPath[0].end, 4e-2) / 100 + 
+                                        startRoad.curvePath.distanceBetweenRoadPercents(initPath[1].start, initPath[1].end, 4e-2) / 100;
+                    allPaths.push({
+                        distance: startDist,
+                        manifest: initPath
+                    });
+                }
+            } else {
+                if (endPoint.rp < startPoint.rp && endPoint.rp >= startingIntersections[0].m_roadTime1) { //we are on the same road and no intersections to pass through to get to the endPoint
+                    exploreNeeded = false;
+                };
+                if (endPoint.rp < startPoint.rp) {
+                    const startDist = startRoad.curvePath.distanceBetweenRoadPercents(endPoint.rp, startPoint.rp, 4e-2) / 100;
+                    allPaths.push({
+                        distance: startDist,
+                        manifest: [{
+                            start: endPoint.rp,
+                            end: startPoint.rp,
+                            reverse: startPoint.reverse,
+                            roadId: startPoint.roadId
+                        }]
+                    });
+                };
+            }
+            
+        } else {
+            if (startRoad.looped) {
+                if (endPoint.rp > startPoint.rp && endPoint.rp <= startingIntersections[0].m_roadTime2) { //we are on the same road and no intersections to pass through to get to the endPoint
+                    //this might need an additional check for 0/1 line
+                    exploreNeeded = false;
+                }
+                if (endPoint.rp > startPoint.rp) {
+                    const startDist = startRoad.curvePath.distanceBetweenRoadPercents(startPoint.rp, endPoint.rp, 4e-2) / 100;
+                    allPaths.push({
+                        distance: startDist,
+                        manifest: [{
+                            start: startPoint.rp,
+                            end: endPoint.rp,
+                            reverse: startPoint.reverse,
+                            roadId: startPoint.roadId
+                        }]
+                    });
+                } else {
+                    const initPath = [{
+                        start: startPoint.rp,
+                        end: 1,
+                        reverse: false,
+                        roadId: startPoint.roadId
+                    },
+                    {
+                        start: 0,
+                        end: endPoint.rp,
+                        reverse: false,
+                        roadId: startPoint.roadId
+                    }];
+                    const startDist = startRoad.curvePath.distanceBetweenRoadPercents(initPath[0].start, initPath[0].end, 4e-2) / 100 + 
+                                        startRoad.curvePath.distanceBetweenRoadPercents(initPath[1].start, initPath[1].end, 4e-2) / 100;
+                    allPaths.push({
+                        distance: startDist,
+                        manifest: initPath
+                    });
+                    
+                };
+            } else {
+                if (endPoint.rp > startPoint.rp && endPoint.rp <= startingIntersections[0].m_roadTime2) { //we are on the same road and no intersections to pass through to get to the endPoint
+                    exploreNeeded = false;
+                }
+                if (endPoint.rp > startPoint.rp) {
+                    const startDist = startRoad.curvePath.distanceBetweenRoadPercents(startPoint.rp, endPoint.rp, 4e-2) / 100;
+                    allPaths.push({
+                        distance: startDist,
+                        manifest: [{
+                            start: startPoint.rp,
+                            end: endPoint.rp,
+                            reverse: startPoint.reverse,
+                            roadId: startPoint.roadId
+                        }]
+                    });
+                };
+            };
+        };
+    }
+    
+    if (exploreNeeded) { //we didn't encounter a situation where it's the same road and no intersections to traverse
+        const dir = startPoint.reverse ? "reverse" : "forward";
+        for (let intersection of startingIntersections) {            
+            for (let option of intersection[dir]) {
+                if (option.option.road != startPoint.roadId) {
+                    let startPath;
+                    let startDist = 0;
+                    if (startRoad.looped && (!startPoint.reverse && startPoint.rp > intersection.m_roadTime2 || 
+                                        startPoint.reverse && startPoint.rp < intersection.m_roadTime1)) {
+                        startPath = [{
+                            start: startPoint.reverse ? 0 : startPoint.rp,
+                            end: startPoint.reverse ? startPoint.rp : 1,
+                            reverse: startPoint.reverse,
+                            roadId: startPoint.roadId
+                        },
+                        {
+                            start: startPoint.reverse ? intersection.m_roadTime1 : 0,
+                            end: startPoint.reverse ? 1 : intersection.m_roadTime2,
+                            reverse: startPoint.reverse,
+                            roadId: startPoint.roadId
+                        }];
+                        
+                        startDist = startRoad.curvePath.distanceBetweenRoadPercents(startPath[0].start, startPath[0].end, 4e-2) / 100 +
+                                                startRoad.curvePath.distanceBetweenRoadPercents(startPath[1].start, startPath[1].end, 4e-2) / 100;
+                        
+                    } else {
+                        startPath = [{
+                            start: startPoint.reverse ? intersection.m_roadTime1 : startPoint.rp,
+                            end: startPoint.reverse ? startPoint.rp : intersection.m_roadTime2,
+                            reverse: startPoint.reverse,
+                            roadId: startPoint.roadId
+                        }];
+                        if (startPath[0].end < startPath[0].start) {
+                            debugger
+                        }
+                        startDist = startRoad.curvePath.distanceBetweenRoadPercents(startPath[0].start, startPath[0].end, 4e-2) / 100;
+                    }
+                    const optionRoad = courseRoads[option.option.road];
+                    if (optionRoad) {
+                        const entryPoint = {
+                            roadId: option.option.road,
+                            rp: option.option.entryTime,
+                            reverse: !option.option.forward
+                        }
+                        
+                        explore(optionRoad, 0, startPath, startDist, entryPoint)
+                    } else {
+                        console.warn("Invalid road", option.option.road)
+                    }
+                }
+            }
+        }
+    }
+    function explore(road, depth, currentPath, thisPathSoFar, entryPoint) {
+        if (courseId == 6 && (road.id == 97 || road.id == 137) && endPoint.roadId != 135) {
+            //don't go into Repack Rush unless explicitly clicking on the road for it
+            return;
+        }
+        const validIntersections = findValidIntersections(entryPoint, road);
+        if (entryPoint.roadId == endPoint.roadId && (noEndPointDirection || entryPoint.reverse == endPoint.reverse)) {
+            if (entryPoint.reverse) { 
+                if (road.looped) {
+                    if (endPoint.rp < entryPoint.rp) {                        
+                        currentPath.push({
+                            start: endPoint.rp,
+                            end: entryPoint.rp,
+                            reverse: entryPoint.reverse,
+                            roadId: entryPoint.roadId
+                        }); 
+                        const thisPathDistance = road.curvePath.distanceBetweenRoadPercents(endPoint.rp, entryPoint.rp, 4e-2) / 100;
+                        const totalPath = thisPathSoFar + thisPathDistance;
+                        if (totalPath < shortestPathSoFar) {
+                            shortestPathSoFar = totalPath;
+                        }
+                        allPaths.push({
+                            distance: totalPath,
+                            manifest: currentPath
+                        })
+                    } else {
+                        const initPath = [{
+                            start: 0,
+                            end: entryPoint.rp,
+                            reverse: true,
+                            roadId: entryPoint.roadId
+                        },
+                        {
+                            start: endPoint.rp,
+                            end: 1,
+                            reverse: true,
+                            roadId: entryPoint.roadId
+                        }];
+                        const thisPathDistance = road.curvePath.distanceBetweenRoadPercents(initPath[0].start, initPath[0].end, 4e-2) / 100 + 
+                                        road.curvePath.distanceBetweenRoadPercents(initPath[1].start, initPath[1].end, 4e-2) / 100;
+                        const totalPath = thisPathSoFar + thisPathDistance;
+                        currentPath.push(initPath[0]);
+                        currentPath.push(initPath[1]);
+                        allPaths.push({
+                            distance: totalPath,
+                            manifest: currentPath
+                        });
+                    };
+                } else {
+                    if (road.singleIntersection || !road.looped) {
+                        //check for safe targets
+                        if (endPoint.rp < road.safeTargets.reverse.start + epsilon) {
+                            console.warn(`Unsafe reverse target RP, adjusting from ${endPoint.rp} to ${road.safeTargets.reverse.start + epsilon}`, road.safeTargets.reverse)
+                            endPoint.rp = road.safeTargets.reverse.start + epsilon;
+                        } else if (endPoint.rp > road.safeTargets.reverse.end - epsilon) {
+                            console.warn(`Unsafe reverse target RP, adjusting from ${endPoint.rp} to ${road.safeTargets.reverse.end - epsilon}`, road.safeTargets.reverse)
+                            endPoint.rp = road.safeTargets.reverse.end - epsilon;
+                        };
+                    } 
+                    if (endPoint.rp < entryPoint.rp) {
+                        currentPath.push({
+                            start: endPoint.rp,
+                            end: entryPoint.rp,
+                            reverse: entryPoint.reverse,
+                            roadId: entryPoint.roadId
+                        });                    
+                        const thisPathDistance = road.curvePath.distanceBetweenRoadPercents(currentPath.at(-1).start, currentPath.at(-1).end, 4e-2) / 100;
+                        const totalPath = thisPathSoFar + thisPathDistance;
+                        if (totalPath < shortestPathSoFar) {
+                            shortestPathSoFar = totalPath;
+                        };
+                        allPaths.push({
+                            distance: totalPath,
+                            manifest: currentPath
+                        });
+                    }
+                    if (endPoint.rp < entryPoint.rp && endPoint.rp >= validIntersections[0]?.m_roadTime1) {
+                        return;
+                    };
+                }
+            } else {
+                if (road.looped) {
+                    if (endPoint.rp > entryPoint.rp) {                        
+                        currentPath.push({
+                            start: entryPoint.rp,
+                            end: endPoint.rp,
+                            reverse: false,
+                            roadId: entryPoint.roadId
+                        });
+                        const thisPathDistance = road.curvePath.distanceBetweenRoadPercents(entryPoint.rp, endPoint.rp, 4e-2) / 100;
+                        const totalPath = thisPathSoFar + thisPathDistance;
+                        if (totalPath < shortestPathSoFar) {
+                            shortestPathSoFar = totalPath;
+                        };
+                        allPaths.push({
+                            distance: totalPath,
+                            manifest: currentPath
+                        });
+                    } else {
+                        const initPath = [{
+                            start: entryPoint.rp,
+                            end: 1,
+                            reverse: false,
+                            roadId: entryPoint.roadId
+                        },
+                        {
+                            start: 0,
+                            end: endPoint.rp,
+                            reverse: false,
+                            roadId: entryPoint.roadId
+                        }];
+                        const thisPathDistance = road.curvePath.distanceBetweenRoadPercents(initPath[0].start, initPath[0].end, 4e-2) / 100 + 
+                                            road.curvePath.distanceBetweenRoadPercents(initPath[1].start, initPath[1].end, 4e-2) / 100;
+                        const totalPath = thisPathSoFar + thisPathDistance;
+                        if (totalPath < shortestPathSoFar) {
+                            shortestPathSoFar = totalPath;
+                        };
+                        currentPath.push(initPath[0]);
+                        currentPath.push(initPath[1]);
+                        allPaths.push({
+                            distance: totalPath,
+                            manifest: currentPath
+                        });
+                    }
+                } else {
+                    if (road.singleIntersection) {
+                        //check for safe targets
+                        if (endPoint.rp < road.safeTargets.forward.start + epsilon) {
+                            console.warn(`Unsafe forward target RP, adjusting from ${endPoint.rp} to ${road.safeTargets.forward.start + epsilon}`, road.safeTargets.forward)
+                            endPoint.rp = road.safeTargets.forward.start + epsilon;
+                        } else if (endPoint.rp > road.safeTargets.forward.end - epsilon) {
+                            console.warn(`Unsafe forward target RP, adjusting from ${endPoint.rp} to ${road.safeTargets.forward.end - epsilon}`, road.safeTargets.forward)
+                            endPoint.rp = road.safeTargets.forward.end - epsilon;
+                        };
+                    }
+                    if (endPoint.rp > entryPoint.rp) {
+                        currentPath.push({
+                            start: entryPoint.rp,
+                            end: endPoint.rp,
+                            reverse: false,
+                            roadId: entryPoint.roadId
+                        });
+                        const thisPathDistance = road.curvePath.distanceBetweenRoadPercents(entryPoint.rp, endPoint.rp, 4e-2) / 100;
+                        const totalPath = thisPathSoFar + thisPathDistance;
+                        if (totalPath < shortestPathSoFar) {
+                            shortestPathSoFar = totalPath;
+                        };
+                        allPaths.push({
+                            distance: totalPath,
+                            manifest: currentPath
+                        });
+                    }
+                    if (endPoint.rp > entryPoint.rp && endPoint.rp <= validIntersections[0]?.m_roadTime2) {
+                        return;
+                    };
+                }         
+            };         
+        }
+        if (thisPathSoFar >= maxLength) {
+            pathsOverMaxDistance++;
+            return;
+        }
+        if (depth > maxDepth) {
+            tooManyHops++;
+            return;
+        }
+        if (thisPathSoFar > shortestPathSoFar) {
+            pathsTooLong++;
+            return;
+        }
+        if (Date.now() - t > 5000) {
+            return;
+        }
+        const dir = entryPoint.reverse ? "reverse" : "forward";
+        for (let intersection of validIntersections) {            
+            for (let option of intersection[dir]) {
+                if (option.option.road != entryPoint.roadId) {
+                    let thisPathDistance = 0;
+                    const nextPath = [...currentPath];
+                    if (road.looped && (!entryPoint.reverse && entryPoint.rp > intersection.m_roadTime2 || 
+                                        entryPoint.reverse && entryPoint.rp < intersection.m_roadTime1)) {
+                        const thisPath = [{
+                            start: entryPoint.reverse ? 0 : entryPoint.rp,
+                            end: entryPoint.reverse ? entryPoint.rp : 1,
+                            reverse: entryPoint.reverse,
+                            roadId: entryPoint.roadId
+                        },
+                        {
+                            start: entryPoint.reverse ? intersection.m_roadTime1 : 0,
+                            end: entryPoint.reverse ? 1 : intersection.m_roadTime2,
+                            reverse: entryPoint.reverse,
+                            roadId: entryPoint.roadId
+                        }];
+                        
+                        thisPathDistance = road.curvePath.distanceBetweenRoadPercents(thisPath[0].start, thisPath[0].end, 4e-2) / 100 +
+                                                road.curvePath.distanceBetweenRoadPercents(thisPath[1].start, thisPath[1].end, 4e-2) / 100;
+                        nextPath.push(thisPath[0]);
+                        nextPath.push(thisPath[1]);
+                    } else {
+                        const thisPath = {
+                            start: entryPoint.reverse ? intersection.m_roadTime1 : entryPoint.rp,
+                            end: entryPoint.reverse ? entryPoint.rp : intersection.m_roadTime2,
+                            reverse: entryPoint.reverse,
+                            roadId: entryPoint.roadId
+                        };
+                        if (thisPath.end <= thisPath.start) {
+                            debugger
+                        }
+                        thisPathDistance = road.curvePath.distanceBetweenRoadPercents(thisPath.start, thisPath.end, 4e-2) / 100;                    
+                        nextPath.push(thisPath);
+                    }
+                    const optionRoad = courseRoads[option.option.road];
+                    if (optionRoad) {
+                        const nextEntryPoint = {
+                            roadId: option.option.road,
+                            rp: option.option.entryTime,
+                            reverse: !option.option.forward
+                        };
+                        const depthInc = road.singleIntersection ? 0 : 1;
+                        explore(optionRoad, depth + depthInc, nextPath, thisPathSoFar + thisPathDistance, nextEntryPoint)
+                    } else {
+                        console.warn("Invalid road", option.option.road);
+                    };
+                };
+            };
+        };
+    };
+    for (let path of allPaths) {
+        let distance = 0;
+        for (let m of path.manifest) {
+            distance += courseRoads[m.roadId].curvePath.distanceBetweenRoadPercents(m.start, m.end, 4e-2) / 100;
+        }
+        path.distance = distance;
+    }
+    allPaths.sort((a,b) => a.distance - b.distance);
+    const shortestPath = allPaths[0]?.distance || null;
+    stats = {
+        allPaths: allPaths.length,
+        shortestDistance: shortestPath,
+        pathsTooLong: pathsTooLong,
+        tooManyHops: tooManyHops,
+        exceedMaxLength: pathsOverMaxDistance,
+        timeSpentFindingPaths: Date.now() - t
+    }
+    const results = {
+               allPaths: allPaths,
+               stats: stats
+           };
+    console.log("Results", results);
+    return results;
+}
+function findNextIntersection(intersections, rp, reverse, looped) {
+    let result;
+
+    if (reverse) {
+    for (let i = intersections.length - 1; i >= 0; i--) {
+        if (intersections[i].reverseValidForCycling && intersections[i].m_roadTime1 < rp) {
+            result = intersections[i];
+            break;
+        }
+    }
+    if (!result && looped) {        
+        for (let i = intersections.length - 1; i >= 0; i--) {
+            if (intersections[i].reverseValidForCycling) { //find the last intersection on the road that is valid for cycling
+                result = intersections[i];
+                break;
+            }
+        }
+    }
+    } else {
+
+    result = intersections.find(x => x.m_roadTime2 > rp && x.forwardValidForCycling);
+    if (!result && looped) {
+        result = intersections.find(x => x.forwardValidForCycling);
+    }
+    }
+
+    return result || [];
+}
+function findValidIntersections(startPoint, road) {
+    let validIntersections;
+    if (road.intersections.length == 1) {
+        return road.intersections;
+    }
+    if (startPoint.reverse) {
+        if (road.looped) {
+            const ahead = road.intersections.filter(x => x.m_roadTime1 < startPoint.rp && x.reverseValidForCycling);
+            const behind = road.intersections.filter(x => x.m_roadTime1 >= startPoint.rp && x.reverseValidForCycling);
+            validIntersections = [...ahead.reverse(), ...behind.reverse()];
+        } else {
+            const ahead = road.intersections.filter(x => x.m_roadTime1 < startPoint.rp && x.reverseValidForCycling);
+            validIntersections = [...ahead.reverse()];
+        }
+
+    } else {
+        if (road.looped) {
+            const ahead = road.intersections.filter(x => x.m_roadTime2 > startPoint.rp && x.forwardValidForCycling);
+            const behind = road.intersections.filter(x => x.m_roadTime2 <= startPoint.rp && x.forwardValidForCycling);
+            validIntersections = [...ahead, ...behind];
+        } else {
+            validIntersections = road.intersections.filter(x => x.m_roadTime2 > startPoint.rp && x.forwardValidForCycling);
+        }
+    }
+    return validIntersections || [];
 }
 
 function getPassedIntersections(roadId, forward, entryTime, targetRP, intersections, allRoads) {
@@ -4444,9 +5669,11 @@ export async function buildRouteData(route, courseId) {
     
     const worldList = await common.getWorldList();
     const worldMeta = worldList.find(x => x.courseId === courseId);
-    //debugger
+    const courseRoads = await common.getRoads(courseId);
+    route.manifest = mergeManifest(route.manifest);
     for (const [i, x] of route.manifest.entries()) {
-        const road = await common.getRoad(courseId, x.roadId);
+        //const road = await common.getRoad(courseId, x.roadId);
+        const road = courseRoads.find(road => road.id == x.roadId)
         const seg = road.curvePath.subpathAtRoadPercents(x.start, x.end);
         const segDist = (road.curvePath.distanceBetweenRoadPercents(x.start, x.end, 4e-2)) / 100;
         route.manifestDistances.push({
@@ -4463,7 +5690,8 @@ export async function buildRouteData(route, courseId) {
         for (const xx of seg.nodes) {
             xx.index = i;
         }
-        route.roadSegments.push(seg);
+        route.roadSegments.push(seg);      
+        
         route.curvePath.extend(x.reverse ? seg.toReversed() : seg);
     }
     Object.assign(route, common.supplimentPath(worldMeta, route.curvePath));
@@ -4472,6 +5700,7 @@ export async function buildRouteData(route, courseId) {
 function getNextIntersection(roadId, forward, start, end, allRoads, intersections) {
     const thisRoadData = allRoads.find(x => x.id == roadId)
     const thisRoadIntersections = intersections.find(int => int.id === roadId)
+    
     if (!thisRoadIntersections.intersections) {
         //we hit a dead end
         return;
@@ -4489,7 +5718,14 @@ function getNextIntersection(roadId, forward, start, end, allRoads, intersection
                 return a.m_roadTime1 > b.m_roadTime1;
             });
         } else {
-            validDirectionIntersections = directionIntersections.filter(x => x.m_roadTime2 > start && x.m_roadTime2 < end)
+            //validDirectionIntersections = directionIntersections.filter(x => x.m_roadTime2 > start && x.m_roadTime2 < end)
+            validDirectionIntersections = directionIntersections.filter(x => {
+                if (x.m_roadTime1 < x.m_roadTime2) { //occasionally m_roadTime2 is less than m_roadTime1
+                    return x.m_roadTime2 > start && x.m_roadTime2 < end;
+                } else {
+                    return x.m_roadTime1 > start && x.m_roadTime1 < end;
+                }
+            });
             validDirectionIntersections.sort((a,b) => {
                 return a.m_roadTime2 > b.m_roadTime2
             })
@@ -4505,15 +5741,22 @@ function getNextIntersection(roadId, forward, start, end, allRoads, intersection
                 return a.m_roadTime1 < b.m_roadTime1;
             });
         } else {                
-            validDirectionIntersections = directionIntersections.filter(x => x.m_roadTime1 < start && x.m_roadTime1 > end)
+            //validDirectionIntersections = directionIntersections.filter(x => x.m_roadTime1 < start && x.m_roadTime1 > end)
+            validDirectionIntersections = directionIntersections.filter(x => {
+                if (x.m_roadTime1 < x.m_roadTime2) {//occasionally m_roadTime2 is less than m_roadTime1
+                    return x.m_roadTime1 > start && x.m_roadTime1 < end;
+                } else {
+                    return x.m_roadTime2 > start && x.m_roadTime2 < end;
+                }
+            });
             validDirectionIntersections.sort((a,b) => {
                 return a.m_roadTime1 < b.m_roadTime1
             })
         }
     }
-    if (roadId == 185) {
-           //debugger
-        }
+    if (roadId == 13 && forward) {
+        //debugger
+    }
     const nextIntersection = validDirectionIntersections.length > 0 ? validDirectionIntersections[0] : [];
     if (nextIntersection.length == 0) {
         //debugger
@@ -4525,6 +5768,9 @@ export function mergeManifest(entries) {
 
     for (let i = 0; i < entries.length; i++) {
         const current = entries[i];
+        if (!current) {
+            continue
+        }
         const last = merged[merged.length - 1];
 
         if (
@@ -4572,7 +5818,9 @@ export async function getManifestIntersections(manifest, courseId) {
                 : a.m_roadTime2 - b.m_roadTime2;
         });
         if (manifestIntersections.length > 1) {
-            //debugger
+            if (m.roadId == 230) {
+                console.log("manifestIntersections", manifestIntersections)
+            }
             for (let j = 0; j < manifestIntersections.length - 1; j++) {                
                 const dir = m.reverse ? "reverse" : "forward";
                 let cyclingRoadOptions = 0;
@@ -4602,7 +5850,9 @@ export async function getManifestIntersections(manifest, courseId) {
                     }
                     intersectionList.push(manifestEntry)
                 }
-                //debugger
+                if (m.roadId == 230) {
+                    console.log(j, "intersectionList", intersectionList)
+                }
             }
             const dir = m.reverse ? "reverse" : "forward";
             let cyclingRoadOptions = 0;
@@ -4610,6 +5860,10 @@ export async function getManifestIntersections(manifest, courseId) {
                 if (allCyclingRoads.find(x => x.id == opt.option.road)) { //some intersections have only one cycling option (others are run only)
                     cyclingRoadOptions++;
                 }
+            }
+            if (m.roadId == 230) {
+                console.log("this manifest", manifest[i])
+                console.log("next manifest roadid", manifest[i + 1]?.roadId, "in", manifestIntersections.at(-1).reverse)
             }
             const lastManifestOption = m.reverse ? 
                 manifestIntersections.at(-1).reverse.find(opt => opt.option.road == manifest[i + 1]?.roadId) :
@@ -4625,7 +5879,9 @@ export async function getManifestIntersections(manifest, courseId) {
                 }
                 intersectionList.push(manifestEntry)
             }
-            //debugger
+            if (m.roadId == 230) {
+                console.log("lastManifestoption", lastManifestOption, "intersectionList", intersectionList)
+            }
         } else if (manifestIntersections.length > 0) {
             const dir = m.reverse ? "reverse" : "forward";
             let cyclingRoadOptions = 0;
@@ -4636,19 +5892,23 @@ export async function getManifestIntersections(manifest, courseId) {
             }
             if (manifestIntersections[0].m_markerId == 0) {
                 //debugger
-            }
+            }            
             if (cyclingRoadOptions <= 1) {
                 //console.log(`ignoring ${dir} intersection`, manifestIntersections.at(-1))
             } else if (manifestIntersections.at(-1)[dir].length == 1 && cyclingRoadOptions <= 1) {
                 //console.log(`ignoring ${dir} intersection`, manifestIntersections.at(-1))
             } else {
                 const manifestIdx = manifest[i + 1] ? i + 1 : i;
+                if (m.roadId == 230) {
+                    console.log("manifestIdx", manifestIdx, "next roadId", manifest[manifestIdx].roadId, "manifestIntersections", manifestIntersections)
+                }
                 const lastManifestOption = m.reverse ? 
                     manifestIntersections.at(-1).reverse.find(opt => opt.option.road == manifest[manifestIdx].roadId) :
                     manifestIntersections.at(-1).forward.find(opt => opt.option.road == manifest[manifestIdx].roadId);
                 
                 if (lastManifestOption) {
                     const manifestEntry = {
+                        //roadExit: m.roadId == manifest[manifestIdx].roadId ? false : true,
                         roadExit: true,
                         m_markerId: manifestIntersections.at(-1).m_markerId,
                         m_roadId: manifestIntersections.at(-1).m_roadId,
@@ -4781,4 +6041,829 @@ export function calculateBearing(p1, p2) {
   const reverse = Number(((forward + 180) % 360).toFixed(3));
   
   return { forward, reverse };
+}
+
+export function latlngToRoad(lat, lon, courseId, worldMeta, courseRoads) {
+    /*
+    if (!worldMeta) {
+        const worldList = await common.getWorldList();
+        worldMeta = worldList.find(x => x.courseId == courseId);
+    }
+    if (!courseRoads) {
+        courseRoads = await common.getRoads(courseId);
+    } 
+    */   
+    const pos = worldMeta.flippedHack ? [
+            (lat - worldMeta.latOffset) * worldMeta.latDegDist * 100,
+            (lon - worldMeta.lonOffset) * worldMeta.lonDegDist * 100
+        ] : [
+            (lon - worldMeta.lonOffset) * worldMeta.lonDegDist * 100,
+            -(lat - worldMeta.latOffset) * worldMeta.latDegDist * 100
+        ];
+    const possibleRoads = [];
+    for (let road of courseRoads) {
+        const points = road.path;
+        let minX = Infinity, maxX = -Infinity;
+        let minY = Infinity, maxY = -Infinity;
+        let minZ = Infinity, maxZ = -Infinity;
+
+        for (const p of points) {
+            const [x, y, z] = p;
+
+            minX = Math.min(minX, x);
+            maxX = Math.max(maxX, x);
+            minY = Math.min(minY, y);
+            maxY = Math.max(maxY, y);
+            minZ = Math.min(minZ, z);
+            maxZ = Math.max(maxZ, z);
+        }
+        const bounds = { minX, maxX, minY, maxY, minZ, maxZ };
+        const x = pos[0];
+        const y = pos[1];        
+        if (x >= bounds.minX && x <= bounds.maxX && y >= bounds.minY && y <= bounds.maxY) {
+            possibleRoads.push(road);
+        }
+    }
+    let nearestPoints = [];
+    
+    for (let road of possibleRoads) {  
+        let thisRoadNearestPoint;
+        let minDistance = Infinity;
+        if (road.distances.at(-1) < 750) {
+            //console.log("ignoring short road", road)     
+            continue; 
+        }
+        const steps = 2500;
+        const points = [];
+        const step = 1 / (steps - 1);
+        for (let i = 0; i < steps; i++) {
+            points.push(i * step);
+        }
+        let i = 0;
+        for (let t of points) {
+            const point2 = road.curvePath.pointAtRoadPercent(t);
+            const dx = point2[0] - pos[0]; 
+            const dy = point2[1] - pos[1]; 
+            //const dz = point2[2] - points[2]; //ignoring altitute.... maybe dumb
+
+            // Use the Euclidean distance formula
+            //const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < minDistance) {
+                minDistance = distance;
+                thisRoadNearestPoint = {
+                    roadId: road.id,
+                    point: point2,
+                    rp: t,
+                    distance: distance,
+                    i: i
+                }
+            }
+            i++;
+        }
+        if (thisRoadNearestPoint.distance < 1000) {
+            nearestPoints.push(thisRoadNearestPoint);
+        }
+    }
+    return nearestPoints;
+    /*
+    if (nearestPoint.distance < 1000) {
+        return nearestPoint;
+    } else {
+        console.log("nearestPoint too far away", nearestPoint)
+        return null;
+    }
+    */
+    
+}
+export function pointToRoad(point, worldMeta, courseRoads) {
+    let lat = point.lat;
+    let lon = point.lng;
+    const pos = worldMeta.flippedHack ? [
+            (lat - worldMeta.latOffset) * worldMeta.latDegDist * 100,
+            (lon - worldMeta.lonOffset) * worldMeta.lonDegDist * 100,
+            altitudeToZ(worldMeta, point.altitude)
+        ] : [
+            (lon - worldMeta.lonOffset) * worldMeta.lonDegDist * 100,
+            -(lat - worldMeta.latOffset) * worldMeta.latDegDist * 100,
+            altitudeToZ(worldMeta, point.altitude)
+        ];
+    
+    const possibleRoads = [];
+    for (let road of courseRoads) {
+        if (worldMeta.courseId == 8 && (road.id == 10 || road.id == 11 || road.id == 12 || road.id == 13)) {
+            continue;
+        }
+        const points = road.path;
+        let minX = Infinity, maxX = -Infinity;
+        let minY = Infinity, maxY = -Infinity;
+        let minZ = Infinity, maxZ = -Infinity;
+
+        for (const p of points) {
+            const [x, y, z] = p;
+
+            minX = Math.min(minX, x);
+            maxX = Math.max(maxX, x);
+            minY = Math.min(minY, y);
+            maxY = Math.max(maxY, y);
+            minZ = Math.min(minZ, z);
+            maxZ = Math.max(maxZ, z);
+        }
+        const bounds = { minX, maxX, minY, maxY, minZ, maxZ };
+        const x = pos[0];
+        const y = pos[1];        
+        if (x >= bounds.minX && x <= bounds.maxX && y >= bounds.minY && y <= bounds.maxY) {
+            possibleRoads.push(road);
+        }
+    }
+    //console.log("possibleRoads", possibleRoads)
+    let nearestPoints = [];
+    
+    for (let road of possibleRoads) { 
+        if (road.distances.at(-1) < 750) {
+            //continue; //ignore short roads, the routing later will pick them up
+        }
+        const thisRoadNearestPoint = roadPercentAtPointLinear(pos, road);
+        if (thisRoadNearestPoint.distance < 1000) {
+            nearestPoints.push(thisRoadNearestPoint);
+        }
+    }
+    return nearestPoints;
+    /*
+    if (nearestPoint.distance < 1000) {
+        return nearestPoint;
+    } else {
+        console.log("nearestPoint too far away", nearestPoint)
+        return null;
+    }
+    */
+    
+}
+export function importSauceCSV(csvData) {
+    const requiredFields = ['distance', 'lat', 'lng', 'altitude'];
+  
+    const lines = csvData
+        .trim()
+        .split(/\r?\n/)
+        .filter(l => l.trim() !== '');
+
+    if (lines.length < 2) {
+        throw new Error('CSV must contain a header row and at least one data row.');
+    }
+
+    const headers = lines[0]
+        .split(',')
+        .map(h => h.trim()
+            .toLowerCase()
+            .replace(/\s+/g, '_')
+        );
+
+    
+    const missing = requiredFields.filter(f => !headers.includes(f));
+    if (missing.length) {
+        throw new Error(`Missing required columns: ${missing.join(', ')}`);
+    }
+
+    
+    const indexByHeader = Object.fromEntries(
+        headers.map((h, i) => [h, i])
+    );
+    
+    const data = lines.slice(1).map((line, rowIdx) => {
+        const values = line.split(',').map(v => v.trim());
+
+        const row = {};
+        for (const field of requiredFields) {
+        const raw = values[indexByHeader[field]];
+        const num = Number(raw);
+
+        if (!Number.isFinite(num)) {
+            throw new Error(
+            `Invalid numeric value for "${field}" on row ${rowIdx + 2}`
+            );
+        }
+
+        row[field] = num;
+        }
+
+        return row;
+    });
+
+    return data;
+}
+export function getKmPts(data) {
+    const startDistance = data[0].distance;
+    const maxDistance = data.at(-1).distance;
+    const kmMarkers = [];
+    for (let i = startDistance;i < maxDistance;i = i + 50) {
+        const m = data.find(x => x.distance > i);
+        kmMarkers.push(m);
+    }
+    return kmMarkers;
+}
+export function summarizeRdPtsv1(rdPts) {
+    const result = [];
+    let current = null;
+
+    for (const group of rdPts) {
+    // Ignore anything that does not contain exactly one object
+    if (!Array.isArray(group) || group.length !== 1) {
+        continue;
+    }
+
+    const { roadId, rp } = group[0];
+
+    if (!current || current.roadId !== roadId) {
+        // Finish previous segment
+        if (current) {
+        result.push(current);
+        }
+
+        // Start a new segment
+        current = {
+        roadId,
+        start: rp,
+        end: rp
+        };
+    } else {
+        // Extend current segment
+        current.end = rp;
+    }
+    }
+
+    // Finalize last segment
+    if (current) {
+    result.push(current);
+    }
+    const manifest = [];
+    for (let r of result) {
+        if (r.start <= r.end) {
+            manifest.push({
+                roadId: r.roadId,
+                reverse: false,
+                start: r.start,
+                end: r.end
+            })
+        } else {
+            manifest.push({
+                roadId: r.roadId,
+                reverse: true,
+                start: r.end,
+                end: r.start
+            })
+        }
+    }
+    const results = {
+        manifest: manifest,
+        raw: result
+    }
+    return results;
+}
+export function summarizeRdPts(rdPts, courseId, allCyclingRoads, onlyUnique=false) {
+    const result = [];
+    let current = null;
+    let lastRp = null;
+    if (onlyUnique) {
+        rdPts = rdPts.filter(x => x.length == 1);
+    }
+
+    for (const group of rdPts) {
+    // Ignore anything that does not contain exactly one object
+    if (!Array.isArray(group) || group.length == 0) {
+        continue;
+    }
+    let roadId;
+    let rp;
+
+    if (group.length > 1) {
+        //const lastRoad = result.at(-1);
+        if (current) {
+            const sameRoad = group.find(x => x.roadId == current.roadId);
+            if (sameRoad) {
+                //debugger
+                if (courseId == 6 && sameRoad.roadId == 24 && sameRoad.rp > 0.884) { // ugly Volcano hack to ensure we get off the road at the top for the loop around
+                    const otherRoad = group.find(x => x.roadId != 24);
+                    if (otherRoad) {
+                        roadId = otherRoad.roadId;
+                        rp = otherRoad.rp;
+                    } else {
+                        // this shouldn't happen but just in case
+                        console.log("This shouldn't happen - weird happenings on the Volcano!", group)
+                        roadId = sameRoad.roadId;
+                        rp = sameRoad.rp;
+                    }
+                } else {
+                    roadId = sameRoad.roadId;
+                    rp = sameRoad.rp;
+                }
+                //debugger
+            } else {
+                const minDist = group.reduce((min, item) => {
+                    return item.distance < min.distance ? item : min;
+                });
+                if (minDist) {
+                    roadId = minDist.roadId;
+                    rp = minDist.rp;
+                }
+            }
+        } else {
+            continue;
+        }
+    } else {
+        roadId = group[0].roadId;
+        rp = group[0].rp
+    }
+
+    //const { roadId, rp } = group[0];
+
+    if (!current) {
+        current = { roadId, start: rp, end: rp };
+        lastRp = rp;
+        continue;
+    }
+
+    const sameRoad = current.roadId === roadId;
+    const delta = rp - lastRp;
+
+    // Detect wrap-around while staying on same road
+    const ascendingWrap = sameRoad && delta < -0.5;
+    const descendingWrap = sameRoad && delta > 0.5;
+    if (group[0].roadId == 24 && group.length == 1) {
+        //debugger
+    }
+    if (!sameRoad || ascendingWrap || descendingWrap) {
+        // Close out current segment
+        if (ascendingWrap) {
+        //debugger
+        //current.end = 1;
+        } else if (descendingWrap) {
+        //debugger
+        //current.end = 0;
+        }
+        result.push(current);
+        // Start new segment
+        current = {
+        roadId,
+        start: rp,
+        end: rp
+        };
+    } else {
+        // Extend current segment
+        current.end = rp;
+    }
+
+    lastRp = rp;
+    }
+    //debugger
+    // Finalize last segment
+    if (current) {
+    result.push(current);
+    }
+
+    const manifest = [];
+    for (let r of result) {
+        if (r.start >= 0 && r.end >= 0 && r.roadId >= 0) {
+            if (r.start <= r.end) {
+                manifest.push({
+                    roadId: r.roadId,
+                    reverse: false,
+                    start: r.start,
+                    end: r.end
+                })
+            } else {
+                manifest.push({
+                    roadId: r.roadId,
+                    reverse: true,
+                    start: r.end,
+                    end: r.start
+                })
+            }
+        }
+    }
+    const sanitizedManifest = [];
+    for (let i = 0; i < manifest.length - 1; i++) {
+        const m = manifest[i];
+        const mRoad = allCyclingRoads.find(x => x.id == m.roadId);
+        if (mRoad.singleIntersection) {
+            const nextManifest = manifest[i + 1];      
+            //todo - also check if it's plausible to get from previous road to this one    
+            if (mRoad.id == 161)  {
+                //debugger
+            }
+            let plausibleRoad;
+            if (m.reverse) {
+                plausibleRoad = mRoad.intersections.find(x => x.reverse.find(y => y.option.road == nextManifest.roadId));
+            } else {
+                plausibleRoad = mRoad.intersections.find(x => x.forward.find(y => y.option.road == nextManifest.roadId));
+            }
+            if (plausibleRoad) {
+                sanitizedManifest.push(m);
+            }
+        } else {
+            sanitizedManifest.push(m);
+        }
+    }
+    sanitizedManifest.push(manifest.at(-1));
+    //debugger
+    const results = {
+        manifest: sanitizedManifest,
+        raw: result
+    }
+    return results;
+}
+
+export function altitudeToZ(worldMeta, altitude, { physicsSlopeScale } = {}) {
+    const scale = physicsSlopeScale || worldMeta?.physicsSlopeScale || 1;
+    const seaLevel = worldMeta?.seaLevel || 0;
+    const elOffset = worldMeta?.eleOffset || 0;
+    return altitude * 100 / scale + seaLevel - elOffset;
+}
+
+export function roadPercentAtPointLinear(targetPoint, road, epsilon=0.0001) {
+    let closestPercent = 0;
+    let closestDistance = Infinity;
+    let closestPoint;
+    let i = 1;
+    for (let rp = 0; rp <= 1; rp += epsilon) {
+        const point = road.curvePath.pointAtRoadPercent(rp);
+        const distance = curves.vecDist(point, targetPoint);
+        if (distance < closestDistance) {
+            closestDistance = distance;
+            closestPercent = rp;
+            closestPoint = point;
+        }
+        i++;
+    }
+    
+    return {
+        roadId: road.id,
+        rp: closestPercent,
+        distance: closestDistance,
+        i: i,
+        point: closestPoint
+    }
+}
+export async function buildCustomManifest(manifestData, intersections, allRoads, courseId) {
+    const manifest = manifestData.manifest;
+    let lastManifestIdx = [];
+    let lastPoint;
+    const newManifest = [];
+    let initOffset = 0;
+    initOffset = (manifest[0].end - manifest[0].start) / 4;
+    //fix this madness in France...
+    if (manifest[0].reverse) {
+        lastPoint = {
+            roadId: manifest[0].roadId,
+            //rp: manifest[0].end,
+            rp: manifest[0].reverse ? manifest[0].end - initOffset : manifest[0].start + initOffset,
+            reverse: true
+        }
+    } else {
+        lastPoint = {
+            roadId: manifest[0].roadId,
+            //rp: manifest[0].start,
+            rp: manifest[0].reverse ? manifest[0].end - initOffset : manifest[0].start + initOffset,
+            reverse: false
+        }
+    }
+    let alternatePath = false;
+    for (let i = 1; i < manifest.length; i++) {
+        const t = Date.now();
+        if (manifest[i].end == manifest[i].start) {
+            continue; // ignore stray manifest points that likely don't make sense
+        }
+        let rpOffset = 0;
+        let nextRp;
+        let usedOffset = false;
+        if (i == manifest.length - 1) {
+            nextRp = manifest[i].reverse ? manifest[i].start : manifest[i].end;
+        } else {
+            // rather than mid point go much closer to exit point
+            rpOffset = (manifest[i].end - manifest[i].start) / 4;
+            nextRp = manifest[i].reverse ? manifest[i].end - rpOffset : manifest[i].start + rpOffset;
+            usedOffset = true;
+        }
+        let nextPoint = {
+            roadId: manifest[i].roadId,
+            rp: nextRp,
+            reverse: manifest[i].reverse
+        }
+        if (courseId == 8 && (nextPoint.roadId == 5 || nextPoint.roadId == 232)) {
+            //need to target the middle of some roads to ensure entryPoint is safe for routing
+            nextPoint.rp = 0.5;
+        }
+        console.log("lastPoint", lastPoint, "nextPoint", nextPoint)
+        if (lastPoint.rp > 1 || nextPoint.rp > 1) {
+            debugger
+        }
+        //debugger
+        if (lastPoint.roadId == 4 && nextPoint.roadId == 5) {
+            //debugger
+        }
+        
+        const path = findPathFromAtoBv6(lastPoint, nextPoint, intersections, allRoads, courseId, true, 2);
+        if (path && path.bestPath?.manifest?.length > 0) {
+            console.log("path", path)
+            if (usedOffset) {                
+                if (path.bestPath.manifest.at(-1).reverse) {
+                    path.bestPath.manifest.at(-1).start = manifest[i].start + rpOffset;
+                } else {
+                    path.bestPath.manifest.at(-1).end = manifest[i].end - rpOffset;
+                }                
+            }
+            for (let m of path.bestPath.manifest) {
+                if (m.start > m.end) {
+                    debugger
+                }
+                newManifest.push(m)
+            }
+            alternatePath = false;
+        } else {
+            console.warn("No path found from", lastPoint, "to", nextPoint)
+            if (!manifest[i - 2]) {
+                debugger
+            }
+            let testPath;
+            let testDirection;
+            const nextPointRoad = allRoads.find(x => x.id == nextPoint.roadId);
+            if (nextPointRoad && nextPointRoad.singleIntersection) {
+                if (manifest[i + 1]) {
+                    rpOffset = (manifest[i + 1].end - manifest[i + 1].start) / 4;
+                    nextRp = manifest[i + 1].reverse ? manifest[i + 1].end - rpOffset : manifest[i + 1].start + rpOffset;
+                    nextPoint = {
+                        roadId: manifest[i + 1].roadId,
+                        rp: nextRp,
+                        reverse: manifest[i + 1].reverse
+                    }
+                console.log("Trying forward one point - lastPoint", lastPoint, "nextPoint", nextPoint)
+                testPath = findPathFromAtoBv6(lastPoint, nextPoint, intersections, allRoads, courseId, true, 2);
+                testDirection = "forward";
+                }
+            } else {
+            
+                const twoPointsBack = {
+                    roadId: manifest[i - 2].roadId,
+                    reverse: manifest[i - 2].reverse,
+                    rp: (manifest[i - 2].start + manifest[i - 2].end) / 2
+                }
+                //debugger
+                console.log("Trying BACK one point - twoPointsBack", twoPointsBack, "nextPoint", nextPoint)
+                testPath = findPathFromAtoBv6(twoPointsBack, nextPoint, intersections, allRoads, courseId, true, 2);
+                testDirection = "reverse";
+            }
+            if (testPath && testPath.bestPath?.manifest?.length > 0) {
+                 
+                //debugger  
+                if (testDirection == "forward") {
+                    //bump forward one manifest entry
+                    i++;
+                } else {
+                    //found a path by rolling back a step
+                    newManifest.length = lastManifestIdx.at(-2); // pull the bad entries off the manifest
+                    if (testPath.bestPath.manifest[0].reverse) {
+                        testPath.bestPath.manifest[0].end  = manifest[i - 2].end;
+                    } else {
+                        testPath.bestPath.manifest[0].start = manifest[i - 2].start;
+                    }
+                    //debugger
+                }
+                for (let m of testPath.bestPath.manifest) {
+                    if (m.start > m.end) {
+                        debugger
+                    }
+                    newManifest.push(m)
+                }
+                
+            alternatePath = true;
+            //debugger
+            }
+        }
+        const manifestEnd = newManifest.at(-1);
+        lastPoint = {
+            roadId: newManifest.at(-1).roadId,
+            rp: manifestEnd.reverse ? manifestEnd.start : manifestEnd.end,
+            reverse: manifestEnd.reverse
+        }
+        //console.log("manifest", manifest, "newManifest", newManifest)
+        if (usedOffset) {
+            //debugger
+        }
+        //debugger
+        lastManifestIdx.push(newManifest.length - 1);
+        console.log(`Last manifest took ${Date.now() - t}ms`)
+    }
+    //debugger
+    const finalManifest = {
+        manifest: newManifest
+    }
+    return finalManifest;
+}
+export function fixBadIntersections(intersections) {
+    if (!intersections) {
+        return null;
+    }
+    for (let road of intersections) {
+        if (road.intersections) {
+            for (let int of road.intersections) {
+                if (int.m_roadTime1 > int.m_roadTime2) { //in rare cases, m_roadTime1 is greater than m_roadTime2 and this causes havoc...
+                    [int.m_roadTime1, int.m_roadTime2] = [int.m_roadTime2, int.m_roadTime1];
+                }
+            }
+        }
+    }
+    return intersections;
+}
+export function getRoadPoints(road) {
+    const roadDistance = parseInt(road.distances.at(-1));
+    const epsilon = 1 / (roadDistance);
+    const points = [];
+    for (let rp = 0; rp <= 1; rp += epsilon) {
+        const point = road.curvePath.pointAtRoadPercent(rp);
+        points.push({
+            rp: rp,
+            point: point
+        })
+    }
+    return points;
+}
+export async function generateRoadData(courseId) {    
+    const worldId = common.courseToWorldIds[courseId]
+    const worldIntersections = await fetch(`data/worlds/${worldId}/roadIntersections.json`).then(response => response.json());
+    const intersections = fixBadIntersections(worldIntersections);
+    const courseRoads = await common.getRoads(courseId);
+    const allCyclingRoads = courseRoads.filter(x => x.sports.includes("cycling"));
+    const singleIntersectionRoads = intersections.filter(road => road.intersections?.length <= 2 && road.intersections?.every(int => int.forward?.length <= 1 && int.reverse?.length <= 1))
+    const epsilon = 1e-6;
+    for (let road of allCyclingRoads) {
+        road.points = getRoadPoints(road);
+        road.entryPoints = [];
+        road.safeTargets = {
+            reverse: {
+                start: 0,
+                end: 1
+            },
+            forward: {
+                start: 0,
+                end: 1
+            }
+        };
+    }
+    for (let road of allCyclingRoads) {
+        const singleIntersection = singleIntersectionRoads.find(x => x.id == road.id);
+        road.singleIntersection = singleIntersection ? true : false;
+        const thisRoadIntersections = intersections.find(x => x.id == road.id);
+        if (thisRoadIntersections) {
+            thisRoadIntersections.intersections?.sort((a,b) => a.m_roadTime1 - b.m_roadTime2);
+            if (thisRoadIntersections && thisRoadIntersections.intersections) {
+                for (let int of thisRoadIntersections.intersections) {
+                    let forwardCyclingOptions = 0;
+                    let reverseCyclingOptions = 0;
+                    for (let option of int.forward) {
+                        if (option.option.road != road.id) {
+                            const nextRoad = allCyclingRoads.find(x => x.id == option.option.road);
+                            if (nextRoad) {
+                                let minDistance = Infinity;
+                                let nearestPoint;
+                                let entryTime;
+                                for (let point of nextRoad.points) {
+                                    const exitPoint = road.curvePath.pointAtRoadPercent(option.option.exitTime);
+                                    const distance = curves.vecDist(exitPoint, point.point);
+                                    if (distance < minDistance) {
+                                        minDistance = distance;
+                                        nearestPoint = point.point;
+                                        entryTime = point.rp;
+                                    }
+                                }
+                                option.option.entryTime = entryTime;
+                                nextRoad.entryPoints.push({
+                                    entryTime: entryTime,
+                                    reverse: !option.option.forward
+                                });
+                                option.option.cycling = true;
+                                forwardCyclingOptions++;
+                            } else {
+                                option.option.cycling = false;
+                            }
+                        } else {
+                            option.option.cycling = true;
+                            forwardCyclingOptions++;
+                        }
+                    }
+                    for (let option of int.reverse) {
+                        if (option.option.road != road.id) {
+                            const nextRoad = allCyclingRoads.find(x => x.id == option.option.road);
+                            if (nextRoad) {
+                                let minDistance = Infinity;
+                                let nearestPoint;
+                                let entryTime;
+                                for (let point of nextRoad.points) {
+                                    const exitPoint = road.curvePath.pointAtRoadPercent(option.option.exitTime);
+                                    const distance = curves.vecDist(exitPoint, point.point);
+                                    if (distance < minDistance) {
+                                        minDistance = distance;
+                                        nearestPoint = point.point;
+                                        entryTime = point.rp;
+                                    }
+                                }
+                                option.option.entryTime = entryTime;
+                                nextRoad.entryPoints.push({
+                                    entryTime: entryTime,
+                                    reverse: !option.option.forward
+                                });
+                                option.option.cycling = true;
+                                reverseCyclingOptions++;
+                            } else {
+                                option.option.cycling = false;
+                            }
+                        } else {
+                            reverseCyclingOptions++;
+                            option.option.cycling = true;
+                        }
+                    }
+                    int.forwardValidForCycling = road.singleIntersection || (forwardCyclingOptions > 1 && int.m_roadTime1 != int.m_roadTime2);
+                    int.reverseValidForCycling = road.singleIntersection || (reverseCyclingOptions > 1 && int.m_roadTime1 != int.m_roadTime2);
+                }
+                if (!road.looped && 
+                    !thisRoadIntersections.intersections.at(-1).forwardValidForCycling && 
+                    thisRoadIntersections.intersections.at(-1).forward.length == 1 &&
+                    thisRoadIntersections.intersections.at(-1).forward[0].option.cycling && 
+                    thisRoadIntersections.intersections.at(-1).forward[0].option.road != road.id
+                ) { //long complicated way to say that the last intersection on a non looped road is a single exit to another cycling road
+                    thisRoadIntersections.intersections.at(-1).forwardValidForCycling = true;
+                }
+                if (!road.looped && 
+                    !thisRoadIntersections.intersections[0].reverseValidForCycling && 
+                    thisRoadIntersections.intersections[0].reverse.length == 1 &&
+                    thisRoadIntersections.intersections[0].reverse[0].option.cycling && 
+                    thisRoadIntersections.intersections[0].reverse[0].option.road != road.id
+                ) { //long complicated way to say that the last intersection on a non looped road is a single exit to another cycling road
+                    thisRoadIntersections.intersections[0].reverseValidForCycling = true;
+                }
+            }
+            road.intersections = thisRoadIntersections.intersections || [];
+        } else {
+            road.intersections = [];
+        }
+        if (courseId == 8 && (road.id == 249 || road.id == 250)) {//incorrectly marked roads as paddocks in NY
+            thisRoadIntersections.roadIsPaddock = false;
+        }
+        road.roadIsPaddock = thisRoadIntersections.roadIsPaddock || false;
+        
+        
+    };
+    for (let road of allCyclingRoads) {
+        //now process safe entry targets
+        if (road.singleIntersection) {            
+            const forwardEntry = road.entryPoints.filter(x => !x.reverse);
+            if (forwardEntry.length > 0) {
+                forwardEntry.sort((a,b) => a.entryTime - b.entryTime);
+                road.safeTargets.forward.start = forwardEntry[0].entryTime + epsilon;
+                road.safeTargets.forward.end = road.intersections[0].m_roadTime2 - epsilon;
+            };
+            const reverseEntry = road.entryPoints.filter(x => x.reverse);
+            if (reverseEntry.length > 0) {
+                reverseEntry.sort((a,b) => b.entryTime - a.entryTime);
+                road.safeTargets.reverse.end = reverseEntry[0].entryTime - epsilon;
+                road.safeTargets.reverse.start = road.intersections[0].m_roadTime1 + epsilon;
+            };            
+        } else if (!road.looped) {
+            const validForwardIntersections = road.intersections.filter(x => x.forwardValidForCycling);
+            const validReverseIntersections = road.intersections.filter(x => x.reverseValidForCycling);
+            const forwardEntryPoints = road.entryPoints.filter(x => !x.reverse);
+            forwardEntryPoints.sort((a,b) => a.entryTime - b.entryTime);
+            const reverseEntryPoints = road.entryPoints.filter(x => x.reverse);
+            reverseEntryPoints.sort((a,b) => b.entryTime - a.entryTime);
+            if (validForwardIntersections.length > 0) {
+                if (forwardEntryPoints.length > 1) {
+                    const first = forwardEntryPoints[0];
+                    const second = forwardEntryPoints[1];
+                    if (second.entryTime < validForwardIntersections[0].m_roadTime1) {
+                        road.safeTargets.forward.start = second.entryTime + epsilon;
+                    } else {
+                        road.safeTargets.forward.start = first.entryTime + epsilon;
+                    };                    
+                } else {
+                    road.safeTargets.forward.start = forwardEntryPoints[0]?.entryTime + epsilon || 0;
+                };
+                road.safeTargets.forward.end = validForwardIntersections.at(-1).m_roadTime2 - epsilon;
+            };
+            if (validReverseIntersections.length > 0) {
+                if (reverseEntryPoints.length > 1) {
+                    const first = reverseEntryPoints[0];
+                    const second = reverseEntryPoints[1];
+                    if (second.entryTime > validReverseIntersections.at(-1).m_roadTime2) {
+                        road.safeTargets.reverse.end = second.entryTime - epsilon;
+                    } else {
+                        road.safeTargets.reverse.end = first.entryTime - epsilon;
+                    }
+                } else {
+                    road.safeTargets.reverse.end = reverseEntryPoints[0]?.entryTime - epsilon || 1;
+                };
+                road.safeTargets.reverse.start = validReverseIntersections[0].m_roadTime1 + epsilon;
+            };
+        };
+    }
+    allCyclingRoads.sort((a,b) => a.id - b.id);
+    const allCyclingRoadsById = Object.fromEntries(allCyclingRoads.map(x => [x.id, x]));
+    return allCyclingRoadsById;    
 }
