@@ -40,7 +40,8 @@ common.settingsStore.setDefault({
     minSegmentLength: 100,
     showFunFacts: true,
     maxHops: 6,
-    maxDistance: 15000
+    maxDistance: 15000,
+    maxOptions: 5
 });
 
 let settings = common.settingsStore.get();
@@ -55,6 +56,7 @@ const routeSetupInfo = document.getElementById('routeSetupInfo');
 const routeSetupContent = document.getElementById('routeSetupContent');
 const routeSetupClose = document.getElementById('routeSetupClose');
 const funFactsDiv = document.getElementById("funFacts");
+const customRouteStepsDiv = document.getElementById("customRouteSteps");
 if (routeSetupClose) {
     routeSetupClose.addEventListener('click', (e) => {
     if (e.target === routeSetupClose) {
@@ -214,7 +216,7 @@ let intersections;
 let badIntersections = [1190003]
 let avoidRepackRush = settings.avoidRepackRush !== false;
 //let showDebugStats = settings.showDebugStats !== false;
-
+let alternateRouteChosen = false;
 function qualityScale(raw) {
     raw = raw || 1;
     const min = 0.2;
@@ -432,6 +434,7 @@ async function getPath(nextTarget) {
     let startPoint;
     if (!customRouteSteps.manifest) {
         customRouteSteps.manifest = [];
+        customRouteSteps.distances = [];
         startPoint = {
             roadId: startingSpawnPoint.roadId,
             reverse: startingSpawnPoint.reverse,
@@ -452,6 +455,8 @@ async function getPath(nextTarget) {
     }
     let paths = zen.findPathFromAtoBv7(startPoint, nextTarget, courseRoads, courseId, options);
     let shortestPath = paths.allPaths[0];
+    const maxOptions = settings.maxOptions || 5;
+    const pathOptions = paths.allPaths.slice(0,maxOptions);
     let stats = paths.stats;
     //console.log("stats", stats)
     if (settings.showFunFacts) {
@@ -470,45 +475,122 @@ async function getPath(nextTarget) {
     }
     if (shortestPath) {
         customRouteSteps.manifest.push(shortestPath.manifest);
-        await applyRoutev4();
+        customRouteSteps.distances.push(shortestPath.distance);
+        await applyRoutev4(pathOptions);
     } else {
+        if (customRouteSteps.manifest.length == 0) {
+            delete customRouteSteps.manifest;
+        }
         console.log("No route found")
         alert(`Unable to find a path to that point.  It could be too far away or an unreachable road.`)
     }
 }
-async function applyRoutev4() {
+async function applyRoutev4(pathOptions) {
     history.replaceState({}, '', url);
     while (_routeHighlights.length) {
         _routeHighlights.pop().elements.forEach(x => x.remove());
     }
-    const routeManifest = {
-        manifest: []
-    };
-    for (let manifestStep of customRouteSteps.manifest) {
-        for (let m of manifestStep) {
-            routeManifest.manifest.push(m);
+    if (customRouteSteps?.manifest?.length > 0) {
+        const routeManifest = {
+            manifest: []
+        };
+        for (let manifestStep of customRouteSteps.manifest) {
+            for (let m of manifestStep) {
+                routeManifest.manifest.push(m);
+            }
         }
+        routeData = await zen.buildRouteData(routeManifest, courseId);
+        const routeElevation = zen.calcElevationGain(routeData.elevations)
+        distanceSelect.value = parseInt(routeData.distances.at(-1));
+        elevationSelect.value = parseInt(routeElevation)
+        elProfile.sectionRouteData = routeData;
+        elProfile.routeId = 999999999;
+        
+        await elProfile.setRoute(999999999);
+        let path;
+        path = routeData.curvePath;
+        
+        _routeHighlights.push(
+            zwiftMap.addHighlightPath(path, `route-3-section`, {width: 0.5, color: 'red'}),
+        );
+        let stepOptions = "<table id='stepOptionsTable'>";
+        for (let i = 0; i < customRouteSteps.manifest.length; i++) { 
+            const distance = customRouteSteps.distances[i];
+            const pathDistance = distance >= 1000 ? `${parseFloat(distance / 1000).toFixed(1)}km` : `${parseInt(distance)}m`;
+            stepOptions += `<tr class="wayPoint"><td>Waypoint ${i + 1}</td><td>${pathDistance}</td><td>${i}</td></tr>`;
+        }
+        if (pathOptions) {
+            for (let i = 0; i < pathOptions.length; i++) {
+                const path = pathOptions[i];
+                const pathDistance = path.distance >= 1000 ? `${parseFloat(path.distance / 1000).toFixed(1)}km` : `${parseInt(path.distance)}m`;
+                const selected = i == 0 ? " selected" : "";
+                stepOptions += `<tr class="option${selected}"><td> - Option ${i + 1}</td><td>${pathDistance}</td><td>${i}</td></tr>`;
+            }
+        }
+        stepOptions += "</table>";
+        customRouteStepsDiv.innerHTML = stepOptions;
+        const stepOptionsTableRows = document.querySelectorAll("#stepOptionsTable tbody tr")
+        stepOptionsTableRows.forEach(row => {
+            row.addEventListener("mouseenter", async () => {
+                if (row.className == "option") {
+                    const optionIdx = row.cells[2].innerText;
+                    const optionManifest = pathOptions[optionIdx];
+                    const optionData = await zen.buildRouteData(optionManifest, courseId);
+                    _routeHighlights.push(
+                        zwiftMap.addHighlightPath(optionData.curvePath, 'tmpOptionHighlight', {width: 0.5, color: 'yellow'})
+                    );
+                };
+            });
+            row.addEventListener("mouseleave", () => { 
+                if (!alternateRouteChosen) {
+                    while (_routeHighlights.length) {
+                        _routeHighlights.pop().elements.forEach(x => x.remove());
+                    };
+                    _routeHighlights.push(
+                        zwiftMap.addHighlightPath(path, `route-3-section`, {width: 0.5, color: 'red'}),
+                    );
+                } else {
+                    alternateRouteChosen = false;
+                }
+            });
+            row.addEventListener("click", async () => {
+                if (row.className == "option") {
+                    const currentlySelected = document.querySelectorAll("tr.option.selected");
+                    currentlySelected.forEach(x => x.classList.remove("selected"));
+                    row.classList.add("selected");
+                    const optionIdx = row.cells[2].innerText;
+                    const optionManifest = pathOptions[optionIdx];
+                    customRouteSteps.manifest.pop();
+                    customRouteSteps.manifest.push(optionManifest.manifest);
+                    routeManifest.manifest.length = 0;
+                    for (let manifestStep of customRouteSteps.manifest) {
+                        for (let m of manifestStep) {
+                            routeManifest.manifest.push(m);
+                        }
+                    };
+                    routeData = await zen.buildRouteData(routeManifest, courseId);
+                    const routeElevation = zen.calcElevationGain(routeData.elevations)
+                    distanceSelect.value = parseInt(routeData.distances.at(-1));
+                    elevationSelect.value = parseInt(routeElevation)
+                    elProfile.sectionRouteData = routeData;
+                    elProfile.routeId = 999999999;
+                    
+                    await elProfile.setRoute(999999999);
+                    //let path;
+                    path = routeData.curvePath;
+                    while (_routeHighlights.length) {
+                        _routeHighlights.pop().elements.forEach(x => x.remove());
+                    }
+                    _routeHighlights.push(
+                        zwiftMap.addHighlightPath(path, `route-3-section`, {width: 0.5, color: 'red'}),
+                    );
+                    alternateRouteChosen = true;
+                };
+            });
+        });
+    } else {
+        customRouteStepsDiv.innerHTML = "";
     }
-    //debugger    
-    routeData = await zen.buildRouteData(routeManifest, courseId);
-    //routeData.manifest = zen.mergeManifest(routeData.manifest); // merge any consecutive manifest entries on the same road
-    
-    
-    //console.log("RouteData",routeData)
-    //console.log("customRouteSteps", customRouteSteps)
-    const routeElevation = zen.calcElevationGain(routeData.elevations)
-    distanceSelect.value = parseInt(routeData.distances.at(-1));
-    elevationSelect.value = parseInt(routeElevation)
-    elProfile.sectionRouteData = routeData;
-    elProfile.routeId = 999999999;
-    
-    await elProfile.setRoute(999999999);
-    let path;
-    path = routeData.curvePath;
-    
-    _routeHighlights.push(
-        zwiftMap.addHighlightPath(path, `route-3-section`, {width: 0.5, color: 'red'}),
-    );
 }
 async function applyRouteV3(undo=false) {
     /*
@@ -1023,6 +1105,7 @@ async function resetMap() {
     //setupMap();
     await elProfile.clear()
     infoPanel.innerHTML = "To begin, choose a spawn point by clicking on one of the red arrows.<br><br>Note that some have arrows pointing in both directions, be sure to choose the one facing in the direction that you want to start."
+    customRouteStepsDiv.innerHTML = "";
 }
 export async function main() {
     common.initInteractionListeners();
@@ -1032,23 +1115,12 @@ export async function main() {
     //const publishButton = document.getElementById("publishButton");
     const resetButton = document.getElementById("resetButton")
     undoButton.addEventListener('click', async undo => {
-        customRouteSteps.manifest.pop();
-        await applyRoutev4();
-        //customRouteSteps.pop()
-        //customRouteSteps.at(-1).pathToHere?.pop();
-        
-        //await applyRouteV3(true);
-        //debugger
-    });
-    /*
-    publishButton.addEventListener('click', async publish => {
-        if (routeData.intersections?.length > 0) {
-            //const result = await common.rpc.updateAthleteData('self', {'zenCustomRoute': {'intersections': routeData.intersections, 'manifest': routeData.manifest}})
-            const result = await common.rpc.updateAthleteData('self', {'zenCustomRoute': {'ts': Date.now(), 'courseId': courseId, 'manifest': routeData.manifest}})
-            console.log("publish result", result)
+        customRouteSteps.manifest.pop();  
+        if (customRouteSteps?.manifest?.length == 0) {
+            delete customRouteSteps.manifest;
         }
-    })
-    */
+        await applyRoutev4();        
+    });
     
     resetButton.addEventListener('click', async ev => {
         resetMap();

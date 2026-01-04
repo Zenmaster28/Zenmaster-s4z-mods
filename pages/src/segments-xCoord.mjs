@@ -173,8 +173,10 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
     }
     if (courseId == 14 && allMarkLines.find(x => x.id == "9655158959") && allMarkLines.find(x => x.id == "1034851390")) {
         // rename Ventoux Half KOM to Ventoux KOM when both are present.  As far as I know, this is the only overlapping segment like this.
-        let ventouxHalf = allMarkLines.find(x => x.name == "Ventoux Half KOM");
-        ventouxHalf.name = "Ventoux KOM";
+        const ventouxHalf = allMarkLines.find(x => x.name == "Ventoux Half KOM");
+        if (ventouxHalf) {
+            ventouxHalf.name = "Ventoux KOM";
+        }
     }
     //debugger
     let segmentRepeatCheck = routeSegments.filter(x => x.repeat > 1);
@@ -5095,7 +5097,7 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
     if (startPoint.roadId == endPoint.roadId && (noEndPointDirection || endPoint.reverse == startPoint.reverse)) {
         if (startPoint.reverse) {
             if (startRoad.looped) {
-                if (endPoint.rp < startPoint.rp && endPoint.rp >= startingIntersections[0].m_roadTime1) { //we are on the same road and no intersections to pass through to get to the endPoint
+                if (endPoint.rp < startPoint.rp && endPoint.rp >= startingIntersections[0]?.m_roadTime1) { //we are on the same road and no intersections to pass through to get to the endPoint
                     exploreNeeded = false;
                 };
                 if (endPoint.rp < startPoint.rp) {
@@ -5149,7 +5151,7 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
             
         } else {
             if (startRoad.looped) {
-                if (endPoint.rp > startPoint.rp && endPoint.rp <= startingIntersections[0].m_roadTime2) { //we are on the same road and no intersections to pass through to get to the endPoint
+                if (endPoint.rp > startPoint.rp && endPoint.rp <= startingIntersections[0]?.m_roadTime2) { //we are on the same road and no intersections to pass through to get to the endPoint
                     //this might need an additional check for 0/1 line
                     exploreNeeded = false;
                 }
@@ -5265,10 +5267,11 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
         }
         const validIntersections = findValidIntersections(entryPoint, road);
         if (entryPoint.roadId == endPoint.roadId && (noEndPointDirection || entryPoint.reverse == endPoint.reverse)) {
+            const directPath = [...currentPath];
             if (entryPoint.reverse) { 
                 if (road.looped) {
                     if (endPoint.rp < entryPoint.rp) {                        
-                        currentPath.push({
+                        directPath.push({
                             start: endPoint.rp,
                             end: entryPoint.rp,
                             reverse: entryPoint.reverse,
@@ -5278,11 +5281,11 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
                         const totalPath = thisPathSoFar + thisPathDistance;
                         if (totalPath < shortestPathSoFar) {
                             shortestPathSoFar = totalPath;
-                        }
+                        };
                         allPaths.push({
                             distance: totalPath,
-                            manifest: currentPath
-                        })
+                            manifest: directPath
+                        });
                     } else {
                         const initPath = [{
                             start: 0,
@@ -5299,11 +5302,11 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
                         const thisPathDistance = road.curvePath.distanceBetweenRoadPercents(initPath[0].start, initPath[0].end, 4e-2) / 100 + 
                                         road.curvePath.distanceBetweenRoadPercents(initPath[1].start, initPath[1].end, 4e-2) / 100;
                         const totalPath = thisPathSoFar + thisPathDistance;
-                        currentPath.push(initPath[0]);
-                        currentPath.push(initPath[1]);
+                        directPath.push(initPath[0]);
+                        directPath.push(initPath[1]);
                         allPaths.push({
                             distance: totalPath,
-                            manifest: currentPath
+                            manifest: directPath
                         });
                     };
                 } else {
@@ -5318,20 +5321,20 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
                         };
                     } 
                     if (endPoint.rp < entryPoint.rp) {
-                        currentPath.push({
+                        directPath.push({
                             start: endPoint.rp,
                             end: entryPoint.rp,
                             reverse: entryPoint.reverse,
                             roadId: entryPoint.roadId
                         });                    
-                        const thisPathDistance = road.curvePath.distanceBetweenRoadPercents(currentPath.at(-1).start, currentPath.at(-1).end, 4e-2) / 100;
+                        const thisPathDistance = road.curvePath.distanceBetweenRoadPercents(directPath.at(-1).start, directPath.at(-1).end, 4e-2) / 100;
                         const totalPath = thisPathSoFar + thisPathDistance;
                         if (totalPath < shortestPathSoFar) {
                             shortestPathSoFar = totalPath;
                         };
                         allPaths.push({
                             distance: totalPath,
-                            manifest: currentPath
+                            manifest: directPath
                         });
                     }
                     if (endPoint.rp < entryPoint.rp && endPoint.rp >= validIntersections[0]?.m_roadTime1) {
@@ -5341,7 +5344,7 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
             } else {
                 if (road.looped) {
                     if (endPoint.rp > entryPoint.rp) {                        
-                        currentPath.push({
+                        directPath.push({
                             start: entryPoint.rp,
                             end: endPoint.rp,
                             reverse: false,
@@ -5354,7 +5357,7 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
                         };
                         allPaths.push({
                             distance: totalPath,
-                            manifest: currentPath
+                            manifest: directPath
                         });
                     } else {
                         const initPath = [{
@@ -5375,11 +5378,11 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
                         if (totalPath < shortestPathSoFar) {
                             shortestPathSoFar = totalPath;
                         };
-                        currentPath.push(initPath[0]);
-                        currentPath.push(initPath[1]);
+                        directPath.push(initPath[0]);
+                        directPath.push(initPath[1]);
                         allPaths.push({
                             distance: totalPath,
-                            manifest: currentPath
+                            manifest: directPath
                         });
                     }
                 } else {
@@ -5394,7 +5397,7 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
                         };
                     }
                     if (endPoint.rp > entryPoint.rp) {
-                        currentPath.push({
+                        directPath.push({
                             start: entryPoint.rp,
                             end: endPoint.rp,
                             reverse: false,
@@ -5407,7 +5410,7 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
                         };
                         allPaths.push({
                             distance: totalPath,
-                            manifest: currentPath
+                            manifest: directPath
                         });
                     }
                     if (endPoint.rp > entryPoint.rp && endPoint.rp <= validIntersections[0]?.m_roadTime2) {

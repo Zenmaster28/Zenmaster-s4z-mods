@@ -1,16 +1,25 @@
-#infoPanel {
-  position: absolute;
-  top: 23mm;  
-  right: 0;
+#contentContainer {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+#rightPanel {
+  width: 15%;
   padding: 10px;  
-  width: 20%;
+}
+#infoPanel {  
+  font-size: calc(var(--font-scale) * 0.8em);
+}
+#customRouteSteps {  
+  padding: 10px;
+  width: 15%;
   font-size: calc(var(--font-scale) * 0.8em);
 }
 #funFacts {
   position: absolute;
   bottom: 5px;
   right: 5px;
-  width: 20%;
+  width: 15%;
   font-size: calc(var(--font-scale) * 0.8em);
   padding: 10px;
 }
@@ -75,12 +84,12 @@
   scroll-behavior: smooth;
   overflow: auto;
   font-variant: small-caps tabular-nums;
-  width: 80%;
+  width: 70%;
 }
 #content > .elevation-profile {
-  width: 80%;
-  padding-left: 10px;
-  padding-right: 10px;
+  width: 100%;
+  padding-left: 16%;
+  padding-right: 16%;
 }
 #intersectionsTable {
   width: 100%;
@@ -222,6 +231,24 @@ html.solid-background body {
 #importExportText {
   width: 100%;
   height: 100%;
+}
+#stepOptionsTable tr {
+  width: 100%;
+}
+#stepOptionsTable td:nth-child(1) {
+  text-align: left;
+  width: 75%;
+}
+#stepOptionsTable td:nth-child(2) {
+  text-align: left;
+  width: 25%;
+}
+#stepOptionsTable td:nth-child(3) {
+  display: none;
+}
+#stepOptionsTable tr.selected {
+  background-image: linear-gradient(135deg, hsl(var(--theme-primary-hue) var(--theme-primary-sat) var(--theme-primary-light)/85%), hsl(var(--theme-primary-hue) var(--theme-primary-sat) calc(var(--theme-primary-light) + -10% * var(--theme-primary-shade-dir))/80%));
+  color: hsl(var(--theme-primary-hue) var(--theme-primary-sat) calc(var(--theme-primary-light) + 100% * var(--theme-primary-shade-dir))/100%);
 }
 .hidden {
   display: none;
