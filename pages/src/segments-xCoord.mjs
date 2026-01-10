@@ -2230,7 +2230,9 @@ export async function validateManifest(route) {
     let courseId = route.courseId
     //let originalManifest = JSON.parse(JSON.stringify(routeManifest))
     let allGaps = [];
-    const intersections = await fetch(`data/worlds/${common.courseToWorldIds[courseId]}/roadIntersections.json`).then(response => response.json());
+    const worldList = await common.getWorldList();   
+    const worldId = (worldList.find(x => x.courseId == courseId)).worldId;
+    const intersections = await fetch(`data/worlds/${worldId}/roadIntersections.json`).then(response => response.json());
     const allRoads = await common.getRoads(courseId)
     for (let i = 0; i < routeManifest.length - 1; i++) {
         
@@ -5845,8 +5847,10 @@ export function mergeManifest(entries) {
 export async function getManifestIntersections(manifest, courseId) {
     let intersectionList = [];
     const allRoads = await common.getRoads(courseId);
-    const allCyclingRoads = allRoads.filter(x => x.sports.includes("cycling"))
-    const intersections = await fetch(`data/worlds/${common.courseToWorldIds[courseId]}/roadIntersections.json`).then(response => response.json());
+    const allCyclingRoads = allRoads.filter(x => x.sports.includes("cycling"));
+    const worldList = await common.getWorldList();   
+    const worldId = (worldList.find(x => x.courseId == courseId)).worldId;
+    const intersections = await fetch(`data/worlds/${worldId}/roadIntersections.json`).then(response => response.json());
     //debugger
     let i = 0;
     const epsilon = 1e-9;
