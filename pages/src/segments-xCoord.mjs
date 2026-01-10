@@ -5076,6 +5076,7 @@ export function findPathFromAtoBv6(startPoint, endPoint, intersections, allRoads
 
 }
 export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, options={}) {
+    
     const t = Date.now();
     const maxDepth = options.maxDepthOverride || options.maxHops || 6;
     const maxLength = options.maxDistance || 15000;
@@ -5093,7 +5094,7 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
     const startingIntersections = findValidIntersections(startPoint, startRoad);
     let exploreNeeded = true;
     const noEndPointDirection = 'reverse' in endPoint ? false : true;
-    console.log("startPoint", startPoint, "endPoint", endPoint)
+    //console.log("startPoint", startPoint, "endPoint", endPoint)
     if (startPoint.roadId == endPoint.roadId && (noEndPointDirection || endPoint.reverse == startPoint.reverse)) {
         if (startPoint.reverse) {
             if (startRoad.looped) {
@@ -5270,6 +5271,13 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
             const directPath = [...currentPath];
             if (entryPoint.reverse) { 
                 if (road.looped) {
+                    if (endPoint.rp > entryPoint.rp) {
+                        //check if we entered just beyond the targetRP and need to back up
+                        const testProximity = road.curvePath.distanceBetweenRoadPercents(entryPoint.rp, endPoint.rp, 4e-2) / 100;
+                        if (testProximity <= 100) {
+                            endPoint.rp = entryPoint.rp - epsilon;
+                        };
+                    };
                     if (endPoint.rp < entryPoint.rp) {                        
                         directPath.push({
                             start: endPoint.rp,
@@ -5319,7 +5327,14 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
                             console.warn(`Unsafe reverse target RP, adjusting from ${endPoint.rp} to ${road.safeTargets.reverse.end - epsilon}`, road.safeTargets.reverse)
                             endPoint.rp = road.safeTargets.reverse.end - epsilon;
                         };
-                    } 
+                    };
+                    if (endPoint.rp > entryPoint.rp) {
+                        //check if we entered just beyond the targetRP and need to back up
+                        const testProximity = road.curvePath.distanceBetweenRoadPercents(entryPoint.rp, endPoint.rp, 4e-2) / 100;
+                        if (testProximity <= 100) {
+                            endPoint.rp = entryPoint.rp - epsilon;
+                        };
+                    };
                     if (endPoint.rp < entryPoint.rp) {
                         directPath.push({
                             start: endPoint.rp,
@@ -5343,6 +5358,14 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
                 }
             } else {
                 if (road.looped) {
+                    if (endPoint.rp < entryPoint.rp) {
+                        //check if we entered just beyond the targetRP and need to back up
+                        const testProximity = road.curvePath.distanceBetweenRoadPercents(endPoint.rp, entryPoint.rp, 4e-2) / 100;
+                        if (testProximity <= 100) {
+                            console.warn(`Nudging endPoint.rp from ${endPoint.rp} to ${entryPoint.rp + epsilon} on road ${entryPoint.roadId}`)                            
+                            endPoint.rp = entryPoint.rp + epsilon;
+                        };
+                    };
                     if (endPoint.rp > entryPoint.rp) {                        
                         directPath.push({
                             start: entryPoint.rp,
@@ -5395,7 +5418,14 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
                             console.warn(`Unsafe forward target RP, adjusting from ${endPoint.rp} to ${road.safeTargets.forward.end - epsilon}`, road.safeTargets.forward)
                             endPoint.rp = road.safeTargets.forward.end - epsilon;
                         };
-                    }
+                    };
+                    if (endPoint.rp < entryPoint.rp) {
+                        //check if we entered just beyond the targetRP and need to back up
+                        const testProximity = road.curvePath.distanceBetweenRoadPercents(endPoint.rp, entryPoint.rp, 4e-2) / 100;
+                        if (testProximity <= 100) {
+                            endPoint.rp = entryPoint.rp + epsilon;
+                        };
+                    };
                     if (endPoint.rp > entryPoint.rp) {
                         directPath.push({
                             start: entryPoint.rp,
@@ -5509,33 +5539,47 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
                allPaths: allPaths,
                stats: stats
            };
-    console.log("Results", results);
+    //console.log("Results", results);
     return results;
 }
-function findNextIntersection(intersections, rp, reverse, looped) {
+function findNextIntersection(intersections, rp, reverse, looped, alsoPrevious=false) {
     let result;
 
     if (reverse) {
-    for (let i = intersections.length - 1; i >= 0; i--) {
-        if (intersections[i].reverseValidForCycling && intersections[i].m_roadTime1 < rp) {
-            result = intersections[i];
-            break;
-        }
-    }
-    if (!result && looped) {        
-        for (let i = intersections.length - 1; i >= 0; i--) {
-            if (intersections[i].reverseValidForCycling) { //find the last intersection on the road that is valid for cycling
-                result = intersections[i];
+        const validReverse = intersections.filter(x => x.reverseValidForCycling);
+        for (let i = validReverse.length - 1; i >= 0; i--) {
+            if (validReverse[i].reverseValidForCycling && validReverse[i].m_roadTime1 < rp) {
+                result = alsoPrevious ? {
+                    next: validReverse[i],
+                    previous: validReverse[i + 1] || []
+                } : validReverse[i];
                 break;
             }
         }
-    }
+        if (!result && looped) {        
+            for (let i = validReverse.length - 1; i >= 0; i--) {
+                if (validReverse[i].reverseValidForCycling) { //find the last intersection on the road that is valid for cycling
+                    result = alsoPrevious ? {
+                        next: validReverse[i],
+                        previous: validReverse[i + 1] || []
+                    } : validReverse[i];
+                    break;
+                }
+            }
+        }
     } else {
-
-    result = intersections.find(x => x.m_roadTime2 > rp && x.forwardValidForCycling);
-    if (!result && looped) {
-        result = intersections.find(x => x.forwardValidForCycling);
-    }
+        const validForward = intersections.filter(x => x.forwardValidForCycling);
+        if (alsoPrevious) {
+            const next = validForward.find(x => x.m_roadTime2 > rp) || (looped ? validForward[0] : {});
+            const nextIdx = validForward.indexOf(next);
+            const previous = validForward[nextIdx - 1] || (looped ? validForward.at(-1) : {});
+            result = {
+                next: next,
+                previous: previous
+            }
+        } else {
+            result = intersections.find(x => x.m_roadTime2 > rp && x.forwardValidForCycling);
+        };
     }
 
     return result || [];
@@ -5693,8 +5737,7 @@ export async function buildRouteData(route, courseId) {
         for (const xx of seg.nodes) {
             xx.index = i;
         }
-        route.roadSegments.push(seg);      
-        
+        route.roadSegments.push(seg);   
         route.curvePath.extend(x.reverse ? seg.toReversed() : seg);
     }
     Object.assign(route, common.supplimentPath(worldMeta, route.curvePath));
@@ -6153,8 +6196,12 @@ export function pointToRoad(point, worldMeta, courseRoads) {
         ];
     
     const possibleRoads = [];
-    for (let road of courseRoads) {
+    //for (let road of courseRoads) 
+    for (let road of Object.values(courseRoads)) {
         if (worldMeta.courseId == 8 && (road.id == 10 || road.id == 11 || road.id == 12 || road.id == 13)) {
+            continue;
+        }
+        if (worldMeta.courseId == 13 && road.id ==3) {
             continue;
         }
         const points = road.path;
@@ -6186,6 +6233,7 @@ export function pointToRoad(point, worldMeta, courseRoads) {
         if (road.distances.at(-1) < 750) {
             //continue; //ignore short roads, the routing later will pick them up
         }
+        
         const thisRoadNearestPoint = roadPercentAtPointLinear(pos, road);
         if (thisRoadNearestPoint.distance < 1000) {
             nearestPoints.push(thisRoadNearestPoint);
@@ -6322,7 +6370,7 @@ export function summarizeRdPtsv1(rdPts) {
     }
     return results;
 }
-export function summarizeRdPts(rdPts, courseId, allCyclingRoads, onlyUnique=false) {
+export function summarizeRdPts(rdPts, courseId, courseRoads, onlyUnique=false) {
     const result = [];
     let current = null;
     let lastRp = null;
@@ -6446,7 +6494,8 @@ export function summarizeRdPts(rdPts, courseId, allCyclingRoads, onlyUnique=fals
     const sanitizedManifest = [];
     for (let i = 0; i < manifest.length - 1; i++) {
         const m = manifest[i];
-        const mRoad = allCyclingRoads.find(x => x.id == m.roadId);
+        //const mRoad = allCyclingRoads.find(x => x.id == m.roadId);
+        const mRoad = courseRoads[m.roadId]
         if (mRoad.singleIntersection) {
             const nextManifest = manifest[i + 1];      
             //todo - also check if it's plausible to get from previous road to this one    
@@ -6487,13 +6536,14 @@ export function roadPercentAtPointLinear(targetPoint, road, epsilon=0.0001) {
     let closestDistance = Infinity;
     let closestPoint;
     let i = 1;
-    for (let rp = 0; rp <= 1; rp += epsilon) {
-        const point = road.curvePath.pointAtRoadPercent(rp);
-        const distance = curves.vecDist(point, targetPoint);
+    //for (let rp = 0; rp <= 1; rp += epsilon) {
+    for (let point of road.points) {
+        //const point = road.curvePath.pointAtRoadPercent(rp);
+        const distance = curves.vecDist(point.point, targetPoint);
         if (distance < closestDistance) {
             closestDistance = distance;
-            closestPercent = rp;
-            closestPoint = point;
+            closestPercent = point.rp;
+            closestPoint = point.point;
         }
         i++;
     }
@@ -6506,7 +6556,251 @@ export function roadPercentAtPointLinear(targetPoint, road, epsilon=0.0001) {
         point: closestPoint
     }
 }
-export async function buildCustomManifest(manifestData, intersections, allRoads, courseId) {
+function mergeCloseManifest(first, second, courseRoads) {
+    let merged;
+    const manifest = [];
+    if (first.reverse) {
+        if (courseRoads[first.roadId].looped && first.start < second.end) {
+            first.start = 0;
+            second.end = 1;
+            manifest.push(first);
+            manifest.push(second);
+        } else {
+            const gapDistance = courseRoads[first.roadId].curvePath.distanceBetweenRoadPercents(second.end, first.start, 4e-2) / 100;
+            console.warn(`Distance from road ${first.roadId} start ${second.end}, end ${first.start} is ${gapDistance}`)
+            if (gapDistance < 500) {
+                merged = {
+                    roadId: first.roadId,
+                    reverse: first.reverse,
+                    start: second.start,
+                    end: first.end
+                }
+            } else {
+                //same road with a gap but it's more than 500m?
+                debugger
+            }
+        }
+    } else {
+        if (courseRoads[first.roadId].looped && first.end > second.start) {
+            first.end = 1;
+            second.start = 0;
+            manifest.push(first);
+            manifest.push(second);
+        } else {
+            const gapDistance = courseRoads[first.roadId].curvePath.distanceBetweenRoadPercents(first.end, second.start, 4e-2) / 100;
+            console.warn(`Distance from road ${first.roadId} start ${first.end}, end ${second.start} is ${gapDistance}`)
+            if (gapDistance < 500) {
+                merged = {
+                    roadId: first.roadId,
+                    reverse: first.reverse,
+                    start: first.start,
+                    end: second.end
+                }
+            } else {
+                //same road with a gap but it's more than 500m?
+                debugger
+            }
+        }
+    }
+    if (merged) {
+        manifest.push(merged);
+    } else if (manifest.length == 0){
+        //nothing merged even though same road and direction
+        debugger
+    }
+    return manifest;
+}
+export function buildCustomManifestv2(manifestData, courseRoads, courseId) {
+    if (manifestData.manifest.length <= 1) {
+        return manifestData;
+    }
+    const manifest = [];
+    const initManifest = manifestData.manifest.filter(x => x.end != x.start); // pull out stray points that don't make sense    
+    for (let i = 0; i < initManifest.length; i++) {
+        const first = initManifest[i];
+        const second = initManifest[i + 1];
+        const third = initManifest[i + 2];
+        if (!second) {
+            manifest.push(initManifest[i]);
+            continue;
+        }
+        //if (courseId == 13 && first.roadId == 3) { // ignore the weird little roundabout road in Makuri at the entrance to Neokyo
+        //    continue;
+        //}
+        if (first.roadId == second.roadId && first.reverse == second.reverse) {
+            const initMerged = mergeCloseManifest(first, second, courseRoads);
+            if (third && third.roadId == initMerged.at(-1).roadId && third.reverse == initMerged.at(-1).reverse) {
+                const nextMerged = mergeCloseManifest(initMerged.at(-1), third, courseRoads)
+                for (let m of nextMerged) {
+                    manifest.push(m);
+                }
+                i = i + 2;
+            } else {
+                for (let m of initMerged) {
+                    manifest.push(m)
+                }
+                i++;
+            }
+        } else {
+            manifest.push(initManifest[i]);
+        }
+    };
+    const newManifest = [];
+    const epsilon = 1e-6;
+    for (let i = 0; i < manifest.length - 1; i++) {    
+          
+        const mRoad = courseRoads[manifest[i].roadId];
+        if (mRoad.looped) {            
+            if (manifest[i].reverse && manifest[i].start == 0) {
+                const next = manifest[i + 1];
+                if (next && next.roadId == manifest[i].roadId && next.reverse == manifest[i].reverse) {
+                    newManifest.push(manifest[i]);
+                    //newManifest.push(next);
+                    //i++;
+                    continue;
+                }
+            } else if (!manifest[i].reverse && manifest[i].end == 1) {
+                const next = manifest[i + 1];
+                if (next && next.roadId == manifest[i].roadId && next.reverse == manifest[i].reverse) {
+                    newManifest.push(manifest[i]);
+                    //newManifest.push(next);
+                    //i++;
+                    continue;
+                }
+            }
+            if (manifest[i].roadId == 134) {
+                //debugger
+            }
+        }
+        const startRp = manifest[i].reverse ? manifest[i].start + epsilon : manifest[i].end - epsilon;
+        const nextIntersection = findNextIntersection(mRoad.intersections, startRp, manifest[i].reverse, mRoad.looped, true);
+        
+        if (nextIntersection.next) {
+            let distanceToIntersection;
+            if (manifest[i].reverse) {
+                if (nextIntersection.next.m_roadTime1 > startRp) {
+                    distanceToIntersection = (mRoad.curvePath.distanceBetweenRoadPercents(0, startRp, 4e-2) / 100) + (mRoad.curvePath.distanceBetweenRoadPercents(nextIntersection.next.m_roadTime1, 1, 4e-2) / 100);
+                } else {
+                    distanceToIntersection = mRoad.curvePath.distanceBetweenRoadPercents(nextIntersection.next.m_roadTime1, startRp, 4e-2) / 100;
+                }
+            } else {
+                if (nextIntersection.next.m_roadTime2 < startRp) {
+                    distanceToIntersection = (mRoad.curvePath.distanceBetweenRoadPercents(startRp, 1, 4e-2) / 100) + (mRoad.curvePath.distanceBetweenRoadPercents(0, nextIntersection.next.m_roadTime2, 4e-2) / 100);                    
+                } else {
+                    distanceToIntersection = mRoad.curvePath.distanceBetweenRoadPercents(startRp, nextIntersection.next.m_roadTime2, 4e-2) / 100;
+                }
+            }
+            if (distanceToIntersection < 500) {
+                //we are close to an intersection and should be good to find a path.
+                const startPoint = {
+                    roadId: manifest[i].roadId,
+                    reverse: manifest[i].reverse,
+                    rp: startRp
+                };
+                const endPoint = {
+                    roadId: manifest[i + 1].roadId,
+                    reverse: manifest[i + 1].reverse,
+                    rp: manifest[i + 1].reverse ? manifest[i + 1].end - epsilon : manifest[i + 1].start + epsilon
+                };
+                const path = findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, {maxDepthOverride: 2});
+                if (path && path.allPaths.length > 0) {
+                    const shortestPath = path.allPaths[0];
+                    newManifest.push({
+                        roadId: manifest[i].roadId,
+                        reverse: manifest[i].reverse,
+                        start: shortestPath.manifest[0].reverse ? shortestPath.manifest[0].start : manifest[i].start,
+                        end: shortestPath.manifest[0].reverse ? manifest[i].end : shortestPath.manifest[0].end
+                    });
+                    for (let m = 1; m < shortestPath.manifest.length; m++) {
+                        newManifest.push(shortestPath.manifest[m]);
+                    }
+                } else {
+                    debugger
+                    //handle missing path - why isn't 133 calculating the entrypoint behind in reverse?
+                }
+                //debugger
+            } else {
+                //next intersection isn't close, what about the previous one?
+                if (Object.keys(nextIntersection.previous).length > 0) {
+                    let distanceToIntersection;
+                    if (manifest[i].reverse) {
+                        if (nextIntersection.previous.m_roadTime1 < startRp) {
+                            distanceToIntersection = (mRoad.curvePath.distanceBetweenRoadPercents(0, startRp, 4e-2) / 100) + (mRoad.curvePath.distanceBetweenRoadPercents(nextIntersection.previous.m_roadTime1, 1, 4e-2) / 100);
+                        } else {
+                            distanceToIntersection = mRoad.curvePath.distanceBetweenRoadPercents(startRp, nextIntersection.previous.m_roadTime1, 4e-2) / 100;
+                        }
+                    } else {
+                        if (nextIntersection.previous.m_roadTime2 > startRp) {
+                            distanceToIntersection = (mRoad.curvePath.distanceBetweenRoadPercents(startRp, 1, 4e-2) / 100) + (mRoad.curvePath.distanceBetweenRoadPercents(0, nextIntersection.previous.m_roadTime2, 4e-2) / 100);                    
+                        } else {
+                            distanceToIntersection = mRoad.curvePath.distanceBetweenRoadPercents(nextIntersection.previous.m_roadTime1, startRp, 4e-2) / 100;
+                        }
+                    }
+                    if (distanceToIntersection < 200) {
+                        //we are close to an intersection and should be good to find a path.
+                        const startPoint = {
+                            roadId: manifest[i].roadId,
+                            reverse: manifest[i].reverse,
+                            rp: manifest[i].reverse ? nextIntersection.previous.m_roadTime2 + epsilon : nextIntersection.previous.m_roadTime1 - epsilon
+                        };
+                        const endPoint = {
+                            roadId: manifest[i + 1].roadId,
+                            reverse: manifest[i + 1].reverse,
+                            rp: manifest[i + 1].reverse ? manifest[i + 1].end - epsilon : manifest[i + 1].start + epsilon
+                        }
+                        const path = findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, {maxDepthOverride: 2})
+                        if (path && path.allPaths.length > 0) {
+                            const shortestPath = path.allPaths[0];
+                            newManifest.push({
+                                roadId: manifest[i].roadId,
+                                reverse: manifest[i].reverse,
+                                start: shortestPath.manifest[0].reverse ? shortestPath.manifest[0].start : manifest[i].start,
+                                end: shortestPath.manifest[0].reverse ? manifest[i].end : shortestPath.manifest[0].end
+                            });
+                            for (let m = 1; m < shortestPath.manifest.length; m++) {
+                                newManifest.push(shortestPath.manifest[m]);
+                            }
+                        } else {
+                            //handle missing path
+                        }
+
+                    } else {
+                        //no intersections close by at all?
+                        debugger
+                    }
+                } else {
+                    //no previous intersection to check
+                    debugger
+                }
+                //debugger
+            }
+            
+        } else {
+            //what if there isn't a next intersection?  See if the previous one is close
+            debugger
+        }
+    }
+    const lastManifest = manifest.at(-1);
+    const lastNewManifest = newManifest.at(-1);
+    newManifest.push(lastManifest);
+    if (lastManifest.roadId == lastNewManifest.roadId && lastManifest.reverse == lastNewManifest.reverse) {
+        //debugger
+        console.log("lastManifest", lastManifest, "lastNewManifest", lastNewManifest)
+        if (lastManifest.reverse) {
+            //lastNewManifest.start = lastManifest.start;
+        } else {
+            //lastNewManifest.end = lastManifest.end;
+        }
+    } else {
+        debugger
+    };
+    const finalManifest = {
+        manifest: newManifest
+    };
+    return finalManifest;
+
+}
+export async function buildCustomManifest(manifestData, intersections, courseRoads, courseId) {
     const manifest = manifestData.manifest;
     let lastManifestIdx = [];
     let lastPoint;
@@ -6564,17 +6858,22 @@ export async function buildCustomManifest(manifestData, intersections, allRoads,
             //debugger
         }
         
-        const path = findPathFromAtoBv6(lastPoint, nextPoint, intersections, allRoads, courseId, true, 2);
-        if (path && path.bestPath?.manifest?.length > 0) {
-            console.log("path", path)
+        //const path = findPathFromAtoBv6(lastPoint, nextPoint, intersections, allRoads, courseId, true, 2);
+        const options = {
+            maxDepthOverride: 2
+        }
+        const paths = findPathFromAtoBv7(lastPoint, nextPoint, courseRoads, courseId, options);
+        if (paths && paths.allPaths[0]?.manifest?.length > 0) {
+            console.log("path", paths)
+            const path = paths.allPaths[0];
             if (usedOffset) {                
-                if (path.bestPath.manifest.at(-1).reverse) {
-                    path.bestPath.manifest.at(-1).start = manifest[i].start + rpOffset;
+                if (path.manifest.at(-1).reverse) {
+                    path.manifest.at(-1).start = manifest[i].start + rpOffset;
                 } else {
-                    path.bestPath.manifest.at(-1).end = manifest[i].end - rpOffset;
+                    path.manifest.at(-1).end = manifest[i].end - rpOffset;
                 }                
             }
-            for (let m of path.bestPath.manifest) {
+            for (let m of path.manifest) {
                 if (m.start > m.end) {
                     debugger
                 }
@@ -6588,7 +6887,8 @@ export async function buildCustomManifest(manifestData, intersections, allRoads,
             }
             let testPath;
             let testDirection;
-            const nextPointRoad = allRoads.find(x => x.id == nextPoint.roadId);
+            //const nextPointRoad = allRoads.find(x => x.id == nextPoint.roadId);
+            const nextPointRoad = courseRoads[nextPoint.roadId]
             if (nextPointRoad && nextPointRoad.singleIntersection) {
                 if (manifest[i + 1]) {
                     rpOffset = (manifest[i + 1].end - manifest[i + 1].start) / 4;
@@ -6599,7 +6899,11 @@ export async function buildCustomManifest(manifestData, intersections, allRoads,
                         reverse: manifest[i + 1].reverse
                     }
                 console.log("Trying forward one point - lastPoint", lastPoint, "nextPoint", nextPoint)
-                testPath = findPathFromAtoBv6(lastPoint, nextPoint, intersections, allRoads, courseId, true, 2);
+                //testPath = findPathFromAtoBv6(lastPoint, nextPoint, intersections, courseRoads, courseId, true, 2);
+                const options = {
+                    maxDepthOverride: 2
+                }
+                testPath = findPathFromAtoBv7(lastPoint, nextPoint, courseRoads, courseId, options)
                 testDirection = "forward";
                 }
             } else {
@@ -6611,7 +6915,11 @@ export async function buildCustomManifest(manifestData, intersections, allRoads,
                 }
                 //debugger
                 console.log("Trying BACK one point - twoPointsBack", twoPointsBack, "nextPoint", nextPoint)
-                testPath = findPathFromAtoBv6(twoPointsBack, nextPoint, intersections, allRoads, courseId, true, 2);
+                //testPath = findPathFromAtoBv6(twoPointsBack, nextPoint, intersections, courseRoads, courseId, true, 2);
+                const options = {
+                    maxDepthOverride: 2
+                }
+                testPath = findPathFromAtoBv7(twoPointsBack, nextPoint, courseRoads, courseId, options);
                 testDirection = "reverse";
             }
             if (testPath && testPath.bestPath?.manifest?.length > 0) {
@@ -6689,8 +6997,9 @@ export function getRoadPoints(road) {
     }
     return points;
 }
-export async function generateRoadData(courseId) {    
-    const worldId = common.courseToWorldIds[courseId]
+export async function generateRoadData(courseId) { 
+    const worldList = await common.getWorldList();   
+    const worldId = (worldList.find(x => x.courseId == courseId)).worldId;
     const worldIntersections = await fetch(`data/worlds/${worldId}/roadIntersections.json`).then(response => response.json());
     const intersections = fixBadIntersections(worldIntersections);
     const courseRoads = await common.getRoads(courseId);

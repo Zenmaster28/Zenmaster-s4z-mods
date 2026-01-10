@@ -101,8 +101,8 @@ if (importRouteButton) {
     importRouteButton.addEventListener("click", async (e) => {
         if (e.target == importRouteButton) {
             const worldList = await common.getWorldList();
-            const worldMeta = worldList.find(x => x.courseId == courseId);
-            const worldId = common.courseToWorldIds[courseId]
+            const worldMeta = worldList.find(x => x.courseId == courseId);            
+            const worldId = worldMeta.worldId;
             const worldIntersections = await fetch(`data/worlds/${worldId}/roadIntersections.json`).then(response => response.json());
             const intersections = zen.fixBadIntersections(worldIntersections);
             //const courseRoads = await common.getRoads(courseId);
@@ -128,7 +128,7 @@ if (importRouteButton) {
             }
             */
             //console.log("allCyclingRoads", allCyclingRoads)
-            const routeableRoads = courseRoads.filter(x => !x.singleIntersection)
+            //const routeableRoads = courseRoads.filter(x => !x.singleIntersection)
             /*
             const routeableRoads = allCyclingRoads.filter(x => {                
                 const roadIntersections = intersections.find(int => int.id == x.id);
@@ -163,7 +163,7 @@ if (importRouteButton) {
             console.log("csvKms", csvKms)
             const rdPts = [];
             for (let pt of csvKms) {
-                const rpData = zen.pointToRoad(pt, worldMeta, routeableRoads);
+                const rpData = zen.pointToRoad(pt, worldMeta, courseRoads);
                 //const rpData = zen.pointToRoad(pt, worldMeta, mappableRoads);
                 if (rpData) {
                     rdPts.push(rpData);
@@ -173,7 +173,8 @@ if (importRouteButton) {
             //debugger
             const manifestPts = zen.summarizeRdPts(rdPts, courseId, courseRoads, true);
             console.log("manifestPts", manifestPts)
-            const customManifest = await zen.buildCustomManifest(manifestPts, intersections, courseRoads, courseId);
+            //const customManifest = await zen.buildCustomManifest(manifestPts, intersections, courseRoads, courseId);
+            const customManifest = zen.buildCustomManifestv2(manifestPts, courseRoads, courseId);
             customManifest.manifest = zen.mergeManifest(customManifest.manifest);
             //routeData = await zen.buildRouteData(manifestPts, courseId);
             routeData = await zen.buildRouteData(customManifest, courseId);
@@ -210,12 +211,10 @@ let courseId = Number(url.searchParams.get('course')) || 6;
 let courseRoads;
 let courseSpawnPoints = [];
 let startingSpawnPoint;
-//let routeId = Number(url.searchParams.get('route')) || undefined;
 let penList;
 let intersections;
 let badIntersections = [1190003]
 let avoidRepackRush = settings.avoidRepackRush !== false;
-//let showDebugStats = settings.showDebugStats !== false;
 let alternateRouteChosen = false;
 function qualityScale(raw) {
     raw = raw || 1;
@@ -232,7 +231,6 @@ function getSetting(key, def) {
 
 function createZwiftMap() {
     const opacity = 1 - 1 / (100 / (settings.transparency || 0));
-    //const autoCenter = getSetting('autoCenter', true);
     const autoCenter = false;
     const zm = new map.SauceZwiftMap({
         el: document.querySelector('.map'),
@@ -278,16 +276,7 @@ function createZwiftMap() {
         autoHeadingBtn.classList.toggle('primary', !!en);
         settings.autoHeading = en;
         common.settingsStore.set(null, settings);
-    }
-    /*
-    autoCenterBtn.classList.toggle('primary', settings.autoCenter !== false);
-    autoCenterBtn.addEventListener('click', () =>
-        autoCenterHandler(!autoCenterBtn.classList.contains('primary')));
-    autoHeadingBtn.classList.toggle('disabled', settings.autoCenter === false);
-    autoHeadingBtn.classList.toggle('primary', settings.autoHeading !== false);
-    autoHeadingBtn.addEventListener('click', () =>
-        autoHeadingHandler(!autoHeadingBtn.classList.contains('primary')));
-    */
+    }    
     zm.addEventListener('drag', ev => {
         if (ev.drag) {
             const dragging = !!(ev.drag && (ev.drag[0] || ev.drag[1]));
@@ -415,8 +404,7 @@ function createElevationProfile() {
     const showRobopacersGap = false;
     const zoomSegmentOnlyWithinApproach = false;
     return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showNextSegmentFinish, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showRobopacersGap, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, showCurrentAltitude, showRouteMaxElevation, showXaxis, xAxisIncrements, xAxisInverse, invertSegmentBool});
-    //return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, showAllArches});
-    //return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, colorScheme, showSegmentStart});
+    
 }
 
 function centerMap(positions, options) {
@@ -576,7 +564,6 @@ async function applyRoutev4(pathOptions) {
                     elProfile.routeId = 999999999;
                     
                     await elProfile.setRoute(999999999);
-                    //let path;
                     path = routeData.curvePath;
                     while (_routeHighlights.length) {
                         _routeHighlights.pop().elements.forEach(x => x.remove());
@@ -592,7 +579,7 @@ async function applyRoutev4(pathOptions) {
         customRouteStepsDiv.innerHTML = "";
     }
 }
-async function applyRouteV3(undo=false) {
+async function XXXapplyRouteV3(undo=false) {
     /*
     if (routeId != null) {
         url.searchParams.set('route', routeId);
@@ -816,7 +803,6 @@ async function applyRouteV3(undo=false) {
 
 async function applyCourse() {
     if (courseId != null) {
-        //debugger
         url.searchParams.set('course', courseId);
     } else {
         url.searchParams.delete('course');
@@ -842,15 +828,11 @@ async function applyCourse() {
             spawnPoint.remove();
         }
         courseSpawnPoints = await zen.getRouteSpawnAreas(courseId);
-        
-        //courseRoads = await common.getRoads(courseId);
         courseRoads = await zen.generateRoadData(courseId);
         console.log("courseSpawnPoints", courseSpawnPoints)
         console.log("courseRoads", courseRoads)
         for (let spawnPoint of courseSpawnPoints) {
             const spArrow = zwiftMap.addPoint([0, 0], 'spawnPoint', spawnPoint.name);
-            //const spRoad = await common.getRoad(courseId, spawnPoint.roadId);
-            //const spRoad = courseRoads.find(x => x.id == spawnPoint.roadId);
             const spRoad = courseRoads[spawnPoint.roadId];
             let subPath = spRoad.curvePath.subpathAtRoadPercents(Math.min(spawnPoint.start, spawnPoint.end), Math.max(spawnPoint.start,spawnPoint.end));
             const pos = subPath.nodes[parseInt(subPath.nodes.length / 2)]?.end;
@@ -860,8 +842,6 @@ async function applyCourse() {
         await new Promise(resolve => setTimeout(resolve, 50)); // dumb but it works...
         
         for (let spawnPoint of courseSpawnPoints) {
-            
-            //const spRoad = await common.getRoad(courseId, spawnPoint.roadId);
             const spRoad = courseRoads[spawnPoint.roadId];
             const p1 = spRoad.curvePath.pointAtRoadPercent(Math.min(spawnPoint.start, spawnPoint.end));
             const p2 = spRoad.curvePath.pointAtRoadPercent(Math.max(spawnPoint.start, spawnPoint.end));           
@@ -961,7 +941,6 @@ async function updateRouteData(self) {
                             distanceToSp < 600 )
     );
     if (matchingRoute && inManifestStart) {
-        //debugger
         const result = await common.rpc.updateAthleteData('self', {'zenCustomRoute': {'ts': Date.now(), 'courseId': courseId, 'manifest': routeData.manifest}});
         console.log("publish result", result);
         if (result) {
@@ -978,7 +957,6 @@ async function updateRouteData(self) {
         const routeSetupStatus = document.getElementById('routeSetupStatus');
         routeSetupStatus.innerHTML = "<hr>Currently loaded route is not correct or you have moved too far from the initial spawn point";
         console.log("Not on a proper route.  Should be one of ", spawnPointRoutes)
-        //not on a route that matches the spawnPoint or outside of the first manifest entry
     }
 }
 
@@ -991,14 +969,10 @@ async function setupMap() {
     const useElements = svgPath.querySelectorAll('use');
     const worldId = common.courseToWorldIds[courseId]
     intersections = await fetch(`data/worlds/${worldId}/roadIntersections.json`).then(response => response.json());
-    //courseRoads = await common.getRoads(courseId);
-    //const cyclingRoads = courseRoads.filter(x => x.sports.includes("cycling"));
     
     useElements.forEach((useElement) => {
         const elementRoad = parseInt(useElement.dataset.id);
-        //const roadData = intersections.find(x => x.id == elementRoad);
         const roadData = courseRoads[elementRoad];
-        //const roadDataSauce = cyclingRoads.find(x => x.id == elementRoad);
         if (!roadData || roadData.roadIsPaddock) {   
             return;
         }
@@ -1022,8 +996,7 @@ async function setupMap() {
                 }
                 
                 let thisRoad = parseInt(pathElement.id.replace("road-path-",""))
-                console.log("Clicked road",thisRoad, "pointToFind", pointToFind)
-                //let roadData = await common.getRoad(courseId, thisRoad)
+                console.log("Clicked road",thisRoad, "pointToFind", pointToFind);
                 let roadData = courseRoads[thisRoad];
                 let minDistance = Infinity;
                 let nearestPoint;
@@ -1036,29 +1009,7 @@ async function setupMap() {
                         rp = point.rp;
                     }
 
-                }
-                //debugger
-                /*
-                const points = [];
-                let steps = 1000
-                const step = 1 / (steps - 1); // Calculate the step size
-                for (let i = 0; i < steps; i++) {
-                    points.push(i * step);
-                }
-                let minDistance = Infinity
-                let nearestPoint;
-                let rp;
-                for (let t of points) {
-                        const pointOnSecondCurve = roadData.curvePath.pointAtRoadPercent(t);  
-                        pointToFind[2] = pointOnSecondCurve[2]  
-                        const distance = zen.calculateDistance(pointToFind, pointOnSecondCurve);
-                        if (distance < minDistance) {            
-                            minDistance = distance;
-                            nearestPoint = pointOnSecondCurve;
-                            rp = t;
-                        } 
-                    }                
-                */
+                };
                 const nextTarget = {
                     roadId: thisRoad,
                     rp: rp
@@ -1068,21 +1019,17 @@ async function setupMap() {
                     roadPercent: rp
                 })
                 await getPath(nextTarget);
-                //await applyRouteV3();
                 
             }
         });
         useElement.classList.add('clickableRoad');
     });
-    //await applyRoute();
         
 }
 
 async function resetMap() {
     const id = Number(courseSelect.value);
-    
     courseId = id;
-    //routeId = undefined;
     infoPanel.innerHTML = "";
     distanceSelect.value = "";    
     elevationSelect.value = ""    ;
@@ -1102,7 +1049,6 @@ async function resetMap() {
         _routeHighlights.pop().elements.forEach(x => x.remove());
     }
     await applyCourse();
-    //setupMap();
     await elProfile.clear()
     infoPanel.innerHTML = "To begin, choose a spawn point by clicking on one of the red arrows.<br><br>Note that some have arrows pointing in both directions, be sure to choose the one facing in the direction that you want to start."
     customRouteStepsDiv.innerHTML = "";
@@ -1112,7 +1058,6 @@ export async function main() {
     common.setBackground(settings);
     doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1); 
     const undoButton = document.getElementById("undoButton");
-    //const publishButton = document.getElementById("publishButton");
     const resetButton = document.getElementById("resetButton")
     undoButton.addEventListener('click', async undo => {
         customRouteSteps.manifest.pop();  
@@ -1183,12 +1128,10 @@ export async function main() {
         zwiftMap.setTiltShift(0);
         zwiftMap.setVerticalOffset(verticalOffset);
         zwiftMap._mapTransition.setDuration(500);
-        
-        //distanceSelect.value = settings.overrideDistance || "";        
         distanceSelect.value = "";        
         await applyCourse();
         infoPanel.innerHTML = "To begin, choose a spawn point by clicking on one of the red arrows.<br><br>Note that some have arrows pointing in both directions, be sure to choose the one facing in the direction that you want to start."
-        //setupMap();
+        
         
     } else {
         console.log("No courseId, This shouldn't happen")
