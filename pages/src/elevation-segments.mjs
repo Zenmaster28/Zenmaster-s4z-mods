@@ -15,7 +15,7 @@ let beaconSubs = [];
 const allRoutes = await zen.getAllRoutes();
 
 export class SauceElevationProfile {
-    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showNextSegmentFinish, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showRobopacersGap, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, showCurrentAltitude, showRouteMaxElevation, showXaxis, xAxisIncrements, xAxisInverse, invertSegmentBool, refresh=1000}) {
+    constructor({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showNextSegmentFinish, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showRobopacersGap, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, showCurrentAltitude, showRouteMaxElevation, showXaxis, xAxisIncrements, xAxisInverse, invertSegmentBool, pinColorTeamMember, refresh=1000}) {
         this.debugXcoord = false;
         this.debugXcoordDistance = null;
         this.debugPinPlacement = false;
@@ -60,6 +60,7 @@ export class SauceElevationProfile {
         this.invertSegmentBool = invertSegmentBool;
         this.pinSize = pinSize;
         this.pinColor = pinColor;
+        this.pinColorTeamMember = pinColorTeamMember;
         this.pinColorMarked = pinColorMarked;
         this.pinName = pinName;
         this.useCustomPin = useCustomPin;
@@ -1869,6 +1870,7 @@ export class SauceElevationProfile {
                             let deemphasizePinSize = 0.35 * this.pinSize * allOtherPins;
                             let otherPinSize = 0.55 * this.pinSize * allOtherPins;
                             let watchingPinColor = this.pinColor;
+                            let teamMemberPinColor = this.pinColorTeamMember;
                             let markedPinColor = this.pinColorMarked;
                             //console.log(allOtherPins)
                             
@@ -2661,26 +2663,7 @@ export class SauceElevationProfile {
                                         } else {
                                             beaconLabelData = `${beaconName}\n0m`
                                         } 
-                                        /*
-                                        if (beaconData?.data?.gapDistance) {
-                                            const gap = Math.ceil(beaconData.data.gapDistance)
-                                            if (gap > 0) {
-                                                beaconLabelData = `${beaconData.data.athlete.fullname}\n${Math.abs(gap)}m\u21A4`
-                                            } else if (gap < 0) {
-                                                beaconLabelData = `${beaconData.data.athlete.fullname}\n\u21A6${Math.abs(gap)}m`
-                                            } else {
-                                                beaconLabelData = `${beaconData.data.athlete.fullname}`
-                                            }                                        
-                                        } else {
-                                            beaconLabelData = `${beaconData?.data?.athlete?.fullname}`
-                                        }
-                                        if (zenGap > 0) {
-                                            beaconLabelZen = `\n${Math.abs(zenGap)}m\u21A4 (z)`
-                                        } else if (zenGap < 0) {
-                                            beaconLabelZen = `\n\u21A6${Math.abs(zenGap)}m (z)`
-                                        }
-                                        beaconLabelData += beaconLabelZen;
-                                        */
+                                        
                                         if (isPP) {
                                             //console.log("beaconData", beaconData)
                                             beaconLabel = {
@@ -2705,7 +2688,7 @@ export class SauceElevationProfile {
                                     symbolSize: symbolSize,                                                        
                                     symbolOffset: [0, -(symbolSize / 2)],                            
                                     itemStyle: {
-                                        color: isBeacon? beaconColour : isWatching ? watchingPinColor : (isTeamMate && this.showTeamMembers) ? watchingPinColor : (isMarked && this.showMarkedRiders) ? markedPinColor : deemphasize ? '#0002' : '#fff7',
+                                        color: isBeacon? beaconColour : isWatching ? watchingPinColor : (isTeamMate && this.showTeamMembers) ? teamMemberPinColor : (isMarked && this.showMarkedRiders) ? markedPinColor : deemphasize ? '#0002' : '#fff7',
                                         borderWidth: this.em(isWatching ? 0.04 : 0.02),
                                     },
                                     emphasis: {
