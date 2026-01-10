@@ -555,12 +555,12 @@ export class SauceElevationProfile {
 
     findNodesIndex(roadSegmentData, origin, next, reverse, startIndex) {
         
-        for (let i = 0; i < roadSegmentData.nodes.length; i++) {
+        for (let i = 0; i < roadSegmentData.roadCurvePath.nodes.length; i++) {
             
             
             if (reverse)
             {             
-                let reversedData = roadSegmentData.nodes.slice(0);   
+                let reversedData = roadSegmentData.roadCurvePath.nodes.slice(0);   
                 reversedData.reverse();
                 const currentNode = reversedData[i];
                 const nextNode = reversedData[i + 1];
@@ -579,7 +579,7 @@ export class SauceElevationProfile {
             }
             // Check if origin properties match
             else {
-                const currentNode = roadSegmentData.nodes[i];
+                const currentNode = roadSegmentData.roadCurvePath.nodes[i];
                 if (
                     this.compareProperties(currentNode.end, origin.end) &&            
                     this.compareProperties(currentNode.cp1, origin.cp1) &&
@@ -667,10 +667,10 @@ export class SauceElevationProfile {
         //console.log(routeFullData)               ;
         let zwiftSegmentsRequireStartEnd = await fetch("data/segRequireStartEnd.json").then((response) => response.json());        
         //let allRoutes = await common.rpc.getRoutes();
-        for (let roadIndex in routeFullData.roadSegments)
+        for (let roadIndex in routeFullData.sections)
         {
-            let thisRoad = routeFullData.roadSegments[roadIndex];     
-            
+            let thisRoad = routeFullData.sections[roadIndex];     
+            //debugger
             if (typeof thisRoad.reverse === 'undefined')
             {
                 thisRoad.reverse = false;            
@@ -695,8 +695,8 @@ export class SauceElevationProfile {
                         ignoreSegment = true;
                     }
                     includeSegment = false;
-                    foundSegmentStart = thisRoad.includesRoadPercent(segment.roadStart);  
-                    foundSegmentEnd = thisRoad.includesRoadPercent(segment.roadFinish);
+                    foundSegmentStart = thisRoad.roadCurvePath.includesRoadPercent(segment.roadStart);  
+                    foundSegmentEnd = thisRoad.roadCurvePath.includesRoadPercent(segment.roadFinish);
                     //foundSegmentStart ? console.log("roadSegment " +  roadIndex + " goes through the start of " + segment.name) : "";
                     //foundSegmentEnd ? console.log("roadSegment " +  roadIndex + " goes through the end of " + segment.name) : "";
                     //debugger
@@ -715,10 +715,10 @@ export class SauceElevationProfile {
                     if (includeSegment && !ignoreSegment)
                     {                        
                         let newSegment = {...segment}
-                        newSegment.bounds = thisRoad.boundsAtRoadPercent(segment.roadStart);
+                        newSegment.bounds = thisRoad.roadCurvePath.boundsAtRoadPercent(segment.roadStart);
                         newSegment.bounds.curvePathIndex = curvePathIndex;
                         newSegment.bounds.roadSegment = parseInt(roadIndex);
-                        newSegment.boundsFinish = thisRoad.boundsAtRoadPercent(segment.roadFinish);
+                        newSegment.boundsFinish = thisRoad.roadCurvePath.boundsAtRoadPercent(segment.roadFinish);
                         newSegment.boundsFinish.curvePathIndex = curvePathIndex;
                         newSegment.boundsFinish.roadSegment = parseInt(roadIndex);
                         newSegment.leadin = thisRoad.leadin ?? false;                        
@@ -753,7 +753,7 @@ export class SauceElevationProfile {
                     }
                 }
             }
-            curvePathIndex += thisRoad.nodes.length;
+            curvePathIndex += thisRoad.roadCurvePath.nodes.length;
         }
         //debugger
         //console.log(this.routeSegments)        
@@ -944,9 +944,9 @@ export class SauceElevationProfile {
                             for (let offt = 0; offt < 12; offt++) {
                                 for (const dir of [1, -1]) {
                                     const segIdx = nearRoadSegIdx + (offt * dir);
-                                    const s = this.route.roadSegments[segIdx];
+                                    const s = this.route.sections[segIdx];
                                     if (s && s.roadId === state.roadId && !!s.reverse === !!state.reverse &&
-                                        s.includesRoadTime(state.roadTime)) {
+                                        s.roadCurvePath.includesRoadTime(state.roadTime)) {
                                         roadSeg = s;
                                         // We found the road segment but need to find the exact node offset
                                         // to support multi-lap configurations...
@@ -967,14 +967,14 @@ export class SauceElevationProfile {
                         }
                         if (!roadSeg) {
                             // Not on our route but might be nearby..
-                            const i = this.route.roadSegments.findIndex(x =>
+                            const i = this.route.sections.findIndex(x =>
                                 x.roadId === state.roadId &&
                                 !!x.reverse === !!state.reverse &&
-                                x.includesRoadTime(state.roadTime));
+                                x.roadCurvePath.includesRoadTime(state.roadTime));
                             if (i === -1) {
                                 return null;
                             }
-                            roadSeg = this.route.roadSegments[i];
+                            roadSeg = this.route.sections[i];
                             nodeRoadOfft = nodes.findIndex(x => x.index === i);
                             deemphasize = true;
                         }
@@ -985,9 +985,9 @@ export class SauceElevationProfile {
                     if (!roadSeg) {
                         return null;
                     }
-                    const bounds = roadSeg.boundsAtRoadTime(state.roadTime);
+                    const bounds = roadSeg.roadCurvePath.boundsAtRoadTime(state.roadTime);
                     const nodeOfft = roadSeg.reverse ?
-                        roadSeg.nodes.length - 1 - (bounds.index + bounds.percent) :
+                        roadSeg.roadCurvePath.nodes.length - 1 - (bounds.index + bounds.percent) :
                         bounds.index + bounds.percent;
                     const xIdx = nodeRoadOfft + nodeOfft;
                     if (xIdx < 0 || xIdx > this._distances.length - 1) {
