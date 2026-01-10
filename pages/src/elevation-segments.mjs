@@ -33,7 +33,9 @@ export class SauceElevationProfile {
         this.showLapMarker = options.showLapMarker;
         this.showCompletedLaps = options.showCompletedLaps;
         this.showTeamMembers = options.showTeamMembers;
+        this.teamMemberFilter = options.teamMemberFilter || "";
         this.showMarkedRiders = options.showMarkedRiders;
+        this.showFollowing = options.showFollowing;
         this.showAllRiders = options.showAllRiders;
         this.showRobopacers = options.showRobopacers;
         this.showRobopacersGap = options.showRobopacersGap;
@@ -63,6 +65,7 @@ export class SauceElevationProfile {
         this.pinColor = options.pinColor;
         this.pinColorTeamMember = options.pinColorTeamMember;
         this.pinColorMarked = options.pinColorMarked;
+        this.pinColorFollowing = options.pinColorFollowing;
         this.colorPinsByCat = options.colorPinsByCat;
         this.catColors = {
             A: 'hsl(6deg 70% 50%)',
@@ -1658,6 +1661,7 @@ export class SauceElevationProfile {
                         const isWatching = (state.athleteId === this.watchingId);
                         let isTeamMate = false;
                         let isMarked = false;
+                        let isFollowing = false;
                         let isPP = false;
                         let isBeacon = false;  
                         let isLeaderSweep = false;  
@@ -1671,11 +1675,16 @@ export class SauceElevationProfile {
                         } else {
                             if (ad && ad.athlete && ad.athlete.team) {
                                 isWatching ? this.watchingTeam = ad.athlete.team : 
-                                ad.athlete.team == this.watchingTeam ? isTeamMate = true : null;   
-                                //debugger                     
+                                ad.athlete.team == this.watchingTeam ? isTeamMate = true : null;
                             } 
+                            if (!isTeamMate && this.teamMemberFilter != "" && ad && ad.athlete) {
+                                isTeamMate = zen.isTeammate(ad, this.teamMemberFilter, "", {partial: true})
+                            }
                             if (ad && ad.athlete && ad.athlete.marked && !isWatching) {
                                 isMarked = true;
+                            }
+                            if (ad && ad.athlete && ad.athlete.following && !isWatching) {
+                                isFollowing = true;
                             }
                             if (ad && ad.athlete && ad.athlete.type == "PACER_BOT" && ad.state.sport == "cycling" && !isWatching && this.showRobopacers) {
                                 isPP = true;
@@ -1714,7 +1723,8 @@ export class SauceElevationProfile {
                             (this.showTeamMembers && isTeamMate) ||
                             (this.showMarkedRiders && isMarked) ||
                             (this.showRobopacers && isPP) || 
-                            (this.showLeaderSweep && isLeaderSweep)
+                            (this.showLeaderSweep && isLeaderSweep) ||
+                            (this.showFollowing && isFollowing)
                         ) {        
                             
                             if (this.routeId != null) {                                
@@ -1885,6 +1895,7 @@ export class SauceElevationProfile {
                             let watchingPinColor = this.pinColor;
                             let teamMemberPinColor = this.pinColorTeamMember;
                             let markedPinColor = this.pinColorMarked;
+                            let followingPinColor = this.pinColorFollowing;
                             let useEventCatColor = false;
                             let eventCatColor = null;
                             if (state.eventSubgroupId > 0 && this.colorPinsByCat && this.eventInfo?.cullingType == "CULLING_EVENT_ONLY") {
@@ -2582,7 +2593,7 @@ export class SauceElevationProfile {
                             } else {
                                 symbol = zen.pins.find(x => x.name == "Default").path;
                             }                        
-                            let symbolSize = isGroup ? this.em(groupPinSize) : isWatching ? this.em(watchingPinSize) : ((isTeamMate && this.showTeamMembers) || (isMarked && this.showMarkedRiders) || (isBeacon)) ? this.em(teamPinSize) : deemphasize ? this.em(deemphasizePinSize) : this.em(otherPinSize)
+                            let symbolSize = isGroup ? this.em(groupPinSize) : isWatching ? this.em(watchingPinSize) : ((isTeamMate && this.showTeamMembers) || (isMarked && this.showMarkedRiders) || (isBeacon)) || (isFollowing && this.showFollowing) ? this.em(teamPinSize) : deemphasize ? this.em(deemphasizePinSize) : this.em(otherPinSize)
                             
                             if (isGroup) {
                                 if (isWatching) {                                  
@@ -2713,7 +2724,7 @@ export class SauceElevationProfile {
                                     symbolSize: symbolSize,                                                        
                                     symbolOffset: [0, -(symbolSize / 2)],                            
                                     itemStyle: {
-                                        color: isBeacon? beaconColour : useEventCatColor ? eventCatColor : isWatching ? watchingPinColor : (isTeamMate && this.showTeamMembers) ? teamMemberPinColor : (isMarked && this.showMarkedRiders) ? markedPinColor : deemphasize ? '#0002' : '#fff7',
+                                        color: isBeacon? beaconColour : useEventCatColor ? eventCatColor : isWatching ? watchingPinColor : (isTeamMate && this.showTeamMembers) ? teamMemberPinColor : (isMarked && this.showMarkedRiders) ? markedPinColor : (isFollowing && this.showFollowing) ? followingPinColor : deemphasize ? '#0002' : '#fff7',
                                         borderWidth: this.em(isWatching ? 0.04 : 0.02),
                                     },
                                     emphasis: {

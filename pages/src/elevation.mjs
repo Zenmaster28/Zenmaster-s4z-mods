@@ -44,6 +44,7 @@ common.settingsStore.setDefault({
     pinColor: "#ff430e",
     pinColorTeamMember: "#ff430e",
     pinColorMarked: "#9cb7ec",
+    pinColorFollowing: "#ff0080",
     colorPinsByCat: false,
     showSegmentFinish: false,
     minSegmentLength: 500,
@@ -66,6 +67,7 @@ common.settingsStore.setDefault({
     behindDistance: 500,
     showTeamMembers: false,
     showMarkedRiders: false,
+    showFollowing: false,
     showAllRiders: true,
     colorScheme: "sauce",
     lineTextColor: "#ffffff",
@@ -89,7 +91,8 @@ common.settingsStore.setDefault({
     showRouteMaxElevation: false,
     showXaxis: false,
     xAxisIncrements: 0,
-    xAxisInverse: false
+    xAxisInverse: false,
+    teamMemberFilter: ""
 });
 
 const settings = common.settingsStore.get();
@@ -175,6 +178,8 @@ function createElevationProfile({worldList}) {
     const lineTypeFinish = settings.lineTypeFinish ? settings.lineTypeFinish : "[5, 10]";
     const lineSize = settings.lineSize ? settings.lineSize : 1.0;
     const pinColor = settings.pinColor ? settings.pinColor : "#ff430e";
+    typeof(settings.showFollowing) == "undefined" ? common.settingsStore.set("showFollowing", false) : null;
+    const showFollowing = settings.showFollowing;
     typeof(settings.pinColorTeamMember) == "undefined" ? common.settingsStore.set("pinColorTeamMember", pinColor) : null;
     const pinColorTeamMember = settings.pinColorTeamMember;
     typeof(settings.colorPinsByCat) == "undefined" ? common.settingsStore.set("colorPinsByCat", false) : null;
@@ -226,7 +231,10 @@ function createElevationProfile({worldList}) {
     typeof(settings.showLeaderSweep) == "undefined" ? common.settingsStore.set("showLeaderSweep", false) : null;
     const showLeaderSweep = settings.showLeaderSweep;
     typeof(settings.pinColorMarked) == "undefined" ? common.settingsStore.set("pinColorMarked", "#9cb7ec") : null;
-    const pinColorMarked = settings.pinColorMarked;typeof(settings.colorScheme) == "undefined" ? common.settingsStore.set("colorScheme", "sauce") : null
+    const pinColorMarked = settings.pinColorMarked;
+    typeof(settings.pinColorFollowing) == "undefined" ? common.settingsStore.set("pinColorFollowing", "#ff0080") : null;
+    const pinColorFollowing = settings.pinColorFollowing;
+    typeof(settings.colorScheme) == "undefined" ? common.settingsStore.set("colorScheme", "sauce") : null
     const colorScheme = settings.colorScheme;typeof(settings.lineTextColor) == "undefined" ? common.settingsStore.set("lineTextColor", "#ffffff") : null;
     const lineTextColor = settings.lineTextColor;
     typeof(settings.gradientOpacity) == "undefined" ? common.settingsStore.set("gradientOpacity", 0.7) : null;
@@ -270,6 +278,7 @@ function createElevationProfile({worldList}) {
     const invertSegmentText = settings.invertSegmentText;
     typeof(settings.invertSegmentBool) == "undefined" ? common.settingsStore.set("invertSegmentBool", false) : null;
     const invertSegmentBool = settings.invertSegmentBool;
+    const teamMemberFilter = settings.teamMemberFilter || "";
     const options = {
         el,
         worldList,
@@ -299,7 +308,9 @@ function createElevationProfile({worldList}) {
         behindDistance,
         showTeamMembers,
         showMarkedRiders,
+        showFollowing,
         pinColorMarked,
+        pinColorFollowing,
         showAllRiders,
         colorScheme,
         lineTextColor,
@@ -331,7 +342,8 @@ function createElevationProfile({worldList}) {
         xAxisInverse,
         invertSegmentBool,
         pinColorTeamMember,
-        colorPinsByCat
+        colorPinsByCat,
+        teamMemberFilter
     };
 
     //return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showNextSegmentFinish, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showRobopacersGap, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, showCurrentAltitude, showRouteMaxElevation, showXaxis, xAxisIncrements, xAxisInverse, invertSegmentBool, pinColorTeamMember, colorPinsByCat});
@@ -629,6 +641,7 @@ export async function main() {
             'pinColor',
             'pinColorTeamMember',
             'pinColorMarked',
+            'pinColorFollowing',
             'colorPinsByCat',
             'showNextSegment',
             'showMyPin',
@@ -637,6 +650,7 @@ export async function main() {
             'behindDistance',
             'showTeamMembers',
             'showMarkedRiders',
+            'showFollowing',
             'showAllRiders',
             'showRobopacers',
             'showLeaderSweep',
@@ -660,7 +674,8 @@ export async function main() {
             'showCurrentAltitude',
             'showRouteMaxElevation',
             'showRobopacersGap',
-            'showNextSegmentFinish'
+            'showNextSegmentFinish',
+            'teamMemberFilter'
         ]
         //console.log(changed);
         if (changed.has('editedSegments')) {
