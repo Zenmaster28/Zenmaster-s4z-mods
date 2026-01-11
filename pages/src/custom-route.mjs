@@ -851,20 +851,7 @@ export async function main() {
         resetMap();
     });
     
-    
-    [worldList, routesList] = await Promise.all([common.getWorldList(), common.getRouteList()]);
-    routesList = Array.from(routesList).sort((a, b) => a.name < b.name ? -1 : 1);
-    
-    let newRoutes = await fetch("data/routes.json").then((response) => response.json()); 
-    newRoutes.forEach(newRoute => {
-        const exists = routesList.some(route => route.id === newRoute.id);
-        if (!exists) {
-            newRoute.courseId = common.worldToCourseIds[newRoute.worldId]
-            console.log("Adding route: " + newRoute.name + " to " + common.worldToNames[newRoute.worldId])            
-            routesList.push(newRoute);
-        }
-    });
-    routesList.sort((a, b) => a.name < b.name ? -1 : 1);    
+    worldList = await common.getWorldList();       
     zwiftMap = createZwiftMap();
     spawnPointArrow = zwiftMap.addPoint([0, 0], 'spawnPoint');
     spawnPointArrow.toggleHidden(true);

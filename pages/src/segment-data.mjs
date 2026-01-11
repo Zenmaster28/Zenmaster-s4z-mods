@@ -286,10 +286,10 @@ async function applySegment() {
         _routeHighlights.pop().elements.forEach(x => x.remove());
     }
     segmentSelect.replaceChildren();
-    segmentSelect.insertAdjacentHTML('beforeend', `<option value disabled selected>Segments (${segmentsList.filter(x => common.worldToCourseIds[x.worldId] == courseId).length})</option>`);  
+    segmentSelect.insertAdjacentHTML('beforeend', `<option value disabled selected>Segments (${segmentsList.filter(x => x.courseId == courseId).length})</option>`);  
     //console.log(segmentsList)  
     for (const x of segmentsList) {        
-        if (common.worldToCourseIds[x.worldId] !== courseId) {
+        if (x.courseId !== courseId) {
             continue;
         }        
         segmentSelect.insertAdjacentHTML('beforeend', `
@@ -385,12 +385,12 @@ async function applySegment() {
 async function getSegmentRoutes(segment, courseId) {
     const routeList = await common.getRouteList(courseId)
     let newRoutes = await fetch("data/routes.json").then((response) => response.json()); 
-    newRoutes = newRoutes.filter(x => common.worldToCourseIds[x.worldId] == courseId)
+    const worldId = (worldList.find(x => x.courseId == courseId)).worldId
+    newRoutes = newRoutes.filter(x => x.worldId == worldId)
     newRoutes.forEach(newRoute => {
         const exists = routeList.some(route => route.id === newRoute.id);
         if (!exists) {
-            newRoute.courseId = common.worldToCourseIds[newRoute.worldId]
-            //console.log("Adding route: " + newRoute.name + " to " + common.worldToNames[newRoute.worldId])            
+            newRoute.courseId = courseId
             routeList.push(newRoute);
         }
     });

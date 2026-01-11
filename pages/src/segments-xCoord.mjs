@@ -1203,6 +1203,7 @@ async function getPenExitRoute(route) {
 
 export async function getModifiedRoute(id, disablePenRouting, customRouteData) { 
     let route;
+    const worldList = await common.getWorldList();
     if (id == 999999999) {
         route = customRouteData
     } else {
@@ -1217,7 +1218,8 @@ export async function getModifiedRoute(id, disablePenRouting, customRouteData) {
                 return -1
             } else {
                 //console.log("Found route", route.name, "in json")
-                route.courseId = common.worldToCourseIds[route.worldId]
+                const courseId = worldList.find(x => x.worldId == route.worldId);
+                route.courseId = courseId;
             }
             //debugger
         }
@@ -1407,8 +1409,6 @@ export async function getModifiedRoute(id, disablePenRouting, customRouteData) {
 
 export async function getSegmentPath(id) {
     let segment = await common.rpc.getSegment(id.toString())
-    //console.log(segment)
-    //debugger
     if (segment) {
         segment.curvePath = new curves.CurvePath();
         segment.roadSegments = []; 
@@ -1423,7 +1423,7 @@ export async function getSegmentPath(id) {
         for (let r=0;r <i;r++) {
             let seg;      
             
-            const road = await common.getRoad(common.worldToCourseIds[segment.worldId], segment.roadId);            
+            const road = await common.getRoad(segment.courseId, segment.roadId);            
             if (segment.reverse) {
                 //debugger
                 if (loop && r == 0) {

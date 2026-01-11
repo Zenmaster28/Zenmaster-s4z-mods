@@ -603,8 +603,7 @@ export async function main() {
     newRoutes.forEach(newRoute => {
         const exists = routesList.some(route => route.id === newRoute.id);
         if (!exists) {
-            newRoute.courseId = common.worldToCourseIds[newRoute.worldId]
-            //console.log("Adding route: " + newRoute.name + " to " + common.worldToNames[newRoute.worldId])            
+            newRoute.courseId = (worldList.find(x => x.worldId == newRoute.worldId)).courseId;
             routesList.push(newRoute);
         }
     });
