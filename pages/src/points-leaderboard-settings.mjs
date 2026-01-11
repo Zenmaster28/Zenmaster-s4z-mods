@@ -123,6 +123,7 @@ eventText.addEventListener("change", async function() {
 })
 const watching = await common.rpc.getAthleteData("watching")
 const self = await common.rpc.getAthlete("self")
+const worldList = await common.getWorldList();
 const selfTeam = self.team || "";
 const penListDiv = document.getElementById('penList');
 const segmentsSaveDiv = document.getElementById('segmentsSave');
@@ -403,7 +404,8 @@ eventsSelect.addEventListener('change', async function() {
                 segmentsTableDiv.innerHTML = "";
                 segmentsSaveDiv.innerHTML = "";
                 eventTextDiv.value = "";
-                segmentsHeaderDiv.innerHTML = "<h2>" + routeData.routeFullData.name + " in " + common.courseToNames[routeData.routeFullData.courseId]
+                const worldName = (worldList.find(x => x.courseId == routeData.routeFullData.courseId)).name;                
+                segmentsHeaderDiv.innerHTML = `<h2> ${routeData.routeFullData.name} in ${worldName}`;
                 segmentsTableDiv.appendChild(segmentsTable)
                 ftsScoreFormatDiv.addEventListener('change', saveConfig);
                 ftsStepDiv.addEventListener('change', saveConfig);
