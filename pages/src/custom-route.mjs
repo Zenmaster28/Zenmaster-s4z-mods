@@ -923,7 +923,7 @@ async function updateRouteData(self) {
     const spawnPointRoutes = startingSpawnPoint.routes;
     const matchingRoute = spawnPointRoutes.find(x => x.id == self.state.routeId);
     const rp = (self.state.roadTime - 5000) / 1e6;
-    const thisRoad = courseRoads.find(x => x.id == self.state.roadId);
+    const thisRoad = courseRoads[self.state.roadId];
       
     const low = Math.min(routeData.manifest[0].start, routeData.manifest[0].end);
     const high = Math.max(routeData.manifest[0].start, routeData.manifest[0].end);
@@ -960,15 +960,13 @@ async function updateRouteData(self) {
     }
 }
 
-async function setupMap() {
+function setupMap() {
     
     const svgPath = document.querySelector('svg.paths');
     const svgPathG = svgPath.querySelector("g")
     const svgPathGClassList = svgPathG.classList
     const svgRotated = svgPathGClassList.contains("rotated-coordinates")
     const useElements = svgPath.querySelectorAll('use');
-    const worldId = common.courseToWorldIds[courseId]
-    intersections = await fetch(`data/worlds/${worldId}/roadIntersections.json`).then(response => response.json());
     
     useElements.forEach((useElement) => {
         const elementRoad = parseInt(useElement.dataset.id);
