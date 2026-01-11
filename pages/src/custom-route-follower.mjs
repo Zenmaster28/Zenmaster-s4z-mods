@@ -27,7 +27,6 @@ const varianceOptions = [25, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
 const currIntersectionDiv = document.getElementById("currentIntersection");
 const intersectionsDiv = document.getElementById("intersectionsDiv");
 const nextRoadIntersectionDiv = document.getElementById("nextRoadIntersection");
-//debugger
 
 function updateConnStatus(s) {
     console.log("Updating game connection status", s)
@@ -81,7 +80,8 @@ export async function main() {
 }
 
 async function getAllIntersections(courseId) {
-    const worldId = common.courseToWorldIds[courseId]
+    const worldList = await common.getWorldList();                
+    const worldId = (worldList.find(x => x.courseId == courseId)).worldId;
     const allIntersections = await fetch(`data/worlds/${worldId}/roadIntersections.json`).then(response => response.json());
     return allIntersections;
 }
@@ -179,6 +179,7 @@ async function _processWatching(watching) {
         customRouteData = await zen.buildRouteData(watching.zenCustomRoute, watching.state.courseId);
         customRouteData.manifestIntersections = [];
         let i = -1;
+        const epsilon = 1e-4;
         for (let m of customRouteData.manifest) {
             let foundInt = false;
             i++;
@@ -186,7 +187,8 @@ async function _processWatching(watching) {
                 if (int.assigned) {
                     continue;
                 }
-                if (int.option.exitTime == (m.reverse ? m.start : m.end)) {
+                const target = m.reverse ? m.start : m.end;
+                if (Math.abs(int.option.exitTime - target) < epsilon) {
                     int.assigned = true;
                     int.idx = i;
                     customRouteData.manifestIntersections.push(int);
@@ -289,22 +291,11 @@ async function _processWatching(watching) {
         options = watching.state.reverse ? currentIntersection.reverse : currentIntersection.forward;
 
         if (options.length > 1) {
-            /*
-            const left = options.find(opt => opt.option.alt == 263);
-            const straight = options.find(opt => opt.option.alt == 265);
-            const right = options.find(opt => opt.option.alt == 262);
-            
-            optionsText = `Left: ${left?.option?.turnText || "n/a"}<br>
-                    Straight: ${straight?.option?.turnText || "n/a"}<br>
-                    Right: ${right?.option?.turnText || "n/a"}<br>
-                `
-            */
             const nextRouteIntersection = customRouteIntersections.find(int => !int.found)            
             if (nextRouteIntersection && currentIntersection.m_markerId == nextRouteIntersection.m_markerId && nextRouteIntersection.idx == manifestIdx.i) {
                 //found the next intersection on the route                
                 const turnDir = nextRouteIntersection.option.alt == 263 ? "Left" : nextRouteIntersection.option.alt == 262 ? "Right" : "Straight"                
                 if (turnDir.toLowerCase() != direction.toLowerCase()) {
-                    //debugger
                     console.log("Turning ", turnDir)
                     await common.rpc[turnComands[turnDir]]([]);
                 }
@@ -326,32 +317,6 @@ async function _processWatching(watching) {
                 }
                 
             }
-            /*
-            const nextIntersection = customRouteIntersections.find(x => !x.found);
-            const nextRoadIntersection = getNextRoadIntersection(rp, roadIntersections.intersections, watching.state.reverse);
-            let distanceToNextIntersection;
-            let nextOption;
-            if (nextRoadIntersection) {
-                if (nextRoadIntersection.m_markerId == nextIntersection.m_markerId) {
-                    //get distance to option exit
-                    distanceToNextIntersection = getDistanceToIntersection(watching, nextIntersection, rp, true);
-                    nextOption = nextIntersection.option;
-                } else {
-                    //get distance to option that stays on the road
-                    distanceToNextIntersection = getDistanceToIntersection(watching, nextRoadIntersection, rp, true);
-                    const nextOptionFind = watching.state.reverse ? 
-                        nextRoadIntersection.reverse.find(x => x.option.road == watching.state.roadId) :
-                        nextRoadIntersection.forward.find(x => x.option.road == watching.state.roadId);
-                    if (nextOptionFind && nextOptionFind.option) {
-                        nextOption = nextOptionFind.option;
-                    }
-                }
-            } else {
-                console.log("no more intersections on this road")
-                //debugger
-                //no more intersections on this route
-            }
-            */
         }
     } 
     const nextIntersection = customRouteIntersections.find(x => !x.found);
@@ -359,9 +324,7 @@ async function _processWatching(watching) {
     let distanceToNextIntersection;
     let nextOption;
     let optionsText = "";
-    //debugger
     if (nextRoadIntersection) {  
-        //if (nextIntersection) {
         if (nextRoadIntersection.m_markerId == nextIntersection?.m_markerId && nextIntersection.idx == manifestIdx.i) {
             //get distance to option exit
             distanceToNextIntersection = getDistanceToIntersection(watching, nextIntersection, rp, true);
@@ -421,7 +384,6 @@ async function _processWatching(watching) {
             }
             optionsText += `<div class="${optClass}"<font size='+2'>&#x21B1;</font> ${right.option?.turnText}</div>`;
         }
-        //} else {
         if (!nextIntersection) {
             //no more intersections on the route.
             const distanceToFinish = parseInt(customRouteData.distances.at(-1) - watching.state.eventDistance);
@@ -439,12 +401,10 @@ async function _processWatching(watching) {
                 nextRoadIntersectionDiv.innerHTML = routeFinish;
                 nextOption = null;
             }
-            //debugger
         }
         
     } else {
         console.log("no more intersections on this road")
-        //no more intersections on this route
     }
     if (nextOption) {
         nextRoadIntersectionDiv.innerHTML = optionsText;
