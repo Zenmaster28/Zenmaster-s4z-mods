@@ -5980,9 +5980,7 @@ export async function getManifestIntersections(manifest, courseId) {
                 //console.log(`ignoring ${dir} intersection`, manifestIntersections.at(-1))
             } else {
                 const manifestIdx = manifest[i + 1] ? i + 1 : i;
-                if (m.roadId == 230) {
-                    console.log("manifestIdx", manifestIdx, "next roadId", manifest[manifestIdx].roadId, "manifestIntersections", manifestIntersections)
-                }
+                
                 const lastManifestOption = m.reverse ? 
                     manifestIntersections.at(-1).reverse.find(opt => opt.option.road == manifest[manifestIdx].roadId) :
                     manifestIntersections.at(-1).forward.find(opt => opt.option.road == manifest[manifestIdx].roadId);
