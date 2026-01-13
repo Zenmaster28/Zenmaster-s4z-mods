@@ -188,7 +188,7 @@ async function _processWatching(watching) {
                     continue;
                 }
                 const target = m.reverse ? m.start : m.end;
-                if (Math.abs(int.option.exitTime - target) < epsilon) {
+                if (Math.abs(int.option.exitTime - target) < epsilon) { //should probably be checking roadId and direction too
                     int.assigned = true;
                     int.idx = i;
                     customRouteData.manifestIntersections.push(int);
