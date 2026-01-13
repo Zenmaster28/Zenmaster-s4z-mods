@@ -44,6 +44,7 @@ common.settingsStore.setDefault({
     maxOptions: 5
 });
 
+const routesDb = await zen.openCustomRoutesDB();
 let settings = common.settingsStore.get();
 const url = new URL(location);
 const courseSelect = document.querySelector('#titlebar select[name="course"]');
@@ -76,6 +77,27 @@ if (clearButton) {
         if (e.target == clearButton) {
             common.rpc.updateAthleteData('self', {'zenCustomRoute': {}});
         }
+    });
+}
+const saveButton = document.getElementById('saveButton');
+if (saveButton) {
+    saveButton.addEventListener("click", async (e) => {
+        const routeName = prompt("Route name:");
+        if (routeName == null) {
+            return;
+        }
+        if (routeName.trim() == "") {
+            alert("Route name cannot be blank");
+            return;
+        }
+        const routeToSave = {
+            "name": routeName,
+            "distance": routeData.distances.at(-1),
+            "elevation": zen.calcElevationGain(routeData.elevations),
+            "manifest": routeData.manifest,
+            "courseId": routeData.courseId
+        };
+        await zen.storecustomRoute(routesDb, routeToSave);
     });
 }
 const importExport = document.getElementById("importExport");

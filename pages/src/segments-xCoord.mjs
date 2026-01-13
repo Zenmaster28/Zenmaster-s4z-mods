@@ -2817,7 +2817,90 @@ export async function openSegmentsDB() {
             reject(event.target.error)
         };
     });
-}
+};
+
+export async function openCustomRoutesDB() {
+    return new Promise((resolve, reject) => {
+        const customRoutesDB = indexedDB.open("customRoutesDatabase", 3)
+        customRoutesDB.onupgradeneeded = function(event) {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains("customRoutes")) {
+                console.log("Creating customRoutes store");
+                const store = db.createObjectStore("customRoutes", {keyPath: "id", autoIncrement: true});
+                store.createIndex("name", "name", {unique: true});
+                store.createIndex("distance", "distance", {unique: false});
+                store.createIndex("elevation", "elevation", {unique: false});
+                store.createIndex("manifest", "manifest", {unique: false});
+                store.createIndex("courseId", "courseId", {unique: false});
+            };
+        };
+        customRoutesDB.onsuccess = async function(event) {
+            const dbRoutes = event.target.result;
+            console.log("Database initialized");
+            resolve(dbRoutes);
+        };
+        customRoutesDB.onerror = function(event) {
+            console.log("Database failed to open:", event.target.error);
+            reject(event.target.error)
+        };
+    });
+};
+export async function storecustomRoute(dbRoutes, customRoute) {
+    return new Promise((resolve, reject) => {
+        const transaction = dbRoutes.transaction("customRoutes", "readwrite");
+        const store = transaction.objectStore("customRoutes");
+        const request = store.put(customRoute);
+        request.onsuccess = function () {
+            console.log("Saved customRoute", customRoute);
+        };
+        request.onerror = function (event) {
+            console.error("Failed to save custom route", event.target.error);
+        };
+        transaction.oncomplete = function () {
+            resolve();
+        };
+
+        transaction.onerror = function (event) {
+            console.error("Transaction error:", event.target.error);
+            reject(event.target.error);
+        };
+    });
+};
+export function getCustomRoutes(dbRoutes) {
+    if (!dbRoutes) {
+        console.error("Database connection is invalid!");
+        return [];
+    }
+    return new Promise((resolve, reject) => {
+        try {
+            const transaction = dbRoutes.transaction("customRoutes", "readonly");
+            const store = transaction.objectStore("customRoutes");
+            const request = store.getAll();
+
+            request.onsuccess = function () {                
+                //console.log("Query success. Retrieved", request.result.length, "entries");
+                resolve(request.result);
+            };
+
+            request.onerror = function (event) {
+                console.error("Error fetching routes:", event.target.error);
+                reject(event.target.error);
+            };
+
+            transaction.oncomplete = function () {
+                //console.log("Transaction completed successfully.");
+            };
+
+            transaction.onerror = function (event) {
+                console.error("Transaction error:", event.target.error);
+                reject(event.target.error);
+            };
+        } catch (error) {
+            console.error("Unexpected error in getCustomRoutes:", error);
+            reject(error);
+        }
+    });
+};
 
 export async function cleanupSegmentsDB(dbSegments, options) {
     return new Promise((resolve, reject) => {
