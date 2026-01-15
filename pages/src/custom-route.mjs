@@ -107,7 +107,22 @@ if (saveButton) {
                     "spawnPoint": startingSpawnPoint
                 };
                 await zen.storecustomRoute(routesDb, routeToSave);
-            }
+                customRouteSelect.replaceChildren();
+                const savedCustomRoutes = await zen.getCustomRoutes(routesDb);
+                courseCustomRoutes = savedCustomRoutes.filter(x => x.courseId == courseId);
+                customRouteSelect.insertAdjacentHTML('beforeend', "<option value='-1'>Saved routes</option>");
+                for (let route of courseCustomRoutes) {                    
+                    customRouteSelect.insertAdjacentHTML('beforeend', `
+                        <option value="${route.name}" ${routeName == route.name ? 'selected' : ''}>${route.name}</option>`)
+                };
+                for (const x of worldList) {        
+                    courseSelect.insertAdjacentHTML('beforeend', `
+                        <option ${x.courseId === courseId ? 'selected' : ''}
+                                value="${x.courseId}">${common.stripHTML(x.name)}</option>`);        
+                };
+            } else {
+                debugger
+            };            
         })
         dialog.showModal();
         
