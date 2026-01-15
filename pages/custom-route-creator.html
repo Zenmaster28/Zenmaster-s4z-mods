@@ -38,6 +38,7 @@
                     <a class="button" onClick="window.location.reload()" title="Reload">&#x21bb;</a>
                     <a class="button open-settings" href="custom-route-creator-settings.html?width=550&height=730&child-window"
                        title="Open settings window" target="custom-route-settings"><ms>settings</ms></a>
+                    
                     <!--
                     <a class="button" title="Import" id="importExportButton">&#x21B9;</a>
                     -->
@@ -51,6 +52,9 @@
             <div ><input id="customDistance" type="number" min="1000" max="100000" step="100" class="options" disabled></div>
             <div class="title">&nbsp;Elevation (m)</div>
             <div ><input id="customElevation" type="number" min="1000" max="100000" step="100" class="options" disabled></div>
+            <div class="filler"></div>
+            <div><select id="customRouteSelect"></select></div>
+            <div><input type="button" id="saveButton" value="&#x1F4BE;" class="button"></div>
         </div>
             <div id="contentContainer">
                 <div id="customRouteSteps">         
@@ -85,5 +89,17 @@
         <div id="xAxis">
 
         </div>
+        <dialog id="saveDialog">
+            <form method="dialog" autocomplete="off">
+                <label>
+                Route name:
+                <input id="saveName" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="off"  autofocus />
+                </label>
+                <menu>
+                <button value="cancel">Cancel</button>
+                <button value="ok">Save</button>
+                </menu>
+            </form>
+        </dialog>
     </body>
 </html>

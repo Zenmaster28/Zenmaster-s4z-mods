@@ -2821,7 +2821,7 @@ export async function openSegmentsDB() {
 
 export async function openCustomRoutesDB() {
     return new Promise((resolve, reject) => {
-        const customRoutesDB = indexedDB.open("customRoutesDatabase", 3)
+        const customRoutesDB = indexedDB.open("customRoutesDatabase", 4)
         customRoutesDB.onupgradeneeded = function(event) {
             const db = event.target.result;
             if (!db.objectStoreNames.contains("customRoutes")) {
@@ -2832,6 +2832,7 @@ export async function openCustomRoutesDB() {
                 store.createIndex("elevation", "elevation", {unique: false});
                 store.createIndex("manifest", "manifest", {unique: false});
                 store.createIndex("courseId", "courseId", {unique: false});
+                store.createIndex("spawnPoint", "spawnPoint", {unique: false});
             };
         };
         customRoutesDB.onsuccess = async function(event) {

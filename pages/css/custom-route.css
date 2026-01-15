@@ -253,3 +253,26 @@ html.solid-background body {
 .hidden {
   display: none;
 }
+.filler {
+  flex: 1 1 0;
+}
+#routeData .button {
+  padding: 0.05em 0.3em;
+  border-radius: 0.22em;
+  text-decoration: none !important;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 200ms, background 200ms;
+  font-size: 0.7em;
+  margin: 0 0 0 1em;
+  background: #111;
+  color: #fff;
+  border-color: rgba(51, 51, 51, 0.2);
+}
+#routeData select {
+  font-size: calc(var(--font-scale) * 0.8em);
+  margin: 0 0 0 1em;
+  background: #111;
+  color: #fff;
+  border-color: rgba(51, 51, 51, 0.2);
+}

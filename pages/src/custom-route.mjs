@@ -48,6 +48,8 @@ const routesDb = await zen.openCustomRoutesDB();
 let settings = common.settingsStore.get();
 const url = new URL(location);
 const courseSelect = document.querySelector('#titlebar select[name="course"]');
+const customRouteSelect = document.getElementById("customRouteSelect");
+let courseCustomRoutes;
 const penSelect = document.querySelector('#titlebar select[name="startPen"]');
 const distanceSelect = document.getElementById("customDistance");
 const elevationSelect = document.getElementById("customElevation");
@@ -82,22 +84,34 @@ if (clearButton) {
 const saveButton = document.getElementById('saveButton');
 if (saveButton) {
     saveButton.addEventListener("click", async (e) => {
-        const routeName = prompt("Route name:");
-        if (routeName == null) {
-            return;
-        }
-        if (routeName.trim() == "") {
-            alert("Route name cannot be blank");
-            return;
-        }
-        const routeToSave = {
-            "name": routeName,
-            "distance": routeData.distances.at(-1),
-            "elevation": zen.calcElevationGain(routeData.elevations),
-            "manifest": routeData.manifest,
-            "courseId": routeData.courseId
-        };
-        await zen.storecustomRoute(routesDb, routeToSave);
+        const dialog = document.getElementById('saveDialog');
+        const saveNameInput = document.getElementById("saveName");
+        saveNameInput.value = "";
+        saveNameInput.defaultValue = "";
+        dialog.addEventListener("close", async () => {
+            if (dialog.returnValue == "ok") {
+                const routeName = document.getElementById("saveName").value;
+                if (routeName == null) {
+                    return;
+                };
+                if (routeName.trim() == "") {
+                    alert("Route name cannot be blank");
+                    return;
+                };
+                const routeToSave = {
+                    "name": routeName,
+                    "distance": routeData.distances.at(-1),
+                    "elevation": zen.calcElevationGain(routeData.elevations),
+                    "manifest": routeData.manifest,
+                    "courseId": routeData.courseId,
+                    "spawnPoint": startingSpawnPoint
+                };
+                await zen.storecustomRoute(routesDb, routeToSave);
+            }
+        })
+        dialog.showModal();
+        
+        
     });
 }
 const importExport = document.getElementById("importExport");
@@ -524,79 +538,82 @@ async function applyRoutev4(pathOptions) {
             zwiftMap.addHighlightPath(path, `route-3-section`, {width: 0.5, color: 'red'}),
         );
         let stepOptions = "<table id='stepOptionsTable'>";
-        for (let i = 0; i < customRouteSteps.manifest.length; i++) { 
-            const distance = customRouteSteps.distances[i];
-            const pathDistance = distance >= 1000 ? `${parseFloat(distance / 1000).toFixed(1)}km` : `${parseInt(distance)}m`;
-            stepOptions += `<tr class="wayPoint"><td>Waypoint ${i + 1}</td><td>${pathDistance}</td><td>${i}</td></tr>`;
-        }
-        if (pathOptions) {
-            for (let i = 0; i < pathOptions.length; i++) {
-                const path = pathOptions[i];
-                const pathDistance = path.distance >= 1000 ? `${parseFloat(path.distance / 1000).toFixed(1)}km` : `${parseInt(path.distance)}m`;
-                const selected = i == 0 ? " selected" : "";
-                stepOptions += `<tr class="option${selected}"><td> - Option ${i + 1}</td><td>${pathDistance}</td><td>${i}</td></tr>`;
+        if (customRouteSteps.distances) {
+            for (let i = 0; i < customRouteSteps.manifest.length; i++) { 
+                const distance = customRouteSteps.distances[i];
+                const pathDistance = distance >= 1000 ? `${parseFloat(distance / 1000).toFixed(1)}km` : `${parseInt(distance)}m`;
+                stepOptions += `<tr class="wayPoint"><td>Waypoint ${i + 1}</td><td>${pathDistance}</td><td>${i}</td></tr>`;
             }
-        }
-        stepOptions += "</table>";
-        customRouteStepsDiv.innerHTML = stepOptions;
-        const stepOptionsTableRows = document.querySelectorAll("#stepOptionsTable tbody tr")
-        stepOptionsTableRows.forEach(row => {
-            row.addEventListener("mouseenter", async () => {
-                if (row.className == "option") {
-                    const optionIdx = row.cells[2].innerText;
-                    const optionManifest = pathOptions[optionIdx];
-                    const optionData = await zen.buildRouteData(optionManifest, courseId);
-                    _routeHighlights.push(
-                        zwiftMap.addHighlightPath(optionData.curvePath, 'tmpOptionHighlight', {width: 0.5, color: 'yellow'})
-                    );
-                };
-            });
-            row.addEventListener("mouseleave", () => { 
-                if (!alternateRouteChosen) {
-                    while (_routeHighlights.length) {
-                        _routeHighlights.pop().elements.forEach(x => x.remove());
-                    };
-                    _routeHighlights.push(
-                        zwiftMap.addHighlightPath(path, `route-3-section`, {width: 0.5, color: 'red'}),
-                    );
-                } else {
-                    alternateRouteChosen = false;
+        
+            if (pathOptions) {
+                for (let i = 0; i < pathOptions.length; i++) {
+                    const path = pathOptions[i];
+                    const pathDistance = path.distance >= 1000 ? `${parseFloat(path.distance / 1000).toFixed(1)}km` : `${parseInt(path.distance)}m`;
+                    const selected = i == 0 ? " selected" : "";
+                    stepOptions += `<tr class="option${selected}"><td> - Option ${i + 1}</td><td>${pathDistance}</td><td>${i}</td></tr>`;
                 }
-            });
-            row.addEventListener("click", async () => {
-                if (row.className == "option") {
-                    const currentlySelected = document.querySelectorAll("tr.option.selected");
-                    currentlySelected.forEach(x => x.classList.remove("selected"));
-                    row.classList.add("selected");
-                    const optionIdx = row.cells[2].innerText;
-                    const optionManifest = pathOptions[optionIdx];
-                    customRouteSteps.manifest.pop();
-                    customRouteSteps.manifest.push(optionManifest.manifest);
-                    routeManifest.manifest.length = 0;
-                    for (let manifestStep of customRouteSteps.manifest) {
-                        for (let m of manifestStep) {
-                            routeManifest.manifest.push(m);
-                        }
+            }
+            stepOptions += "</table>";
+            customRouteStepsDiv.innerHTML = stepOptions;
+            const stepOptionsTableRows = document.querySelectorAll("#stepOptionsTable tbody tr")
+            stepOptionsTableRows.forEach(row => {
+                row.addEventListener("mouseenter", async () => {
+                    if (row.className == "option") {
+                        const optionIdx = row.cells[2].innerText;
+                        const optionManifest = pathOptions[optionIdx];
+                        const optionData = await zen.buildRouteData(optionManifest, courseId);
+                        _routeHighlights.push(
+                            zwiftMap.addHighlightPath(optionData.curvePath, 'tmpOptionHighlight', {width: 0.5, color: 'yellow'})
+                        );
                     };
-                    routeData = await zen.buildRouteData(routeManifest, courseId);
-                    const routeElevation = zen.calcElevationGain(routeData.elevations)
-                    distanceSelect.value = parseInt(routeData.distances.at(-1));
-                    elevationSelect.value = parseInt(routeElevation)
-                    elProfile.sectionRouteData = routeData;
-                    elProfile.routeId = 999999999;
-                    
-                    await elProfile.setRoute(999999999);
-                    path = routeData.curvePath;
-                    while (_routeHighlights.length) {
-                        _routeHighlights.pop().elements.forEach(x => x.remove());
+                });
+                row.addEventListener("mouseleave", () => { 
+                    if (!alternateRouteChosen) {
+                        while (_routeHighlights.length) {
+                            _routeHighlights.pop().elements.forEach(x => x.remove());
+                        };
+                        _routeHighlights.push(
+                            zwiftMap.addHighlightPath(path, `route-3-section`, {width: 0.5, color: 'red'}),
+                        );
+                    } else {
+                        alternateRouteChosen = false;
                     }
-                    _routeHighlights.push(
-                        zwiftMap.addHighlightPath(path, `route-3-section`, {width: 0.5, color: 'red'}),
-                    );
-                    alternateRouteChosen = true;
-                };
+                });
+                row.addEventListener("click", async () => {
+                    if (row.className == "option") {
+                        const currentlySelected = document.querySelectorAll("tr.option.selected");
+                        currentlySelected.forEach(x => x.classList.remove("selected"));
+                        row.classList.add("selected");
+                        const optionIdx = row.cells[2].innerText;
+                        const optionManifest = pathOptions[optionIdx];
+                        customRouteSteps.manifest.pop();
+                        customRouteSteps.manifest.push(optionManifest.manifest);
+                        routeManifest.manifest.length = 0;
+                        for (let manifestStep of customRouteSteps.manifest) {
+                            for (let m of manifestStep) {
+                                routeManifest.manifest.push(m);
+                            }
+                        };
+                        routeData = await zen.buildRouteData(routeManifest, courseId);
+                        const routeElevation = zen.calcElevationGain(routeData.elevations)
+                        distanceSelect.value = parseInt(routeData.distances.at(-1));
+                        elevationSelect.value = parseInt(routeElevation)
+                        elProfile.sectionRouteData = routeData;
+                        elProfile.routeId = 999999999;
+                        
+                        await elProfile.setRoute(999999999);
+                        path = routeData.curvePath;
+                        while (_routeHighlights.length) {
+                            _routeHighlights.pop().elements.forEach(x => x.remove());
+                        }
+                        _routeHighlights.push(
+                            zwiftMap.addHighlightPath(path, `route-3-section`, {width: 0.5, color: 'red'}),
+                        );
+                        alternateRouteChosen = true;
+                    };
+                });
             });
-        });
+        };
     } else {
         customRouteStepsDiv.innerHTML = "";
     }
@@ -610,7 +627,14 @@ async function applyCourse() {
     }
     history.replaceState({}, '', url);
     courseSelect.replaceChildren();
-    
+    customRouteSelect.replaceChildren();
+    const savedCustomRoutes = await zen.getCustomRoutes(routesDb);
+    courseCustomRoutes = savedCustomRoutes.filter(x => x.courseId == courseId);
+    customRouteSelect.insertAdjacentHTML('beforeend', "<option value='-1'>Saved routes</option>");
+    for (let route of courseCustomRoutes) {
+        customRouteSelect.insertAdjacentHTML('beforeend', `
+            <option value="${route.name}">${route.name}</option>`)
+    };
     for (const x of worldList) {        
         courseSelect.insertAdjacentHTML('beforeend', `
             <option ${x.courseId === courseId ? 'selected' : ''}
@@ -851,7 +875,28 @@ async function resetMap() {
     await elProfile.clear()
     infoPanel.innerHTML = "To begin, choose a spawn point by clicking on one of the red arrows.<br><br>Note that some have arrows pointing in both directions, be sure to choose the one facing in the direction that you want to start."
     customRouteStepsDiv.innerHTML = "";
-}
+    customRouteSelect.value = "-1"
+};
+async function loadCustomRoute() {
+    const customRouteName = customRouteSelect.value;
+    if (customRouteName == "-1") {
+        return;
+    };
+    const allSpawnPoints = document.querySelectorAll('.spawnPoint:not(.startSpawnPoint)')
+    for (let spawnPoint of allSpawnPoints) {                    
+        spawnPoint.style.visibility = "hidden"
+    };    
+    const chosenRoute = courseCustomRoutes.find(x => x.name == customRouteName);
+    const chosenRouteData = await zen.buildRouteData(chosenRoute, courseId);
+    customRouteSteps.manifest = [chosenRouteData.manifest];
+    applyRoutev4();
+    startingSpawnPoint = chosenRouteData.spawnPoint;
+    infoPanel.innerHTML = "";
+    infoPanel.innerHTML = `<hr>Click the Finish button to publish the route for navigation.<br>
+                            <input type=button id="finishButton" value=Finish></button>
+                            `
+    document.getElementById("finishButton").addEventListener("click", publishRoute); 
+};
 export async function main() {
     common.initInteractionListeners();
     common.setBackground(settings);
@@ -872,6 +917,9 @@ export async function main() {
     courseSelect.addEventListener('change', async ev => {
         resetMap();
     });
+    customRouteSelect.addEventListener('change', async ev => {
+        loadCustomRoute();
+    })
     
     worldList = await common.getWorldList();       
     zwiftMap = createZwiftMap();
