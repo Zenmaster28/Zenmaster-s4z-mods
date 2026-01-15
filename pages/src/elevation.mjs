@@ -558,6 +558,7 @@ export async function main() {
                         groupMinimum.state.groupTS = ts;
                         groupMinimum.state.gapTime = groupMinimum.gap;
                         groupMinimum.state.gapDistance = groupMinimum.gapDistance;
+                        groupMinimum.state.athleteId = group.id || groupMinimum.state.athleteId;
                     }
                     if (typeof(groupMinimum.state) != "undefined") {
                         states.push(groupMinimum.state)
@@ -567,7 +568,7 @@ export async function main() {
                 states = states.filter(x => x.isGroup)
                 elProfile.groups = groups;
                 elProfile.groupTS = ts;
-                if (states.length > 0)  {                     
+                if (states.length > 0)  { 
                     elProfile.renderAthleteStates(states);
                 }
             });
