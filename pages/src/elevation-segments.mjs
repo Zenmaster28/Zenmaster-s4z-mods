@@ -1326,15 +1326,16 @@ export class SauceElevationProfile {
     async getPpRoute() {
         const groups = await common.rpc.getGroupsData();
         let watchingIndex;
-        let groupAthletes;
+        let groupAthletes = [];
         
         for (let  i = 0; i < groups.length; i++) {
             if (groups[i].watching === true) {
                 watchingIndex = i;
-                groupAthletes = groups[watchingIndex].athletes;
+                groupAthletes = groups[watchingIndex]._athleteDatas;
                 break;
             }
         }
+        //debugger
         let ppInGroup = groupAthletes.find(x => x.athlete.type == "PACER_BOT");
         if (ppInGroup) {
             return ppInGroup.state.routeId;
@@ -1380,7 +1381,7 @@ export class SauceElevationProfile {
                 if ((!watching.routeId && !this.routeOverride && (Date.now() - this.routeOverrideTS > 5000)) || (!watching.routeId && (Date.now() - this.routeOverrideTS > 5000)) || !knownRoute) {
                     this.routeOverrideTS = Date.now();
                     if (this.routeOverride != 999999999) {
-                        this.routeOverride = await this.getPpRoute();
+                        //this.routeOverride = await this.getPpRoute();
                     }
                 }  
                 const ad = common.getAthleteDataCacheEntry(watching.athleteId);
