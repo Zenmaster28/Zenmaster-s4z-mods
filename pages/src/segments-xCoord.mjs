@@ -5204,6 +5204,7 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
     let pathsTooLong = 0;
     let tooManyHops = 0;
     let pathsOverMaxDistance = 0;
+    let repeatIntersections = 0;
     let timeSpentMeasuring = 0;        
     const startRoad = courseRoads[startPoint.roadId];
     const endRoad = courseRoads[endPoint.roadId];
@@ -5331,6 +5332,7 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
             for (let option of intersection[dir]) {
                 if (option.option.road != startPoint.roadId) {
                     let startPath;
+                    let startIntersection = [];
                     let startDist = 0;
                     if (startRoad.looped && (!startPoint.reverse && startPoint.rp > intersection.m_roadTime2 || 
                                         startPoint.reverse && startPoint.rp < intersection.m_roadTime1)) {
@@ -5368,9 +5370,9 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
                             roadId: option.option.road,
                             rp: option.option.entryTime,
                             reverse: !option.option.forward
-                        }
-                        
-                        explore(optionRoad, 0, startPath, startDist, entryPoint)
+                        };
+                        startIntersection.push(intersection.m_markerId)
+                        explore(optionRoad, 0, startPath, startDist, entryPoint, startIntersection)
                     } else {
                         console.warn("Invalid road", option.option.road)
                     }
@@ -5378,7 +5380,7 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
             }
         }
     }
-    function explore(road, depth, currentPath, thisPathSoFar, entryPoint) {
+    function explore(road, depth, currentPath, thisPathSoFar, entryPoint, thisPathIntersections) {
         if (courseId == 6 && (road.id == 97 || road.id == 137) && endPoint.roadId != 135) {
             //don't go into Repack Rush unless explicitly clicking on the road for it
             return;
@@ -5582,11 +5584,16 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
             return;
         }
         const dir = entryPoint.reverse ? "reverse" : "forward";
-        for (let intersection of validIntersections) {            
+        for (let intersection of validIntersections) {  
+            if (thisPathIntersections.find(x => x == intersection.m_markerId)) {
+                repeatIntersections++;
+                return;
+            }
             for (let option of intersection[dir]) {
                 if (option.option.road != entryPoint.roadId) {
                     let thisPathDistance = 0;
                     const nextPath = [...currentPath];
+                    const nextPathIntersections = [...thisPathIntersections];
                     if (road.looped && (!entryPoint.reverse && entryPoint.rp > intersection.m_roadTime2 || 
                                         entryPoint.reverse && entryPoint.rp < intersection.m_roadTime1)) {
                         const thisPath = [{
@@ -5627,7 +5634,8 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
                             reverse: !option.option.forward
                         };
                         const depthInc = road.singleIntersection ? 0 : 1;
-                        explore(optionRoad, depth + depthInc, nextPath, thisPathSoFar + thisPathDistance, nextEntryPoint)
+                        nextPathIntersections.push(intersection.m_markerId);
+                        explore(optionRoad, depth + depthInc, nextPath, thisPathSoFar + thisPathDistance, nextEntryPoint, nextPathIntersections)
                     } else {
                         console.warn("Invalid road", option.option.road);
                     };
@@ -5650,13 +5658,14 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
         pathsTooLong: pathsTooLong,
         tooManyHops: tooManyHops,
         exceedMaxLength: pathsOverMaxDistance,
-        timeSpentFindingPaths: Date.now() - t
+        timeSpentFindingPaths: Date.now() - t,
+        repeatIntersections: repeatIntersections
     }
     const results = {
                allPaths: allPaths,
                stats: stats
            };
-    //console.log("Results", results);
+    console.log("Results", results);
     return results;
 }
 function findNextIntersection(intersections, rp, reverse, looped, alsoPrevious=false) {

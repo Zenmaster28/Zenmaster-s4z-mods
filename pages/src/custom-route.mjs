@@ -492,6 +492,7 @@ async function getPath(nextTarget) {
                             - Too long: ${stats.exceedMaxLength}<br>
                             - Longer than shortest path so far: ${stats.pathsTooLong} <br>
                             - Too many hops: ${stats.tooManyHops}<br>
+                            - going in a circle: ${stats.repeatIntersections}<br>
         `
         funFactsDiv.innerHTML = funFactsContent;
     } else {
@@ -876,6 +877,7 @@ async function resetMap() {
     infoPanel.innerHTML = "To begin, choose a spawn point by clicking on one of the red arrows.<br><br>Note that some have arrows pointing in both directions, be sure to choose the one facing in the direction that you want to start."
     customRouteStepsDiv.innerHTML = "";
     customRouteSelect.value = "-1"
+    funFactsDiv.innerHTML = "";
 };
 async function loadCustomRoute() {
     const customRouteName = customRouteSelect.value;
