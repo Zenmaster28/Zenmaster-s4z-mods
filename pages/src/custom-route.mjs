@@ -477,7 +477,7 @@ async function getPath(nextTarget) {
         startPoint = {
             roadId: startingSpawnPoint.roadId,
             reverse: startingSpawnPoint.reverse,
-            rp: startingSpawnPoint.reverse ? startingSpawnPoint.end : startingSpawnPoint.start
+            rp: startingSpawnPoint.start
         }
     } else {
         const lastManifest = customRouteSteps.manifest.at(-1);
