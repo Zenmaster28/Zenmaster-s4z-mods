@@ -559,7 +559,11 @@ export async function main() {
                         groupMinimum.state.gapTime = groupMinimum.gap;
                         groupMinimum.state.gapDistance = groupMinimum.gapDistance;
                         groupMinimum.state.athleteId = group.id || groupMinimum.state.athleteId;
+                        if (!group.id) {
+                            group.id = groupMinimum.state.athleteId;
+                        }
                     }
+
                     if (typeof(groupMinimum.state) != "undefined") {
                         states.push(groupMinimum.state)
                     }

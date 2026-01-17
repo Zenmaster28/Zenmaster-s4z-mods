@@ -72,7 +72,12 @@ export class SauceElevationProfile {
             C: 'hsl(180deg 80% 50%)',
             D: 'hsl(60deg 80% 50%)',
             E: 'hsl(270deg 80% 50%)'
-        };         
+        }; 
+        this.piePinCanvas = document.createElement('canvas');
+        this.piePinSize = 100;
+        this.piePinCanvas.width = this.piePinCanvas.height = this.piePinSize ;
+        this.piePinCtx = this.piePinCanvas.getContext('2d');
+        this.cats = ["A", "B", "C", "D", "E"];        
         this.pinName = options.pinName;
         this.useCustomPin = options.useCustomPin;
         this.customPin = options.customPin;
@@ -1343,6 +1348,62 @@ export class SauceElevationProfile {
         return false;
     }
     
+    getPinPie(group, colors) {
+        const TWO_PI = Math.PI * 2;
+        const sgLabels = Object.create(null);
+        let total = 0;
+
+        for (const x of group.athletes) {
+            const sg = common.getEventSubgroup(x.state.eventSubgroupId);
+            const label = sg?.subgroupLabel;
+            if (label) {
+                sgLabels[label] = (sgLabels[label] || 0) + 1;
+                total++;
+            }
+        }
+
+        if (!total) return null;
+
+        this.piePinCtx.clearRect(0, 0, this.piePinSize, this.piePinSize);
+
+        const cx = this.piePinSize / 2;
+        const headRadius = this.piePinSize * 0.25;
+        const headY = headRadius + 2;
+
+        let startAngle = -Math.PI / 2;
+
+        for (const cat of this.cats) {
+            const count = sgLabels[cat];
+            if (!count) continue;
+
+            const angle = (count / total) * TWO_PI;
+
+            this.piePinCtx.beginPath();
+            this.piePinCtx.moveTo(cx, headY);
+            this.piePinCtx.arc(cx, headY, headRadius, startAngle, startAngle + angle);
+            this.piePinCtx.closePath();
+
+            this.piePinCtx.fillStyle = colors[cat];
+            this.piePinCtx.fill();
+
+            startAngle += angle;
+        }
+
+        this.piePinCtx.beginPath();
+        this.piePinCtx.arc(cx, headY, headRadius, 0, TWO_PI);
+        this.piePinCtx.strokeStyle = '#333';
+        this.piePinCtx.lineWidth = 1;
+        this.piePinCtx.stroke();
+
+        this.piePinCtx.beginPath();
+        this.piePinCtx.moveTo(cx, headY + headRadius);
+        this.piePinCtx.lineTo(cx, this.piePinSize - 2);
+        this.piePinCtx.strokeStyle = '#333';
+        this.piePinCtx.lineWidth = 1.5;
+        this.piePinCtx.stroke();
+
+        return `image://${this.piePinCanvas.toDataURL()}`;
+    }
 
     async renderAthleteStates(states, force) {
         if (this.watchingId == null || this._busy) {
@@ -1382,6 +1443,8 @@ export class SauceElevationProfile {
                     this.routeOverrideTS = Date.now();
                     if (this.routeOverride != 999999999) {
                         //this.routeOverride = await this.getPpRoute();
+                        this.routeOverride = false;
+
                     }
                 }  
                 const ad = common.getAthleteDataCacheEntry(watching.athleteId);
@@ -2362,7 +2425,7 @@ export class SauceElevationProfile {
                             if (isBeacon) { 
                                 symbol = "path://m 19.000923,56.950256 h 1.021954 V 100 h -0.963276 z m -1.266211,-22.991813 7.026027,-6.131803 -3.321394,9.069959 z m 3.832378,2.107806 a 2.4271723,2.3632993 0 0 1 -2.427172,2.3633 2.4271723,2.3632993 0 0 1 -2.427171,-2.3633 2.4271723,2.3632993 0 0 1 2.427171,-2.363299 2.4271723,2.3632993 0 0 1 2.427172,2.363299 z M 19.521675,13.903697 1.1291999,24.759155 1.2559791,46.349633 19.521675,57.20826 37.917319,46.859918 38.174047,25.015882 Z m 0.129951,10.475121 A 11.369386,11.369386 0 0 1 31.020536,35.747733 11.369386,11.369386 0 0 1 19.651624,47.116646 11.369386,11.369386 0 0 1 8.2827093,35.747733 11.369386,11.369386 0 0 1 19.651626,24.378818 Z M 1,11.858402 19.523156,1 38.174058,11.789339 38.046313,19.267666 19.581839,9.5589751 1.0932144,19.081236 Z"
                             } else if (isGroup) {
-                                symbol = "path://M 50,50 a 50,50 0 1,0 0,100 a 50,50 0 1,0 0,-100 M 50,150 L 50,250"
+                                symbol = "path://M 50,50 a 50,50 0 1,0 0,100 a 50,50 0 1,0 0,-100 M 50,150 L 50,250"                                
                             } else if (this.customPin && this.useCustomPin) {
                                 symbol = this.customPin;
                             } else if (this.pinName) {
@@ -2381,6 +2444,12 @@ export class SauceElevationProfile {
                                         state.groupWeight = myGroup.weight;
                                         state.groupGapEst = myGroup.isGapEst;
                                         state.groupSize = myGroup.athletes.length;
+                                        if (this.colorPinsByCat && this.eventInfo?.cullingType == "CULLING_EVENT_ONLY") {
+                                            const groupDist = this.getPinPie(myGroup, this.catColors);
+                                            if (groupDist) {
+                                                symbol = groupDist;
+                                            };                                            
+                                        };
                                     } else {
                                         console.log("Missing myGroup data!")
                                         state.groupSpeed = 0;
@@ -2389,6 +2458,14 @@ export class SauceElevationProfile {
                                         state.groupGapEst = true;
                                         state.groupSize = 1;
                                     }
+                                } else {
+                                    const thisGroup = this.groups.find(x => x.id == state.athleteId);
+                                    if (thisGroup && this.colorPinsByCat && this.eventInfo?.cullingType == "CULLING_EVENT_ONLY") {
+                                        const groupDist = this.getPinPie(thisGroup, this.catColors);
+                                        if (groupDist) {
+                                            symbol = groupDist
+                                        };                                            
+                                    };
                                 }
                                 let maxGroupSize = 0;
                                 for (let group of this.groups) {
