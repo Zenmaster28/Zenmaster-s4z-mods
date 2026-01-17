@@ -64,6 +64,41 @@ export async function main() {
         customRouteIntersections = customRouteIntersections.filter(x => x.roadExit);
         console.log("new customRouteIntersections", customRouteIntersections)
         exitIntersections = [];
+        customRouteManifest = selfData.zenCustomRoute;
+        customRouteData = await zen.buildRouteData(selfData.zenCustomRoute, selfData.zenCustomRoute.courseId);
+        customRouteData.manifestIntersections = [];
+        let i = -1;
+        const epsilon = 1e-4;
+        console.log("customrouteData.manifest", customRouteData.manifest)
+        
+        for (let m of customRouteData.manifest) {
+            let foundInt = false;
+            i++;
+            for (let int of customRouteIntersections) {
+                if (int.assigned) {
+                    continue;
+                }
+                const target = m.reverse ? m.start : m.end;
+                const intExit = m.reverse ? int.m_roadTime1 : int.m_roadTime2;
+                //if (Math.abs(int.option.exitTime - target) < epsilon) { //should probably be checking roadId and direction too
+                if (Math.abs(intExit - target) < epsilon) {
+                    int.assigned = true;
+                    int.idx = i;
+                    customRouteData.manifestIntersections.push(int);
+                    foundInt = true;
+                    break;                    
+                }
+            }
+            if (!foundInt) {
+                //console.log(m)
+                //debugger
+                customRouteData.manifestIntersections.push(null)
+            }
+        }        
+        customRouteIntersections = customRouteData.manifestIntersections.filter(x => x != null)
+        console.log("customRouteIntersections", customRouteIntersections)
+        console.log("customrouteData", customRouteData)
+
     }
     common.subscribe('status', updateConnStatus, {source: 'gameConnection', persistent: true});
     common.subscribe('athlete/self', processWatching);
@@ -188,7 +223,10 @@ async function _processWatching(watching) {
                     continue;
                 }
                 const target = m.reverse ? m.start : m.end;
-                if (Math.abs(int.option.exitTime - target) < epsilon) { //should probably be checking roadId and direction too
+                const intExit = m.reverse ? int.m_roadTime1 : int.m_roadTime2;
+                //if (Math.abs(int.option.exitTime - target) < epsilon) { //should probably be checking roadId and direction too
+                if (Math.abs(intExit - target) < epsilon) {
+                //if (Math.abs(int.option.exitTime - target) < epsilon) { //should probably be checking roadId and direction too
                     int.assigned = true;
                     int.idx = i;
                     customRouteData.manifestIntersections.push(int);
@@ -216,6 +254,11 @@ async function _processWatching(watching) {
             const high = Math.max(rp, manifestStart);            
             const thisRoad = courseRoadsById[watching.state.roadId];
             spawnDistance = (thisRoad.curvePath.distanceBetweenRoadPercents(low, high, 4e-2) / 100) - watching.state.eventDistance;
+            if (watching.state.reverse && rp > manifestStart) {
+                spawnDistance = spawnDistance * -1;
+            } else if (!watching.state.reverse && rp < manifestStart) {
+                spawnDistance = spawnDistance * -1;
+            }
             console.log("rp", rp, "manifestStart", manifestStart, "spawnDistance", spawnDistance)
         } else {
             //check if found in athleteData
@@ -319,11 +362,13 @@ async function _processWatching(watching) {
             }
         }
     } 
-    const nextIntersection = customRouteIntersections.find(x => !x.found);
+    //const nextIntersection = customRouteIntersections.find(x => !x.found);
+    const nextIntersection = customRouteIntersections.find(x => x.idx == manifestIdx.i);
     const nextRoadIntersection = getNextRoadIntersection(rp, roadIntersections.intersections, watching.state.reverse);
     let distanceToNextIntersection;
     let nextOption;
     let optionsText = "";
+    //debugger
     if (nextRoadIntersection) {  
         if (nextRoadIntersection.m_markerId == nextIntersection?.m_markerId && nextIntersection.idx == manifestIdx.i) {
             //get distance to option exit
