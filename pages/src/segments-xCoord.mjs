@@ -5992,9 +5992,6 @@ export async function getManifestIntersections(manifest, courseId) {
                 : a.m_roadTime2 - b.m_roadTime2;
         });
         if (manifestIntersections.length > 1) {
-            if (m.roadId == 230) {
-                console.log("manifestIntersections", manifestIntersections)
-            }
             for (let j = 0; j < manifestIntersections.length - 1; j++) {                
                 const dir = m.reverse ? "reverse" : "forward";
                 let cyclingRoadOptions = 0;
