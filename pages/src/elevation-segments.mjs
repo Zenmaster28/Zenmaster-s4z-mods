@@ -1785,7 +1785,7 @@ export class SauceElevationProfile {
                                     yCoord = this._elevations[xIdx];
                                 }
                                 if (isNaN(xCoord) || xCoord == null) {
-                                    console.error('xCoord is NaN or null');
+                                    //console.error('xCoord is NaN or null');
                                 }
                             } else if (isWatching && this.foundRoute) {
                                 let routeOffset;
