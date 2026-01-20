@@ -93,7 +93,25 @@
                 <label title="Show all rider pins (aka the riff raff)">
                     <key>&nbsp;&nbsp;- All riders:</key>
                     <input type="checkbox" name="showAllRiders"/>
-                </label>              
+                </label>
+                <label title="Enter the Zwift Ids for riders you want emphasized.  A label will always be visible with extra data.">
+                    <key data-added="2026-01-18">Emphasize riders:</key>
+                    <input type="checkbox" name="showEmphasisRiders">&nbsp;
+                    <input type="text" name="emphasisRiders" size="40">
+                </label>
+                <label>
+                    <key>&nbsp;&nbsp;- show distance gap:</key>
+                    <input type="checkbox" name="showDistanceGap" data-depends-on="showEmphasisRiders">
+                </label>
+                <label>
+                    <key>&nbsp;&nbsp;- show time gap:</key>
+                    <input type="checkbox" name="showTimeGap" data-depends-on="showEmphasisRiders">
+                </label>
+                <label>
+                    <key>Background opacity:</key>
+                    <input type="range" name="emphasisOpacity" min="0.1" max="1" step="0.1" data-depends-on="showEmphasisRiders"/>
+                    <input type="number" name="emphasisOpacity" min="0.1" max="1" step="0.1" style="--size: 5" data-depends-on="showEmphasisRiders"/>
+                </label> 
                 <hr>
                 <label style="visibility: hidden; height: 0px">
                     <key>Pin:</key>

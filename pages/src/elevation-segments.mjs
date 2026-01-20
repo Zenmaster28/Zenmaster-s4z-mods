@@ -11,6 +11,7 @@ const H = locale.human;
 let routeSegments = [];
 let allMarkLines = [];
 let beaconSubs = [];
+let emphasisSubs = [];
 const allRoutes = await zen.getAllRoutes();
 
 export class SauceElevationProfile {
@@ -133,7 +134,13 @@ export class SauceElevationProfile {
         this.courseRoads = [];   
         this.portalRoads = [];
         this.customRouteTs = Date.now();
-        this.eventInfo = null;
+        this.eventInfo = null;        
+        //this.emphasisRiders = options.emphasisRiders?.split(",").map(x => x.trim()).map(Number).filter(Number.isInteger) || []; //deal with this changing from settings and allow nickname
+        this.emphasisRiders = this.splitEmphasisRiders(options.emphasisRiders);
+        this.showEmphasisRiders = options.showEmphasisRiders;
+        this.showDistanceGap = options.showDistanceGap;
+        this.showTimeGap = options.showTimeGap;
+        this.emphasisOpacity = options.emphasisOpacity;
         const el = options.el;
         el.classList.add('sauce-elevation-profile-container');
         this.chartXaxis = ec.init(document.getElementById('xAxis'));  
@@ -321,6 +328,37 @@ export class SauceElevationProfile {
                 }
             })
         }                      
+    }
+    splitEmphasisRiders(emphasisRiders) {
+        if (!emphasisRiders) {
+            return [];
+        };
+        let result = [];
+        const initSplit = emphasisRiders.split(",");
+        for (let e of initSplit) {
+            const eSplit = e.trim().split(' ');
+            if (Number(eSplit[0])) {
+                result.push({
+                    athleteId: parseInt(eSplit[0]),
+                    nickName: eSplit[1]?.replace("(", "").replace(")", "") || null
+                })
+            };
+        };
+        for (let i = emphasisSubs.length - 1; i >= 0; i--) {
+        //for (let sub of emphasisSubs) {
+            try {
+                common.unsubscribe('athlete/' + emphasisSubs[i].athleteId, this.updateEmphasisData); // reset any subscriptions
+                emphasisSubs.splice(i, 1);
+            } catch {
+
+            }
+        }
+        console.log("emphasisRiders", result)
+        return result;
+    }
+    updateEmphasisData(emp) {
+        const thisEmp = emphasisSubs.find(x => x.athleteId == emp.athleteId);
+        thisEmp.data = emp;
     }
     createPOI(ev, self, xValue) { 
         if (self.activePOIHandler) {
@@ -1347,8 +1385,20 @@ export class SauceElevationProfile {
         } 
         return false;
     }
-    
-    getPinPie(group, colors) {
+    fmtTime(totalSeconds) {
+        const isNegative = totalSeconds < 0;
+        totalSeconds = Math.abs(Math.floor(totalSeconds));
+
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+
+        return {
+            minutes: isNegative ? -minutes : minutes,
+            seconds,
+            formatted: `${isNegative ? '-' : ''}${minutes}:${seconds.toString().padStart(2, '0')}`
+        };
+    }
+    getPinPie(group, colors, isWatching) {
         const TWO_PI = Math.PI * 2;
         const sgLabels = Object.create(null);
         let total = 0;
@@ -1392,8 +1442,16 @@ export class SauceElevationProfile {
         this.piePinCtx.beginPath();
         this.piePinCtx.arc(cx, headY, headRadius, 0, TWO_PI);
         this.piePinCtx.strokeStyle = '#333';
-        this.piePinCtx.lineWidth = 1;
+        this.piePinCtx.lineWidth = isWatching ? 2 : 1;
         this.piePinCtx.stroke();
+
+        if (isWatching) {
+            this.piePinCtx.beginPath();
+            this.piePinCtx.arc(cx, headY, headRadius - 2, 0, TWO_PI);
+            this.piePinCtx.strokeStyle = 'white';
+            this.piePinCtx.lineWidth = 2;
+            this.piePinCtx.stroke();
+        }
 
         this.piePinCtx.beginPath();
         this.piePinCtx.moveTo(cx, headY + headRadius);
@@ -1619,9 +1677,11 @@ export class SauceElevationProfile {
                         let isPP = false;
                         let isBeacon = false;  
                         let isLeaderSweep = false;  
-                        let isGroup = false;                
+                        let isGroup = false;        
+                        let isEmphasisRider = false;
                         let beaconColour;
                         let beaconData = {};
+                        let emphasisData = {};
                         let eventCategory = "";
                         const ad = common.getAthleteDataCacheEntry(state.athleteId);
                         if (state.isGroup) {
@@ -1639,6 +1699,19 @@ export class SauceElevationProfile {
                             }
                             if (ad && ad.athlete && ad.athlete.following && !isWatching) {
                                 isFollowing = true;
+                            }
+                            if (ad && ad.athleteId && !isWatching && this.showEmphasisRiders && !this.showGroups) {
+                                isEmphasisRider = this.emphasisRiders.find(x => x.athleteId == ad.athleteId);
+                                if (isEmphasisRider && !emphasisSubs.find(x => x.athleteId == ad.athleteId)) {
+                                    emphasisSubs.push({
+                                        athleteId: ad.athleteId,
+                                        nickName: isEmphasisRider.nickName,
+                                        ts: Date.now(),
+                                        data: {}
+                                    });
+                                    common.subscribe("athlete/" + ad.athleteId, this.updateEmphasisData);                                    
+                                };
+                                emphasisData = emphasisSubs.find(x => x.athleteId == ad.athleteId);
                             }
                             if (ad && ad.athlete && ad.athlete.type == "PACER_BOT" && ad.state.sport == "cycling" && !isWatching && this.showRobopacers) {
                                 isPP = true;
@@ -2254,7 +2327,7 @@ export class SauceElevationProfile {
                                         let distToNextSegmentFinish = null;
                                         if (this.showNextSegmentFinish && nextSegment != -1 && !nextSegment.name.includes("Finish")) {
                                             nextSegmentFinish = allMarkLines[nextSegmentIdx + 1];
-                                            distToNextSegmentFinish =  nextSegmentFinish.markLine - xCoord;  
+                                            distToNextSegmentFinish =  nextSegmentFinish?.markLine - xCoord;  
                                         }
                                         if (locale.isImperial()) {
                                             const metersPerMile = 1000 / locale.milesPerKm
@@ -2436,6 +2509,7 @@ export class SauceElevationProfile {
                             let symbolSize = isGroup ? this.em(groupPinSize) : isWatching ? this.em(watchingPinSize) : ((isTeamMate && this.showTeamMembers) || (isMarked && this.showMarkedRiders) || (isBeacon)) || (isFollowing && this.showFollowing) ? this.em(teamPinSize) : deemphasize ? this.em(deemphasizePinSize) : this.em(otherPinSize)
                             
                             if (isGroup) {
+                                const colorPinsByCat = this.colorPinsByCat && this.eventInfo?.cullingType == "CULLING_EVENT_ONLY";
                                 if (isWatching) {                                  
                                   const myGroup = this.groups.find(x => x.watching)
                                   if (myGroup) {
@@ -2445,7 +2519,7 @@ export class SauceElevationProfile {
                                         state.groupGapEst = myGroup.isGapEst;
                                         state.groupSize = myGroup.athletes.length;
                                         if (this.colorPinsByCat && this.eventInfo?.cullingType == "CULLING_EVENT_ONLY") {
-                                            const groupDist = this.getPinPie(myGroup, this.catColors);
+                                            const groupDist = this.getPinPie(myGroup, this.catColors, isWatching);
                                             if (groupDist) {
                                                 symbol = groupDist;
                                             };                                            
@@ -2461,9 +2535,9 @@ export class SauceElevationProfile {
                                 } else {
                                     const thisGroup = this.groups.find(x => x.id == state.athleteId);
                                     if (thisGroup && this.colorPinsByCat && this.eventInfo?.cullingType == "CULLING_EVENT_ONLY") {
-                                        const groupDist = this.getPinPie(thisGroup, this.catColors);
+                                        const groupDist = this.getPinPie(thisGroup, this.catColors, isWatching);
                                         if (groupDist) {
-                                            symbol = groupDist
+                                            symbol = groupDist;
                                         };                                            
                                     };
                                 }
@@ -2473,9 +2547,11 @@ export class SauceElevationProfile {
                                         maxGroupSize = group.athletes.length;
                                     }
                                 }
-                                if (state.groupSize > 1) {
+                                if (state.groupSize > 1 || isWatching) {
                                     let proportion = (state.groupSize - 1) / (maxGroupSize - 1)
-                                    if (isWatching && proportion < 1) {
+                                    if (isWatching && this.colorPinsByCat && this.eventInfo?.cullingType == "CULLING_EVENT_ONLY" && proportion < 1) {
+                                        proportion = 1.1;
+                                    } else if (isWatching && proportion < 1) {
                                         proportion = ((1 - proportion) / 2) + proportion // give a little more emphasis to watching group pin size
                                     }
                                     const result = 1.5 + proportion
@@ -2497,11 +2573,11 @@ export class SauceElevationProfile {
                                     },
                                     label: {
                                         show: true,
-                                        formatter: state.groupSize > 1 ? state.groupSize.toString() : "",
-                                        color: 'white',
+                                        formatter: state.groupSize > 1 || isWatching ? state.groupSize.toString() : "",
+                                        color: colorPinsByCat ? '#222' : 'white',
                                         position: 'insideTop',
                                         fontSize: symbolSize / 4,
-                                        offset: [0,4 * this.pinSize]
+                                        offset: [0,5 * this.pinSize]
                                     },
                                     emphasis: {
                                         label: {
@@ -2532,10 +2608,9 @@ export class SauceElevationProfile {
                                 };
                                 
                             } else {
-                                let beaconLabel = {show: false};                                
-                                if (this.showRobopacers && this.showRobopacersGap) {
-                                    let beaconLabelData = "";
-                                    let beaconLabelZen = "";
+                                let beaconLabel = {show: false};
+                                if ((this.showRobopacers && this.showRobopacersGap) || this.showEmphasisRiders) {
+                                    let beaconLabelData = "";                                    
                                     if (beaconData?.data?.athlete) {
                                         const zenGap = Math.ceil(this.watchingPosition - xCoord);
                                         const sauceGap = Math.ceil(beaconData.data.gapDistance) || zenGap
@@ -2564,6 +2639,36 @@ export class SauceElevationProfile {
                                         if (isBeacon) {
 
                                         }
+                                    } else if (isEmphasisRider) {
+                                        if (emphasisData?.data?.athlete) {
+                                            const sauceGap = Math.ceil(emphasisData.data.gapDistance);
+                                            let emphasisName = emphasisData.nickName || ad.athlete.sanitizedFullname;
+                                            const gapDisplay = parseInt(sauceGap);
+                                            if (gapDisplay >= 10 || gapDisplay <= -10) {
+                                                const timeGap = this.fmtTime(emphasisData.data.gap).formatted;
+                                                const distGap = H.distance((gapDisplay), {suffix: true});
+                                                beaconLabelData = `${emphasisName}${this.showDistanceGap ? `\n${distGap}` : ''}${this.showTimeGap ? `\n${timeGap}` : ''}`
+                                            //} else if (gapDisplay < 0) {
+                                            //    beaconLabelData = `${emphasisName}${this.showDistanceGap ? `\n${distGap}` : ''}${this.showTimeGap ? `\n${timeGap}` : ''}`
+                                            } else {
+                                                beaconLabelData = `${emphasisName}`
+                                            };                                        
+                                        
+                                            beaconLabel = {
+                                                show: true,
+                                                position: "top",
+                                                distance: this.em(1 * markPointLabelSize),
+                                                fontSize: this.fontScale * 12,
+                                                color: 'white',
+                                                backgroundColor: `rgba(0, 0, 0, ${this.emphasisOpacity || 0.5})`,
+                                                borderRadius: this.em(0.22 * markPointLabelSize),
+                                                borderWidth: 1,
+                                                borderColor: '#fff9',
+                                                padding: [2, 4],
+                                                formatter: beaconLabelData
+                                            };   
+                                        }                             
+                                        //debugger
                                     }
                                 };                                
                                 return {
@@ -2595,7 +2700,10 @@ export class SauceElevationProfile {
                                             formatter: this.onMarkEmphasisLabel.bind(this),
                                         }
                                     },
-                                    label: beaconLabel
+                                    label: beaconLabel,
+                                    labelLayout: {
+                                        hideOverlap: true
+                                    }
                                 };
                             };
                     };

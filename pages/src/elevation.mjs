@@ -92,7 +92,12 @@ common.settingsStore.setDefault({
     showXaxis: false,
     xAxisIncrements: 0,
     xAxisInverse: false,
-    teamMemberFilter: ""
+    teamMemberFilter: "",
+    showEmphasisRiders: false,
+    emphasisRiders: "",
+    showDistanceGap: true,
+    showTimeGap: true,
+    emphasisOpacity: 0.5
 });
 
 const settings = common.settingsStore.get();
@@ -279,6 +284,13 @@ function createElevationProfile({worldList}) {
     typeof(settings.invertSegmentBool) == "undefined" ? common.settingsStore.set("invertSegmentBool", false) : null;
     const invertSegmentBool = settings.invertSegmentBool;
     const teamMemberFilter = settings.teamMemberFilter || "";
+    const showDistanceGap = settings.showDistanceGap || false;
+    const showTimeGap = settings.showTimeGap || false;
+    const emphasisRiders = settings.emphasisRiders || "";
+    typeof(settings.showEmphasisRiders) == "undefined" ? common.settingsStore.set("showEmphasisRiders", false) : null;
+    const showEmphasisRiders = settings.showEmphasisRiders;
+    typeof(settings.emphasisOpacity) == "undefined" ? common.settingsStore.set("emphasisOpacity", 0.5) : null;
+    const emphasisOpacity = settings.emphasisOpacity;
     const options = {
         el,
         worldList,
@@ -343,7 +355,12 @@ function createElevationProfile({worldList}) {
         invertSegmentBool,
         pinColorTeamMember,
         colorPinsByCat,
-        teamMemberFilter
+        teamMemberFilter,
+        emphasisRiders,
+        showEmphasisRiders,
+        showDistanceGap,
+        showTimeGap,
+        emphasisOpacity
     };
 
     //return new elevation.SauceElevationProfile({el, worldList, preferRoute, showMaxLine, showLapMarker, showSegmentStart, showLoopSegments, pinSize, lineType, lineTypeFinish, lineSize, pinColor, showSegmentFinish, minSegmentLength, showNextSegment, showNextSegmentFinish, showMyPin, setAthleteSegmentData, showCompletedLaps, overrideDistance, overrideLaps, yAxisMin, singleLapView, profileZoom, forwardDistance, behindDistance, showTeamMembers, showMarkedRiders, pinColorMarked, showAllRiders, colorScheme, lineTextColor, showRobopacers, showRobopacersGap, showLeaderSweep, gradientOpacity, zoomNextSegment, zoomNextSegmentApproach, zoomFinalKm, zoomSlider, pinName, useCustomPin, customPin, zoomSegmentOnlyWithinApproach, showAllArches, showGroups, showLineAhead, distanceAhead, aheadLineColor, aheadLineType, showNextPowerup, disablePenRouting, zoomRemainingRoute, showCurrentAltitude, showRouteMaxElevation, showXaxis, xAxisIncrements, xAxisInverse, invertSegmentBool, pinColorTeamMember, colorPinsByCat});
@@ -680,7 +697,11 @@ export async function main() {
             'showRouteMaxElevation',
             'showRobopacersGap',
             'showNextSegmentFinish',
-            'teamMemberFilter'
+            'teamMemberFilter',
+            'showEmphasisRiders',
+            'showDistanceGap',
+            'showTimeGap',
+            'emphasisOpacity'
         ]
         //console.log(changed);
         if (changed.has('editedSegments')) {
@@ -746,6 +767,8 @@ export async function main() {
             common.settingsStore.set('invertSegmentBool', invertBool);
             elProfile['invertSegmentBool'] = invertBool;
             elProfile.setRoute(elProfile.routeId);
+        } else if (changed.has('emphasisRiders')) {
+            elProfile.emphasisRiders = elProfile.splitEmphasisRiders(changed.get('emphasisRiders'));
         }
         props.forEach(property => {
             if (changed.has(property)) {                
