@@ -2550,7 +2550,7 @@ export class SauceElevationProfile {
                                 if (state.groupSize > 1 || isWatching) {
                                     let proportion = (state.groupSize - 1) / (maxGroupSize - 1)
                                     if (isWatching && this.colorPinsByCat && this.eventInfo?.cullingType == "CULLING_EVENT_ONLY" && proportion < 1) {
-                                        proportion = 1.1;
+                                        proportion = 1.2;
                                     } else if (isWatching && proportion < 1) {
                                         proportion = ((1 - proportion) / 2) + proportion // give a little more emphasis to watching group pin size
                                     }
@@ -2648,16 +2648,25 @@ export class SauceElevationProfile {
                                                 const timeGap = this.fmtTime(emphasisData.data.gap).formatted;
                                                 const distGap = H.distance((gapDisplay), {suffix: true});
                                                 beaconLabelData = `${emphasisName}${this.showDistanceGap ? `\n${distGap}` : ''}${this.showTimeGap ? `\n${timeGap}` : ''}`
-                                            //} else if (gapDisplay < 0) {
-                                            //    beaconLabelData = `${emphasisName}${this.showDistanceGap ? `\n${distGap}` : ''}${this.showTimeGap ? `\n${timeGap}` : ''}`
                                             } else {
                                                 beaconLabelData = `${emphasisName}`
                                             };                                        
-                                        
+                                            //const chartSeries = this.chart.getOption().series.find(x => x.name == "Elevation")
+                                            //const markPointLabels = chartSeries.markPoint.data.filter(x => x.label.show && x.name != state.athleteId)
+                                            //console.log("markPointLabels", markPointLabels)
+                                            let labelDistance = this.em(1 * markPointLabelSize);
+                                            if (emphasisSubs.length > 0) {
+                                                const emp = emphasisSubs.sort((a,b) => a.data?.state?.eventDistance - b.data?.state?.eventDistance);
+                                                const empIdx = emp.indexOf(emphasisData);
+                                                const isOdd = empIdx % 2 !== 0;
+                                                if (isOdd) {
+                                                    labelDistance = labelDistance * 2.5 // half assed attempt at staggering the height to reduce overlap
+                                                };
+                                            }
                                             beaconLabel = {
                                                 show: true,
                                                 position: "top",
-                                                distance: this.em(1 * markPointLabelSize),
+                                                distance: labelDistance,
                                                 fontSize: this.fontScale * 12,
                                                 color: 'white',
                                                 backgroundColor: `rgba(0, 0, 0, ${this.emphasisOpacity || 0.5})`,
@@ -2700,10 +2709,8 @@ export class SauceElevationProfile {
                                             formatter: this.onMarkEmphasisLabel.bind(this),
                                         }
                                     },
-                                    label: beaconLabel,
-                                    labelLayout: {
-                                        hideOverlap: true
-                                    }
+                                    label: beaconLabel
+                                    
                                 };
                             };
                     };
