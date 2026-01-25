@@ -121,13 +121,59 @@ if (saveButton) {
                         <option ${x.courseId === courseId ? 'selected' : ''}
                                 value="${x.courseId}">${common.stripHTML(x.name)}</option>`);        
                 };
+                const saveToJson = document.getElementById('saveToFile').checked;
+                if (saveToJson) {
+                    const jsonResults = JSON.stringify(routeToSave, null, 2);
+                    const resultsBlob = new Blob([jsonResults], { type: "application/json" });
+                    const url = URL.createObjectURL(resultsBlob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    const currentWorldName = courseSelect.options[courseSelect.selectedIndex].textContent;
+                    const suggestedFileName = `${routeName}-${currentWorldName}.json`;
+                    a.download = suggestedFileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }
             } else {
-                debugger
+                //debugger
             };            
         })
         dialog.showModal();
         
         
+    });
+};
+const openButton = document.getElementById("openButton");
+if (openButton) {
+    let jsonFile;
+    openButton.addEventListener("click", () => {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "application/json,.json";
+        input.addEventListener("change", () => {
+            const file = input.files[0];
+            if (!file) {
+                return;
+            };
+            const reader = new FileReader();
+            reader.onload = async () => {
+                try {
+                    //debugger
+                    const json = JSON.parse(reader.result);
+                    jsonFile = json;
+                    await loadRouteJson(jsonFile);
+                } catch (err) {
+                    console.warn("Invalid JSON file");
+                }
+            };
+            reader.onerror = () => {
+                console.warn("Failed to read file")
+            };
+            reader.readAsText(file);
+        });
+        input.click();
     });
 }
 const importExport = document.getElementById("importExport");
@@ -901,11 +947,19 @@ async function loadCustomRoute() {
     if (customRouteName == "-1") {
         return;
     };
-    const allSpawnPoints = document.querySelectorAll('.spawnPoint:not(.startSpawnPoint)')
-    for (let spawnPoint of allSpawnPoints) {                    
-        spawnPoint.style.visibility = "hidden"
-    };    
     const chosenRoute = courseCustomRoutes.find(x => x.name == customRouteName);
+    //const allSpawnPoints = document.querySelectorAll('.spawnPoint:not(.startSpawnPoint)')
+    const allSpawnPoints = document.querySelectorAll('.spawnPoint')
+    for (let spawnPoint of allSpawnPoints) {
+        if (spawnPoint.id != chosenRoute.spawnPoint.name) {
+            spawnPoint.classList.remove("startSpawnPoint");
+            spawnPoint.style.visibility = "hidden";
+        } else {
+            spawnPoint.classList.add("startSpawnPoint");
+            spawnPoint.style.visibility = "";
+        };
+    };    
+    
     const chosenRouteData = await zen.buildRouteData(chosenRoute, courseId);
     customRouteSteps.manifest = [chosenRouteData.manifest];
     applyRoutev4();
@@ -916,6 +970,33 @@ async function loadCustomRoute() {
                             `
     document.getElementById("finishButton").addEventListener("click", publishRoute); 
 };
+async function loadRouteJson(jsonFile) {
+    if (jsonFile.courseId != courseId) {
+        courseSelect.value = jsonFile.courseId;
+        await resetMap();
+    }
+    const allSpawnPoints = document.querySelectorAll('.spawnPoint')
+    for (let spawnPoint of allSpawnPoints) { 
+        if (spawnPoint.id != jsonFile.spawnPoint.name) {
+            spawnPoint.classList.remove("startSpawnPoint");
+            spawnPoint.style.visibility = "hidden";
+        } else {
+            spawnPoint.classList.add("startSpawnPoint");
+            spawnPoint.style.visibility = "";
+        };
+    }; 
+    const jsonRouteData = await zen.buildRouteData(jsonFile, courseId);
+    console.log(jsonRouteData)
+    customRouteSteps.manifest = [jsonRouteData.manifest];
+    applyRoutev4();
+    startingSpawnPoint = jsonRouteData.spawnPoint;
+    infoPanel.innerHTML = "";
+    infoPanel.innerHTML = `<hr>Click the Finish button to publish the route for navigation.<br>
+                            <input type=button id="finishButton" value=Finish></button>
+                            `
+    document.getElementById("finishButton").addEventListener("click", publishRoute); 
+    customRouteSelect.value = -1;
+}
 export async function main() {
     common.initInteractionListeners();
     common.setBackground(settings);
