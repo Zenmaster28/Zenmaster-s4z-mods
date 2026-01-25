@@ -830,7 +830,7 @@ export async function getAllRoutes() {
 
 export async function getRoadSegments(courseId, roadId, reverse) {
     let worldSegments = await common.rpc.getSegments(courseId)
-    let roadSegments = worldSegments.filter(x => x.roadId == roadId && x.reverse == reverse)
+    let roadSegments = worldSegments.filter(x => x.roadId == roadId && ((x.reverse ?? false) == reverse));
     let thisRoad = await common.getRoad(courseId, roadId)
     for (let segment of roadSegments) {
         segment.bounds = thisRoad.curvePath.boundsAtRoadPercent(segment.roadStart)
