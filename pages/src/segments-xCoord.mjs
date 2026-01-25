@@ -220,14 +220,14 @@ function findSegmentsOnRoadSection(thisRoad, cpIndex, rsIdx, showAllArches) {
             if (!segment.givesPowerUp && segment.worldId !== 8) {
                 continue; // hide banners with no Powerup (hidden Pier_RouteStart)
             }
-            if ((segment.roadStart == null || segment.reverse != thisRoad.reverse) && (!showAllArches)) {
+            if ((segment.roadStart == null || (segment.reverse ?? false) != thisRoad.reverse) && (!showAllArches)) {
                 // skip segments with no roadStart value and the segment and road direction must match
                 continue;
             }            
             segment.id == "1065262910" ? segment.id = "18245132094" : ""; // leg snapper segment id workaround
             let includeSegment = false;   
             let wrongWay = false;
-            if (segment.reverse != thisRoad.reverse) {
+            if ((segment.reverse ?? false) != thisRoad.reverse) {
                 wrongWay = true;
                 includeSegment = false;
                 //console.log("We are going the wrong way for this segment")
@@ -499,7 +499,7 @@ export async function getSegmentsOnRoute(courseId, routeId, eventSubgroupId) {
             for (let segment of segmentsOnRoad)
             {             
                 ignoreSegment = false;
-                if (segment.roadStart == null || segment.reverse != thisRoad.reverse) //ignore segments with no start and segment direction and road must match
+                if (segment.roadStart == null || (segment.reverse ?? false) != thisRoad.reverse) //ignore segments with no start and segment direction and road must match
                 {                        
                     ignoreSegment = true;
                 }                 
@@ -1444,7 +1444,7 @@ export async function getSegmentPath(id) {
                     seg = road.curvePath.subpathAtRoadPercents(segment.roadStart, segment.roadFinish);
                 }
             }
-            seg.reverse = segment.reverse;
+            seg.reverse = segment.reverse || false;
             //seg.leadin = segment.leadin;
             seg.roadId = segment.roadId;
             for (const xx of seg.nodes) {
@@ -2819,13 +2819,12 @@ export async function openSegmentsDB() {
 
 export async function openCustomRoutesDB() {
     return new Promise((resolve, reject) => {
-        const customRoutesDB = indexedDB.open("customRoutesDatabase", 4)
+        const customRoutesDB = indexedDB.open("customRoutesDatabase", 5)
         customRoutesDB.onupgradeneeded = function(event) {
             const db = event.target.result;
             if (!db.objectStoreNames.contains("customRoutes")) {
                 console.log("Creating customRoutes store");
-                const store = db.createObjectStore("customRoutes", {keyPath: "id", autoIncrement: true});
-                store.createIndex("name", "name", {unique: true});
+                const store = db.createObjectStore("customRoutes", {keyPath: "name"});                
                 store.createIndex("distance", "distance", {unique: false});
                 store.createIndex("elevation", "elevation", {unique: false});
                 store.createIndex("manifest", "manifest", {unique: false});
