@@ -356,15 +356,13 @@ function findSegmentsOnRoadSection(thisRoad, cpIndex, rsIdx, showAllArches) {
         let groupedSegments = groupBy(roadSegments, 'roadFinish')
         for (let s in groupedSegments) {
             if (groupedSegments[s].length > 1) {
-                filteredSegments.push(groupedSegments[s].find(x => x.reverse == thisRoad.reverse))
+                filteredSegments.push(groupedSegments[s].find(x => (x.reverse ?? false) == thisRoad.reverse))
             } else {
                 filteredSegments.push(groupedSegments[s][0])
             }
         }
     }
-    if (roadSegments.length > 0) {
-        //debugger
-    }
+    
     return filteredSegments
     //return roadSegments;
 }
