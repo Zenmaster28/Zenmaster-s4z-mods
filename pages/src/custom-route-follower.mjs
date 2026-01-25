@@ -265,7 +265,7 @@ async function _processWatching(watching) {
             spawnDistance = 0.1; // just so this doesn't constantly get triggered
         }
     }
-    if (customRouteComplete) {
+    if (customRouteComplete || !customRouteData) {
         return;
     }
     let manifestIdx = null;
@@ -283,7 +283,7 @@ async function _processWatching(watching) {
     if (!manifestIdx) {
         nextRoadIntersectionDiv.innerHTML = "";
         badManifestCounter++;
-        currIntersectionDiv.innerHTML = `!unknown manifest! ${badManifestCounter}`; 
+        currIntersectionDiv.innerHTML = `Uh-oh! We might be lost... ${badManifestCounter}`; 
         return;
     }
     currIntersectionDiv.innerHTML = "";    
