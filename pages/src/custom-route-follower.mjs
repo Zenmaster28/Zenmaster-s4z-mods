@@ -244,6 +244,9 @@ async function _processWatching(watching) {
         spawnDistance = null;
         customRouteComplete = false;
     }
+    if (customRouteComplete || !customRouteData) {
+        return;
+    }
     if (!spawnDistance) {
         //don't calc this if not at the start of the route
         //consider sending this back to athleteData entry in case of reload
@@ -264,10 +267,8 @@ async function _processWatching(watching) {
             //check if found in athleteData
             spawnDistance = 0.1; // just so this doesn't constantly get triggered
         }
-    }
-    if (customRouteComplete || !customRouteData) {
-        return;
-    }
+    };
+    
     let manifestIdx = null;
     const distanceTarget = watching.state.eventDistance + spawnDistance;
     for (let variance of varianceOptions) {        
