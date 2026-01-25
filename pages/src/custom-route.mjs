@@ -56,6 +56,7 @@ const elevationSelect = document.getElementById("customElevation");
 const infoPanel = document.getElementById('infoPanel');
 const routeSetup = document.getElementById('routeSetup');
 const routeSetupInfo = document.getElementById('routeSetupInfo');
+const routeSetupRoutes = document.getElementById('routeSetupRoutes');
 const routeSetupContent = document.getElementById('routeSetupContent');
 const routeSetupClose = document.getElementById('routeSetupClose');
 const funFactsDiv = document.getElementById("funFacts");
@@ -739,7 +740,7 @@ async function publishRoute() {
     const spawnPointRoutes = startingSpawnPoint.routes; 
     console.log("spawnPointRoutes", spawnPointRoutes);
     routeSetupContent.innerHTML = `<h1>*** Do not close this window unless you want to cancel!! ***</h1>
-                                - Start a freeride on one of the routes below.<br>
+                                - Start a freeride on one of the routes displayed to the right .<br>
                                 - Once Zwift is loaded and on one of the proper routes, this custom route will be applied to Sauce.<br>
                                 - Game connection needs to be enabled and connected and you need to have a "Custom Route Chauffeur" window open.<br>
                                 - This window will close automatically once the route has been applied. (Clicking the X will prevent it from applying)
@@ -751,10 +752,11 @@ async function publishRoute() {
         if (i > 5) {
             break;
         }
-        routeList += `${route.name}<br>`;
+        routeList += `- ${route.name}<br>`;
         i++;
     }
-    routeSetupContent.innerHTML += routeList;
+    //routeSetupContent.innerHTML += routeList;
+    routeSetupRoutes.innerHTML = routeList;
     routeSetupContent.innerHTML += `<div id=routeSetupStatus></div>`
     routeSetup.classList.remove('hidden'); 
     common.subscribe('athlete/self', updateRouteData);
