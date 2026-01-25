@@ -2819,12 +2819,14 @@ export async function openSegmentsDB() {
 
 export async function openCustomRoutesDB() {
     return new Promise((resolve, reject) => {
-        const customRoutesDB = indexedDB.open("customRoutesDatabase", 5)
+        const customRoutesDB = indexedDB.open("customRoutesDatabase", 6)
         customRoutesDB.onupgradeneeded = function(event) {
             const db = event.target.result;
             if (!db.objectStoreNames.contains("customRoutes")) {
                 console.log("Creating customRoutes store");
-                const store = db.createObjectStore("customRoutes", {keyPath: "name"});                
+                const store = db.createObjectStore("customRoutes", {keyPath: "id", autoIncrement: true});
+                //const store = db.createObjectStore("customRoutes", {keyPath: "name"});
+                store.createIndex("name", "name", {unique: true});
                 store.createIndex("distance", "distance", {unique: false});
                 store.createIndex("elevation", "elevation", {unique: false});
                 store.createIndex("manifest", "manifest", {unique: false});
