@@ -7216,6 +7216,9 @@ export async function generateRoadData(courseId) {
                     }
                     int.forwardValidForCycling = road.singleIntersection || (forwardCyclingOptions > 1 && int.m_roadTime1 != int.m_roadTime2);
                     int.reverseValidForCycling = road.singleIntersection || (reverseCyclingOptions > 1 && int.m_roadTime1 != int.m_roadTime2);
+                    if (courseId == 13 && int.m_markerId == 60006) {
+                        int.reverseValidForCycling = true; //the weird little roundabout on the way into Neokyo.  Force it to be a valid intersection.
+                    }
                 }
                 if (!road.looped && 
                     !thisRoadIntersections.intersections.at(-1).forwardValidForCycling && 
