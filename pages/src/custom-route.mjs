@@ -631,6 +631,14 @@ async function applyRoutev4(pathOptions) {
                             zwiftMap.addHighlightPath(optionData.curvePath, 'tmpOptionHighlight', {width: 0.5, color: 'yellow'})
                         );
                     };
+                    if (row.className == "wayPoint") {
+                        const wpIdx = row.cells[2].innerText;
+                        const wpManifest = {manifest: customRouteSteps.manifest[wpIdx]};
+                        const wpData = await zen.buildRouteData(wpManifest, courseId);
+                        _routeHighlights.push(
+                            zwiftMap.addHighlightPath(wpData.curvePath, 'tmpOptionHighlight', {width: 0.5, color: 'yellow'})
+                        );
+                    }
                 });
                 row.addEventListener("mouseleave", () => { 
                     if (!alternateRouteChosen) {
