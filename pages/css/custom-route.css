@@ -14,6 +14,8 @@
   padding: 10px;
   width: 15%;
   font-size: calc(var(--font-scale) * 0.8em);
+  overflow: auto;
+  height: 90%;
 }
 #funFacts {
   position: absolute;
@@ -255,6 +257,17 @@ html.solid-background body {
 #stepOptionsTable tr.selected {
   background-image: linear-gradient(135deg, hsl(var(--theme-primary-hue) var(--theme-primary-sat) var(--theme-primary-light)/85%), hsl(var(--theme-primary-hue) var(--theme-primary-sat) calc(var(--theme-primary-light) + -10% * var(--theme-primary-shade-dir))/80%));
   color: hsl(var(--theme-primary-hue) var(--theme-primary-sat) calc(var(--theme-primary-light) + 100% * var(--theme-primary-shade-dir))/100%);
+}
+#stepOptionsTable tr.option {
+  background-color: hsl(var(--theme-intrinsic-inverted-hue), var(--theme-intrinsic-inverted-sat), calc(var(--theme-intrinsic-inverted-light) + 0% * var(--theme-intrinsic-inverted-shade-dir)), 0.2);
+}
+#stepOptionsTable td.sep {
+  padding: 0em;
+}
+#stepOptionsTable hr.sep-hr {
+  border-top: 1px;
+  margin: 0;
+  padding: 0;
 }
 .hidden {
   display: none;

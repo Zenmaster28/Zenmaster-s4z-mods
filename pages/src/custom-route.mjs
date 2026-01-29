@@ -602,12 +602,6 @@ async function applyRoutev4(pathOptions) {
         );
         let stepOptions = "<table id='stepOptionsTable'>";
         if (customRouteSteps.distances) {
-            for (let i = 0; i < customRouteSteps.manifest.length; i++) { 
-                const distance = customRouteSteps.distances[i];
-                const pathDistance = distance >= 1000 ? `${parseFloat(distance / 1000).toFixed(1)}km` : `${parseInt(distance)}m`;
-                stepOptions += `<tr class="wayPoint"><td>Waypoint ${i + 1}</td><td>${pathDistance}</td><td>${i}</td></tr>`;
-            }
-        
             if (pathOptions) {
                 for (let i = 0; i < pathOptions.length; i++) {
                     const path = pathOptions[i];
@@ -616,6 +610,14 @@ async function applyRoutev4(pathOptions) {
                     stepOptions += `<tr class="option${selected}"><td> - Option ${i + 1}</td><td>${pathDistance}</td><td>${i}</td></tr>`;
                 }
             }
+            stepOptions += `<tr><td class="sep" colspan="2"><hr class="sep-hr"></td></tr>`
+            for (let i = customRouteSteps.manifest.length - 1; i >= 0; i--) { 
+                const distance = customRouteSteps.distances[i];
+                const pathDistance = distance >= 1000 ? `${parseFloat(distance / 1000).toFixed(1)}km` : `${parseInt(distance)}m`;
+                stepOptions += `<tr class="wayPoint"><td>Waypoint ${i + 1}</td><td>${pathDistance}</td><td>${i}</td></tr>`;
+            }
+        
+            
             stepOptions += "</table>";
             customRouteStepsDiv.innerHTML = stepOptions;
             const stepOptionsTableRows = document.querySelectorAll("#stepOptionsTable tbody tr")
