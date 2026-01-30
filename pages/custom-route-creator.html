@@ -52,6 +52,10 @@
             <div ><input id="customDistance" type="number" min="1000" max="100000" step="100" class="options" disabled></div>
             <div class="title">&nbsp;Elevation (m)</div>
             <div ><input id="customElevation" type="number" min="1000" max="100000" step="100" class="options" disabled></div>
+            <div>
+                <input type="radio" name="wayPointOrCuesheet" value="waypoints" checked>Waypoints&nbsp;
+                <input type="radio" name="wayPointOrCuesheet" value="cuesheet">Cuesheet
+            </div>
             <div class="filler"></div>
             <div><select id="customRouteSelect"></select></div>
             <div><input type="button" id="saveButton" value="&#x1F4BE;" class="button" title="Save route"></div>
@@ -59,6 +63,9 @@
         </div>
             <div id="contentContainer">
                 <div id="customRouteSteps">         
+                </div>
+                <div id="cueSheet">
+
                 </div>
                 <div id="content">                
                     <div class="elevation-profile"></div>                

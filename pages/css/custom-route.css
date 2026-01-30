@@ -17,6 +17,14 @@
   overflow: auto;
   height: 90%;
 }
+#cueSheet {  
+  padding: 10px;
+  width: 15%;
+  font-size: calc(var(--font-scale) * 0.8em);
+  overflow: auto;
+  height: 90%;
+  display: none;
+}
 #funFacts {
   position: absolute;
   bottom: 5px;
@@ -37,6 +45,15 @@
 }
 .sauce-map-container {
   cursor: unset;
+}
+.sauce-map-container > .sauce-map > div.entities .entity.intersectionMarker {
+  width: 2em;
+  height: 2em;
+  left: -1em;
+  top: -1em;
+  --fill: lime;
+  clip-path: circle(50%);
+  z-index: 5;
 }
 .sauce-map-container > .sauce-map > div.entities .entity.spawnPoint {
   width: 2em;

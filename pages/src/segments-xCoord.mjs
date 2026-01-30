@@ -7305,4 +7305,20 @@ export async function generateRoadData(courseId) {
     allCyclingRoads.sort((a,b) => a.id - b.id);
     const allCyclingRoadsById = Object.fromEntries(allCyclingRoads.map(x => [x.id, x]));
     return allCyclingRoadsById;    
+};
+export function generateCueSheet(intersections) {
+    if (!intersections || intersections.length == 0) {
+        return;
+    };    
+    const turns = {
+        263: "Left",
+        265: "Straight",
+        262: "Right"
+    }
+    let cueSheet = `<ol id="cueSheetUl" class="cueSheetUl">`;
+    for (let int of intersections) {
+        cueSheet += `<li data-marker-id="${int.m_markerId}" data-road-id="${int.m_roadId}" data-reverse="${int.reverse}">${turns[int.option.alt]} to ${int.option.turnText}</li>`;
+    };
+    cueSheet += `</ol>`;
+    return cueSheet;
 }

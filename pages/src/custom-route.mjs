@@ -61,6 +61,27 @@ const routeSetupContent = document.getElementById('routeSetupContent');
 const routeSetupClose = document.getElementById('routeSetupClose');
 const funFactsDiv = document.getElementById("funFacts");
 const customRouteStepsDiv = document.getElementById("customRouteSteps");
+const cueSheetDiv = document.getElementById("cueSheet");
+const radios = document.querySelectorAll('input[type="radio"][name="wayPointOrCuesheet"');
+function toggleWaypointCuesheet() {
+    const waypointOrCuesheet = document.querySelector(`input[name="wayPointOrCuesheet"]:checked`);
+    if (waypointOrCuesheet.value === "cuesheet") {
+        customRouteStepsDiv.style.display = "none";
+        cueSheetDiv.style.display = "block";
+    } else {
+        customRouteStepsDiv.style.display = "";
+        cueSheetDiv.style.display = "none";
+    }
+}
+if (radios) {
+    radios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                toggleWaypointCuesheet();
+            }
+        })
+    })
+}
 if (routeSetupClose) {
     routeSetupClose.addEventListener('click', (e) => {
     if (e.target === routeSetupClose) {
@@ -689,7 +710,35 @@ async function applyRoutev4(pathOptions) {
             });            
         };
         let allCustomRouteIntersections = zen.getManifestIntersections(routeManifest.manifest, courseId, courseRoads);
-        console.log("allCustomRouteIntersections", allCustomRouteIntersections)
+        console.log("allCustomRouteIntersections", allCustomRouteIntersections);
+        const cueSheetUl = zen.generateCueSheet(allCustomRouteIntersections);        
+        cueSheetDiv.innerHTML = cueSheetUl;
+        const cueSheetList = document.querySelector("#cueSheetUl");
+        if (cueSheetList) {
+            cueSheetList.addEventListener("mouseover", (e) => {
+                const allMarkers = document.querySelectorAll('.intersectionMarker')
+                for (let marker of allMarkers) {                    
+                    marker.remove();
+                }
+                const li = e.target.closest("li");
+                if (!li) {
+                    return;
+                };
+                const markerId = li.dataset.markerId;
+                const roadId = li.dataset.roadId;
+                const reverse = li.dataset.reverse === "true";
+                const thisIntersection = courseRoads[roadId].intersections.find(x => x.m_markerId == markerId);
+                const intersectionExitRp = reverse ? thisIntersection.m_roadTime1 : thisIntersection.m_roadTime2;
+                const exitPt = courseRoads[roadId].curvePath.pointAtRoadPercent(intersectionExitRp);
+                zwiftMap.addPoint([exitPt[0],exitPt[1]], "intersectionMarker");
+            });
+            cueSheetList.addEventListener("mouseleave", (e) => {
+                const allMarkers = document.querySelectorAll('.intersectionMarker')
+                for (let marker of allMarkers) {                    
+                    marker.remove();
+                }
+            });
+        };
         let exitCustomRouteIntersections = allCustomRouteIntersections.filter(x => x.roadExit);
         console.log("exitCustomRouteIntersections", exitCustomRouteIntersections)
         let customRouteData = zen.buildRouteData(routeManifest, courseId, courseRoads, worldMeta);
@@ -723,7 +772,8 @@ async function applyRoutev4(pathOptions) {
         console.log("customRouteIntersections", customRouteIntersections)
     } else {
         customRouteStepsDiv.innerHTML = "";
-    }
+    };  
+    toggleWaypointCuesheet();  
 }
 
 async function applyCourse() {
@@ -984,6 +1034,7 @@ async function resetMap() {
     await elProfile.clear()
     infoPanel.innerHTML = "To begin, choose a spawn point by clicking on one of the red arrows.<br><br>Note that some have arrows pointing in both directions, be sure to choose the one facing in the direction that you want to start."
     customRouteStepsDiv.innerHTML = "";
+    cueSheetDiv.innerHTML = "";
     customRouteSelect.value = "-1"
     funFactsDiv.innerHTML = "";
 };
