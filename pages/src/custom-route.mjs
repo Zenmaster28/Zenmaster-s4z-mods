@@ -685,8 +685,41 @@ async function applyRoutev4(pathOptions) {
                         alternateRouteChosen = true;
                     };
                 });
-            });
+            });            
         };
+        let allCustomRouteIntersections = await zen.getManifestIntersections(routeManifest.manifest, courseId);
+        console.log("allCustomRouteIntersections", allCustomRouteIntersections)
+        let exitCustomRouteIntersections = allCustomRouteIntersections.filter(x => x.roadExit);
+        console.log("exitCustomRouteIntersections", exitCustomRouteIntersections)
+        let customRouteData = await zen.buildRouteData(routeManifest, courseId);
+        customRouteData.manifestIntersections = [];
+        let i = -1;
+        const epsilon = 1e-4;
+        for (let m of customRouteData.manifest) {
+            let foundInt = false;
+            i++;
+            for (let int of exitCustomRouteIntersections) {
+                if (int.assigned || int.m_roadId != m.roadId || int.reverse != m.reverse) {
+                    continue;
+                }
+                const target = m.reverse ? m.start : m.end;
+                const intExit = m.reverse ? int.m_roadTime1 : int.m_roadTime2;
+                //if (Math.abs(int.option.exitTime - target) < epsilon) { //should probably be checking roadId and direction too
+                if (Math.abs(intExit - target) < epsilon) {
+                //if (Math.abs(int.option.exitTime - target) < epsilon) { //should probably be checking roadId and direction too
+                    int.assigned = true;
+                    int.idx = i;
+                    customRouteData.manifestIntersections.push(int);
+                    foundInt = true;
+                    break;                    
+                }
+            }
+            if (!foundInt) {
+                customRouteData.manifestIntersections.push(null)
+            }
+        };
+        const customRouteIntersections = customRouteData.manifestIntersections.filter(x => x != null)
+        console.log("customRouteIntersections", customRouteIntersections)
     } else {
         customRouteStepsDiv.innerHTML = "";
     }
