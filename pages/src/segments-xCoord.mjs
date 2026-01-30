@@ -5832,20 +5832,20 @@ function measureRoadSectionV2(section, courseId, allRoads) {
     return sectionLength;    
 }
 
-export async function buildRouteData(route, courseId) {
+export function buildRouteData(route, courseId, courseRoads, worldMeta) {
     let totalDistance = 0;
     route.manifestDistances = [];
     route.curvePath = new curves.CurvePath();
     route.roadSegments = [];
     route.courseId = courseId;
-    
-    const worldList = await common.getWorldList();
-    const worldMeta = worldList.find(x => x.courseId === courseId);
-    const courseRoads = await common.getRoads(courseId);
+    //const worldList = await common.getWorldList();
+    //const worldMeta = worldList.find(x => x.courseId === courseId);
+    //const courseRoads = await common.getRoads(courseId);
     route.manifest = mergeManifest(route.manifest);
     for (const [i, x] of route.manifest.entries()) {
         //const road = await common.getRoad(courseId, x.roadId);
-        const road = courseRoads.find(road => road.id == x.roadId)
+        //const road = courseRoads.find(road => road.id == x.roadId)
+        const road = courseRoads[x.roadId]
         const seg = road.curvePath.subpathAtRoadPercents(x.start, x.end);
         const segDist = (road.curvePath.distanceBetweenRoadPercents(x.start, x.end, 4e-2)) / 100;
         route.manifestDistances.push({
@@ -5967,13 +5967,13 @@ export function mergeManifest(entries) {
 
     return merged;
 }
-export async function getManifestIntersections(manifest, courseId) {
+export function getManifestIntersections(manifest, courseId, courseRoads) {
     let intersectionList = [];
-    const allRoads = await common.getRoads(courseId);
-    const allCyclingRoads = allRoads.filter(x => x.sports.includes("cycling"));
-    const worldList = await common.getWorldList();   
-    const worldId = (worldList.find(x => x.courseId == courseId)).worldId;
-    const intersections = await fetch(`data/worlds/${worldId}/roadIntersections.json`).then(response => response.json());
+    //const allRoads = await common.getRoads(courseId);
+    //const allCyclingRoads = allRoads.filter(x => x.sports.includes("cycling"));
+    //const worldList = await common.getWorldList();   
+    //const worldId = (worldList.find(x => x.courseId == courseId)).worldId;
+    //const intersections = await fetch(`data/worlds/${worldId}/roadIntersections.json`).then(response => response.json());
     //debugger
     let i = 0;
     const epsilon = 1e-9;
@@ -5981,7 +5981,8 @@ export async function getManifestIntersections(manifest, courseId) {
         let usedManifestIntersections = [];
         const start = m.reverse ? m.end : m.start;
         const end = m.reverse ? m.start : m.end;
-        const thisRoadIntersections = (intersections.filter(x => x.id == m.roadId))[0].intersections
+        //const thisRoadIntersections = (intersections.filter(x => x.id == m.roadId))[0].intersections
+        const thisRoadIntersections = courseRoads[m.roadId].intersections
         const manifestIntersections = m.reverse ? 
             thisRoadIntersections.filter(x => x.reverse.length > 0 && (start >= x.m_roadTime1 - epsilon) && (end <= x.m_roadTime1 + epsilon)) :
             thisRoadIntersections.filter(x => x.forward.length > 0 && (start <= x.m_roadTime2 + epsilon) && (end >= x.m_roadTime2 - epsilon));
@@ -5995,7 +5996,8 @@ export async function getManifestIntersections(manifest, courseId) {
                 const dir = m.reverse ? "reverse" : "forward";
                 let cyclingRoadOptions = 0;
                 for (let opt of manifestIntersections[j][dir]) {
-                    if (allCyclingRoads.find(x => x.id == opt.option.road)) { //some intersections have only one cycling option (others are run only)
+                    //if (allCyclingRoads.find(x => x.id == opt.option.road)) { //some intersections have only one cycling option (others are run only)
+                    if (courseRoads[opt.option.road]) {
                         cyclingRoadOptions++;
                     }
                 }
@@ -6025,7 +6027,8 @@ export async function getManifestIntersections(manifest, courseId) {
             const dir = m.reverse ? "reverse" : "forward";
             let cyclingRoadOptions = 0;
             for (let opt of manifestIntersections.at(-1)[dir]) {
-                if (allCyclingRoads.find(x => x.id == opt.option.road)) { //some intersections have only one cycling option (others are run only)
+                //if (allCyclingRoads.find(x => x.id == opt.option.road)) { //some intersections have only one cycling option (others are run only)
+                if (courseRoads[opt.option.road]) {
                     cyclingRoadOptions++;
                 }
             };
@@ -6051,7 +6054,8 @@ export async function getManifestIntersections(manifest, courseId) {
             const dir = m.reverse ? "reverse" : "forward";
             let cyclingRoadOptions = 0;
             for (let opt of manifestIntersections.at(-1)[dir]) {
-                if (allCyclingRoads.find(x => x.id == opt.option.road)) { //some intersections have only one cycling option (others are run only)
+                //if (allCyclingRoads.find(x => x.id == opt.option.road)) { //some intersections have only one cycling option (others are run only)
+                if (courseRoads[opt.option.road]) {
                     cyclingRoadOptions++;
                 }
             }
