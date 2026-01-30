@@ -16,6 +16,8 @@ let allIntersections;
 let intersectionsById;
 let inIntersection = false;
 let courseRoads = [];
+const worldList = await common.getWorldList(); 
+let worldMeta;
 let courseRoadsById;
 let lastKnownIntersection;
 let foundRouteIntersection = false;
@@ -60,12 +62,13 @@ export async function main() {
     const selfData = await common.rpc.getAthleteData('self'); 
     if (selfData && selfData.zenCustomRoute?.ts != customRouteManifest.ts) {
         console.log("Updating custom route intersections from watching data", selfData.zenCustomRoute);
-        customRouteIntersections = await zen.getManifestIntersections(selfData.zenCustomRoute.manifest, selfData.zenCustomRoute.courseId)
+        customRouteIntersections = zen.getManifestIntersections(selfData.zenCustomRoute.manifest, selfData.zenCustomRoute.courseId, courseRoads)
         customRouteIntersections = customRouteIntersections.filter(x => x.roadExit);
         console.log("new customRouteIntersections", customRouteIntersections)
         exitIntersections = [];
         customRouteManifest = selfData.zenCustomRoute;
-        customRouteData = await zen.buildRouteData(selfData.zenCustomRoute, selfData.zenCustomRoute.courseId);
+        worldMeta = worldList.find(x => x.courseId == selfData.zenCustomRoute.courseId);
+        customRouteData = zen.buildRouteData(selfData.zenCustomRoute, selfData.zenCustomRoute.courseId, courseRoads, worldMeta);
         customRouteData.manifestIntersections = [];
         let i = -1;
         const epsilon = 1e-4;
@@ -129,7 +132,7 @@ function getDistanceToIntersection(watching, nextIntersection, rp, toEnd) {
     if (!nextIntersection) {
         return;
     }
-    const thisRoad = courseRoadsById[watching.state.roadId];
+    const thisRoad = courseRoads[watching.state.roadId];
     const reverse = watching.state.reverse;
     let target;
     if (toEnd) {
@@ -177,7 +180,7 @@ function getNextRoadIntersection(rp, roadIntersections, reverse) {
     //maybe someday skip intersections that only runners can choose
     if (ahead.length > 0) {
         return ahead[0];
-    } else if (courseRoadsById[roadIntersections[0].m_roadId].looped) {
+    } else if (courseRoads[roadIntersections[0].m_roadId].looped) {
         return roadIntersections[0]; //we are on a looped road and after the last intersection before the 0/1 line, return the first intersection after that line
     } else {
         return null;
@@ -202,16 +205,18 @@ async function _processWatching(watching) {
         intersectionsById = Object.fromEntries(allIntersections.map(x => [x.id, x]));
     }
     if (courseRoads.length == 0) {
-        courseRoads = await getAllRoads(watching.state.courseId);
-        courseRoadsById = Object.fromEntries(courseRoads.map(x => [x.id, x]));
+        //courseRoads = await getAllRoads(watching.state.courseId);
+        courseRoads = await zen.generateRoadData(courseId);
+        worldMeta = worldList.find(x.courseId == courseId);
+        //courseRoadsById = Object.fromEntries(courseRoads.map(x => [x.id, x]));
     }
     if (watching.zenCustomRoute?.ts != customRouteManifest.ts) {
         console.log("Updating custom route intersections from watching data", watching.zenCustomRoute);
-        let allCustomRouteIntersections = await zen.getManifestIntersections(watching.zenCustomRoute.manifest, watching.zenCustomRoute.courseId);
+        let allCustomRouteIntersections = zen.getManifestIntersections(watching.zenCustomRoute.manifest, watching.zenCustomRoute.courseId, courseRoads);
         let exitCustomRouteIntersections = allCustomRouteIntersections.filter(x => x.roadExit);
         console.log("new customRouteIntersections", exitCustomRouteIntersections)
         customRouteManifest = watching.zenCustomRoute;
-        customRouteData = await zen.buildRouteData(watching.zenCustomRoute, watching.state.courseId);
+        customRouteData = zen.buildRouteData(watching.zenCustomRoute, watching.state.courseId, courseRoads, worldMeta);
         customRouteData.manifestIntersections = [];
         let i = -1;
         const epsilon = 1e-4;
@@ -255,7 +260,8 @@ async function _processWatching(watching) {
             const manifestStart = watching.state.reverse ? customRouteData.manifest[0].end : customRouteData.manifest[0].start;
             const low = Math.min(rp, manifestStart);
             const high = Math.max(rp, manifestStart);            
-            const thisRoad = courseRoadsById[watching.state.roadId];
+            //const thisRoad = courseRoadsById[watching.state.roadId];
+            const thisRoad = courseRoads[watching.state.roadId];
             spawnDistance = (thisRoad.curvePath.distanceBetweenRoadPercents(low, high, 4e-2) / 100) - watching.state.eventDistance;
             if (watching.state.reverse && rp > manifestStart) {
                 spawnDistance = spawnDistance * -1;

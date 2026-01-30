@@ -275,7 +275,7 @@ if (importRouteButton) {
             const customManifest = zen.buildCustomManifestv2(manifestPts, courseRoads, courseId);
             customManifest.manifest = zen.mergeManifest(customManifest.manifest);
             //routeData = await zen.buildRouteData(manifestPts, courseId);
-            routeData = await zen.buildRouteData(customManifest, courseId);
+            routeData = zen.buildRouteData(customManifest, courseId, courseRoads, worldMeta);
             elProfile.sectionRouteData = routeData;
             elProfile.routeId = 999999999;
             //await elProfile.setPath();
@@ -309,6 +309,7 @@ let courseId = Number(url.searchParams.get('course')) || 6;
 let courseRoads;
 let courseSpawnPoints = [];
 let startingSpawnPoint;
+let worldMeta;
 let penList;
 let intersections;
 let badIntersections = [1190003]
@@ -586,7 +587,7 @@ async function applyRoutev4(pathOptions) {
                 routeManifest.manifest.push(m);
             }
         }
-        routeData = await zen.buildRouteData(routeManifest, courseId);
+        routeData = zen.buildRouteData(routeManifest, courseId, courseRoads, worldMeta);
         const routeElevation = zen.calcElevationGain(routeData.elevations)
         distanceSelect.value = parseInt(routeData.distances.at(-1));
         elevationSelect.value = parseInt(routeElevation)
@@ -626,7 +627,7 @@ async function applyRoutev4(pathOptions) {
                     if (row.className == "option") {
                         const optionIdx = row.cells[2].innerText;
                         const optionManifest = pathOptions[optionIdx];
-                        const optionData = await zen.buildRouteData(optionManifest, courseId);
+                        const optionData = zen.buildRouteData(optionManifest, courseId, courseRoads, worldMeta);
                         _routeHighlights.push(
                             zwiftMap.addHighlightPath(optionData.curvePath, 'tmpOptionHighlight', {width: 0.5, color: 'yellow'})
                         );
@@ -634,7 +635,7 @@ async function applyRoutev4(pathOptions) {
                     if (row.className == "wayPoint") {
                         const wpIdx = row.cells[2].innerText;
                         const wpManifest = {manifest: customRouteSteps.manifest[wpIdx]};
-                        const wpData = await zen.buildRouteData(wpManifest, courseId);
+                        const wpData = zen.buildRouteData(wpManifest, courseId, courseRoads, worldMeta);
                         _routeHighlights.push(
                             zwiftMap.addHighlightPath(wpData.curvePath, 'tmpOptionHighlight', {width: 0.5, color: 'yellow'})
                         );
@@ -667,7 +668,7 @@ async function applyRoutev4(pathOptions) {
                                 routeManifest.manifest.push(m);
                             }
                         };
-                        routeData = await zen.buildRouteData(routeManifest, courseId);
+                        routeData = zen.buildRouteData(routeManifest, courseId, courseRoads, worldMeta);
                         const routeElevation = zen.calcElevationGain(routeData.elevations)
                         distanceSelect.value = parseInt(routeData.distances.at(-1));
                         elevationSelect.value = parseInt(routeElevation)
@@ -687,11 +688,11 @@ async function applyRoutev4(pathOptions) {
                 });
             });            
         };
-        let allCustomRouteIntersections = await zen.getManifestIntersections(routeManifest.manifest, courseId);
+        let allCustomRouteIntersections = zen.getManifestIntersections(routeManifest.manifest, courseId, courseRoads);
         console.log("allCustomRouteIntersections", allCustomRouteIntersections)
         let exitCustomRouteIntersections = allCustomRouteIntersections.filter(x => x.roadExit);
         console.log("exitCustomRouteIntersections", exitCustomRouteIntersections)
-        let customRouteData = await zen.buildRouteData(routeManifest, courseId);
+        let customRouteData = zen.buildRouteData(routeManifest, courseId, courseRoads, worldMeta);
         customRouteData.manifestIntersections = [];
         let i = -1;
         const epsilon = 1e-4;
@@ -760,6 +761,7 @@ async function applyCourse() {
         }
         courseSpawnPoints = await zen.getRouteSpawnAreas(courseId);
         courseRoads = await zen.generateRoadData(courseId);
+        worldMeta = worldList.find(x => x.courseId == courseId);
         console.log("courseSpawnPoints", courseSpawnPoints)
         console.log("courseRoads", courseRoads)
         for (let spawnPoint of courseSpawnPoints) {
@@ -1003,7 +1005,7 @@ async function loadCustomRoute() {
         };
     };    
     
-    const chosenRouteData = await zen.buildRouteData(chosenRoute, courseId);
+    const chosenRouteData = zen.buildRouteData(chosenRoute, courseId, courseRoads, worldMeta);
     customRouteSteps.manifest = [chosenRouteData.manifest];
     applyRoutev4();
     startingSpawnPoint = chosenRouteData.spawnPoint;
@@ -1028,7 +1030,7 @@ async function loadRouteJson(jsonFile) {
             spawnPoint.style.visibility = "";
         };
     }; 
-    const jsonRouteData = await zen.buildRouteData(jsonFile, courseId);
+    const jsonRouteData = zen.buildRouteData(jsonFile, courseId, courseRoads, worldMeta);
     console.log(jsonRouteData)
     customRouteSteps.manifest = [jsonRouteData.manifest];
     applyRoutev4();
