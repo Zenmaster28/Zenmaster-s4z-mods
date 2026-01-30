@@ -6016,6 +6016,7 @@ export async function getManifestIntersections(manifest, courseId) {
                         m_roadId: manifestIntersections[j].m_roadId,
                         m_roadTime1: manifestIntersections[j].m_roadTime1,
                         m_roadTime2: manifestIntersections[j].m_roadTime2,
+                        reverse: m.reverse,
                         option: nextManifestOption.option
                     }
                     intersectionList.push(manifestEntry)
