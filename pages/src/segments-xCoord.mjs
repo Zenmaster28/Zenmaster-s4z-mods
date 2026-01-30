@@ -6020,10 +6020,7 @@ export async function getManifestIntersections(manifest, courseId) {
                         option: nextManifestOption.option
                     }
                     intersectionList.push(manifestEntry)
-                }
-                if (m.roadId == 230) {
-                    console.log(j, "intersectionList", intersectionList)
-                }
+                };
             }
             const dir = m.reverse ? "reverse" : "forward";
             let cyclingRoadOptions = 0;
@@ -6031,11 +6028,7 @@ export async function getManifestIntersections(manifest, courseId) {
                 if (allCyclingRoads.find(x => x.id == opt.option.road)) { //some intersections have only one cycling option (others are run only)
                     cyclingRoadOptions++;
                 }
-            }
-            if (m.roadId == 230) {
-                console.log("this manifest", manifest[i])
-                console.log("next manifest roadid", manifest[i + 1]?.roadId, "in", manifestIntersections.at(-1).reverse)
-            }
+            };
             const lastManifestOption = m.reverse ? 
                 manifestIntersections.at(-1).reverse.find(opt => opt.option.road == manifest[i + 1]?.roadId) :
                 manifestIntersections.at(-1).forward.find(opt => opt.option.road == manifest[i + 1]?.roadId);
@@ -6046,6 +6039,7 @@ export async function getManifestIntersections(manifest, courseId) {
                     m_roadId: manifestIntersections.at(-1).m_roadId,
                     m_roadTime1: manifestIntersections.at(-1).m_roadTime1,
                     m_roadTime2: manifestIntersections.at(-1).m_roadTime2,
+                    reverse: m.reverse,
                     option: lastManifestOption.option
                 }
                 intersectionList.push(manifestEntry)
@@ -6083,6 +6077,7 @@ export async function getManifestIntersections(manifest, courseId) {
                         m_roadId: manifestIntersections.at(-1).m_roadId,
                         m_roadTime1: manifestIntersections.at(-1).m_roadTime1,
                         m_roadTime2: manifestIntersections.at(-1).m_roadTime2,
+                        reverse: m.reverse,
                         option: lastManifestOption.option                        
                     }
                     intersectionList.push(manifestEntry)
