@@ -219,7 +219,7 @@ async function _processWatching(watching) {
             let foundInt = false;
             i++;
             for (let int of exitCustomRouteIntersections) {
-                if (int.assigned) {
+                if (int.assigned || int.m_roadId != m.roadId || int.reverse != m.reverse) {
                     continue;
                 }
                 const target = m.reverse ? m.start : m.end;
