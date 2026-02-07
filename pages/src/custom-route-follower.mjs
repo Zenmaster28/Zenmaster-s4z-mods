@@ -33,6 +33,17 @@ const varianceOptions = [25, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
 const currIntersectionDiv = document.getElementById("currentIntersection");
 const cueSheetDiv = document.getElementById("chauffeurCueSheet");
 const nextRoadIntersectionDiv = document.getElementById("nextRoadIntersection");
+let enableNavigation = true;
+let gcEnabled = false;
+const pauseBtn = document.getElementById("pauseBtn");
+if (pauseBtn) {
+    pauseBtn.addEventListener("click", () => {
+        pauseBtn.classList.toggle("pressed");
+        enableNavigation = !enableNavigation;
+        const pausedDiv = document.getElementById("paused");
+        pausedDiv.innerHTML = enableNavigation ? gcEnabled ? "" : "Automatic route navigation will not work until the Game Connection is enabled and connected!" : "Navigation paused!"
+    });
+}
 let distanceToNextIntersection;
 let nextOption;
 let optionsText = "";
@@ -55,7 +66,19 @@ function updateConnStatus(s) {
     }    
     const gcStatus = document.getElementById("gcStatus")
     const gcState = s.state == "connected" ? "&#x2705;" : s.state == "waiting" ? "waiting" : "&#x274C;"
-    gcStatus.innerHTML = `Game connection: ${gcState}`
+    gcStatus.innerHTML = `Game connection: ${gcState}&nbsp; <div id="paused"></div>`
+    if (s.state != "connected") {
+        const pausedDiv = document.getElementById("paused");
+        pausedDiv.innerHTML = "Automatic route navigation will not work until the Game Connection is enabled and connected!"
+    } else {
+        const pausedDiv = document.getElementById("paused");
+        pausedDiv.innerHTML = enableNavigation ? "" : "Navigation paused!"
+    };
+    if (s.state === "connected") {
+        gcEnabled = true;
+    } else {
+        gcEnabled = false;
+    };
 };
 function changeFontScale() {
     const doc = document.documentElement;
@@ -101,51 +124,18 @@ export async function main() {
         let i = -1;
         const epsilon = 1e-4;
         console.log("customrouteData.manifest", customRouteData.manifest)
-        //fix this part about assigning intersections to manifest
-        /*
-        for (let m of customRouteData.manifest) {
-            let foundInt = false;
-            i++;
-            for (let int of customRouteIntersections) {
-                
-                if (int.assigned || int.m_roadId != m.roadId || int.reverse != m.reverse) {
-                    continue;
-                }
-                const target = m.reverse ? m.start : m.end;
-                const intExit = m.reverse ? int.m_roadTime1 : int.m_roadTime2;
-                if (Math.abs(intExit - target) < epsilon) {
-                    int.assigned = true;
-                    int.idx = i;
-                    customRouteData.manifestIntersections.push(int);
-                    foundInt = true;
-                    break;                    
-                } else {
-                    if ((m.reverse && int.m_roadTime1 >= m.start && int.m_roadTime1 <= m.end) ||
-                        (!m.reverse && int.m_roadTime2 >= m.start && int.m_roadTime1 <= m.end)) {
-                            int.idx = i;
-                            int.assigned = true;
-                    };
-                };
-            }
-            if (!foundInt) {
-                //console.log(m)
-                //debugger
-                customRouteData.manifestIntersections.push(null)
-            }
-        }       
-        */ 
-        //customRouteIntersections = customRouteData.manifestIntersections.filter(x => x != null)
+        
         customRouteIntersections = allCustomRouteIntersections;
         setCueSheet();
-        //if (showCueSheet) {
-            const cueSheetListHtml = zen.generateCueSheet(allCustomRouteIntersections);
-            cueSheetDiv.innerHTML = cueSheetListHtml;
-            cueSheetList = document.getElementById("cueSheetUl");
-            cueSheetItems = cueSheetList?.querySelectorAll("li");
-        //};        
+        const cueSheetListHtml = zen.generateCueSheet(allCustomRouteIntersections);
+        cueSheetDiv.innerHTML = cueSheetListHtml;
+        cueSheetList = document.getElementById("cueSheetUl");
+        cueSheetItems = cueSheetList?.querySelectorAll("li");
         console.log("customRouteIntersections", customRouteIntersections)
         console.log("customrouteData", customRouteData)
 
+    } else {
+        nextRoadIntersectionDiv.innerHTML = "No custom route loaded."
     }
     common.subscribe('status', updateConnStatus, {source: 'gameConnection', persistent: true});
     common.subscribe('athlete/self', processWatching);
@@ -163,49 +153,6 @@ export async function main() {
                 setCueSheet();
             }
     })
-}
-
-async function getAllIntersections(courseId) {
-    const worldList = await common.getWorldList();                
-    const worldId = (worldList.find(x => x.courseId == courseId)).worldId;
-    const allIntersections = await fetch(`data/worlds/${worldId}/roadIntersections.json`).then(response => response.json());
-    for (let road of allIntersections) {
-        if (!road.intersections) {
-            continue;
-        }
-        for (let int of road.intersections) {
-            let forwardCyclingOptions = 0;
-            let reverseCyclingOptions = 0;
-            let singleIntersection = false;
-            if (int.forward) {
-                for (let opt of int.forward) {
-                    if (courseRoads[opt.option.road]) {
-                        forwardCyclingOptions++;
-                    };
-                };
-                if (int.forward.length == 1) {
-                    singleIntersection = true;
-                }
-            };
-            if (int.reverse) {
-                for (let opt of int.reverse) {
-                    if (courseRoads[opt.option.road]) {
-                        reverseCyclingOptions++;
-                    };
-                };
-                if (int.reverse.length == 1) {
-                    singleIntersection = true;
-                }
-            };
-            int.forwardValidForCycling = (forwardCyclingOptions > 1) || !!singleIntersection;
-            int.reverseValidForCycling = (reverseCyclingOptions > 1) || !!singleIntersection;
-        }
-    }
-    return allIntersections;
-}
-
-async function getAllRoads(courseId) {
-    return await common.getRoads(courseId);
 }
 
 function getDistanceToIntersection(watching, nextIntersection, rp, toEnd) {
@@ -270,9 +217,11 @@ function getNextRoadIntersection(rp, roadIntersections, reverse) {
 
 function setupCustomRoute(customRoute, courseId, courseRoads, worldMeta) {
     customRouteManifest = customRoute;
-    allCustomRouteIntersections = zen.getManifestIntersections(customRouteManifest, courseId, courseRoads);    
+    allCustomRouteIntersections = zen.getManifestIntersections(customRouteManifest.manifest, courseId, courseRoads);    
     customRouteData = zen.buildRouteData(customRouteManifest, courseId, courseRoads, worldMeta);
     customRouteData.manifestIntersections = [];
+    customRouteIntersections = allCustomRouteIntersections;
+    
 };
 
 let _processWatchingBusy;
@@ -297,52 +246,24 @@ async function _processWatchingv2(watching) {
         worldMeta = worldList.find(x => x.courseId == watching.state.courseId);
     };
     if (watching.zenCustomRoute?.ts != customRouteManifest.ts) {
+        courseRoads = await zen.generateRoadData(watching.zenCustomRoute.courseId);
+        worldMeta = worldList.find(x => x.courseId == watching.zenCustomRoute.courseId);
         setupCustomRoute(watching.zenCustomRoute, courseId, courseRoads, worldMeta);
-        let exitCustomRouteIntersections = allCustomRouteIntersections.filter(x => x.roadExit);
-        let i = 0;
-        const epsilon = 1e-4;
-        /*
-        for (let m of customRouteData.manifest) {
-            let foundInt = false;
-            for (let int of exitCustomRouteIntersections) {
-                if (int.assigned || int.m_roadId != m.roadId || int.reverse != m.reverse) {
-                    continue;
-                };
-                const target = m.reverse ? m.start : m.end;
-                const intExit = m.reverse ? int.m_roadTime1 : int.m_roadTime2;
-                if (Math.abs(intExit - target) < epsilon) {
-                    int.assigned = true;
-                    int.idx = i;
-                    customRouteData.manifestIntersections.push(int);
-                    foundInt = true;
-                    break;
-                } else {
-                    if ((m.reverse && int.m_roadTime1 >= m.start && int.m_roadTime1 <= m.end) ||
-                        (!m.reverse && int.m_roadTime2 >= m.start && int.m_roadTime1 <= m.end)) {
-                            int.idx = i;
-                            int.assigned = true;
-                    };
-                };
-            };
-            i++;
-        };
-        */
-        if (!foundInt) {
-            customRouteData.manifestIntersections.push(null);  //do I need this?
-        };
-        //if (showCueSheet) {
-            const cueSheetList = zen.generateCueSheet(allCustomRouteIntersections);
-            cueSheetDiv.innerHTML = cueSheetList;
-            cueSheetList = document.getElementById("cueSheetUl");
-            cueSheetItems = cueSheetList?.querySelectorAll("li");
-            //debugger
-        //};
+        setCueSheet();
+        const cueSheetListOutput = zen.generateCueSheet(allCustomRouteIntersections);
+        cueSheetDiv.innerHTML = cueSheetListOutput;
+        cueSheetList = document.getElementById("cueSheetUl");
+        cueSheetItems = cueSheetList?.querySelectorAll("li");
         spawnDistance = null;
         customRouteComplete = false;
     };
-    if (customRouteComplete || !customRouteData) {
+    if (customRouteComplete) {
         return;
     };
+    if (!customRouteData) {
+        nextRoadIntersectionDiv.innerHTML = "No custom route loaded."
+        return;
+    }
     if (!spawnDistance) {
         //don't calc this if not at the start of the route
         //consider sending this back to athleteData entry in case of reload
@@ -383,6 +304,8 @@ async function _processWatchingv2(watching) {
         badManifestCounter++;
         currIntersectionDiv.innerHTML = `Uh-oh! We might be lost... ${badManifestCounter}`; 
         return;
+    } else {
+        currIntersectionDiv.innerHTML = "";
     };
     let i = 0;
     for (let int of allCustomRouteIntersections) {        
@@ -440,7 +363,7 @@ async function _processWatchingv2(watching) {
             if (nextRouteIntersection && currentIntersection.m_markerId == nextRouteIntersection.m_markerId && nextRouteIntersection.idx == manifestIdx.i) {
                 //found the next intersection on the route                
                 const turnDir = nextRouteIntersection.option.alt == 263 ? "Left" : nextRouteIntersection.option.alt == 262 ? "Right" : "Straight"                
-                if (turnDir.toLowerCase() != direction.toLowerCase()) {
+                if (enableNavigation && turnDir.toLowerCase() != direction.toLowerCase()) {
                     console.log("Turning ", turnDir)
                     await common.rpc[turnComands[turnDir]]([]);
                 };
@@ -454,7 +377,7 @@ async function _processWatchingv2(watching) {
                 const thisRoadOption = intOptions.find(opt => opt.option.road == watching.state.roadId);
                 
                 const turnDir = thisRoadOption?.option.alt == 263 ? "Left" : thisRoadOption?.option.alt == 262 ? "Right" : "Straight"
-                if (turnDir.toLowerCase() != direction.toLowerCase()) {
+                if (enableNavigation && turnDir.toLowerCase() != direction.toLowerCase()) {
                     console.log("Turning ", turnDir)
                     await common.rpc[turnComands[turnDir]]([]);
                 };
