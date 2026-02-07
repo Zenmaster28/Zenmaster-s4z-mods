@@ -5975,6 +5975,7 @@ export function getManifestIntersections(manifest, courseId, courseRoads) {
     //const worldId = (worldList.find(x => x.courseId == courseId)).worldId;
     //const intersections = await fetch(`data/worlds/${worldId}/roadIntersections.json`).then(response => response.json());
     //debugger
+    console.log("processing manifest for intersections", manifest)
     let i = 0;
     const epsilon = 1e-9;
     for (let m of manifest) {
@@ -5991,7 +5992,7 @@ export function getManifestIntersections(manifest, courseId, courseRoads) {
                 ? b.m_roadTime2 - a.m_roadTime2
                 : a.m_roadTime2 - b.m_roadTime2;
         });
-        if (manifestIntersections.length > 1) {
+        if (manifestIntersections.length > 1) {            
             for (let j = 0; j < manifestIntersections.length - 1; j++) {                
                 const dir = m.reverse ? "reverse" : "forward";
                 let cyclingRoadOptions = 0;
@@ -6000,20 +6001,22 @@ export function getManifestIntersections(manifest, courseId, courseRoads) {
                     if (courseRoads[opt.option.road]) {
                         cyclingRoadOptions++;
                     }
-                }
-                if (manifestIntersections[j].m_roadId == 0 && dir == "reverse") {
-                    //debugger
-                }
+                };
                 if (manifestIntersections[j][dir].length == 1 || cyclingRoadOptions <= 1) {
                     //console.log(`ignoring ${dir} intersection`, manifestIntersections[j])
                     continue; // weird intersections with only one choice, ignore it.
-                }
+                };
                 const nextManifestOption = m.reverse ? 
                 manifestIntersections[j].reverse.find(opt => !opt.option.forward && opt.option.road == m.roadId) :
                 manifestIntersections[j].forward.find(opt => opt.option.forward && opt.option.road == m.roadId);
+                let exception = false;
+                if (courseId === 6 && manifestIntersections[j].m_markerId === 210001) {
+                    exception = true;
+                }
                 if (nextManifestOption) {
                     const manifestEntry = {
-                        roadExit: false,
+                        idx: i,
+                        roadExit: exception,
                         m_markerId: manifestIntersections[j].m_markerId,
                         m_roadId: manifestIntersections[j].m_roadId,
                         m_roadTime1: manifestIntersections[j].m_roadTime1,
@@ -6023,7 +6026,7 @@ export function getManifestIntersections(manifest, courseId, courseRoads) {
                     }
                     intersectionList.push(manifestEntry)
                 };
-            }
+            };
             const dir = m.reverse ? "reverse" : "forward";
             let cyclingRoadOptions = 0;
             for (let opt of manifestIntersections.at(-1)[dir]) {
@@ -6032,22 +6035,28 @@ export function getManifestIntersections(manifest, courseId, courseRoads) {
                     cyclingRoadOptions++;
                 }
             };
-            const lastManifestOption = m.reverse ? 
+            let lastManifestOption = m.reverse ? 
                 manifestIntersections.at(-1).reverse.find(opt => opt.option.road == manifest[i + 1]?.roadId) :
                 manifestIntersections.at(-1).forward.find(opt => opt.option.road == manifest[i + 1]?.roadId);
+            if (!lastManifestOption && manifest.indexOf(m) === manifest.length - 1) {
+                lastManifestOption = m.reverse ? 
+                    manifestIntersections.at(-1).reverse.find(opt => opt.option.road == manifest.at(-1).roadId) :
+                    manifestIntersections.at(-1).forward.find(opt => opt.option.road == manifest.at(-1).roadId);
+            }
             if (lastManifestOption && cyclingRoadOptions > 1) {                
                 const manifestEntry = {
+                    idx: i,
                     roadExit: true,
                     m_markerId: manifestIntersections.at(-1).m_markerId,
                     m_roadId: manifestIntersections.at(-1).m_roadId,
                     m_roadTime1: manifestIntersections.at(-1).m_roadTime1,
                     m_roadTime2: manifestIntersections.at(-1).m_roadTime2,
                     reverse: m.reverse,
-                    option: lastManifestOption.option
+                    option: lastManifestOption?.option || null
                 }
                 intersectionList.push(manifestEntry)
             }
-            if (m.roadId == 230) {
+            if (m.roadId == 149) {
                 console.log("lastManifestoption", lastManifestOption, "intersectionList", intersectionList)
             }
         } else if (manifestIntersections.length > 0) {
@@ -6076,6 +6085,7 @@ export function getManifestIntersections(manifest, courseId, courseRoads) {
                 if (lastManifestOption) {
                     const manifestEntry = {
                         //roadExit: m.roadId == manifest[manifestIdx].roadId ? false : true,
+                        idx: i,
                         roadExit: true,
                         m_markerId: manifestIntersections.at(-1).m_markerId,
                         m_roadId: manifestIntersections.at(-1).m_roadId,
@@ -6093,6 +6103,7 @@ export function getManifestIntersections(manifest, courseId, courseRoads) {
         i++
     }
     //debugger
+    intersectionList = intersectionList.filter(x => x.option.turnText != "");
     return intersectionList;
 }
 

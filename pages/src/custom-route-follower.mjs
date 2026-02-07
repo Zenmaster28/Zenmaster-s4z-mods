@@ -22,14 +22,32 @@ let courseRoadsById;
 let lastKnownIntersection;
 let foundRouteIntersection = false;
 let customRouteData;
+let allCustomRouteIntersections;
+let showCueSheet = settings.showCueSheet || false;
+let cueSheetList;
+let cueSheetItems;
 let customRouteComplete = false;
 let spawnDistance = 0;
 let badManifestCounter = 0;
 const varianceOptions = [25, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
 const currIntersectionDiv = document.getElementById("currentIntersection");
-const intersectionsDiv = document.getElementById("intersectionsDiv");
+const cueSheetDiv = document.getElementById("chauffeurCueSheet");
 const nextRoadIntersectionDiv = document.getElementById("nextRoadIntersection");
-
+let distanceToNextIntersection;
+let nextOption;
+let optionsText = "";
+let lastScrollTime = Date.now() - 10000;
+if (cueSheetDiv) {
+    cueSheetDiv.addEventListener("wheel", () => {
+        lastScrollTime = Date.now();
+    });
+    cueSheetDiv.addEventListener("touchstart", () => {
+        lastScrollTime = Date.now();
+    });
+    cueSheetDiv.addEventListener("scroll", () => {
+        lastScrollTime = Date.now();
+    });
+}
 function updateConnStatus(s) {
     console.log("Updating game connection status", s)
     if (!s) {
@@ -38,12 +56,11 @@ function updateConnStatus(s) {
     const gcStatus = document.getElementById("gcStatus")
     const gcState = s.state == "connected" ? "&#x2705;" : s.state == "waiting" ? "waiting" : "&#x274C;"
     gcStatus.innerHTML = `Game connection: ${gcState}`
-}
-
+};
 function changeFontScale() {
     const doc = document.documentElement;
     doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  
-}
+};
 function setBackground() {
     const {solidBackground, backgroundColor} = common.settingsStore.get();
     doc.classList.toggle('solid-background', !!solidBackground);
@@ -52,8 +69,15 @@ function setBackground() {
     } else {
         doc.style.removeProperty('--background-color');
     }
-}
-
+};
+function setCueSheet() {
+    const {showCueSheet} = common.settingsStore.get();
+    if (showCueSheet) {
+        cueSheetDiv.style.display = "block";
+    } else {
+        cueSheetDiv.style.display = "none";
+    }
+};
 
 export async function main() {
     common.initInteractionListeners(); 
@@ -62,8 +86,12 @@ export async function main() {
     const selfData = await common.rpc.getAthleteData('self'); 
     if (selfData && selfData.zenCustomRoute?.ts != customRouteManifest.ts) {
         console.log("Updating custom route intersections from watching data", selfData.zenCustomRoute);
-        customRouteIntersections = zen.getManifestIntersections(selfData.zenCustomRoute.manifest, selfData.zenCustomRoute.courseId, courseRoads)
-        customRouteIntersections = customRouteIntersections.filter(x => x.roadExit);
+        courseRoads = await zen.generateRoadData(selfData.zenCustomRoute.courseId);
+        worldMeta = worldList.find(x => x.courseId == selfData.zenCustomRoute.courseId);
+        allCustomRouteIntersections = zen.getManifestIntersections(selfData.zenCustomRoute.manifest, selfData.zenCustomRoute.courseId, courseRoads)
+        console.log("allCustomRouteIntersections", allCustomRouteIntersections)
+        //customRouteIntersections = allCustomRouteIntersections.filter(x => x.roadExit);
+        customRouteIntersections = allCustomRouteIntersections;
         console.log("new customRouteIntersections", customRouteIntersections)
         exitIntersections = [];
         customRouteManifest = selfData.zenCustomRoute;
@@ -73,32 +101,48 @@ export async function main() {
         let i = -1;
         const epsilon = 1e-4;
         console.log("customrouteData.manifest", customRouteData.manifest)
-        
+        //fix this part about assigning intersections to manifest
+        /*
         for (let m of customRouteData.manifest) {
             let foundInt = false;
             i++;
             for (let int of customRouteIntersections) {
-                if (int.assigned) {
+                
+                if (int.assigned || int.m_roadId != m.roadId || int.reverse != m.reverse) {
                     continue;
                 }
                 const target = m.reverse ? m.start : m.end;
                 const intExit = m.reverse ? int.m_roadTime1 : int.m_roadTime2;
-                //if (Math.abs(int.option.exitTime - target) < epsilon) { //should probably be checking roadId and direction too
                 if (Math.abs(intExit - target) < epsilon) {
                     int.assigned = true;
                     int.idx = i;
                     customRouteData.manifestIntersections.push(int);
                     foundInt = true;
                     break;                    
-                }
+                } else {
+                    if ((m.reverse && int.m_roadTime1 >= m.start && int.m_roadTime1 <= m.end) ||
+                        (!m.reverse && int.m_roadTime2 >= m.start && int.m_roadTime1 <= m.end)) {
+                            int.idx = i;
+                            int.assigned = true;
+                    };
+                };
             }
             if (!foundInt) {
                 //console.log(m)
                 //debugger
                 customRouteData.manifestIntersections.push(null)
             }
-        }        
-        customRouteIntersections = customRouteData.manifestIntersections.filter(x => x != null)
+        }       
+        */ 
+        //customRouteIntersections = customRouteData.manifestIntersections.filter(x => x != null)
+        customRouteIntersections = allCustomRouteIntersections;
+        setCueSheet();
+        //if (showCueSheet) {
+            const cueSheetListHtml = zen.generateCueSheet(allCustomRouteIntersections);
+            cueSheetDiv.innerHTML = cueSheetListHtml;
+            cueSheetList = document.getElementById("cueSheetUl");
+            cueSheetItems = cueSheetList?.querySelectorAll("li");
+        //};        
         console.log("customRouteIntersections", customRouteIntersections)
         console.log("customrouteData", customRouteData)
 
@@ -113,6 +157,10 @@ export async function main() {
             };
             if (changed.has('solidBackground') || changed.has('backgroundColor')) {            
                 setBackground();
+            };
+            if (changed.has('showCueSheet')) {
+                showCueSheet = changed.get('showCueSheet');
+                setCueSheet();
             }
     })
 }
@@ -121,6 +169,38 @@ async function getAllIntersections(courseId) {
     const worldList = await common.getWorldList();                
     const worldId = (worldList.find(x => x.courseId == courseId)).worldId;
     const allIntersections = await fetch(`data/worlds/${worldId}/roadIntersections.json`).then(response => response.json());
+    for (let road of allIntersections) {
+        if (!road.intersections) {
+            continue;
+        }
+        for (let int of road.intersections) {
+            let forwardCyclingOptions = 0;
+            let reverseCyclingOptions = 0;
+            let singleIntersection = false;
+            if (int.forward) {
+                for (let opt of int.forward) {
+                    if (courseRoads[opt.option.road]) {
+                        forwardCyclingOptions++;
+                    };
+                };
+                if (int.forward.length == 1) {
+                    singleIntersection = true;
+                }
+            };
+            if (int.reverse) {
+                for (let opt of int.reverse) {
+                    if (courseRoads[opt.option.road]) {
+                        reverseCyclingOptions++;
+                    };
+                };
+                if (int.reverse.length == 1) {
+                    singleIntersection = true;
+                }
+            };
+            int.forwardValidForCycling = (forwardCyclingOptions > 1) || !!singleIntersection;
+            int.reverseValidForCycling = (reverseCyclingOptions > 1) || !!singleIntersection;
+        }
+    }
     return allIntersections;
 }
 
@@ -176,7 +256,8 @@ function getNextRoadIntersection(rp, roadIntersections, reverse) {
     } else {
         roadIntersections.sort((a,b) => a.m_roadTime1 - b.m_roadTime1);
     }    
-    const ahead = reverse ? roadIntersections.filter(x => x.reverse.length > 0 && x.m_roadTime1 <= rp) : roadIntersections.filter(x => x.forward.length > 0 && x.m_roadTime2 >= rp);
+    const ahead = reverse ? roadIntersections.filter(x => x.reverse.length > 0 && x.m_roadTime1 <= rp && x.reverseValidForCycling) : roadIntersections.filter(x => x.forward.length > 0 && x.m_roadTime2 >= rp && x.forwardValidForCycling);
+    //console.log("ahead", ahead)
     //maybe someday skip intersections that only runners can choose
     if (ahead.length > 0) {
         return ahead[0];
@@ -185,7 +266,15 @@ function getNextRoadIntersection(rp, roadIntersections, reverse) {
     } else {
         return null;
     }
-}
+};
+
+function setupCustomRoute(customRoute, courseId, courseRoads, worldMeta) {
+    customRouteManifest = customRoute;
+    allCustomRouteIntersections = zen.getManifestIntersections(customRouteManifest, courseId, courseRoads);    
+    customRouteData = zen.buildRouteData(customRouteManifest, courseId, courseRoads, worldMeta);
+    customRouteData.manifestIntersections = [];
+};
+
 let _processWatchingBusy;
 async function processWatching(watching) {
     if (_processWatchingBusy) {
@@ -193,65 +282,67 @@ async function processWatching(watching) {
     }
     _processWatchingBusy = true;
     try {
-        return await _processWatching.apply(this, arguments);
+        return await _processWatchingv2.apply(this, arguments);
     } finally {
         _processWatchingBusy = false;
     }
 }
-
-async function _processWatching(watching) {    
-    if (!allIntersections) {
-        allIntersections = await getAllIntersections(watching.state.courseId);
-        intersectionsById = Object.fromEntries(allIntersections.map(x => [x.id, x]));
-    }
+async function _processWatchingv2(watching) {
+    if (watching.state.courseId != courseId) {
+        courseId = watching.state.courseId;
+        courseRoads.length = 0;
+    };
     if (courseRoads.length == 0) {
-        //courseRoads = await getAllRoads(watching.state.courseId);
-        courseRoads = await zen.generateRoadData(courseId);
-        worldMeta = worldList.find(x.courseId == courseId);
-        //courseRoadsById = Object.fromEntries(courseRoads.map(x => [x.id, x]));
-    }
+        courseRoads = await zen.generateRoadData(watching.state.courseId);
+        worldMeta = worldList.find(x => x.courseId == watching.state.courseId);
+    };
     if (watching.zenCustomRoute?.ts != customRouteManifest.ts) {
-        console.log("Updating custom route intersections from watching data", watching.zenCustomRoute);
-        let allCustomRouteIntersections = zen.getManifestIntersections(watching.zenCustomRoute.manifest, watching.zenCustomRoute.courseId, courseRoads);
+        setupCustomRoute(watching.zenCustomRoute, courseId, courseRoads, worldMeta);
         let exitCustomRouteIntersections = allCustomRouteIntersections.filter(x => x.roadExit);
-        console.log("new customRouteIntersections", exitCustomRouteIntersections)
-        customRouteManifest = watching.zenCustomRoute;
-        customRouteData = zen.buildRouteData(watching.zenCustomRoute, watching.state.courseId, courseRoads, worldMeta);
-        customRouteData.manifestIntersections = [];
-        let i = -1;
+        let i = 0;
         const epsilon = 1e-4;
+        /*
         for (let m of customRouteData.manifest) {
             let foundInt = false;
-            i++;
             for (let int of exitCustomRouteIntersections) {
                 if (int.assigned || int.m_roadId != m.roadId || int.reverse != m.reverse) {
                     continue;
-                }
+                };
                 const target = m.reverse ? m.start : m.end;
                 const intExit = m.reverse ? int.m_roadTime1 : int.m_roadTime2;
-                //if (Math.abs(int.option.exitTime - target) < epsilon) { //should probably be checking roadId and direction too
                 if (Math.abs(intExit - target) < epsilon) {
-                //if (Math.abs(int.option.exitTime - target) < epsilon) { //should probably be checking roadId and direction too
                     int.assigned = true;
                     int.idx = i;
                     customRouteData.manifestIntersections.push(int);
                     foundInt = true;
-                    break;                    
-                }
-            }
-            if (!foundInt) {
-                customRouteData.manifestIntersections.push(null)
-            }
-        }
-        customRouteIntersections = customRouteData.manifestIntersections.filter(x => x != null)
-        console.log("customRouteIntersections", customRouteIntersections)
-        console.log("customrouteData", customRouteData)
+                    break;
+                } else {
+                    if ((m.reverse && int.m_roadTime1 >= m.start && int.m_roadTime1 <= m.end) ||
+                        (!m.reverse && int.m_roadTime2 >= m.start && int.m_roadTime1 <= m.end)) {
+                            int.idx = i;
+                            int.assigned = true;
+                    };
+                };
+            };
+            i++;
+        };
+        */
+        if (!foundInt) {
+            customRouteData.manifestIntersections.push(null);  //do I need this?
+        };
+        //if (showCueSheet) {
+            const cueSheetList = zen.generateCueSheet(allCustomRouteIntersections);
+            cueSheetDiv.innerHTML = cueSheetList;
+            cueSheetList = document.getElementById("cueSheetUl");
+            cueSheetItems = cueSheetList?.querySelectorAll("li");
+            //debugger
+        //};
         spawnDistance = null;
         customRouteComplete = false;
-    }
+    };
     if (customRouteComplete || !customRouteData) {
         return;
-    }
+    };
     if (!spawnDistance) {
         //don't calc this if not at the start of the route
         //consider sending this back to athleteData entry in case of reload
@@ -259,8 +350,7 @@ async function _processWatching(watching) {
             const rp = (watching.state.roadTime - 5000) / 1e6;
             const manifestStart = watching.state.reverse ? customRouteData.manifest[0].end : customRouteData.manifest[0].start;
             const low = Math.min(rp, manifestStart);
-            const high = Math.max(rp, manifestStart);            
-            //const thisRoad = courseRoadsById[watching.state.roadId];
+            const high = Math.max(rp, manifestStart);
             const thisRoad = courseRoads[watching.state.roadId];
             spawnDistance = (thisRoad.curvePath.distanceBetweenRoadPercents(low, high, 4e-2) / 100) - watching.state.eventDistance;
             if (watching.state.reverse && rp > manifestStart) {
@@ -274,8 +364,9 @@ async function _processWatching(watching) {
             spawnDistance = 0.1; // just so this doesn't constantly get triggered
         }
     };
-    
     let manifestIdx = null;
+    const rp = (watching.state.roadTime - 5000) / 1e6;
+    const reverse = watching.state.reverse;
     const distanceTarget = watching.state.eventDistance + spawnDistance;
     for (let variance of varianceOptions) {        
         manifestIdx = customRouteData.manifestDistances.find(x => (x.start - variance) <= distanceTarget && 
@@ -284,37 +375,41 @@ async function _processWatching(watching) {
             x.reverse == watching.state.reverse); 
         if (manifestIdx) {
             break;
-        }
-    }
+        };
+    };
 
     if (!manifestIdx) {
         nextRoadIntersectionDiv.innerHTML = "";
         badManifestCounter++;
         currIntersectionDiv.innerHTML = `Uh-oh! We might be lost... ${badManifestCounter}`; 
         return;
-    }
-    currIntersectionDiv.innerHTML = "";    
-    const prevIntersections = customRouteIntersections.filter(x => x.idx < manifestIdx.i)
-    const nextIntersections = customRouteIntersections.filter(x => x.idx >= manifestIdx.i)
-    
-    for (let p of prevIntersections) {
-        if (!p.found) {
-            p.found = true;
-        }        
-    }
-    for (let n of nextIntersections) {
-        if (n.found) {
-            n.found = false;
+    };
+    let i = 0;
+    for (let int of allCustomRouteIntersections) {        
+        if (int.idx < manifestIdx.i) {
+            int.found = true;
+            cueSheetItems[i].classList.add("complete");
+        } else if (int.idx === manifestIdx.i) {
+            if (reverse && rp < int.m_roadTime1 || !reverse && rp > int.m_roadTime2) {
+                int.found = true;
+                cueSheetItems[i].classList.add("complete");
+            } else {
+                int.found = false;
+                cueSheetItems[i].classList.remove("complete");
+            };        
+        } else {
+            int.found = false;
+            cueSheetItems[i].classList.remove("complete");
         }
-    }
-        
-    const rp = (watching.state.roadTime - 5000) / 1e6;
+        i++;
+    };
     let currentIntersection;
     let validIntersection = false;
-    
-    const roadIntersections = intersectionsById[watching.state.roadId];
-    
+    const roadIntersections = courseRoads[watching.state.roadId];
     for (let int of roadIntersections.intersections) {
+        if (watching.state.reverse && !int.reverseValidForCycling || !watching.state.reverse && !int.forwardValidForCycling) {
+            continue;
+        } 
         //m_roadTime1 is almost always less than m_roadTime2 but not always
         const t1 = int.m_roadTime1;
         const t2 = int.m_roadTime2;
@@ -325,7 +420,7 @@ async function _processWatching(watching) {
             currentIntersection = int;
             break;
         }
-    }
+    };
     if (!currentIntersection) {
         //not in an intersection
         inIntersection = false;
@@ -333,110 +428,102 @@ async function _processWatching(watching) {
         //return;
     } else {
         validIntersection = watching.state.reverse ? currentIntersection.reverse.length > 0 : currentIntersection.forward.length > 0;
-    }
+    };
+    const nextRouteIntersection = customRouteIntersections.find(int => !int.found);
+    //check if at the end of the route
     if (validIntersection) {
         let options;
-        let optionsText;        
         let direction = watching.state.turning ? watching.state.turning : "Straight";
         options = watching.state.reverse ? currentIntersection.reverse : currentIntersection.forward;
 
-        if (options.length > 1) {
-            const nextRouteIntersection = customRouteIntersections.find(int => !int.found)            
+        if (options.length > 1) {            
             if (nextRouteIntersection && currentIntersection.m_markerId == nextRouteIntersection.m_markerId && nextRouteIntersection.idx == manifestIdx.i) {
                 //found the next intersection on the route                
                 const turnDir = nextRouteIntersection.option.alt == 263 ? "Left" : nextRouteIntersection.option.alt == 262 ? "Right" : "Straight"                
                 if (turnDir.toLowerCase() != direction.toLowerCase()) {
                     console.log("Turning ", turnDir)
                     await common.rpc[turnComands[turnDir]]([]);
-                }
-            
-                
+                };
             } else {
                 let intOptions = [];
                 if (watching.state.reverse) {
-                    intOptions = currentIntersection.reverse
+                    intOptions = currentIntersection.reverse;
                 } else {
-                    intOptions = currentIntersection.forward
+                    intOptions = currentIntersection.forward;
                 }
-                const thisRoadOption = intOptions.find(opt => opt.option.road == watching.state.roadId)
+                const thisRoadOption = intOptions.find(opt => opt.option.road == watching.state.roadId);
                 
                 const turnDir = thisRoadOption?.option.alt == 263 ? "Left" : thisRoadOption?.option.alt == 262 ? "Right" : "Straight"
                 if (turnDir.toLowerCase() != direction.toLowerCase()) {
                     console.log("Turning ", turnDir)
                     await common.rpc[turnComands[turnDir]]([]);
-                }
+                };
                 
-            }
-        }
-    } 
-    //const nextIntersection = customRouteIntersections.find(x => !x.found);
-    const nextIntersection = customRouteIntersections.find(x => x.idx == manifestIdx.i);
-    const nextRoadIntersection = getNextRoadIntersection(rp, roadIntersections.intersections, watching.state.reverse);
-    let distanceToNextIntersection;
-    let nextOption;
-    let optionsText = "";
-    //debugger
-    if (nextRoadIntersection) {  
-        if (nextRoadIntersection.m_markerId == nextIntersection?.m_markerId && nextIntersection.idx == manifestIdx.i) {
+            };
+        };
+    };
+    const nextRoadIntersection = getNextRoadIntersection(rp, roadIntersections.intersections, reverse)
+    optionsText = "";
+    if (nextRoadIntersection) {
+        if (nextRoadIntersection.m_markerId === nextRouteIntersection?.m_markerId && nextRouteIntersection.idx === manifestIdx.i) {
             //get distance to option exit
-            distanceToNextIntersection = getDistanceToIntersection(watching, nextIntersection, rp, true);
-            nextOption = nextIntersection.option;
-        } else {
-            //get distance to option that stays on the road
             distanceToNextIntersection = getDistanceToIntersection(watching, nextRoadIntersection, rp, true);
-            if (watching.state.reverse) {
+            nextOption = nextRouteIntersection.option;
+        } else {
+            //get distance to option that stays on this road
+            distanceToNextIntersection = getDistanceToIntersection(watching, nextRoadIntersection, rp, true);
+            if (reverse) {
                 if (nextRoadIntersection.reverse.length > 1) {
-                    nextOption = nextRoadIntersection.reverse.find(x => x.option.road == watching.state.roadId);
+                    nextOption = nextRoadIntersection.reverse.find(x => x.option.road === watching.state.roadId);
                     if (nextOption) {
                         nextOption = nextOption.option;
-                    }
+                    };
                 } else {
-                    nextOption = nextRoadIntersection.reverse[0]
+                    nextOption = nextRoadIntersection.reverse[0];
                     if (nextOption) {
                         nextOption = nextOption.option;
-                    }
-                }
+                    };
+                };
             } else {
                 if (nextRoadIntersection.forward.length > 1) {
-                    nextOption = nextRoadIntersection.forward.find(x => x.option.road == watching.state.roadId);
+                    nextOption = nextRoadIntersection.forward.find(x => x.option.road === watching.state.roadId);
                     if (nextOption) {
                         nextOption = nextOption.option;
-                    }
+                    };
                 } else {
-                    nextOption = nextRoadIntersection.forward[0]
+                    nextOption = nextRoadIntersection.forward[0];
                     if (nextOption) {
                         nextOption = nextOption.option;
-                    }
-                }
-            }
-        }          
-        const options = watching.state.reverse ? nextRoadIntersection.reverse : nextRoadIntersection.forward;
+                    };
+                };
+            };
+        };
+        const options = reverse ? nextRoadIntersection.reverse : nextRoadIntersection.forward;
         const left = options.find(opt => opt.option.alt == 263);
         const straight = options.find(opt => opt.option.alt == 265);
         const right = options.find(opt => opt.option.alt == 262);
-        
         if (left) {
             let optClass = "";
             if (nextOption?.alt == 263) {
                 optClass = "nextOption";
             }
             optionsText += `<div class="${optClass}"<font size='+2'>&#x21B0;</font> ${left.option?.turnText}</div>`;
-        }
+        };
         if (straight) {
             let optClass = "";
             if (nextOption?.alt == 265) {
                 optClass = "nextOption";
             }
             optionsText += `<div class="${optClass}"<font size='+2'>&#x2191;</font> ${straight.option?.turnText}</div>`;
-        }
+        };
         if (right) {
             let optClass = "";
             if (nextOption?.alt == 262) {
                 optClass = "nextOption";
             }
             optionsText += `<div class="${optClass}"<font size='+2'>&#x21B1;</font> ${right.option?.turnText}</div>`;
-        }
-        if (!nextIntersection) {
+        };
+        if (!nextRouteIntersection) {
             //no more intersections on the route.
             const distanceToFinish = parseInt(customRouteData.distances.at(-1) - watching.state.eventDistance);
             if (distanceToFinish < distanceToNextIntersection) {
@@ -451,22 +538,36 @@ async function _processWatching(watching) {
                     customRouteComplete = true;
                 }
                 nextRoadIntersectionDiv.innerHTML = routeFinish;
+                if (showCueSheet) {
+                    nextRoadIntersectionDiv.innerHTML += "<hr class='hrSep'>";
+                };
                 nextOption = null;
             }
-        }
-        
-    } else {
-        console.log("no more intersections on this road")
-    }
+        };
+    };
     if (nextOption) {
         nextRoadIntersectionDiv.innerHTML = optionsText;
+        if (showCueSheet) {
+            nextRoadIntersectionDiv.innerHTML += "<hr class='hrSep'>";
+        }
         const nextOptionDiv = document.querySelector('.nextOption');
         if (nextOptionDiv) {
             const distanceOutput = distanceToNextIntersection < 1000 ? ` (${distanceToNextIntersection}m)` : ` (${parseFloat(distanceToNextIntersection / 1000).toFixed(2)}km)`
             nextOptionDiv.innerHTML += distanceOutput;
         }
+    };
+    const completed = cueSheetDiv.querySelectorAll("ol li.complete");
+    if (completed.length > 0) {
+        const lastComplete = completed[completed.length - 2];
+        if (lastComplete && (Date.now() - lastScrollTime > 5000)) {
+            lastComplete.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
     }
-}
+    //debugger
+};
 
 export async function settingsMain() {
     common.initInteractionListeners();

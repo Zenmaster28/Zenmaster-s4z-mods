@@ -331,6 +331,7 @@ let courseRoads;
 let courseSpawnPoints = [];
 let startingSpawnPoint;
 let worldMeta;
+let allCustomRouteIntersections;
 let penList;
 let intersections;
 let badIntersections = [1190003]
@@ -593,6 +594,38 @@ async function getPath(nextTarget) {
         console.log("No route found")
         alert(`Unable to find a path to that point.  It could be too far away or an unreachable road.`)
     }
+};
+function buildCueSheet(routeManifest) {
+    allCustomRouteIntersections = zen.getManifestIntersections(routeManifest.manifest, courseId, courseRoads);
+    console.log("allCustomRouteIntersections", allCustomRouteIntersections);
+    const cueSheetUl = zen.generateCueSheet(allCustomRouteIntersections);        
+    cueSheetDiv.innerHTML = cueSheetUl;
+    const cueSheetList = document.querySelector("#cueSheetUl");
+    if (cueSheetList) {
+        cueSheetList.addEventListener("mouseover", (e) => {
+            const allMarkers = document.querySelectorAll('.intersectionMarker')
+            for (let marker of allMarkers) {                    
+                marker.remove();
+            }
+            const li = e.target.closest("li");
+            if (!li) {
+                return;
+            };
+            const markerId = li.dataset.markerId;
+            const roadId = li.dataset.roadId;
+            const reverse = li.dataset.reverse === "true";
+            const thisIntersection = courseRoads[roadId].intersections.find(x => x.m_markerId == markerId);
+            const intersectionExitRp = reverse ? thisIntersection.m_roadTime1 : thisIntersection.m_roadTime2;
+            const exitPt = courseRoads[roadId].curvePath.pointAtRoadPercent(intersectionExitRp);
+            zwiftMap.addPoint([exitPt[0],exitPt[1]], "intersectionMarker");
+        });
+        cueSheetList.addEventListener("mouseleave", (e) => {
+            const allMarkers = document.querySelectorAll('.intersectionMarker')
+            for (let marker of allMarkers) {                    
+                marker.remove();
+            }
+        });
+    };
 }
 async function applyRoutev4(pathOptions) {
     history.replaceState({}, '', url);
@@ -705,40 +738,12 @@ async function applyRoutev4(pathOptions) {
                             zwiftMap.addHighlightPath(path, `route-3-section`, {width: 0.5, color: 'red'}),
                         );
                         alternateRouteChosen = true;
+                        buildCueSheet(routeManifest);
                     };
                 });
             });            
         };
-        let allCustomRouteIntersections = zen.getManifestIntersections(routeManifest.manifest, courseId, courseRoads);
-        console.log("allCustomRouteIntersections", allCustomRouteIntersections);
-        const cueSheetUl = zen.generateCueSheet(allCustomRouteIntersections);        
-        cueSheetDiv.innerHTML = cueSheetUl;
-        const cueSheetList = document.querySelector("#cueSheetUl");
-        if (cueSheetList) {
-            cueSheetList.addEventListener("mouseover", (e) => {
-                const allMarkers = document.querySelectorAll('.intersectionMarker')
-                for (let marker of allMarkers) {                    
-                    marker.remove();
-                }
-                const li = e.target.closest("li");
-                if (!li) {
-                    return;
-                };
-                const markerId = li.dataset.markerId;
-                const roadId = li.dataset.roadId;
-                const reverse = li.dataset.reverse === "true";
-                const thisIntersection = courseRoads[roadId].intersections.find(x => x.m_markerId == markerId);
-                const intersectionExitRp = reverse ? thisIntersection.m_roadTime1 : thisIntersection.m_roadTime2;
-                const exitPt = courseRoads[roadId].curvePath.pointAtRoadPercent(intersectionExitRp);
-                zwiftMap.addPoint([exitPt[0],exitPt[1]], "intersectionMarker");
-            });
-            cueSheetList.addEventListener("mouseleave", (e) => {
-                const allMarkers = document.querySelectorAll('.intersectionMarker')
-                for (let marker of allMarkers) {                    
-                    marker.remove();
-                }
-            });
-        };
+        buildCueSheet(routeManifest);
         let exitCustomRouteIntersections = allCustomRouteIntersections.filter(x => x.roadExit);
         console.log("exitCustomRouteIntersections", exitCustomRouteIntersections)
         let customRouteData = zen.buildRouteData(routeManifest, courseId, courseRoads, worldMeta);
