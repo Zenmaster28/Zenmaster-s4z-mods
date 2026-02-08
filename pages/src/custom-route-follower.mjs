@@ -23,7 +23,7 @@ let lastKnownIntersection;
 let foundRouteIntersection = false;
 let customRouteData;
 let allCustomRouteIntersections;
-let showCueSheet = settings.showCueSheet || false;
+let showCueSheet = settings.showCueSheet ?? true;
 let cueSheetList;
 let cueSheetItems;
 let customRouteComplete = false;
