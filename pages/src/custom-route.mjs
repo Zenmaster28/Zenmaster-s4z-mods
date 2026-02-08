@@ -62,6 +62,12 @@ const routeSetupClose = document.getElementById('routeSetupClose');
 const funFactsDiv = document.getElementById("funFacts");
 const customRouteStepsDiv = document.getElementById("customRouteSteps");
 const cueSheetDiv = document.getElementById("cueSheet");
+const navigateButtonDiv = document.getElementById("navigateButtonDiv");
+let courseSegments;
+document.addEventListener("click", () => {
+    const navMenu = document.getElementById("navigateMenu");
+    navMenu.classList.add("hidden");
+})
 const radios = document.querySelectorAll('input[type="radio"][name="wayPointOrCuesheet"');
 function toggleWaypointCuesheet() {
     const waypointOrCuesheet = document.querySelector(`input[name="wayPointOrCuesheet"]:checked`);
@@ -816,6 +822,43 @@ async function applyCourse() {
         }
         courseSpawnPoints = await zen.getRouteSpawnAreas(courseId);
         courseRoads = await zen.generateRoadData(courseId);
+        courseSegments = await common.rpc.getSegments(courseId);
+        courseSegments.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+        let navigateToMenu = `&nbsp;&nbsp;<button id='navigateButton'>Navigate to ▾</button>
+                                <ul id='navigateMenu' class='menu hidden'>`;
+        for (let segment of courseSegments) {
+            navigateToMenu += `<li data-roadid="${segment.roadId}" data-reverse="${segment.reverse}" data-roadfinish="${segment.roadFinish}">${segment.name}</li>`
+        };
+        navigateToMenu += "</ul>"
+        navigateButtonDiv.innerHTML = "";
+        navigateButtonDiv.innerHTML += navigateToMenu;
+        const navButton = document.getElementById("navigateButton");
+        const navMenu = document.getElementById("navigateMenu");
+        navButton.addEventListener("click", (e) => {
+            e.stopPropagation();
+            navMenu.classList.toggle("hidden");
+        })
+        
+        navMenu.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            const seg = e.target.closest('li');
+            if (!seg) {                
+                return;
+            };            
+            const segmentRoadId = parseInt(seg.dataset.roadid);
+            const segmentReverse = seg.dataset.reverse === "true";
+            const segmentRoadFinish = segmentReverse ? parseFloat(seg.dataset.roadfinish) - 0.0001 : parseFloat(seg.dataset.roadfinish) + 0.0001; //go just barely beyond the segment line
+            navMenu.classList.toggle("hidden")
+            const nextTarget = {
+                roadId: segmentRoadId,
+                rp: segmentRoadFinish,
+                reverse: segmentReverse
+            };
+            customRouteSteps.push(nextTarget);
+            await getPath(nextTarget);
+        });
+        
+        
         worldMeta = worldList.find(x => x.courseId == courseId);
         console.log("courseSpawnPoints", courseSpawnPoints)
         console.log("courseRoads", courseRoads)
@@ -1011,7 +1054,7 @@ function setupMap() {
         });
         useElement.classList.add('clickableRoad');
     });
-        
+    navigateButtonDiv.style.display = "inline-block";
 }
 
 async function resetMap() {
@@ -1042,6 +1085,7 @@ async function resetMap() {
     cueSheetDiv.innerHTML = "";
     customRouteSelect.value = "-1"
     funFactsDiv.innerHTML = "";
+    navigateButtonDiv.style.display = "none";
 };
 async function loadCustomRoute() {
     const customRouteName = customRouteSelect.value;

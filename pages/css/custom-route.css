@@ -373,3 +373,38 @@ html.solid-background body {
   background-color: yellow;
   color: black;
 }
+#navigateButton {
+  background-color: black;
+  color: white
+}
+.menu-container {
+  position: relative;
+  display: none;
+}
+
+.menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin: 4px 0 0;
+  padding: 4px 0;
+  list-style: none;
+  background: black;
+  border: 0.5px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  z-index: 50;
+  font-size: calc(var(--font-scale) * 0.9em);
+  width: 15em;
+  overflow-y: auto;
+  max-height: min(calc(100vh - 100px));
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.menu li {  
+  cursor: pointer;
+}
+
+.menu li:hover {
+  background: #adadad;
+}
