@@ -2377,8 +2377,7 @@ export class SauceElevationProfile {
                                     nextSegmentDiv.style.visibility = "hidden";                     
                                 }
                                 this.watchingPosition = xCoord;
-                                if (this.setAthleteSegmentData)
-                                {
+                                if (this.showSegmentStart && this.setAthleteSegmentData) {
                                     
                                     nextSegment.markLine - xCoord > 1000 ? distanceToGo = parseFloat((nextSegment.markLine - xCoord) / 1000).toFixed(2) : distanceToGo = parseFloat(nextSegment.markLine - xCoord).toFixed(0);
                                     nextSegment.markLine - xCoord > 1000 ? distanceToGoUnits = "km" : distanceToGoUnits = "m";
