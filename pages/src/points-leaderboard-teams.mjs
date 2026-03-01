@@ -11,8 +11,205 @@ const scoreFormatDiv = document.getElementById("scoreFormats");
 const doc = document.documentElement;
 //doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  
 doc.style.setProperty('--font-scale', 1.5);  
+let drsTeams;
+const drsInfoDiv = document.getElementById("drsInfo");
+const drsImportDiv = document.getElementById("drsImport");
+if (drsInfoDiv) {
+    drsInfoDiv.addEventListener("click", () => {
+        drsImportDiv.classList.remove("hidden");
+    });
+};
+const importCloseButton = document.getElementById("importClose");
+if (importCloseButton) {
+    importCloseButton.addEventListener("click", () => {
+        drsImportDiv.classList.add("hidden");
+    });
+};
+const openJsonButton = document.getElementById("importDrsTeamsButton");
+if (openJsonButton) {
+    openJsonButton.addEventListener("click", () => {
+        const eventId = document.getElementById("eventsSelect").value;
+        window.open(`https://www.dirtracingseries.com/teams/saucedata/v1/${eventId}/`);
+    });
+};
+const importTextArea = document.getElementById("importText");
+if (importTextArea) {
+    importTextArea.addEventListener("paste", (e) => {
+        const drsPensDiv = document.getElementById("drsPens");
+        const jsonRawData = e.clipboardData.getData('text');
+        try {
+            drsTeams = JSON.parse(jsonRawData);
+        } catch {
+            console.log("Invalid JSON")
+            drsPensDiv.innerHTML = "Error reading the data.  Try copying the data again and ensure you capture everything.  Ctrl/Cmd - A to select all and then Ctrl-Cmd - C to copy."
+            return;
+        }
+        console.log("drsTeams", drsTeams);
+        
+        drsPensDiv.innerHTML = "";
+        let pensOutput = "";
+        for (let pen of drsTeams.pens) {
+            pensOutput += `<input id="${pen.pen}" name="penCb" type="radio">${pen.pen} - ${pen.category}<br>`
+        };
+        drsPensDiv.innerHTML = pensOutput;
+        importDrsSaveButton.style.display = "block";
+    })
+}
+const importDrsSaveButton = document.getElementById("importDrsSaveButton");
+const duplicateWarningDiv = document.getElementById("duplicateWarning");
+if (importDrsSaveButton) {
+    importDrsSaveButton.addEventListener("click", async () => {
+        const pensToSave = document.querySelectorAll('[name="penCb"]');
+        let drsTeamsToSave = [];
+        for (let pen of pensToSave) {
+            if (pen.checked) {
+                const drsPen = drsTeams.pens.find(x => x.pen === pen.id);
+                drsTeamsToSave.push(drsPen);
+            }
+        }
+        console.log("drsTeamsToSave", drsTeamsToSave);
+        let existingTeams = await zen.getExistingTeams(dbTeams);
+        console.log("existingTeams", existingTeams);
+        let duplicates = [];
+        for (let pen of drsTeamsToSave) {
+            const sanitizedPen = assignTeamNames(pen.teams);
+            console.log("sanitizedPen", sanitizedPen);
+            const penDuplicates = await findDuplicateAssignments(sanitizedPen);
+            penDuplicates.forEach(dup => duplicates.push(dup));
+            console.log("penDuplicates", penDuplicates)
+            for (let team of sanitizedPen) {
+                const existingCheck = existingTeams.find(x => x.team === team.teamName);
+                if (!existingCheck) {                    
+                    console.log("Creating new team", team.teamName)
+                    await newTeam(team.teamName);
+                };
+            };
+            existingTeams = await zen.getExistingTeams(dbTeams);
+            console.log("existingTeams", existingTeams);
+            for (let team of sanitizedPen) {
+                const dbTeam = existingTeams.find(x => x.team === team.teamName);
+                if (dbTeam) {
+                    for (let rider of team.riders) {
+                        zen.assignAthlete(dbTeams, dbTeam.id, rider.zwift_id);
+                    };
+                } else {
+                    console.warn("Missing team data!")
+                    debugger
+                };
+            };            
+        }
+        if (duplicates.length > 0) {
+            console.log("all duplicates", duplicates)
+            let duplicateWarning = `WARNING: The following riders belong to more than one team and may not be assigned correctly.  <br>
+                <table>
+                    <tr><th>Name</th><th>Assigned Team</th><th>Possible Teams</th></tr>
+                `
+            const existingAssignments = await zen.getTeamAssignments(dbTeams);
+            existingTeams = await zen.getExistingTeams(dbTeams);
+            for (let dup of duplicates) {
+                const thisDup = existingAssignments.find(x => x.athleteId === dup.zwift_id);
+                const thisDupTeam = existingTeams.find(x => x.id === thisDup.team);
+                let possibleTeams = "";
+                dup.teams.forEach(x => possibleTeams += `${x}, `)
+                duplicateWarning += `<tr><td>${dup.name}</td><td>${thisDupTeam.team}</td><td>${possibleTeams}</td></tr>`
+            };            
+            duplicateWarning += "</table>"
+            duplicateWarningDiv.innerHTML = duplicateWarning;
+            duplicateWarningDiv.classList.remove("hidden");
 
+        } else {
+            duplicateWarningDiv.classList.add("hidden");
+        }
+        await refreshTeams();
+        importCloseButton.click();
+    })
+};
+function normalize(str) {
+    const stripRegex = /[()\[\]{}]/g;
+    return typeof str === "string"
+        ? str.replace(stripRegex, "").trim()
+        : "";
+}
+async function findDuplicateAssignments(pen) {
+    const riderMap = new Map();
 
+    for (const team of pen) {
+        const { teamName, riders } = team;
+
+        for (const rider of riders) {
+            const { zwift_id } = rider;
+
+            if (!riderMap.has(zwift_id)) {
+                riderMap.set(zwift_id, new Set());
+            }
+
+            riderMap.get(zwift_id).add(teamName);
+        }
+    }
+    
+    const result = [];
+
+    for (const [zwift_id, teams] of riderMap.entries()) {
+        if (teams.size > 1) {
+            const athlete = await common.rpc.getAthlete(zwift_id);
+            console.log("duplicate athlete", athlete)
+            result.push({
+            zwift_id,
+            name: athlete.sanitizedFullname,
+            teams: [...teams]
+            });
+        }
+    }
+
+    return result;
+
+}
+
+function assignTeamNames(pen) {
+    const counts = new Map();
+    
+    for (const team of pen) {
+        const normalizedTag = normalize(team.in_game_tag);
+        counts.set(
+            normalizedTag,
+            (counts.get(normalizedTag) || 0) + 1
+        );
+    }
+
+    for (const team of pen) {
+        const normalizedTag = normalize(team.in_game_tag);
+
+        if (counts.get(normalizedTag) === 1) {
+            team.teamName = normalizedTag;
+        } else if (normalize(team.team_name).startsWith(normalizedTag)) {
+            const newName = normalize(team.team_name).replace(normalizedTag, "").trim();
+            team.teamName = newName;
+        } else {
+            team.teamName = normalize(team.team_name);
+        }
+    }
+
+    return pen;
+};
+const resetAllTeamsButton = document.getElementById("resetTeamsDb");
+if (resetAllTeamsButton) {
+    resetAllTeamsButton.addEventListener("click", async () => {
+        if (confirm(`WARNING: This will delete ALL teams and their member assignments!!  Do you want to continue?`)) {
+            const allTeams = await zen.getExistingTeams(dbTeams);
+            const teamAssignments = await zen.getTeamAssignments(dbTeams);
+            for (let team of allTeams) {            
+                const thisTeam = allTeams.find(x => x.team === team.team);
+                const thisTeamMembers = teamAssignments.filter(x => x.team === thisTeam.id);                
+                for (let member of thisTeamMembers) {
+                    zen.assignAthlete(dbTeams, "-1", member.athleteId)
+                };                
+                await zen.deleteTeam(dbTeams, team.id);
+            };
+            await refreshTeams();
+        };
+        duplicateWarningDiv.classList.add("hidden");
+    });
+}
 const eventsListDiv = document.getElementById("eventsList");
 const allEvents = await common.rpc.getCachedEvents();
 const eventsSelect = document.createElement('select')
@@ -46,6 +243,7 @@ eventText.placeholder = "or event ID"
 eventsListDiv.appendChild(eventText);
 eventText.addEventListener("change", async function() {
     const eventTextDiv = document.getElementById("eventText");
+    duplicateWarningDiv.classList.add("hidden");
     let eventIdSearch = eventTextDiv.value;
     if (eventIdSearch != "") {
         eventIdSearch = parseInt(eventIdSearch)
@@ -82,7 +280,7 @@ const penListDiv = document.getElementById('penList');
 const eventTextDiv = document.getElementById('eventText'); 
 
 eventsSelect.addEventListener('change', async function() {
-    
+    duplicateWarningDiv.classList.add("hidden");
     penListDiv.innerHTML = "";    
     eventTextDiv.value = "";
     if (this.value != -1) {
@@ -91,14 +289,17 @@ eventsSelect.addEventListener('change', async function() {
             if (a.subgroupLabel > b.subgroupLabel) return 1;
             if (a.subgroupLabel < b.subgroupLabel) return -1;
             return 0;
-        })
-        //debugger
+        });
         const penSelect = document.createElement('select');
         penSelect.id = "penSelect"
         if (eventInfo) {
             sgStartTime = eventInfo.ts;
             console.log(eventInfo)
-            
+            if (eventInfo.allTagsObject.dirtracingseries) {
+                document.getElementById("drsDisplay").style.display = "flex";
+            } else {
+                document.getElementById("drsDisplay").style.display = "none";
+            }
             const optText = document.createElement('option');
             optText.textContent = "Select a pen"
             optText.value = -1
@@ -112,6 +313,7 @@ eventsSelect.addEventListener('change', async function() {
             penListDiv.appendChild(penSelect)
         }
         penSelect.addEventListener('change', async function() {
+            duplicateWarningDiv.classList.add("hidden");
             const sg = eventInfo.eventSubgroups.find(x => x.id == this.value)
             const outputDiv = document.getElementById("outputDiv")
             if (sg) {   
@@ -150,12 +352,14 @@ eventsSelect.addEventListener('change', async function() {
                 const teamSelects = document.querySelectorAll('select[name="customTeamSelect"]');
                 teamSelects.forEach(select => {
                     select.addEventListener('change', async event => {
+                        duplicateWarningDiv.classList.add("hidden");
                         const [id, athleteId] = event.target.value.split(",");
                         zen.assignAthlete(dbTeams, id, athleteId);
                         existingTeamsDiv.innerHTML = await getExistingTeams();
                         const teamsTable = document.getElementById("existingTeamsTable");
                         for (let row of teamsTable.rows) {
                             row.addEventListener("click", function () {
+                                duplicateWarningDiv.classList.add("hidden");
                                 const id = this.cells[0].textContent;
                                 const team = this.cells[1].textContent.replace(/\(\d+\)/, '').trim();
                                 showTeamMembers(id, team)
@@ -197,13 +401,29 @@ eventsSelect.addEventListener('change', async function() {
 
 const newTeamInput = document.getElementById("newTeamName");
 const addNewTeamButton = document.getElementById("addNewTeam");
-async function newTeam() {
-    const teamName = newTeamInput.value.trim();
+async function refreshTeams() {
+    existingTeamsDiv.innerHTML = await getExistingTeams();
+    const teamsTable = document.getElementById("existingTeamsTable");
+    const outputDiv = document.getElementById("outputDiv")
+    outputDiv.innerHTML = "";
+    for (let row of teamsTable.rows) {
+        row.addEventListener("click", function () {
+            duplicateWarningDiv.classList.add("hidden");
+            const id = this.cells[0].textContent;
+            const team = this.cells[1].textContent.replace(/\(\d+\)/, '').trim();
+            showTeamMembers(id, team)
+        })
+    }
+}
+async function newTeam(name) {
+    const teamName = name ? name : newTeamInput.value.trim();
     await zen.addNewTeam(dbTeams, teamName);
     existingTeamsDiv.innerHTML = await getExistingTeams();
     const teamsTable = document.getElementById("existingTeamsTable");
+    duplicateWarningDiv.classList.add("hidden");
     for (let row of teamsTable.rows) {
         row.addEventListener("click", function () {
+            duplicateWarningDiv.classList.add("hidden");
             const id = this.cells[0].textContent;
             const team = this.cells[1].textContent.replace(/\(\d+\)/, '').trim();
             showTeamMembers(id, team)
@@ -235,6 +455,7 @@ existingTeamsDiv.innerHTML = await getExistingTeams();
 const teamsTable = document.getElementById("existingTeamsTable");
 for (let row of teamsTable.rows) {
     row.addEventListener("click", function () {
+        duplicateWarningDiv.classList.add("hidden");
         const id = this.cells[0].textContent;
         const team = this.cells[1].textContent.replace(/\(\d+\)/, '').trim();
         showTeamMembers(id, team)
@@ -249,6 +470,7 @@ async function addNewMember(team, teamName) {
     const teamsTable = document.getElementById("existingTeamsTable");
     for (let row of teamsTable.rows) {
         row.addEventListener("click", function () {
+            duplicateWarningDiv.classList.add("hidden");
             const id = this.cells[0].textContent;
             const team = this.cells[1].textContent.replace(/\(\d+\)/, '').trim();
             showTeamMembers(id, team)
@@ -285,16 +507,19 @@ async function showTeamMembers(team, teamName) {
     const deleteTeamButton = document.getElementById("deleteTeamButton");
     
     addNewMemberButton.addEventListener("click", async function () {
+        duplicateWarningDiv.classList.add("hidden");
         await addNewMember(team, teamName)
     });
     const addNewMemberInput = document.getElementById('newTeamMember');
     addNewMemberInput.addEventListener("keydown", async function(event) {
         if (event.key === "Enter") {
+            duplicateWarningDiv.classList.add("hidden");
             await addNewMember(team, teamName)
         }
     });
     removeAllButton.addEventListener("click", async function () {
         if (confirm(`Delete all members from ${teamName}?`)) {
+            duplicateWarningDiv.classList.add("hidden");
             const teamAssignments = await zen.getTeamAssignments(dbTeams);        
             const thisTeam = teamAssignments.filter(x => x.team == team)
             for (let member of thisTeam) {
@@ -304,6 +529,7 @@ async function showTeamMembers(team, teamName) {
             const teamsTable = document.getElementById("existingTeamsTable");
             for (let row of teamsTable.rows) {
                 row.addEventListener("click", function () {
+                    duplicateWarningDiv.classList.add("hidden");
                     const id = this.cells[0].textContent;
                     const team = this.cells[1].textContent.replace(/\(\d+\)/, '').trim();
                     showTeamMembers(id, team)

@@ -289,3 +289,75 @@ div .pointsTitle {
   font-variant: small-caps tabular-nums;
   font-size: calc(var(--font-scale) * 0.8em);
 }
+#drsDisplay {
+  display: none;
+  flex-direction: row;
+  margin: 0 auto;
+  margin-top: 20px;
+  background-image: linear-gradient(135deg, hsl(var(--theme-primary-hue) var(--theme-primary-sat) var(--theme-primary-light)/85%), hsl(var(--theme-primary-hue) var(--theme-primary-sat) calc(var(--theme-primary-light) + -10% * var(--theme-primary-shade-dir))/80%));
+}
+#drsImg {
+  height: 60px;
+}
+#drsImg img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+#drsInfo {
+  font-size: calc(var(--font-scale) * 1em);
+  vertical-align: middle;
+}
+.drsImport {
+  position: fixed;
+  top: 75px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 10vh;
+  z-index: 9999;
+}
+.importInfo {
+  padding: 10px;
+  background: black;
+  width: 60vw;
+  height: 60vh;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  overflow: auto;
+  font-size: calc(var(--font-scale) * 0.8em);
+}
+.importClose {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #111;
+  color: #fff;
+  border-color: rgba(51, 51, 51, 0.5);
+  cursor: pointer;
+  font-size: calc(var(--font-scale) * 1.3em);
+}
+.hidden {
+  display: none;
+}
+#importText {
+  width: 50%;
+  height: 200px;
+}
+#importPens {
+  display: flex;
+  flex-direction: row;
+}
+#importDrsSaveButton {
+  display: none;
+}
+#importPensRight {
+  display: flex;
+  flex-direction: column;
+  padding-left: 10px;
+}

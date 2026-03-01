@@ -201,11 +201,21 @@
                     
                 </div>
                 <div class="buttons">
+                    <button id="resetTeamsDb">Clear All Teams</button>
                     <div title="Close this window" class="button close electron-only"><ms>close</ms></div>
                 </div>
             </header>
         </div>
-        <div id="content">            
+        <div id="drsDisplay">
+            <div id="drsImg">                
+                <img src="https://www.dirtracingseries.com/media/images/DRS_Logo_Big.original.format-webp.webp" alt="DRS">
+            </div>
+            <div id="drsInfo">
+                This is a Dirt Racing Series Event.  Click here to import teams.                
+            </div>
+        </div>   
+        <div id="content">   
+                  
             <div id="leftSide" class="sides">                
                 
                 <div id="existingTeamsDiv">
@@ -216,6 +226,33 @@
                 
                 <div id="outputDiv">
                 </div>
+            </div>
+            <div id="drsImport" class="drsImport hidden">
+                <div id="importInfo" class="importInfo">                    
+                    <div id="importContent">
+                        <ol>
+                            <li>Click the Open JSON button below</li>
+                            <li>In the window that opens, copy the contents to the clipboard (Ctrl/Cmd - A to highlight then Ctrl/Cmd - C to copy).  Make sure it is the raw data being selected.  Don't check "pretty print" or anything that formats the output.</li>
+                            <li>Return to this window and paste the contents to the textbox below</li>
+                            <li>Choose which pen to import</li>
+                            <li>Click the Save button</li>
+                        </ol>
+                        <button title="Open JSON" id="importDrsTeamsButton">Open JSON</button>
+                        
+                        <br>
+                        <input type="button" id="importClose" class="importClose" value="X">
+                        <div id="importPens">
+                            <textarea id="importText"  spellcheck="false" autocomplete="off"></textarea>
+                            <div id="importPensRight">
+                                <div id="drsPens"></div>
+                                <button title="Save" id="importDrsSaveButton">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="duplicateWarning" class="duplicate hidden">
+                
             </div>
         </div>
     </body>

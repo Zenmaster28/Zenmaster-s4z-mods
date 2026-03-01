@@ -3499,14 +3499,14 @@ export async function assignAthlete(dbTeams, id, athleteId) {
             team: id
         }
         let request;
-        console.log("assignment", assignment)
+        //console.log("assignment", assignment)
         if (id != "-1") {
             request = store.put(assignment);
         } else {
             request = store.delete(athleteId)
         }
         request.onsuccess = function () {            
-            console.log("Team assignment complete:", assignment);
+            //console.log("Team assignment complete:", assignment);
         };
         request.onerror = function (event) {
             console.error("Failed to assign athlete to team:", event.target.error);
