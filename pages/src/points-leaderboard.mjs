@@ -926,7 +926,13 @@ async function buildPointsTable(racerScores, athletes, lastSegmentName = "", ign
         maxRacers = Infinity;
     }
     //console.log("Max racers to display:", maxRacers)
-    const allTeamScores = [];
+    let allTeamScores = [];
+    const allScores = [];    
+    let maxScoringRiders = 0;
+    if (currentEventConfig.limitScoringRiders) {
+        const configScoringRiders = parseInt(currentEventConfig.maxScoringRiders) || 0;
+        maxScoringRiders = configScoringRiders;        
+    }
     const customTeams = settings.useCustomTeams ? await zen.getExistingTeams(dbTeams) : [];
     const teamAssignments = settings.useCustomTeams ? await zen.getTeamAssignments(dbTeams) : [];
     const teamScore = {
@@ -980,7 +986,13 @@ async function buildPointsTable(racerScores, athletes, lastSegmentName = "", ign
             }
             teamBadge = customTeam ? common.teamBadge(customTeamName) : teamBadge;
             let currentTeamScore = allTeamScores.find(x => x.name == customTeamName);
-            
+            allScores.push({
+                customTeamName: customTeamName || "Unknown",
+                ftsPoints: racer.ftsPointTotal,
+                falPoints: racer.falPointTotal,
+                finPoints: racer.finPoints,
+                totalPoints: racer.pointTotal
+            })
             if (currentTeamScore) {
                 //console.log("Found previous score for", customTeamName, currentTeamScore)
                 //console.log("Adding racer scores of ", racer)
@@ -1019,7 +1031,7 @@ async function buildPointsTable(racerScores, athletes, lastSegmentName = "", ign
                 }
                 
             
-            }
+            }            
             if (lastSegmentName == "") {
                 //console.log("allTeamScores", allTeamScores);
             } else {
@@ -1047,11 +1059,38 @@ async function buildPointsTable(racerScores, athletes, lastSegmentName = "", ign
             teamScore.name = "My team"
             allTeamScores.push(teamScore)
         }
-        allTeamScores.sort((a,b) => b.totalPoints - a.totalPoints)
+        allTeamScores.sort((a,b) => b.totalPoints - a.totalPoints);
+        if (maxScoringRiders > 0) {
+            const topTeamScores = [];
+            for (let teamScore of allTeamScores) {
+                if (teamScore.name == "Unknown" && !settings.showUnknownTeam) {
+                    continue;
+                };
+                const thisTeamScores = allScores.filter(x => x.customTeamName === teamScore.name);
+                thisTeamScores.sort((a,b) => b.totalPoints - a.totalPoints);
+                const thisTeamTopScores = thisTeamScores.slice(0, maxScoringRiders);
+                const newScores = {
+                    name: teamScore.name,
+                    ftsPoints: 0,
+                    falPoints: 0,
+                    finPoints: 0,
+                    totalPoints: 0
+                };
+                for (let score of thisTeamTopScores) {
+                    newScores.ftsPoints += score.ftsPoints;
+                    newScores.falPoints += score.falPoints;
+                    newScores.finPoints += score.finPoints;
+                    newScores.totalPoints += score.totalPoints;
+                };
+                topTeamScores.push(newScores);
+            };
+            topTeamScores.sort((a,b) => b.totalPoints - a.totalPoints);
+            allTeamScores = topTeamScores;
+        };
         for (let teamScore of allTeamScores) {
             if (teamScore.name == "Unknown" && !settings.showUnknownTeam) {
                 continue;
-            }
+            }                       
             let teamScoreOutput = `<tr><td>${teamRank}</td><td><div id="info-item-team-l">${common.teamBadge(teamScore.name)}</div></td><td ${evaluateVisibility('FAL')}>${teamScore.falPoints}</td><td ${evaluateVisibility('FTS')}>${teamScore.ftsPoints}</td><td ${evaluateVisibility('FIN', ignoreFIN)}>${teamScore.finPoints}</td><td>${teamScore.totalPoints}</td></tr>`;
             tableFinalOutput += teamScoreOutput;
             teamRank++;

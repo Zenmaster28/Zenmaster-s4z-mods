@@ -34,6 +34,8 @@ scoreFormatDiv.innerHTML += `
         <option value="5">-5</option>
     </select>
     <input disabled type="text" id="falBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">    
+    <span title="Limit the number of riders per team that score points">Limit scoring riders</span><input disabled type="checkbox" id="limitScoringRiders" title="Limit the number of riders per team that score points">
+    <input type="number" id="maxScoringRiders" style="--size: 6;" title="The number of riders on a team that can score points" disabled>
     <br>
     <span class="scoreLabel">FIN:</span> 
     <input disabled type="text" id="finScoreFormat" size="18" title="Examples are 10..1 which would score 10 for 1st, 9 for 2nd etc.  Comma separated values such as 15,11,9 would score as 15 for 1st, 11 for 2nd, 9 for 3rd.  Formats can be combined like 20,15,10,7..1" placeholder="Select event first">
@@ -151,6 +153,9 @@ const nonTeammatesDiv = document.getElementById("nonTeammates");
 const teamNamesSetting = document.getElementById("teamNames");
 const highlightTeammateSetting = document.getElementById("highlightTeammate");
 const ftsPerEvent = document.getElementById("ftsPerEvent");
+const limitScoringRiders = document.getElementById("limitScoringRiders");
+const maxScoringRiders = document.getElementById("maxScoringRiders");
+
 let allCats = false;
 
 async function loadSavedScoreFormats(action) {    
@@ -206,6 +211,10 @@ savedFormatsSelect.addEventListener("change", function() {
     buttonSaveFormat.title = `Save '${formatName.value}'`
     buttonDeleteFormat.title = `Delete '${formatName.value}'`
     ftsPerEvent.checked = selectedformatName.ftsPerEvent;
+    limitScoringRiders.checked = selectedformatName.limitScoringRiders;
+    limitScoringRiders.disabled = false;
+    maxScoringRiders.value = selectedformatName.maxScoringRiders || 0;
+    maxScoringRiders.disabled = selectedformatName.limitScoringRiders ? false : true;
     saveConfig();
 });
 buttonSaveFormat.addEventListener("click", function() {
@@ -221,7 +230,9 @@ buttonSaveFormat.addEventListener("click", function() {
             fin: finScoreFormatDiv.value,
             finStep: finStepDiv.value,
             finBonus: finBonusDiv.value,
-            ftsPerEvent: ftsPerEvent.checked
+            ftsPerEvent: ftsPerEvent.checked,
+            limitScoringRiders: limitScoringRiders.checked,
+            maxScoringRiders: maxScoringRiders.value
         };
         console.log("newFormat",newFormat);
         const transaction = dbSegmentConfig.transaction("scoringConfig", "readwrite");
@@ -358,6 +369,10 @@ eventsSelect.addEventListener('change', async function() {
                     sampleScoring.innerHTML = "Sample Scoring";
                     sampleScoring.innerHTML = await showSampleScoring(currentEventConfig);
                     ftsPerEvent.checked = currentEventConfig.ftsPerEvent;
+                    limitScoringRiders.checked = currentEventConfig.limitScoringRiders;
+                    limitScoringRiders.disabled = false;
+                    maxScoringRiders.value = currentEventConfig.maxScoringRiders || 0;
+                    maxScoringRiders.disabled = limitScoringRiders.checked ? false : true;
                 } else {
                     ftsScoreFormatDiv.value = "";    
                     falScoreFormatDiv.value = "";
@@ -371,6 +386,8 @@ eventsSelect.addEventListener('change', async function() {
                     const sampleScoring = document.getElementById('sampleScoring');
                     sampleScoring.innerHTML = "Sample Scoring";
                     ftsPerEvent.checked = false;
+                    limitScoringRiders.checked = false;
+                    maxScoringRiders.value = 0;
                 }                            
                 ftsScoreFormatDiv.disabled = false;
                 ftsScoreFormatDiv.placeholder = "";                            
@@ -419,6 +436,18 @@ eventsSelect.addEventListener('change', async function() {
                 const segTable = document.getElementById('segmentsTable')
                 segTable.addEventListener('change', saveConfig);
                 ftsPerEvent.addEventListener('change', saveConfig);
+                limitScoringRiders.disabled = false;
+                limitScoringRiders.addEventListener('change', () => {
+                    if (limitScoringRiders.checked) {
+                        maxScoringRiders.value = 0;
+                        maxScoringRiders.disabled = false;
+                    } else {
+                        maxScoringRiders.disabled = true;
+                        maxScoringRiders.value = 0;
+                    }
+                    saveConfig();
+                });
+                maxScoringRiders.addEventListener('change', saveConfig);
             }    
             const settings = common.settingsStore.get();
             if (settings.highlightTeammate && settings.teamNames != "") {
@@ -589,7 +618,9 @@ function saveConfig() {
                 ts: sgStartTime,
                 allCats: allCats,
                 eventSubgroupIds: penValues,
-                ftsPerEvent: document.getElementById('ftsPerEvent').checked
+                ftsPerEvent: document.getElementById('ftsPerEvent').checked,
+                limitScoringRiders: document.getElementById('limitScoringRiders').checked,
+                maxScoringRiders: document.getElementById('maxScoringRiders').value
             }
             const transaction = dbSegmentConfig.transaction("segmentConfig", "readwrite");
             const store = transaction.objectStore("segmentConfig")
