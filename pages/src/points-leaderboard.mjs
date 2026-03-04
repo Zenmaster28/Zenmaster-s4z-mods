@@ -96,7 +96,8 @@ common.settingsStore.setDefault({
     stickyWatching: true,
     stickyTeammate: true,
     stickyMarked: true,
-    showUnknownTeam: false
+    showUnknownTeam: false,
+    hideRiderScores: false
 });
 /*
 common.settingsStore.addEventListener('changed', ev => {
@@ -1099,8 +1100,12 @@ async function buildPointsTable(racerScores, athletes, lastSegmentName = "", ign
         let teamScoreOutput = `<tr class=teammate><td></td><td>Team<div id="info-item-team">${common.teamBadge(watchingTeam)}</div></td><td ${evaluateVisibility('FAL')}>${teamScore.falPoints}</td><td ${evaluateVisibility('FTS')}>${teamScore.ftsPoints}</td><td ${evaluateVisibility('FIN', ignoreFIN)}>${teamScore.finPoints}</td><td>${teamScore.totalPoints}</td></tr>`;
         tableFinalOutput += teamScoreOutput;
     }
-    tableOutput += "</table>"    
-    tableFinalOutput += tableOutput;
+    tableOutput += "</table>" 
+    if (settings.hideRiderScores) {
+        tableFinalOutput += "</table>"
+    } else {
+        tableFinalOutput += tableOutput;
+    }
     if (settings.preview) {
         common.settingsStore.set("preview", false);
     }
@@ -1337,6 +1342,7 @@ async function _getLeaderboard(watching) {
                 eventSubgroupId = watching.state.eventSubgroupId;
             }
             currentEventConfig = await zen.getEventConfig(dbSegmentConfig, eventSubgroupId)
+            //can I just override the currentEventConfig with the custom one at this point?
             await getKnownRacersV2(watching, currentEventConfig)
             await getAllSegmentResults(watching, currentEventConfig)
             await getRaceResults(watching, currentEventConfig)
