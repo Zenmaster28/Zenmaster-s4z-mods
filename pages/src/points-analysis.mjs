@@ -864,14 +864,18 @@ export async function main() {
 
     })
     const saveJsonButton = document.getElementById("saveJson");
-    saveJsonButton.addEventListener("click", () => {
+    saveJsonButton.addEventListener("click", async () => {
+        const customTeams = await zen.getExistingTeams(dbTeams);
+        const teamAssignments = await zen.getTeamAssignments(dbTeams);
         const exportData = {
             Name: lastEventName,
             EventId: lastEventId,
             Pen: lastEventPen,
             Points: lastEventRacerScores,
             SegmentScores: lastEventSegmentScores,
-            AllSegmentResults: lastEventResults
+            AllSegmentResults: lastEventResults,
+            Teams: customTeams,
+            teamAssignments: teamAssignments
         };
         const jsonResults = JSON.stringify(exportData, null, 2);
         const resultsBlob = new Blob([jsonResults], { type: "application/json" });
