@@ -2,6 +2,7 @@ import * as common from '/pages/src/common.mjs';
 import * as zen from './segments-xCoord.mjs';
 let dbSegments = await zen.openSegmentsDB();
 let dbSegmentConfig = await zen.openSegmentConfigDB();
+let dbTeams = await zen.openTeamsDB();
 await zen.cleanupSegmentsDB(dbSegments);
 await zen.cleanupSegmentsDB(dbSegments, {live: true});
 await zen.cleanupSegmentConfigDB(dbSegmentConfig);
@@ -243,7 +244,8 @@ async function scoreResults(eventResults, currentEventConfig) {
                     //debugger
                 }
                 //debugger
-                //console.log("Scoring ", pointsCounter, "racers as", scorePoints)
+                console.log("Scoring ", pointsCounter, "racers as", scorePoints)
+                let t = Date.now();
                 for (let i = 0; i < pointsCounter; i++) { 
                     if (currentEventConfig.ftsPerEvent && scoreFormat == "fts") {                        
                         if (segRes.repeat == 1) {
@@ -423,6 +425,7 @@ async function scoreResults(eventResults, currentEventConfig) {
                         //points--;
                     }
                 }
+                console.log("Scoring racers took", Date.now() - t, "ms")
             }
         }
         segmentScores.push(segmentPointBreakdown)
@@ -440,8 +443,12 @@ async function scoreResults(eventResults, currentEventConfig) {
         scorePoints = zen.getScoreFormat(finScores, finScoreStep); 
         //console.log("FIN score points",scorePoints)
     }
+    console.log("getting race results for", currentEventConfig.eventSubgroupId)
+    let t = Date.now();
     let res = await common.rpc.getEventSubgroupResults(currentEventConfig.eventSubgroupId);
+    console.log("race results took", Date.now() - t, "ms")
     raceResults = [...res];
+    
     /*
     res.forEach(result => {
         const exists = raceResults.some(r => r.profileId === result.profileId);
@@ -451,6 +458,8 @@ async function scoreResults(eventResults, currentEventConfig) {
         }
     });
     */
+   console.log("Scoring fin points")
+   t = Date.now();
     if (raceResults.length > 0) {
         //console.log("raceResults",raceResults)
         const femaleOnly = document.getElementById("femaleOnly").checked;
@@ -507,6 +516,7 @@ async function scoreResults(eventResults, currentEventConfig) {
         }
         racer.pointTotal = racer.ftsPointTotal + racer.falPointTotal + racer.finPoints;
     }  
+    console.log("Scoring fin points took", Date.now() - t, "ms")
     console.log("Racer scores",racerScores)  
     return [racerScores, segmentScores, perEventResults];
 }
@@ -603,7 +613,7 @@ async function displayResults(racerScores, segmentScores, sgConfig, eventResults
         }
         tableOutput += "</table>"  
         pointsResultsDiv.innerHTML = tableOutput;        
-    } else {
+    } else if (selectedView.value === "segment") {
         //debugger
         let tableOutput = `<table id='pointsTable'><tr class="shown">`
         for (let segment of segmentScores) {
@@ -653,6 +663,75 @@ async function displayResults(racerScores, segmentScores, sgConfig, eventResults
         }
         tableOutput += "</table>"
         pointsResultsDiv.innerHTML = tableOutput;
+    } else if (selectedView.value === "teams") {
+        console.log("teams selected")
+        const customTeams = await zen.getExistingTeams(dbTeams);
+        const teamAssignments = await zen.getTeamAssignments(dbTeams);
+        for (let racer of racerScores) {
+            const racerTeamAssignment = teamAssignments.find(x => x.athleteId === racer.athleteId);
+            if (racerTeamAssignment) {
+                const racerTeam = customTeams.find(x => x.id === racerTeamAssignment.team);
+                racer.assignedTeam = racerTeam.team;
+            } else {
+                racer.assignedTeam = "Unknown";
+            };
+        };
+        const allTeamNames = zen.getUniqueValues(racerScores, "assignedTeam");        
+        let teamsTableOutput = "<table id='pointsTable'><thead><tr><th class='rank'>Rank</th><th class='teamName'>Team</th><th class='fal'>FAL</th><th class='fts'>FTS</th><th class='fin'>FIN</th><th class='teamScore'>Total</th></tr></thead>"        
+        const allTeamScores = [];
+        for (let team of allTeamNames) {
+            const thisTeamScores = racerScores.filter(x => x.assignedTeam === team);
+            thisTeamScores.sort((a,b) => b.pointTotal - a.pointTotal);
+            const thisTeamScoringRiders = thisTeamScores.slice(0, sgConfig.maxScoringRiders)
+            let teamScore = 0;
+            let teamFAL = 0;
+            let teamFTS = 0;
+            let teamFIN = 0;
+            const teamRiders = [];
+            for (let rider of thisTeamScoringRiders) {
+                teamFAL += rider.falPointTotal;
+                teamFTS += rider.ftsPointTotal;
+                teamFIN += rider.finPoints;
+                teamScore += rider.pointTotal;
+                teamRiders.push(rider)
+            }
+            allTeamScores.push({
+                team: team,
+                teamFAL: teamFAL,
+                teamFTS: teamFTS,
+                teamFIN: teamFIN,
+                teamScore: teamScore,
+                riders: teamRiders
+            });            
+            
+        };
+        allTeamScores.sort((a,b) => b.teamScore - a.teamScore);
+        console.log("allTeamScores", allTeamScores)
+        let rank = 1;
+        for (let team of allTeamScores) {
+            teamsTableOutput += `<tr class="teamScore"><td class="rank">${rank}</td><td class="teamName">${team.team}</td><td class="fal">${team.teamFAL}</td><td class="fts">${team.teamFTS}</td><td class="fin">${team.teamFIN}</td><td class="teamScore">${team.teamScore}</td></tr>`;
+            teamsTableOutput += `<tr class="teamScoreDetails"><td colspan="6"><div class="container">`;
+            teamsTableOutput += `<table id="teamRiderScores"><tr><th class="name"></th><th class="score">FAL</th><th class="score">FTS</th><th class="score">FIN</th><th class="score">Total</th></tr>`;
+            for (let rider of team.riders) {
+                teamsTableOutput += `<tr><td class="name">${rider.name}</td><td class="score">${rider.falPointTotal}</td><td class="score">${rider.ftsPointTotal}</td><td class="score">${rider.finPoints}</td><td class="score">${rider.pointTotal}</td></tr>`
+            }
+            teamsTableOutput += `</table></div>`
+            rank++;
+        }
+        teamsTableOutput += "</table>";        
+        pointsResultsDiv.innerHTML = teamsTableOutput;
+        const pointsTable = document.getElementById("pointsTable");
+        pointsTable.addEventListener("click", (e) => {
+            const row = e.target.closest('tr.teamScore');
+            if (!row) {
+                return;
+            };
+            const detailsRow = row.nextElementSibling;
+            if (detailsRow && detailsRow.classList.contains("teamScoreDetails")) {
+                const isHidden = getComputedStyle(detailsRow).display === "none";
+                detailsRow.style.display = isHidden ? 'table-row' : 'none';
+            }
+        })
     }
     const pointsTable = document.getElementById("pointsTable")
     pointsTable.addEventListener("click", function(event) {
@@ -767,7 +846,7 @@ export async function main() {
             if (a.subgroupLabel < b.subgroupLabel) return -1;
             return 0;
         })
-        let selectPenList = "<select id='selectPen'><option value='-1'>Select a pen</option>"
+        let selectPenList = "<select id='selectPen'><option value='-1'>Pen</option>"
         for (let pen of eventDetails.eventSubgroups) {
             //debugger
             const sgConfig = allEventConfigs.find(x => x.eventSubgroupId == pen.id)

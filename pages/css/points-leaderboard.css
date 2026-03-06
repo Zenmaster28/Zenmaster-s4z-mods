@@ -281,6 +281,55 @@ div .pointsTitle {
   /* background-color: black; */
   background-color: hsl(var(--theme-bg-hue), var(--theme-bg-sat), var(--theme-bg-light), 100%);
 }
+#pointsTable .rank {
+  max-width: 0;
+  width: 10%;
+  text-align: right;
+}
+#pointsTable .teamName {
+  max-width: 0;
+  width: 50%;
+}
+#pointsTable .fal {
+  max-width: 0;
+  width: 10%;
+  text-align: right;
+}
+#pointsTable .fts {
+  max-width: 0;
+  width: 10%;
+  text-align: right;
+}
+#pointsTable .fin {
+  max-width: 0;
+  width: 10%;
+  text-align: right;
+}
+#pointsTable .teamScore {
+  max-width: 0;
+  width: 10%;
+  text-align: right;
+}
+#pointsTable .container {
+  padding-left: 10%;
+  padding-right: 10%;
+}
+#pointsTable > tbody > tr:nth-child(4n-1) {
+  background-color: hsl(var(--theme-intrinsic-inverted-hue), var(--theme-intrinsic-inverted-sat), calc(var(--theme-intrinsic-inverted-light) + 0% * var(--theme-intrinsic-inverted-shade-dir)), 0.1);
+}
+#teamRiderScores {
+  border: 1px dotted #fff
+}
+#teamRiderScores .name {
+  max-width: 0;
+  width: 50%;
+  text-align: left;
+}
+#teamRiderScores .score {
+  max-width: 0;
+  width: 10%;
+  text-align: right;
+}
 #importantScores {
   font-variant: small-caps tabular-nums;
   font-size: calc(var(--font-scale) * 0.8em);
@@ -360,4 +409,7 @@ div .pointsTitle {
   display: flex;
   flex-direction: column;
   padding-left: 10px;
+}
+tr.teamScoreDetails {
+  display: none
 }
