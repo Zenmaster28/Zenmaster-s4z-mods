@@ -2506,7 +2506,6 @@ export class SauceElevationProfile {
                                 symbol = zen.pins.find(x => x.name == "Default").path;
                             }                        
                             let symbolSize = isGroup ? this.em(groupPinSize) : isWatching ? this.em(watchingPinSize) : ((isTeamMate && this.showTeamMembers) || (isMarked && this.showMarkedRiders) || (isBeacon)) || (isFollowing && this.showFollowing) ? this.em(teamPinSize) : deemphasize ? this.em(deemphasizePinSize) : this.em(otherPinSize)
-                            
                             if (isGroup) {
                                 const colorPinsByCat = this.colorPinsByCat && this.eventInfo?.cullingType == "CULLING_EVENT_ONLY";
                                 if (isWatching) {                                  
@@ -2546,8 +2545,12 @@ export class SauceElevationProfile {
                                         maxGroupSize = group.athletes.length;
                                     }
                                 }
-                                if (state.groupSize > 1 || isWatching) {
-                                    let proportion = (state.groupSize - 1) / (maxGroupSize - 1)
+                                if (state.groupSize > 1 || isWatching) {      
+                                    const proportionDiv = maxGroupSize > 1 ? maxGroupSize : 1;                              
+                                    let proportion = (state.groupSize - 1) / proportionDiv;
+                                    if (isNaN(proportion)) {
+                                        proportion = 1;
+                                    }
                                     if (isWatching && this.colorPinsByCat && this.eventInfo?.cullingType == "CULLING_EVENT_ONLY" && proportion < 1) {
                                         proportion = 1.2;
                                     } else if (isWatching && proportion < 1) {
@@ -2557,6 +2560,9 @@ export class SauceElevationProfile {
                                     symbolSize = symbolSize * result;
                                 } else {
                                     symbolSize = isWatching ? symbolSize * 1.5 : symbolSize; // if not in a group, make watching pin 1.5x larger for emphasis
+                                }
+                                if (isNaN(symbolSize)) {
+                                    symbolSize = this.em(groupPinSize); //failsafe, shouldn't be needed
                                 }
                                 const pinData = {
                                     name: state.athleteId,
