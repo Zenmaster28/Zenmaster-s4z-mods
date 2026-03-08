@@ -32,6 +32,7 @@
                       
                 <div class="filler"></div>
                 <div class="buttons">
+                    <a class="button" title="Clear custom configuration" id="clearConfigButton">&#x274C;</a>
                     <a class="button" onClick="window.location.reload()" title="Reload">&#x21bb;</a>
                     <!--<a class="button open-settings" href="points-analysis-settings.html?width=750&height=750&child-window"
                        title="Open settings window" target="points-analysis-settings"><ms>settings</ms></a>                    
@@ -41,7 +42,8 @@
                 </div>
             </header>
         </div>
-        <div id="content">    
+        <div id="content">  
+            <div id="overridePenList"></div>  
             <div id="customTitle" class="title" style="display:none">
                 <hr>Title: <input id="customTitleInput" type="text" value="" spellcheck="false"/>
             </div>

@@ -349,7 +349,8 @@ eventsSelect.addEventListener('change', async function() {
                 allCats = true;
                 penValue = this.options[2].value
             }
-            //console.log("penValue", penValue, "allCats", allCats)
+            console.log("penValue", penValue, "allCats", allCats)
+            saveConfig();
             //sg = eventInfo.eventSubgroups.find(x => x.id == penValue)
             currentSg = eventInfo.eventSubgroups.find(x => x.id == penValue)
             if (currentSg) {                            
@@ -458,10 +459,16 @@ eventsSelect.addEventListener('change', async function() {
         })
         if (watching) {
             const eventSubgroupId = watching.state.eventSubgroupId;
+            const currentEventConfig = await zen.getEventConfig(dbSegmentConfig, eventSubgroupId);
             if (eventSubgroupId > 0) {
                 const validOption = Array.from(penSelect.options).some(option => option.value == eventSubgroupId)
                 if (validOption) {
-                    penSelect.value = eventSubgroupId
+                    //debugger
+                    if (currentEventConfig && currentEventConfig.allCats) {
+                        penSelect.value = "-2";
+                    } else {
+                        penSelect.value = eventSubgroupId
+                    }
                     const event = new Event('change')
                     penSelect.dispatchEvent(event)
                 }
@@ -572,7 +579,7 @@ async function getTeammates(noToggle = false) {
     noToggle = false;
 }
 function saveConfig() {
-    //console.log("Saving eventConfig")
+    console.log("Saving eventConfig")
     const segmentsTable = document.getElementById('segmentsTable');
     const sampleScoring = document.getElementById('sampleScoring');
     const penOptions = document.getElementById('penSelect');

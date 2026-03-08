@@ -487,12 +487,15 @@ async function getRaceResults(watching) {
     */
 }
 
-async function processResults(watching, dbResults, currentEventConfig) {
+async function processResults(watching, dbResults, currentEventConfig, overrideConfig) {
     let eventResults = [];
     //let eventSubgroupId = watching.state.eventSubgroupId;
     let eventSubgroupId;
     let segmentData;
-    if (!watching.state.eventSubgroupId && lastKnownSG.eventSubgroupId > 0) {
+    if (overrideConfig) {
+        eventSubgroupId == overrideConfig.eventSubgroupId;
+        segmentData = overrideConfig.segments;
+    } else if (!watching.state.eventSubgroupId && lastKnownSG.eventSubgroupId > 0) {
         eventSubgroupId = lastKnownSG.eventSubgroupId;
         segmentData = lastKnownSegmentData;
         //console.log("Using last known segment data")
@@ -1335,21 +1338,25 @@ async function _getLeaderboard(watching) {
 
             }
             */
+            const overrideConfig = settings.configOverride ? JSON.parse(settings.configOverride) : null;
+            
             let eventSubgroupId;
-            if (!watching.state.eventSubgroupId && lastKnownSG.eventSubgroupId > 0) {
+            if (overrideConfig) {
+                eventSubgroupId = parseInt(overrideConfig.eventSubgroupId);
+            } else if (!watching.state.eventSubgroupId && lastKnownSG.eventSubgroupId > 0) {
                 eventSubgroupId = lastKnownSG.eventSubgroupId;
             } else {
                 eventSubgroupId = watching.state.eventSubgroupId;
             }
-            currentEventConfig = await zen.getEventConfig(dbSegmentConfig, eventSubgroupId)
+            currentEventConfig = await zen.getEventConfig(dbSegmentConfig, eventSubgroupId);
             //can I just override the currentEventConfig with the custom one at this point?
             await getKnownRacersV2(watching, currentEventConfig)
             await getAllSegmentResults(watching, currentEventConfig)
             await getRaceResults(watching, currentEventConfig)
             
             let dbResults = await zen.getSegmentResults(dbSegments, eventSubgroupId)
-            //console.log("DB results:",dbResults)
-            let eventResults = await processResults(watching, dbResults, currentEventConfig);
+            console.log("DB results:",dbResults)
+            let eventResults = await processResults(watching, dbResults, currentEventConfig, overrideConfig);
             //console.log("event segment results",eventResults)
             const lastSegmentWithResults = [eventResults.filter(x => x.fal.length > 0 || x.fts.length > 0).at(-1)] 
             console.log("lastSegmentWithResults", lastSegmentWithResults)
@@ -1383,8 +1390,9 @@ async function _getLeaderboard(watching) {
             //debugger
         }
         if (Date.now() - lastVerification > 30000 && !busyVerifying && allKnownRacers.length > 0) {
+            // Maybe use this if I have time to look more closely
             //console.log("Verifying racers")
-            verifyRacers();
+            //verifyRacers();
         }
     } else {
         
