@@ -2910,7 +2910,7 @@ export async function cleanupSegmentsDB(dbSegments, options) {
         const index = store.index("ts");
 
         const now = Date.now();
-        const cutoff = now - 7 * 24 * 60 * 60 * 1000; 
+        const cutoff = now - 14 * 24 * 60 * 60 * 1000; 
 
         const request = index.openCursor(IDBKeyRange.upperBound(cutoff));
 
@@ -2950,7 +2950,7 @@ export async function cleanupSegmentConfigDB(dbSegmentConfig) {
         const index = store.index("ts");
 
         const now = Date.now();
-        const cutoff = now - 7 * 24 * 60 * 60 * 1000; 
+        const cutoff = now - 14 * 24 * 60 * 60 * 1000; 
 
         const request = index.openCursor(IDBKeyRange.upperBound(cutoff));
 
