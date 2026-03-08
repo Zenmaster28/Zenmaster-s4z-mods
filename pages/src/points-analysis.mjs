@@ -244,7 +244,7 @@ async function scoreResults(eventResults, currentEventConfig) {
                     //debugger
                 }
                 //debugger
-                console.log("Scoring ", pointsCounter, "racers as", scorePoints)
+                //console.log("Scoring ", pointsCounter, "racers as", scorePoints)
                 let t = Date.now();
                 for (let i = 0; i < pointsCounter; i++) { 
                     if (currentEventConfig.ftsPerEvent && scoreFormat == "fts") {                        
@@ -425,7 +425,7 @@ async function scoreResults(eventResults, currentEventConfig) {
                         //points--;
                     }
                 }
-                console.log("Scoring racers took", Date.now() - t, "ms")
+                //console.log("Scoring racers took", Date.now() - t, "ms")
             }
         }
         segmentScores.push(segmentPointBreakdown)
@@ -458,8 +458,8 @@ async function scoreResults(eventResults, currentEventConfig) {
         }
     });
     */
-   console.log("Scoring fin points")
-   t = Date.now();
+   //console.log("Scoring fin points")
+   //t = Date.now();
     if (raceResults.length > 0) {
         //console.log("raceResults",raceResults)
         const femaleOnly = document.getElementById("femaleOnly").checked;
@@ -516,7 +516,7 @@ async function scoreResults(eventResults, currentEventConfig) {
         }
         racer.pointTotal = racer.ftsPointTotal + racer.falPointTotal + racer.finPoints;
     }  
-    console.log("Scoring fin points took", Date.now() - t, "ms")
+    //console.log("Scoring fin points took", Date.now() - t, "ms")
     console.log("Racer scores",racerScores)  
     return [racerScores, segmentScores, perEventResults];
 }
