@@ -867,6 +867,22 @@ export async function main() {
     saveJsonButton.addEventListener("click", async () => {
         const customTeams = await zen.getExistingTeams(dbTeams);
         const teamAssignments = await zen.getTeamAssignments(dbTeams);
+        const racerIds = [];
+        for (let racer of lastEventRacerScores) {
+            racerIds.push(racer.athleteId);
+        };
+        const racerData = await common.rpc.getAthletes(racerIds);
+        for (let racer of lastEventRacerScores) {
+            const thisRacerData = racerData.find(x => x.id === racer.athleteId);
+            if (thisRacerData && thisRacerData.racingCategory && thisRacerData.racingScore) {
+                racer.racingCategory = thisRacerData.racingCategory;
+                racer.racingScore = thisRacerData.racingScore;
+            } else {
+                const thisRacerRefresh = await common.rpc.getAthlete(racer.athleteId, {refresh: true});
+                racer.racingCategory = thisRacerRefresh.racingCategory || null;
+                racer.racingScore = thisRacerRefresh.racingScore || null;
+            }
+        }
         const exportData = {
             Name: lastEventName,
             EventId: lastEventId,
