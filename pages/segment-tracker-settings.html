@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html class="settings-page" tabindex="0" data-settings-key="segment-tracker-settings">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';"/>
+
+        <title>Segment Tracker - Settings</title>
+
+        <link id="favicon" rel="shortcut icon" href="/pages/images/favicon.png"/>
+        <link rel="stylesheet" href="/pages/css/common.css"/>
+
+        <style>
+            
+        </style>
+
+        <script type="module">
+            import {settingsMain} from './src/segment-tracker.mjs';
+            settingsMain();
+        </script>
+    </head>
+    <body>
+        <div id="titlebar">
+            <header>
+                <div class="logo"><img src="/pages/images/icon128.png"/></div>
+                <div class="title">Segment Tracker - Settings</div>
+                <div class="filler"></div>
+                <div class="buttons">
+                    <div title="Close this window" class="button close electron-only"><ms>close</ms></div>
+                </div>
+            </header>
+        </div>
+        <div id="settings">
+            <form id="options" class="section">
+                <div class="title">Window Settings</div>
+                <label>
+                    <key>Only show time gap:</key>
+                    <input type="checkbox" name="onlyShowGap">
+                </label>
+                <label>
+                    <key>Show distance to start within:</key>
+                    <input type="range" name="startDistance" min="0" max="1000" step="100">
+                    <input type="number" name="startDistance" min="0" max="1000" step="100" style="--size: 7">
+                </label>
+                <label>
+                    <key>Data Font scaling:</key>
+                    <input type="range" name="fontScale" min="0.1" max="2" step="0.05"/>
+                    <input type="number" name="fontScale" min="0.1" max="2" step="0.05" style="--size: 5"/>
+                </label>   
+                <label>
+                    <key>Theme override:</key>
+                    <select is="sauce-theme" override></select>
+                </label>           
+                <label title="Mostly useful for streamers using OBS window and browser sources">
+                    <key>Solid background:</key>
+                    <input type="checkbox" name="solidBackground"/>
+                </label>
+                <label>
+                    <key>Background color:</key>
+                    <input type="color" name="backgroundColor" data-depends-on="solidBackground"/>
+                    <input type="text" name="backgroundColor" data-depends-on="solidBackground" size="7"/>
+                </label>
+                <a href="https://www.buymeacoffee.com/zenmaster28" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 108px !important;" ></a>
+            </form>
+            <form id="fields" class="section">
+                <div class="title"></div>
+            </form>
+        </div>
+    </body>
+</html>

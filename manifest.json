@@ -222,6 +222,20 @@
                 "x": -300,
                 "y": 100
             }
-        }        
+        },        
+        {
+            "file": "pages/segment-tracker.html",
+            "id": "segment-tracker",
+            "name": "Virtual goal pacer",
+            "description": "Compare your progress on a route/segment/climb against a previous time (yours or someone else's).  Requires downloading a previous effort from Strava using the Sauce for Strava browser extension.",
+            "overlay": true,
+            "frame": false,
+            "default_bounds": {
+                "width": 400,
+                "height": 500,
+                "x": 300,
+                "y": 200
+            }
+        }  
     ]
 }
