@@ -101,7 +101,7 @@ tr.shown {
   display: table-row;
 }
 table .table-racers {
-  width: max-content;
+  width: 100%;
   max-width: 100%;
   table-layout: auto;
   border-collapse: collapse;
@@ -111,6 +111,14 @@ table .table-racers td {
   padding-right: 2em;
   text-align: left;
   min-width: 0;
+}
+table .table-racers .segName {
+  max-width: 0;
+  width: 25%;
+}
+table .table-racers .segScore {
+  max-width: 0;
+  width: 10%;
 }
 table .table-segments {
   width: 100%;

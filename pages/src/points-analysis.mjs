@@ -583,7 +583,7 @@ async function displayResults(racerScores, segmentScores, sgConfig, eventResults
             //tableOutput += isWatching ? "<tr class=watching>" : isMarked ? "<tr class=marked>" : isTeamMate ? "<tr class=teammate>" : "<tr>"
             tableOutput += "<tr class='shown'>"
             tableOutput += `<td>${rank}</td><td><span id="riderName">${sanitizedName}</span><div id="info-item-team">${teamBadge}</div></td><td ${evaluateVisibility('FAL',sgConfig)}>${racer.falPointTotal}</td><td ${evaluateVisibility('FTS',sgConfig)}>${racer.ftsPointTotal}</td><td ${evaluateVisibility('FIN',sgConfig)}>${racer.finPoints}</td><td>${racer.pointTotal}</td></tr>`
-            tableOutput += `<tr class='hidden'><td><td colspan='5'><table class="table-racers">`;
+            tableOutput += `<tr class='hidden'><td><td colspan='5'><div class="container"><table class="table-racers">`;
             for (let segScore of segmentScores) {
                 const falScore = segScore.fal.find(x => x.athleteId == racer.athleteId);
                 let ftsScore = segScore.fts.find(x => x.athleteId == racer.athleteId);
@@ -606,9 +606,9 @@ async function displayResults(racerScores, segmentScores, sgConfig, eventResults
                     ftsScore.points = ftsPoints;
                 }
                 
-                tableOutput += `<tr><td>${segScore.name} [${segScore.repeat}]</td><td>FAL: ${falScore?.points || 0}</td><td>FTS: ${ftsScore?.points || 0}</td></tr>`
+                tableOutput += `<tr><td class="segName">${segScore.name} [${segScore.repeat}]</td><td class="segScore">FAL: ${falScore?.points || 0}</td><td class="segScore">FTS: ${ftsScore?.points || 0}</td></tr>`
             }
-            tableOutput += `</td></tr></table>`
+            tableOutput += `</td></tr></table></div>`
             rank++;
         }
         tableOutput += "</table>"  
