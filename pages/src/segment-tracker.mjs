@@ -14,6 +14,12 @@ const worldList = await common.getWorldList()
 let sauceStartPoint;
 let segmentGoalTime;
 let segmentDistance;
+const segmentResult = {
+    aheadBehind: "",
+    elapsedTimeMs: 0,
+    goalTime: 0,
+    finished: false
+};
 
 function setBackground() {
     const {solidBackground, backgroundColor} = common.settingsStore.get();
@@ -171,19 +177,20 @@ function checkHeading(actual, target, tolerance = 70) {
     return diff <= tolerance;
 };
 
-const formatTime = (milliseconds) => {
+const formatTime = (milliseconds, includeMs = false) => {
     //milliseconds = Math.round(milliseconds);
-    //const ms = milliseconds.toString().padStart(3, "0").substr(-3).slice(0,timePrecision);    
+    //const ms = milliseconds.toString().padStart(3, "0").substr(-3).slice(0,timePrecision);  
+    const ms = includeMs ? `.${milliseconds % 1000}` : "";
     const seconds = Math.floor((milliseconds / 1000) % 60);
     const minutes = Math.floor((milliseconds / 1000 / 60) % 60);                
     const hours = Math.floor((milliseconds / 1000 / 60 / 60) % 60);     
     if (hours != 0) {
-        return hours.toString() + ":" + minutes.toString().padStart(2, "0") + ":" + seconds.toString().padStart(2, "0");
+        return hours.toString() + ":" + minutes.toString().padStart(2, "0") + ":" + seconds.toString().padStart(2, "0") + ms;
     };
     if (minutes != 0) {
-        return minutes.toString().padStart(1, "0") + ":" + seconds.toString().padStart(2, "0");
+        return minutes.toString().padStart(1, "0") + ":" + seconds.toString().padStart(2, "0") + ms;
     } else {
-        return seconds.toString().padStart(1, "0");
+        return seconds.toString().padStart(1, "0") + ms;
     };
 };
 
@@ -312,30 +319,32 @@ class SegmentTracker {
   };
 
   getProgress(lat, lon) {
-    if (!this.started) return null;
+    if (!this.started) {
+        return null
+    };
 
-        const lastPoint = this.segmentPoints[this.currentIdx];
-        const nextPoint = this.segmentPoints[Math.min(this.currentIdx + 1, this.segmentPoints.length - 1)];
+    const lastPoint = this.segmentPoints[this.currentIdx];
+    const nextPoint = this.segmentPoints[Math.min(this.currentIdx + 1, this.segmentPoints.length - 1)];
 
-        const totalSegmentDist = haversineDistance(lastPoint.lat, lastPoint.lon, nextPoint.lat, nextPoint.lon);
-        const distanceToNext = haversineDistance(lat, lon, nextPoint.lat, nextPoint.lon);
-        const distanceSoFar = this.segmentPoints[this.currentIdx].distance;
-        const distanceRemaining = parseInt(this.totalDistance - distanceSoFar);
-        const t = totalSegmentDist ? (1 - distanceToNext / totalSegmentDist) : 0;
+    const totalSegmentDist = haversineDistance(lastPoint.lat, lastPoint.lon, nextPoint.lat, nextPoint.lon);
+    const distanceToNext = haversineDistance(lat, lon, nextPoint.lat, nextPoint.lon);
+    const distanceSoFar = this.segmentPoints[this.currentIdx].distance;
+    const distanceRemaining = parseInt(this.totalDistance - distanceSoFar);
+    const t = totalSegmentDist ? (1 - distanceToNext / totalSegmentDist) : 0;
 
-        // interpolate segment time
-        const lastTime = lastPoint.timeMs;
-        const nextTime = nextPoint.timeMs;
-        const interpolatedTime = lastTime + t * (nextTime - lastTime);        
-        return {
-            currentIdx: this.currentIdx,
-            totalPoints: this.segmentPoints.length,
-            //fraction: (this.currentIdx + t) / (this.segmentPoints.length - 1),
-            segmentTimeMs: interpolatedTime,
-            elapsedTimeMs: Date.now() - this.startTime,
-            finished: this.finished,
-            distanceRemaining: distanceRemaining
-        };
+    // interpolate segment time
+    const lastTime = lastPoint.timeMs;
+    const nextTime = nextPoint.timeMs;
+    const interpolatedTime = lastTime + t * (nextTime - lastTime);        
+    return {
+        currentIdx: this.currentIdx,
+        totalPoints: this.segmentPoints.length,
+        //fraction: (this.currentIdx + t) / (this.segmentPoints.length - 1),
+        segmentTimeMs: interpolatedTime,
+        elapsedTimeMs: Date.now() - this.startTime,
+        finished: this.finished,
+        distanceRemaining: distanceRemaining
+    };
     };
 ;}
 
@@ -354,21 +363,31 @@ async function updateProgress(watching) {
     segmentTracker.update(lat, lon, watching);
     const progress = segmentTracker.getProgress(lat, lon);
     if (progress) {
-        if (progress.finished) {
-            content.innerHTML = "Segment complete!"
+        const timeDiffMs = progress.elapsedTimeMs - progress.segmentTimeMs;
+        const s = Math.abs(timeDiffMs) >= 60000 ? "" : "s";
+        const timeDiff = progress.finished ? formatTime((Math.abs(timeDiffMs)), true) : formatTime((Math.abs(timeDiffMs)));
+        let timeGap;
+        if (timeDiffMs <= -1000) {
+            timeGap = `<div class="ahead">Ahead: ${timeDiff}${s}</div>`;
+        } else if (timeDiffMs >= 1000) {
+            timeGap = `<div class="behind">Behind: ${timeDiff}${s}</div>`
         } else {
-            const timeDiffMs = progress.elapsedTimeMs - progress.segmentTimeMs
-            //console.log("timeDiffMs", timeDiffMs)
-            const s = Math.abs(timeDiffMs) >= 60000 ? "" : "s";
-            const timeDiff = formatTime((Math.abs(timeDiffMs)));
-            let timeGap;
-            if (timeDiffMs <= -1000) {
-                timeGap = `<div class="ahead">Ahead: ${timeDiff}${s}</div>`;
-            } else if (timeDiffMs >= 1000) {
-                timeGap = `<div class="behind">Behind: ${timeDiff}${s}</div>`
-            } else {
-                timeGap = `<div class="level">On pace: ${timeDiff}</div>`
+            timeGap = `<div class="level">On pace: ${timeDiff}</div>`
+        }
+        if (progress.finished) {
+            if (!segmentResult.finished) {
+                segmentResult.aheadBehind = timeGap;
+                segmentResult.elapsedTimeMs = progress.elapsedTimeMs;
+                segmentResult.goalTime = progress.segmentTimeMs;
+                segmentResult.finished = true;
             }
+            content.innerHTML = `Segment complete!<br>
+                                ${segmentResult.aheadBehind}<br>
+                                Result: ${formatTime(segmentResult.elapsedTimeMs)}<br>
+                                Goal: ${formatTime(segmentResult.goalTime)}
+                                `
+        } else {
+            
             if (onlyShowGap) {
                 content.innerHTML = timeGap;
             } else {
@@ -475,6 +494,17 @@ export async function main() {
     const helpButton = document.getElementById("helpButton");
     helpButton.addEventListener("click", () => {
         window.open("segment-tracker-help.html?width=850&height=900&child-window");
+    });
+    const resetButton = document.getElementById("resetProgress");
+    resetButton.addEventListener("click", () => {
+        segmentResult.aheadBehind = "";
+        segmentResult.elapsedTimeMs = 0;
+        segmentResult.goalTime = 0;
+        segmentResult.finished = false;
+        segmentTracker.finished = false;
+        segmentTracker.started = false;
+        segmentTracker.currentIdx = 0;
+        segmentTracker.startTime = null;    
     })
 }
 
