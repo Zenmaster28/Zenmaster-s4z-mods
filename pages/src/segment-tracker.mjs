@@ -195,7 +195,7 @@ const formatTime = (milliseconds, includeMs = false) => {
 };
 
 class SegmentTracker {
-    constructor(segmentPoints, startThreshold = 5, pointThreshold = 3, headingTolerance = 70) {
+    constructor(segmentPoints, startThreshold = 10, pointThreshold = 3, headingTolerance = 70) {
         this.segmentPoints = segmentPoints;
         this.startThreshold = startThreshold;
         this.pointThreshold = pointThreshold;
@@ -368,11 +368,11 @@ async function updateProgress(watching) {
         const timeDiff = progress.finished ? formatTime((Math.abs(timeDiffMs)), true) : formatTime((Math.abs(timeDiffMs)));
         let timeGap;
         if (timeDiffMs <= -1000) {
-            timeGap = `<div class="ahead">Ahead: ${timeDiff}${s}</div>`;
+            timeGap = `<div id="status" class="ahead">Ahead: ${timeDiff}${s}</div>`;
         } else if (timeDiffMs >= 1000) {
-            timeGap = `<div class="behind">Behind: ${timeDiff}${s}</div>`
+            timeGap = `<div id="status" class="behind">Behind: ${timeDiff}${s}</div>`
         } else {
-            timeGap = `<div class="level">On pace: ${timeDiff}</div>`
+            timeGap = `<div id="status" class="level">On pace: ${timeDiff}</div>`
         }
         if (progress.finished) {
             if (!segmentResult.finished) {
@@ -381,10 +381,10 @@ async function updateProgress(watching) {
                 segmentResult.goalTime = progress.segmentTimeMs;
                 segmentResult.finished = true;
             }
-            content.innerHTML = `Segment complete!<br>
+            content.innerHTML = `<div id="details">Segment complete!<br>
                                 ${segmentResult.aheadBehind}<br>
                                 Result: ${formatTime(segmentResult.elapsedTimeMs)}<br>
-                                Goal: ${formatTime(segmentResult.goalTime)}
+                                Goal: ${formatTime(segmentResult.goalTime)}</div>
                                 `
         } else {
             
@@ -395,7 +395,7 @@ async function updateProgress(watching) {
                 const totalDistance = segmentDistance >= 1000 ? `${(segmentDistance / 1000).toFixed(2)}km` : `${parseInt(segmentDistance)}m`
                 const elapsedTime = formatTime(progress.elapsedTimeMs);
                 const goalTime = formatTime(segmentGoalTime);
-                content.innerHTML = `${timeGap}<br>Distance: ${distRemaining} / ${totalDistance}<br>Time: ${elapsedTime} / ${goalTime} `;
+                content.innerHTML = `${timeGap}<div id="details">Distance: ${distRemaining} / ${totalDistance}<br>Time: ${elapsedTime} / ${goalTime} </div>`;
             }
         }
         //console.log(`Segment ${progress.currentIdx + 1}/${progress.totalPoints}, fraction: ${(progress.fraction*100).toFixed(1)}%, time: ${progress.segmentTimeMs}ms`);
@@ -431,6 +431,7 @@ export async function main() {
         if (changed.has('startDistance')) {
             startDistance = changed.get('startDistance');
         }
+        settings = common.settingsStore.get();
         
     });
     const openSegmentButton = document.getElementById("openSegmentButton");
@@ -475,13 +476,17 @@ export async function main() {
                         altitude: currentSegmentData[p].altitude
                     };
                     const startRoadPt2 = zen.pointToRoad(point2, segmentWorldMeta, segmentCourseRoads);
-                    console.log("startPoint2", startRoadPt2)
-                    const reverse = startRoadPt2[0].rp < startRoad[0].rp;
-                    sauceStartPoint = {
-                        roadId: startRoad[0].roadId,
-                        rp: startRoad[0].rp,
-                        reverse: reverse
-                    };
+                    if (startRoadPt2.length === 1) {
+                        console.log("startPoint2", startRoadPt2)
+                        const reverse = startRoadPt2[0].rp < startRoad[0].rp;
+                        sauceStartPoint = {
+                            roadId: startRoad[0].roadId,
+                            rp: startRoad[0].rp,
+                            reverse: reverse
+                        };
+                    } else {
+                        console.log("ambiguous startpt2")
+                    }
                 } else { //ambiguous start road
                     //debugger
                 }
