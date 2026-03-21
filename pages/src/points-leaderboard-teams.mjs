@@ -155,7 +155,7 @@ async function findDuplicateAssignments(pen) {
             console.log("duplicate athlete", athlete)
             result.push({
             zwift_id,
-            name: athlete.sanitizedFullname,
+            name: athlete.sanitizedFullname ?? zwift_id,
             teams: [...teams]
             });
         }
