@@ -448,13 +448,28 @@ async function _processWatchingv2(watching) {
         };
         if (!nextRouteIntersection) {
             //no more intersections on the route.
-            const distanceToFinish = parseInt(customRouteData.distances.at(-1) - watching.state.eventDistance);
-            if (distanceToFinish < distanceToNextIntersection) {
+            const lastRoad = courseRoads[manifestIdx.roadId];
+            const lastManifest = customRouteData.manifest.at(-1);
+            const targetRp = lastManifest.reverse ? lastManifest.start : lastManifest.end;
+            let min;
+            let max;
+            if (targetRp < rp) {
+                min = targetRp;
+                max = rp;
+            } else {
+                min = rp;
+                max = targetRp;
+            }
+            const distanceToFinish = parseInt(lastRoad.curvePath.distanceBetweenRoadPercents(min, max, 4e-2) / 100);
+            //const distanceToFinish = parseInt(customRouteData.distances.at(-1) - watching.state.eventDistance);
+            if ((lastManifest.reverse && rp <= targetRp) || (!lastManifest.reverse && rp >= targetRp)) {                
+                customRouteComplete = true;
+                nextRoadIntersectionDiv.innerHTML = "Route complete.";
+            } else if (distanceToFinish <= distanceToNextIntersection) {
                 let routeFinish = `Finish: `;
-                
                 if (distanceToFinish >= 1000) {
                     routeFinish += `${(distanceToFinish / 1000).toFixed(2)}km`
-                } else if (distanceToFinish >= 0) {
+                } else if (distanceToFinish > 0) {
                     routeFinish += `${distanceToFinish}m`;
                 } else {
                     routeFinish = "Route complete."
