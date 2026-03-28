@@ -29,7 +29,10 @@ let cueSheetItems;
 let customRouteComplete = false;
 let spawnDistance = 0;
 let badManifestCounter = 0;
-const varianceOptions = [25, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
+let possiblyLost = false;
+let possiblyLostTs = Date.now();
+const epsilon = 1e-3;
+const varianceOptions = [0, 25, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
 const currIntersectionDiv = document.getElementById("currentIntersection");
 const cueSheetDiv = document.getElementById("chauffeurCueSheet");
 const nextRoadIntersectionDiv = document.getElementById("nextRoadIntersection");
@@ -121,8 +124,7 @@ export async function main() {
         worldMeta = worldList.find(x => x.courseId == selfData.zenCustomRoute.courseId);
         customRouteData = zen.buildRouteData(selfData.zenCustomRoute, selfData.zenCustomRoute.courseId, courseRoads, worldMeta);
         customRouteData.manifestIntersections = [];
-        let i = -1;
-        const epsilon = 1e-4;
+        let i = -1;        
         console.log("customrouteData.manifest", customRouteData.manifest)
         
         customRouteIntersections = allCustomRouteIntersections;
@@ -217,11 +219,12 @@ function getNextRoadIntersection(rp, roadIntersections, reverse) {
 
 function setupCustomRoute(customRoute, courseId, courseRoads, worldMeta) {
     customRouteManifest = customRoute;
-    allCustomRouteIntersections = zen.getManifestIntersections(customRouteManifest.manifest, courseId, courseRoads);    
+    allCustomRouteIntersections = zen.getManifestIntersections(customRouteManifest.manifest, courseId, courseRoads);   
+    console.log("allCustomRouteIntersections", allCustomRouteIntersections) 
     customRouteData = zen.buildRouteData(customRouteManifest, courseId, courseRoads, worldMeta);
     customRouteData.manifestIntersections = [];
     customRouteIntersections = allCustomRouteIntersections;
-    
+    console.log("customRouteData", customRouteData)
 };
 
 let _processWatchingBusy;
@@ -288,23 +291,32 @@ async function _processWatchingv2(watching) {
     let manifestIdx = null;
     const rp = (watching.state.roadTime - 5000) / 1e6;
     const reverse = watching.state.reverse;
-    const distanceTarget = watching.state.eventDistance + spawnDistance;
+    const distanceTarget = watching.state.eventDistance + spawnDistance;    
     for (let variance of varianceOptions) {        
         manifestIdx = customRouteData.manifestDistances.find(x => (x.start - variance) <= distanceTarget && 
             (x.end + variance) >= distanceTarget && 
             x.roadId == watching.state.roadId && 
-            x.reverse == watching.state.reverse); 
+            x.reverse == watching.state.reverse && 
+            (rp >= (Math.min(x.rpStart, x.rpEnd) - epsilon) && rp <= (Math.max(x.rpStart, x.rpEnd) + epsilon))
+        ); 
         if (manifestIdx) {
             break;
         };
     };
 
     if (!manifestIdx) {
-        nextRoadIntersectionDiv.innerHTML = "";
-        badManifestCounter++;
-        currIntersectionDiv.innerHTML = `Uh-oh! We might be lost... ${badManifestCounter}`; 
-        return;
+        //put a timer in here to only display it if repeatedly detected (1-2s?)
+        if (!possiblyLost) {
+            possiblyLostTs = Date.now(); //track the first instance of being possibly lost
+            possiblyLost = true;
+        } else if (Date.now() - possiblyLostTs > 2000) { //only show the warning if it's been more than 2s
+            nextRoadIntersectionDiv.innerHTML = "";
+            badManifestCounter++;
+            currIntersectionDiv.innerHTML = `Uh-oh! We might be lost... ${badManifestCounter}`; 
+        }
+        return;        
     } else {
+        possiblyLost = false;
         currIntersectionDiv.innerHTML = "";
     };
     let i = 0;

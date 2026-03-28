@@ -5857,7 +5857,9 @@ export function buildRouteData(route, courseId, courseRoads, worldMeta) {
             roadId: x.roadId,
             reverse: x.reverse,
             start: totalDistance,
-            end: totalDistance + segDist
+            end: totalDistance + segDist,
+            rpStart: x.start,
+            rpEnd: x.end
         });
         totalDistance += segDist;
         seg.reverse = x.reverse;
