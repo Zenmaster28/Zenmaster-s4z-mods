@@ -408,3 +408,14 @@ html.solid-background body {
 .menu li:hover {
   background: #adadad;
 }
+.hidden {
+  display: none
+}
+#topInfo {
+  display: flex;
+  flex-direction: row;
+}
+.warning { 
+  background-color: yellow;
+  color: black;
+}
