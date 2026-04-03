@@ -10,54 +10,8 @@ common.settingsStore.set("formatsChanged", false);
 common.settingsStore.set("preview", false);
 document.body.classList.remove("transparent-bg");
 const scoreFormatDiv = document.getElementById("scoreFormats");
-scoreFormatDiv.innerHTML += `
-    <b>Score Formats</b></br>
-    <span class="scoreLabel">FTS:</span> 
-    <input disabled type="text" id="ftsScoreFormat" size="18" title="Examples are 10..1 which would score 10 for 1st, 9 for 2nd etc.  Comma separated values such as 15,11,9 would score as 15 for 1st, 11 for 2nd, 9 for 3rd.  Formats can be combined like 20,15,10,7..1" placeholder="Select event first">
-    <select disabled id="ftsStep" title="The amount to decrease points per rider when using ..  ie. 50..1 with -2 would score as 50, 48, 46 etc.">
-        <option value="1">-1</option>
-        <option value="2">-2</option>
-        <option value="3">-3</option>
-        <option value="4">-4</option>
-        <option value="5">-5</option>
-    </select>
-    <input disabled type="text" id="ftsBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">        
-    <span title="Score FTS once per segment for the whole event">FTS per event/ZRL style </span><input type="checkbox" id="ftsPerEvent" title="Score FTS once per segment for the whole event">
-    <br>
-    <span class="scoreLabel">FAL:</span> 
-    <input disabled type="text" id="falScoreFormat" size="18" title="Examples are 10..1 which would score 10 for 1st, 9 for 2nd etc.  Comma separated values such as 15,11,9 would score as 15 for 1st, 11 for 2nd, 9 for 3rd.  Formats can be combined like 20,15,10,7..1" placeholder="Select event first">
-    <select disabled id="falStep" title="The amount to decrease points per rider when using ..  ie. 50..1 with -2 would score as 50, 48, 46 etc.">
-        <option value="1">-1</option>
-        <option value="2">-2</option>
-        <option value="3">-3</option>
-        <option value="4">-4</option>
-        <option value="5">-5</option>
-    </select>
-    <input disabled type="text" id="falBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">    
-    <span title="Limit the number of riders per team that score points">Limit scoring riders</span><input disabled type="checkbox" id="limitScoringRiders" title="Limit the number of riders per team that score points">
-    <input type="number" id="maxScoringRiders" style="--size: 6;" title="The number of riders on a team that can score points" disabled>
-    <br>
-    <span class="scoreLabel">FIN:</span> 
-    <input disabled type="text" id="finScoreFormat" size="18" title="Examples are 10..1 which would score 10 for 1st, 9 for 2nd etc.  Comma separated values such as 15,11,9 would score as 15 for 1st, 11 for 2nd, 9 for 3rd.  Formats can be combined like 20,15,10,7..1" placeholder="Select event first">
-    <select disabled id="finStep" title="The amount to decrease points per rider when using ..  ie. 50..1 with -2 would score as 50, 48, 46 etc.">
-        <option value="1">-1</option>
-        <option value="2">-2</option>
-        <option value="3">-3</option>
-        <option value="4">-4</option>
-        <option value="5">-5</option>
-    </select>
-    <input disabled type="text" id="finBonus" size="18" title="Add any podium bonus points here. ie. 5,3,1 would award 5 extra points for 1st, 3 for 2nd, 1 for 3rd" placeholder="Bonus points (if any)">
-    <br>
-    <span id="savedFormatsSpan" style="visibility:hidden" class="scoreLabel">Load:</span>
-    <select id="savedFormats" style="visibility: hidden;">
-        <option value="-1"></option>
-    </select>
-    <input type="text" id="formatName" size="10" style="visibility:hidden" spellcheck="false">
-    <input type="button" id="buttonSaveFormat" value="&#x1F4BE;" class="zenButton" style="visibility:hidden" title="Save">
-    <input type="button" id="buttonDeleteFormat" value="&#x274C;" class="zenButton" style="visibility:hidden" title="Delete">        
-    <input type="button" id="buttonImportExport" style="visibility:hidden" class="zenButton" value="&#x21B9;" title="Import/Export">
-    <hr>
-`
+
+scoreFormatDiv.innerHTML += zen.scoreFormatHTML;
 let currentSg;
 let currentSgEntrants;
 const eventsListDiv = document.getElementById("eventsList");
