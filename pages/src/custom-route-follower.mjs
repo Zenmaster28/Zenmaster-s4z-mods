@@ -482,8 +482,8 @@ async function _processWatchingv2(watching) {
             }
             optionsText += `<div class="${optClass}"<font size='+2'>&#x21B1;</font> ${right.option?.turnText}</div>`;
         };
-        if (!nextRouteIntersection) {
-            //no more intersections on the route.
+        if (!nextRouteIntersection && manifestIdx.roadId === customRouteData.manifest.at(-1).roadId) {
+            //no more intersections on the route and we are on the last roadId of the route.
             const lastRoad = courseRoads[manifestIdx.roadId];
             const lastManifest = customRouteData.manifest.at(-1);
             const targetRp = lastManifest.reverse ? lastManifest.start : lastManifest.end;
