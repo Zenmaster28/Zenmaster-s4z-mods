@@ -36,6 +36,13 @@ const varianceOptions = [0, 25, 100, 200, 300, 400, 500, 600, 700, 800, 900, 100
 const currIntersectionDiv = document.getElementById("currentIntersection");
 const cueSheetDiv = document.getElementById("chauffeurCueSheet");
 const nextRoadIntersectionDiv = document.getElementById("nextRoadIntersection");
+const diagDiv = document.getElementById("diag");
+let showDiag = settings.showDiag ?? false;
+if (showDiag) {
+    diagDiv?.classList.remove('hidden')
+} else {
+    diagDiv?.classList.add('hidden');
+};
 let enableNavigation = true;
 let gcEnabled = false;
 const pauseBtn = document.getElementById("pauseBtn");
@@ -153,7 +160,15 @@ export async function main() {
             if (changed.has('showCueSheet')) {
                 showCueSheet = changed.get('showCueSheet');
                 setCueSheet();
-            }
+            };
+            if (changed.has('showDiag')) {
+                showDiag = changed.get('showDiag');
+                if (showDiag) {
+                    diagDiv.classList.remove('hidden')
+                } else {
+                    diagDiv.classList.add('hidden');
+                };
+            };
     })
 }
 
