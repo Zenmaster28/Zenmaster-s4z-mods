@@ -927,6 +927,7 @@ async function applyCourse() {
 }
 async function publishRoute() {  
     const spawnPointRoutes = startingSpawnPoint.routes; 
+    spawnPointRoutes.sort((a,b) => {a.distance - b.distance});
     console.log("spawnPointRoutes", spawnPointRoutes);
     routeSetupContent.innerHTML = `<h1>*** Do not close this window unless you want to cancel!! ***</h1>
                                 - Start a freeride on one of the routes displayed to the right .<br>
@@ -957,8 +958,10 @@ async function updateRouteData(self) {
     const rp = (self.state.roadTime - 5000) / 1e6;
     const thisRoad = courseRoads[self.state.roadId];
       
-    const low = Math.min(routeData.manifest[0].start, routeData.manifest[0].end);
-    const high = Math.max(routeData.manifest[0].start, routeData.manifest[0].end);
+    //const low = Math.min(routeData.manifest[0].start, routeData.manifest[0].end);
+    const low = startingSpawnPoint.start;
+    //const high = Math.max(routeData.manifest[0].start, routeData.manifest[0].end);
+    const high = startingSpawnPoint.end;
     let distanceToSp;
     const midSp = (low + high) / 2;
     if (rp < midSp) {
@@ -985,7 +988,7 @@ async function updateRouteData(self) {
             routeSetup.classList.add("hidden");
         }
     } else {
-        debugger
+        //debugger
         const routeSetupStatus = document.getElementById('routeSetupStatus');
         routeSetupStatus.innerHTML = "<hr>Currently loaded route is not correct or you have moved too far from the initial spawn point";
         console.log("Not on a proper route.  Should be one of ", spawnPointRoutes)
