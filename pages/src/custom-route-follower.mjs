@@ -327,11 +327,20 @@ async function _processWatchingv2(watching) {
         } else if (Date.now() - possiblyLostTs > 2000) { //only show the warning if it's been more than 2s
             nextRoadIntersectionDiv.innerHTML = "";
             badManifestCounter++;
+            currIntersectionDiv.classList.add('warning');
             currIntersectionDiv.innerHTML = `Uh-oh! We might be lost... ${badManifestCounter}`; 
         }
         return;        
     } else {
+        if (!manifestIdx.actualStart) {
+            manifestIdx.actualStart = distanceTarget;
+            manifestIdx.startDelta = distanceTarget - manifestIdx.start;
+            console.log(`manifestIdx: ${manifestIdx.i} delta: ${manifestIdx.startDelta} all: `, customRouteData.manifestDistances)
+            const diagOutput = `i: ${manifestIdx.i} &Delta;: ${parseInt(manifestIdx.startDelta)}`;
+            diagDiv.innerHTML = diagOutput;
+        }
         possiblyLost = false;
+        currIntersectionDiv.classList.remove('warning');
         currIntersectionDiv.innerHTML = "";
     };
     let i = 0;
@@ -415,7 +424,7 @@ async function _processWatchingv2(watching) {
     const nextRoadIntersection = getNextRoadIntersection(rp, roadIntersections.intersections, reverse)
     optionsText = "";
     if (nextRoadIntersection) {
-        if (nextRoadIntersection.m_markerId === nextRouteIntersection?.m_markerId && nextRouteIntersection.idx === manifestIdx.i) {
+        if (nextRoadIntersection.m_markerId === nextRouteIntersection?.m_markerId && (nextRouteIntersection.idx === manifestIdx.i || nextRouteIntersection.idx === manifestIdx.i + 1)) {
             //get distance to option exit
             distanceToNextIntersection = getDistanceToIntersection(watching, nextRoadIntersection, rp, true);
             nextOption = nextRouteIntersection.option;
