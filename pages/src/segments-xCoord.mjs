@@ -5346,8 +5346,8 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
                             roadId: startPoint.roadId
                         },
                         {
-                            start: startPoint.reverse ? intersection.m_roadTime1 : 0,
-                            end: startPoint.reverse ? 1 : intersection.m_roadTime2,
+                            start: startPoint.reverse ? option.option.exitTime < 1 ? option.option.exitTime : intersection.m_roadTime1 : 0,
+                            end: startPoint.reverse ? 1 : option.option.exitTime < 1 ? option.option.exitTime : intersection.m_roadTime2,
                             reverse: startPoint.reverse,
                             roadId: startPoint.roadId
                         }];
@@ -5357,8 +5357,8 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
                         
                     } else {
                         startPath = [{
-                            start: startPoint.reverse ? intersection.m_roadTime1 : startPoint.rp,
-                            end: startPoint.reverse ? startPoint.rp : intersection.m_roadTime2,
+                            start: startPoint.reverse ? option.option.exitTime < 1 ? option.option.exitTime : intersection.m_roadTime1 : startPoint.rp,
+                            end: startPoint.reverse ? startPoint.rp : option.option.exitTime < 1 ? option.option.exitTime : intersection.m_roadTime2,
                             reverse: startPoint.reverse,
                             roadId: startPoint.roadId
                         }];
@@ -5617,9 +5617,28 @@ export function findPathFromAtoBv7(startPoint, endPoint, courseRoads, courseId, 
                         nextPath.push(thisPath[0]);
                         nextPath.push(thisPath[1]);
                     } else {
+                        /*
+                        if (dir === "reverse") {
+                            if (intersection.m_roadTime1 > option.option.exitTime) {
+                                console.warn(`Int: ${intersection.m_markerId} m_roadTime1: ${intersection.m_roadTime1} exitTime: ${option.option.exitTime}`)
+                            }
+                        } else {
+                            if (intersection.m_roadTime2 < option.option.exitTime) {
+                                console.warn(`Int: ${intersection.m_markerId} m_roadTime2: ${intersection.m_roadTime2} exitTime: ${option.option.exitTime}`)
+                            }
+                        }
+                        */                        
+                        /*
                         const thisPath = {
                             start: entryPoint.reverse ? intersection.m_roadTime1 : entryPoint.rp,
                             end: entryPoint.reverse ? entryPoint.rp : intersection.m_roadTime2,
+                            reverse: entryPoint.reverse,
+                            roadId: entryPoint.roadId
+                        };
+                        */
+                       const thisPath = {
+                            start: entryPoint.reverse ? option.option.exitTime < 1 ? option.option.exitTime : intersection.m_roadTime1 : entryPoint.rp,
+                            end: entryPoint.reverse ? entryPoint.rp : option.option.exitTime < 1 ? option.option.exitTime : intersection.m_roadTime2,
                             reverse: entryPoint.reverse,
                             roadId: entryPoint.roadId
                         };
