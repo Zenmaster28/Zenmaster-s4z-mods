@@ -320,11 +320,10 @@ async function _processWatchingv2(watching) {
     };
 
     if (!manifestIdx) {
-        //put a timer in here to only display it if repeatedly detected (1-2s?)
         if (!possiblyLost) {
             possiblyLostTs = Date.now(); //track the first instance of being possibly lost
             possiblyLost = true;
-        } else if (Date.now() - possiblyLostTs > 2000) { //only show the warning if it's been more than 2s
+        } else if (Date.now() - possiblyLostTs > 2000) { //only show the warning if it's been more than 5s
             nextRoadIntersectionDiv.innerHTML = "";
             badManifestCounter++;
             currIntersectionDiv.classList.add('warning');
@@ -334,7 +333,7 @@ async function _processWatchingv2(watching) {
     } else {
         if (!manifestIdx.actualStart) {
             manifestIdx.actualStart = distanceTarget;
-            manifestIdx.startDelta = distanceTarget - manifestIdx.start;
+            manifestIdx.startDelta = manifestIdx.i > 0 ? distanceTarget - manifestIdx.start : 0;
             console.log(`manifestIdx: ${manifestIdx.i} delta: ${manifestIdx.startDelta} all: `, customRouteData.manifestDistances)
             const diagOutput = `i: ${manifestIdx.i} &Delta;: ${parseInt(manifestIdx.startDelta)}`;
             diagDiv.innerHTML = diagOutput;
