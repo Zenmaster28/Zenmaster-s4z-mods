@@ -927,7 +927,7 @@ async function applyCourse() {
 }
 async function publishRoute() {  
     const spawnPointRoutes = startingSpawnPoint.routes; 
-    spawnPointRoutes.sort((a,b) => {a.distance - b.distance});
+    spawnPointRoutes.sort((a,b) => a.distance - b.distance);
     console.log("spawnPointRoutes", spawnPointRoutes);
     routeSetupContent.innerHTML = `<h1>*** Do not close this window unless you want to cancel!! ***</h1>
                                 - Start a freeride on one of the routes displayed to the right .<br>
