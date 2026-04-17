@@ -26,6 +26,7 @@ let lastRotationTS = Date.now() - 2000000;
 let busyVerifying = false;
 let lastVerification = Date.now() - 2000000;
 let ftsScoringResults = [];
+let noConfigWarning = false;
 const doc = document.documentElement;
 doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  
 let allPointsTableVisible = true;
@@ -1349,6 +1350,19 @@ async function _getLeaderboard(watching) {
                 eventSubgroupId = watching.state.eventSubgroupId;
             }
             currentEventConfig = await zen.getEventConfig(dbSegmentConfig, eventSubgroupId);
+            if (!currentEventConfig || (!currentEventConfig.ftsScoreFormat && !currentEventConfig.falScoreFormat && !currentEventConfig.finScoreFormat)) {
+                pointsResultsDiv.innerHTML = "Warning! You are in an event but no scoring has been configured for this event!";
+                pointsResultsDiv.classList.add("warning");
+                noConfigWarning = true;
+                return;
+                //debugger
+            } else {
+                if (noConfigWarning) {
+                    pointsResultsDiv.classList.remove("warning");
+                    pointsResultsDiv.innerHTML = "";
+                    noConfigWarning = false;
+                };
+            };
             //can I just override the currentEventConfig with the custom one at this point?
             await getKnownRacersV2(watching, currentEventConfig)
             await getAllSegmentResults(watching, currentEventConfig)

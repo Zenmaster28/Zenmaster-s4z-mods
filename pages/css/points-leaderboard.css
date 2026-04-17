@@ -421,3 +421,8 @@ div .pointsTitle {
 tr.teamScoreDetails {
   display: none
 }
+.warning { 
+  background-color: yellow;
+  color: black;
+  white-space: unset !important; 
+}
