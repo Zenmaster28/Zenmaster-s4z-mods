@@ -19,6 +19,7 @@ let sgEntrantsList = [];
 let lastKnownSegmentData;
 let currentEventConfig;
 let watchingTeam;
+let refreshRate = 30000;
 let refresh = Date.now() - 2000000;
 let lastAllCatRefresh = Date.now() - 2000000;
 let lastSegmentTS = Date.now() - 2000000;
@@ -27,10 +28,12 @@ let busyVerifying = false;
 let lastVerification = Date.now() - 2000000;
 let ftsScoringResults = [];
 let noConfigWarning = false;
+let waitingInPen = false;
 const doc = document.documentElement;
 doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  
 let allPointsTableVisible = true;
 let rotateTableInterval = settings.rotateInterval * 1000 || 10000;
+let showPreEventSummary = settings.showPreEventSummary ?? true;
 const pointsResultsDiv = document.getElementById("pointsResults");
 const lastSegmentPointsResultsDiv = document.getElementById("lastSegmentPointsResults");
 if (pointsResultsDiv) {
@@ -98,7 +101,8 @@ common.settingsStore.setDefault({
     stickyTeammate: true,
     stickyMarked: true,
     showUnknownTeam: false,
-    hideRiderScores: false
+    hideRiderScores: false,
+    showPreEventSummary: true
 });
 /*
 common.settingsStore.addEventListener('changed', ev => {
@@ -904,7 +908,7 @@ function evaluateVisibility(scoreType, ignoreFIN = false) {
         //console.log("No segments with a score of type",scoreType)
         return "style=display:none";
     }
-    if (scoreType == "FIN" && (currentEventConfig.finScoreFormat == "" || raceResults.length == 0 || ignoreFIN)) {
+    if (scoreType == "FIN" && (currentEventConfig.finScoreFormat == "" || !raceResults.find(x => x.rank === 1) || ignoreFIN)) {
         //console.log("No score format for FIN")
         return "style=display:none";
     }
@@ -1284,7 +1288,7 @@ async function getLeaderboard() {
 
 async function _getLeaderboard(watching) {
     if (watching.state.eventSubgroupId != 0 || lastKnownSG.eventSubgroupId > 0) {        
-        let refreshRate = 30000;
+        
         if (watching.segmentData?.routeSegments) {
             const segmentFinishLines = watching.segmentData.routeSegments.filter(segment => segment.name.includes("Finish") && !segment.finishArchOnly);
             if (segmentFinishLines.length > 0) {
@@ -1307,7 +1311,10 @@ async function _getLeaderboard(watching) {
                     }
                     //console.log("Refreshing every 5s due to segment finish proximity");
                 } else if (Date.now() - lastRotationTS > rotateTableInterval) {
+                    refreshRate = 30000;
                     rotateVisibleTable({forceLast: false})
+                } else {
+                    refreshRate = 30000;
                 }
             }
         }
@@ -1351,7 +1358,7 @@ async function _getLeaderboard(watching) {
             }
             currentEventConfig = await zen.getEventConfig(dbSegmentConfig, eventSubgroupId);
             if (!currentEventConfig || (!currentEventConfig.ftsScoreFormat && !currentEventConfig.falScoreFormat && !currentEventConfig.finScoreFormat)) {
-                pointsResultsDiv.innerHTML = "Warning! You are in an event but no scoring has been configured for this event!";
+                pointsResultsDiv.innerHTML = "Warning! You are in an event but no scoring has been configured!";
                 pointsResultsDiv.classList.add("warning");
                 noConfigWarning = true;
                 return;
@@ -1363,7 +1370,29 @@ async function _getLeaderboard(watching) {
                     noConfigWarning = false;
                 };
             };
-            //can I just override the currentEventConfig with the custom one at this point?
+            if (showPreEventSummary && watching.state.eventDistance === 0 && watching.state.speed === 0 && watching.state.eventSubgroupId != 0) { //sitting in the pen
+                waitingInPen = true;
+                const ftsScoreFormatConfigured = !!currentEventConfig.ftsScoreFormat;
+                const falScoreFormatConfigured = !!currentEventConfig.falScoreFormat;
+                const finScoreFormatConfigured = !!currentEventConfig.finScoreFormat;
+                let summaryScoring = `<div class="summaryContainer"><div class="summaryTitle">Event configuration</div>
+                <div>FTS: ${ftsScoreFormatConfigured ? "&#x2705;" : "&#x274C;"}</div>
+                <div>FAL: ${falScoreFormatConfigured ? "&#x2705;" : "&#x274C;"}</div>
+                <div>FIN: ${finScoreFormatConfigured ? "&#x2705;" : "&#x274C;"}</div>
+                `
+                for (let segment of currentEventConfig.segments) {
+                    let thisScoreFormat = segment.enabled ? segment.scoreFormat : "&#x274C;";
+                    summaryScoring += `<div class="summarySegment"><div class="summaryName">${segment.name} [${segment.repeat}]:</div><div class="summaryFormat">${thisScoreFormat}</div></div>`
+                }
+                summaryScoring += "</div>"
+                pointsResultsDiv.innerHTML = summaryScoring
+                return;
+            } else {
+                if (waitingInPen) {
+                    pointsResultsDiv.innerHTML = "";
+                    waitingInPen = false;
+                }
+            }
             await getKnownRacersV2(watching, currentEventConfig)
             await getAllSegmentResults(watching, currentEventConfig)
             await getRaceResults(watching, currentEventConfig)
@@ -1438,7 +1467,7 @@ export async function main() {
 
     common.settingsStore.addEventListener('changed', ev => {
         const changed = ev.data.changed; 
-        //console.log(changed)
+        //console.log("changed", changed)
         if (changed.has('solidBackground') || changed.has('backgroundColor')) {            
             setBackground();
         } 
@@ -1463,6 +1492,13 @@ export async function main() {
         if (changed.has('configOverride')) {
             const newConfig = JSON.parse(common.settingsStore.get('configOverride'));
             console.log("Event override changed ", newConfig)
+        }
+        if (changed.has('eventConfigChanged')) {
+            refresh = (Date.now() - refreshRate) + 1000; //update the scores quickly after a config change
+        }
+        if (changed.has('showPreEventSummary')) {
+            showPreEventSummary = changed.get('showPreEventSummary')
+            refresh = (Date.now() - refreshRate) + 3000; //update the scores quickly after a config change
         }
         settings = common.settingsStore.get();
     });

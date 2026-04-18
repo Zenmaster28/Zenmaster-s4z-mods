@@ -600,6 +600,7 @@ function saveConfig() {
         console.log("No segments defined / no pen selected")
     }
     //debugger
+    common.settingsStore.set("eventConfigChanged", Date.now())
 }
 async function showSampleScoring(eventConfig) {
     const scoreKeys = ["falScoreFormat", "ftsScoreFormat", "finScoreFormat"];

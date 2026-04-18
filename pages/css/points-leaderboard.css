@@ -35,6 +35,7 @@ div .segmentData {
   width: 100%;  
   font-variant: small-caps tabular-nums;
   font-size: calc(var(--font-scale) * 0.8em);
+  padding: 2px;
 }
 div .segmentData .data {
   width: 100%
@@ -425,4 +426,24 @@ tr.teamScoreDetails {
   background-color: yellow;
   color: black;
   white-space: unset !important; 
+}
+.summarySegment {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+.summaryName {
+  width: 75%;
+  overflow-x: hidden;
+}
+.summaryFormat {
+  width: 25%;
+}
+.summaryTitle {
+  width: 100%;
+  text-align: center;
+}
+.summaryContainer {
+  width: 100%;
+  padding: 5px;
 }
