@@ -276,6 +276,16 @@ div .pointsTitle {
 #sgEntrantsTable td:not(:nth-child(4)), th:not(:nth-child(4)){
   text-align: left;
 }
+#sgEntrantsTable th:hover {
+  cursor: pointer
+}
+#sgEntrantsTable select {
+  /* font-size: 0.7em; */
+  margin: 0 0 0 1em;
+  background: #111;
+  color: #fff;
+  border-color: rgba(51, 51, 51, 0.2);
+}
 #pointsTable th {
   position: sticky;
   top: 0;

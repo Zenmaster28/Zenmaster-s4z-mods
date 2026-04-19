@@ -3,6 +3,10 @@ import * as zen from './segments-xCoord.mjs';
 //zen.buildPointsForm();
 //zen.buildSegmentsTable()
 let sgStartTime;
+let sgSortOrder = {
+    column: "name",
+    ascending: true
+};
 let dbTeams = await zen.openTeamsDB();
 import {settingsMain} from './points-leaderboard.mjs';
 settingsMain();
@@ -317,7 +321,8 @@ eventsSelect.addEventListener('change', async function() {
             const sg = eventInfo.eventSubgroups.find(x => x.id == this.value)
             const outputDiv = document.getElementById("outputDiv")
             if (sg) {   
-                const sgEntrants = await common.rpc.getEventSubgroupEntrants(sg.id)  
+                const sgEntrants = await common.rpc.getEventSubgroupEntrants(sg.id)
+                /*
                 sgEntrants.sort((a,b) => {
                     if (a.athlete.sanitizedFullname < b.athlete.sanitizedFullname) {
                         return -1
@@ -326,15 +331,63 @@ eventsSelect.addEventListener('change', async function() {
                     }
                 })
                 console.log("sgEntrants", sgEntrants)
+                */
                 //debugger
-                let tableOutput = "<table id='sgEntrantsTable'><th>Name</th><th>Team</th><th>Custom Team</th>"
+                const arrowSymbol = sgSortOrder.ascending ? "&nbsp;&#x25B2;" : "&nbsp;&#x25BC;";
+                let tableOutput = `<table id='sgEntrantsTable'><th data-col='name'>Name${sgSortOrder.column === "name" ? arrowSymbol : ""}</th><th data-col='zwiftTeam'>Team${sgSortOrder.column === "zwiftTeam" ? arrowSymbol : ""}</th><th data-col='customTeam'>Custom Team${sgSortOrder.column === "customTeam" ? arrowSymbol : ""}</th>`
                 const customTeams = await zen.getExistingTeams(dbTeams);
+                customTeams.sort((a,b) => a.team.localeCompare(b.team, undefined, {sensitivity: 'case'}));
                 const teamAssignments = await zen.getTeamAssignments(dbTeams);
                 console.log("customTeams", customTeams)
                 console.log("teamAssignments", teamAssignments)
                 for (let entrant of sgEntrants) {
+                    const zenTeam = teamAssignments.find(x => x.athleteId == entrant.athlete.id);
+                    if (zenTeam) {
+                        const zenTeamData = customTeams.find(x => x.id === parseInt(zenTeam.team));
+                        if (zenTeamData) {
+                            entrant.zenTeamName = zenTeamData.team;
+                            entrant.zenTeamId = zenTeamData.id;
+                        }
+                    }
+                    if (!entrant.athlete.team) {
+                        entrant.athlete.team = ""
+                    }
+                }
+                console.log("sgEntrants", sgEntrants)
+                //sgSortOrder.column = "customTeam";
+                //sgSortOrder.ascending = false;
+                sgEntrants.sort((a,b) => {
+                    if (sgSortOrder.column === "name") {
+                        const comp = a.athlete.sanitizedFullname.localeCompare(b.athlete.sanitizedFullname, undefined, {sensitivity: "case", numeric: true});
+                        return sgSortOrder.ascending ? comp : -comp;
+                    } else if (sgSortOrder.column === "zwiftTeam") { 
+                        if (a.athlete.team && !b.athlete.team) {
+                            return -1;
+                        } else if (!a.athlete.team && b.athlete.team) {
+                            return 1;
+                        } else if (!a.athlete.team && !b.athlete.team) {
+                            const comp = a.athlete.sanitizedFullname.localeCompare(b.athlete.sanitizedFullname, undefined, {sensitivity: "case", numeric: true});
+                            return sgSortOrder.ascending ? comp : -comp;
+                        }
+                        const comp = a.athlete.team?.localeCompare(b.athlete.team, undefined, {sensitivity: "base", numeric: true});
+                        return sgSortOrder.ascending ? comp : -comp;
+                    } else if (sgSortOrder.column === "customTeam") {
+                        if (a.zenTeamName && !b.zenTeamName) {
+                            return -1;
+                        } else if (!a.zenTeamName && b.zenTeamName) {
+                            return 1;
+                        } else if (!a.zenTeamName && !b.zenTeamName) {
+                            const comp = a.athlete.sanitizedFullname.localeCompare(b.athlete.sanitizedFullname, undefined, {sensitivity: "case", numeric: true});
+                            return sgSortOrder.ascending ? comp : -comp;
+                        }
+                        const comp = a.zenTeamName?.localeCompare(b.zenTeamName, undefined, {sensitivity: "case", numeric: true});
+                        return sgSortOrder.ascending ? comp : -comp;
+                    }
+                });
+                
+                for (let entrant of sgEntrants) {
                     //debugger
-                    const zenTeam = teamAssignments.find(x => x.athleteId == entrant.athlete.id) // todo - find custom team                    
+                    const zenTeam = teamAssignments.find(x => x.athleteId == entrant.athlete.id)          
                     let select = `<select name='customTeamSelect'><option value='-1,${entrant.athlete.id}'>---</option>`
                     for (let team of customTeams) {
                         if (zenTeam && zenTeam.team == team.id && zenTeam.athleteId == entrant.athlete.id) {
@@ -367,6 +420,18 @@ eventsSelect.addEventListener('change', async function() {
                         }
                     });
                 });
+                const tableHeaders = document.getElementById("sgEntrantsTable").querySelectorAll("th");
+                tableHeaders.forEach(th => {
+                    th.addEventListener("click", () => {
+                        if (sgSortOrder.column != th.dataset.col) {
+                            sgSortOrder.column = th.dataset.col;
+                        } else {
+                            sgSortOrder.ascending = !sgSortOrder.ascending;
+                        };
+                        const event = new Event('change');
+                        penSelect.dispatchEvent(event);
+                    })
+                })
             }
             //debugger
         })
@@ -428,6 +493,10 @@ async function newTeam(name) {
             const team = this.cells[1].textContent.replace(/\(\d+\)/, '').trim();
             showTeamMembers(id, team)
         })
+    };
+    if (penSelect.value != "-1") {
+        const event = new Event('change');
+        penSelect.dispatchEvent(event);
     }
 }
 addNewTeamButton.addEventListener("click", async function() {
@@ -442,7 +511,9 @@ const existingTeamsDiv = document.getElementById("existingTeamsDiv")
 async function getExistingTeams() {
     const existingTeams = await zen.getExistingTeams(dbTeams);  
     const teamAssignments = await zen.getTeamAssignments(dbTeams); 
+    existingTeams.sort((a,b) => a.team.localeCompare(b.team, undefined, {sensitivity: 'case'}));
     console.log("existingTeams", existingTeams) 
+    
     let existingTeamsTable = "<table id='existingTeamsTable'><th>Id</th><th>Name</th><th></th>"
     for (let team of existingTeams) {
         const teamMemberCount = (teamAssignments.filter(x => x.team == team.id)).length
