@@ -282,7 +282,7 @@ div .pointsTitle {
 #sgEntrantsTable select {
   /* font-size: 0.7em; */
   margin: 0 0 0 1em;
-  background: #111;
+  background: hsl(var(--theme-fg-hue), var(--theme-fg-sat), calc(var(--theme-fg-light) + 80% * var(--theme-fg-shade-dir)), 0.8);;
   color: #fff;
   border-color: rgba(51, 51, 51, 0.2);
 }
@@ -411,7 +411,7 @@ div .pointsTitle {
   font-size: calc(var(--font-scale) * 1.3em);
 }
 .hidden {
-  display: none;
+  display: none !important;
 }
 #importText {
   width: 50%;
@@ -436,6 +436,8 @@ tr.teamScoreDetails {
   background-color: yellow;
   color: black;
   white-space: unset !important; 
+  padding-left: 10px !important;
+  padding-right: 10px !important;
 }
 .summarySegment {
   display: flex;
@@ -456,4 +458,23 @@ tr.teamScoreDetails {
 .summaryContainer {
   width: 100%;
   padding: 5px;
+}
+#renameDialogButtons {
+  display: flex;
+  flex-direction: row;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+#nextSegment {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: calc(var(--font-scale) * 0.6em);
+  font-variant: small-caps tabular-nums;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+#summaryTable td {
+  text-align: left;
 }

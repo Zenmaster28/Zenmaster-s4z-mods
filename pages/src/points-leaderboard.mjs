@@ -34,6 +34,7 @@ doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1
 let allPointsTableVisible = true;
 let rotateTableInterval = settings.rotateInterval * 1000 || 10000;
 let showPreEventSummary = settings.showPreEventSummary ?? true;
+let showNextSegmentHint = settings.showNextSegmentHint ?? true;
 const pointsResultsDiv = document.getElementById("pointsResults");
 const lastSegmentPointsResultsDiv = document.getElementById("lastSegmentPointsResults");
 if (pointsResultsDiv) {
@@ -46,6 +47,7 @@ if (pointsResultsDiv) {
 const lastSegmentImportantScoresDiv = document.getElementById("lastSegmentImportantScores");
 const importantScoresDiv = document.getElementById("importantScores");
 const pointsTitleDiv = document.getElementById("pointsTitle");
+const nextSegmentDiv = document.getElementById("nextSegment");
 function rotateVisibleTable(options) {
     
     if (settings.rotateTotalLast) {
@@ -1272,6 +1274,45 @@ async function updateRacerStatus(states) {
     }
 }
 
+function updateSegmentHint(watching) {
+    if (!showNextSegmentHint || waitingInPen) {
+        nextSegmentDiv.classList.add("hidden");
+        return;
+    }
+    if (watching.state.eventSubgroupId != 0 || lastKnownSG.eventSubgroupId > 0) {        
+        
+        if (watching.segmentData?.routeSegments) {
+            const segmentFinishLines = watching.segmentData.routeSegments.filter(segment => segment.name.includes("Finish") && !segment.finishArchOnly);
+            const segmentStartLines = watching.segmentData.routeSegments.filter(segment => !segment.name.includes("Finish") && !segment.finishArchOnly);
+            if (segmentFinishLines.length > 0) {                
+                const currentPosition = watching.segmentData.currentPosition;
+                const nextSegment = segmentStartLines.find(x => x.markLine > currentPosition);
+                const nextFinishLine = segmentFinishLines.find(x => x.markLine > currentPosition);
+                if (showNextSegmentHint && currentEventConfig && nextSegment && !waitingInPen) {
+                    const nextSegmentConfig = currentEventConfig.segments.find(x => x.segmentId === nextSegment.id && x.repeat === nextSegment.repeat);
+                    if (nextSegmentConfig) {
+                        let distanceToNextSegment; 
+                        if (nextFinishLine.markLine > nextSegment.markLine) {
+                            distanceToNextSegment = nextSegment.markLine - currentPosition;
+                        } else {
+                            distanceToNextSegment = nextFinishLine.markLine - currentPosition;
+                        }
+                        const distanceToNextSegmentDisplay = distanceToNextSegment >= 1000 ? `${(distanceToNextSegment / 1000).toFixed(2)}km` : `${parseInt(distanceToNextSegment)}m`
+                        nextSegmentDiv.innerHTML = `<div>${nextSegmentConfig.name} [${nextSegmentConfig.repeat}]:</div>
+                            <div>  ${nextSegmentConfig.enabled ? nextSegmentConfig.scoreFormat : "&#x274C;"}</div>
+                            <div>${distanceToNextSegmentDisplay}</div>
+                        `
+                        nextSegmentDiv.classList.remove("hidden")
+                    } else {
+                        nextSegmentDiv.classList.add("hidden")
+                    }
+                } else {
+                    nextSegmentDiv.classList.add("hidden")
+                }
+            }
+        }
+    }
+}
 let _getLeaderboardBusy;
 async function getLeaderboard() {
     if (_getLeaderboardBusy) {
@@ -1376,9 +1417,11 @@ async function _getLeaderboard(watching) {
                 const falScoreFormatConfigured = !!currentEventConfig.falScoreFormat;
                 const finScoreFormatConfigured = !!currentEventConfig.finScoreFormat;
                 let summaryScoring = `<div class="summaryContainer"><div class="summaryTitle">Event configuration</div>
-                <div>FTS: ${ftsScoreFormatConfigured ? "&#x2705;" : "&#x274C;"}</div>
-                <div>FAL: ${falScoreFormatConfigured ? "&#x2705;" : "&#x274C;"}</div>
-                <div>FIN: ${finScoreFormatConfigured ? "&#x2705;" : "&#x274C;"}</div>
+                <table id="summaryTable">
+                    <tr><td>FTS:</td><td>${ftsScoreFormatConfigured ? "&#x2705;" : "&#x274C;"}</td></tr>
+                    <tr><td>FAL:</td></td><td>${falScoreFormatConfigured ? "&#x2705;" : "&#x274C;"}</td></tr>
+                    <tr><td>FIN:</td></td><td>${finScoreFormatConfigured ? "&#x2705;" : "&#x274C;"}</td></tr>
+                </table>
                 `
                 for (let segment of currentEventConfig.segments) {
                     let thisScoreFormat = segment.enabled ? segment.scoreFormat : "&#x274C;";
@@ -1456,7 +1499,10 @@ function changeBadgeScale() {
 
 export async function main() {
     common.initInteractionListeners();  
-    common.subscribe('athlete/watching', getLeaderboard);    
+    common.subscribe('athlete/watching', watching => {
+        getLeaderboard(watching);
+        updateSegmentHint(watching);
+    });       
     common.subscribe('watching-athlete-change', async athleteId => {
         console.log("Watching athlete changed")        
         if (raceResults.length > 0) {
@@ -1499,6 +1545,10 @@ export async function main() {
         if (changed.has('showPreEventSummary')) {
             showPreEventSummary = changed.get('showPreEventSummary')
             refresh = (Date.now() - refreshRate) + 3000; //update the scores quickly after a config change
+        }
+        if (changed.has('showNextSegmentHint')) {            
+            showNextSegmentHint = changed.get('showNextSegmentHint');
+            console.log("showNextSegmentHint", showNextSegmentHint)
         }
         settings = common.settingsStore.get();
     });
