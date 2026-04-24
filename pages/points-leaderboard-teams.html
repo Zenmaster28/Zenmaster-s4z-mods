@@ -187,14 +187,7 @@
             <header>
                 <div class="logo"><img src="/pages/images/icon128.png"/></div>
                 <div class="title">Points leaderboard Teams</div>
-                <div id="newTeamDiv">
-                    <input type="text" id="newTeamName" placeholder="New team name"/>
-                    <button id="addNewTeam">Add team</button><div id="badgePreview" style="--o101c:#c0c0c0; --weight:600"></div>
-                <!--
-                    <input type="color" name="newTeamColor" value="#c0c0c0">
-                    <input type="text" name="newTeamColor" size="7" value="#c0c0c0"/>
-                -->
-                </div>
+                
                 <div id="eventsList"></div>
                 <div id="penList"></div>
                 <div class="filler">
@@ -217,7 +210,14 @@
         <div id="content">   
                   
             <div id="leftSide" class="sides">                
-                
+                <div id="newTeamDiv">
+                    <input type="text" id="newTeamName" placeholder="New team name"/>
+                    <button id="addNewTeam">Add team</button><div id="badgePreview" style="--o101c:#c0c0c0; --weight:600"></div>
+                <!--
+                    <input type="color" name="newTeamColor" value="#c0c0c0">
+                    <input type="text" name="newTeamColor" size="7" value="#c0c0c0"/>
+                -->
+                </div>
                 <div id="existingTeamsDiv">
 
                 </div>
@@ -255,5 +255,15 @@
                 
             </div>
         </div>
+        <dialog id="renameDialog">
+            <form method="dialog">
+                <p>Enter new team name:</p>
+                <input name="value" spellcheck="false">
+                <div id="renameDialogButtons">                    
+                    <button value="ok">OK</button>
+                    <button value="cancel">Cancel</button>
+                </div>
+            </form>
+        </dialog>
     </body>
 </html>

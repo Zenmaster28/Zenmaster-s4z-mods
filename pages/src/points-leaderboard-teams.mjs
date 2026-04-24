@@ -494,7 +494,7 @@ async function newTeam(name) {
             showTeamMembers(id, team)
         })
     };
-    if (penSelect.value != "-1") {
+    if (eventsSelect.value != "-1" && penSelect.value != "-1") {
         const event = new Event('change');
         penSelect.dispatchEvent(event);
     }
@@ -529,7 +529,11 @@ for (let row of teamsTable.rows) {
         duplicateWarningDiv.classList.add("hidden");
         const id = this.cells[0].textContent;
         const team = this.cells[1].textContent.replace(/\(\d+\)/, '').trim();
-        showTeamMembers(id, team)
+        for (let row of teamsTable.rows) {
+            row.classList.remove("watching");
+        }
+        row.classList.add("watching");
+        showTeamMembers(id, team);
     })
 }
 async function addNewMember(team, teamName) {
@@ -565,11 +569,16 @@ async function showTeamMembers(team, teamName) {
         <button id="addNewTeamMember">Add to ${teamName}</button>
         <button id="clearTeamButton">Remove All</button>
         <button id="deleteTeamButton">Delete ${teamName}</button>
+        <button id="renameTeamButton" value="${team}">Rename ${teamName}</button>
         `;
     let thisTeamTable = `<hr><table id='thisTeamTable'><th>Name</th><th>Team from Zwift</th><th>athleteId</th><th>Remove from ${teamName}</th>`
     for (let athlete of thisTeam) {
         const athleteData = await common.rpc.getAthlete(athlete.athleteId);
-        thisTeamTable += `<tr><td>${athleteData?.sanitizedFullname}</td><td>${athleteData?.team || ""}</td><td>${athlete.athleteId}</td><td>X</td></tr>`
+        athlete.athleteData = athleteData ?? {sanitizedFullname: ""};        
+    }
+    thisTeam.sort((a,b) => a.athleteData.sanitizedFullname.localeCompare(b.athleteData.sanitizedFullname, undefined, {sensitivity: 'case'}));
+    for (let athlete of thisTeam) {
+        thisTeamTable += `<tr><td>${athlete.athleteData?.sanitizedFullname}</td><td>${athlete.athleteData?.team || ""}</td><td>${athlete.athleteId}</td><td>X</td></tr>`
     }
     thisTeamTable += "</table>";
     outputDiv.innerHTML += thisTeamTable;
@@ -628,6 +637,34 @@ async function showTeamMembers(team, teamName) {
             }
             outputDiv.innerHTML = "";
         }
+    })
+    renameTeamButton.addEventListener("click", async function () {
+        const renameDialog = document.getElementById("renameDialog");
+        renameDialog.addEventListener("cancel", (e) => {
+            e.preventDefault();
+            renameDialog.closest("cancel");
+        });       
+        renameDialog.addEventListener("close", async () => {
+            
+            if (renameDialog.returnValue === "ok") {
+                const newName = renameDialog.querySelector("input").value;
+                const teamId = parseInt(renameTeamButton.value);
+                const rename = await zen.renameTeam(dbTeams, teamId, newName);
+                showTeamMembers(teamId, newName)
+                const existingTeamsDiv = document.getElementById("existingTeamsDiv");
+                existingTeamsDiv.innerHTML = await getExistingTeams();
+                const teamsTable = document.getElementById("existingTeamsTable");
+                for (let row of teamsTable.rows) {
+                    row.addEventListener("click", function () {
+                        duplicateWarningDiv.classList.add("hidden");
+                        const id = this.cells[0].textContent;
+                        const team = this.cells[1].textContent.replace(/\(\d+\)/, '').trim();
+                        showTeamMembers(id, team)
+                    })
+                }
+            }
+        });
+        renameDialog.showModal();
     })
     const teamTable = document.getElementById("thisTeamTable");
     for (let row of teamTable.rows) {
