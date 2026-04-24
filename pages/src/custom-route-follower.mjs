@@ -21,6 +21,7 @@ let worldMeta;
 let courseRoadsById;
 let lastKnownIntersection;
 let foundRouteIntersection = false;
+let diagData = [];
 let customRouteData;
 let allCustomRouteIntersections;
 let showCueSheet = settings.showCueSheet ?? true;
@@ -133,7 +134,12 @@ export async function main() {
         customRouteData.manifestIntersections = [];
         let i = -1;        
         console.log("customrouteData.manifest", customRouteData.manifest)
-        
+        if (selfData.zenSpawnData?.ts === customRouteManifest.ts) {
+            spawnDistance = selfData.zenSpawnData.spawnDistance ?? null;
+            console.log("restoring spawnDistance from ad to ", spawnDistance)
+        } else {
+            spawnDistance = null;
+        }
         customRouteIntersections = allCustomRouteIntersections;
         setCueSheet();
         const cueSheetListHtml = zen.generateCueSheet(allCustomRouteIntersections);
@@ -272,7 +278,12 @@ async function _processWatchingv2(watching) {
         cueSheetDiv.innerHTML = cueSheetListOutput;
         cueSheetList = document.getElementById("cueSheetUl");
         cueSheetItems = cueSheetList?.querySelectorAll("li");
-        spawnDistance = null;
+        if (watching.zenSpawnData?.ts === customRouteManifest.ts) {
+            spawnDistance = watching.zenSpawnData.spawnDistance ?? null;
+            console.log("restoring spawnDistance from ad to ", spawnDistance)
+        } else {
+            spawnDistance = null;
+        }
         customRouteComplete = false;
     };
     if (customRouteComplete) {
@@ -297,6 +308,13 @@ async function _processWatchingv2(watching) {
             } else if (!watching.state.reverse && rp < manifestStart) {
                 spawnDistance = spawnDistance * -1;
             }
+            const adSpawnData = {
+                zenSpawnData: {
+                    ts: customRouteManifest.ts,
+                    spawnDistance: spawnDistance
+                }
+            };
+            await common.rpc.updateAthleteData("self", adSpawnData)
             console.log("rp", rp, "manifestStart", manifestStart, "spawnDistance", spawnDistance)
         } else {
             //check if found in athleteData
@@ -331,17 +349,27 @@ async function _processWatchingv2(watching) {
         }
         return;        
     } else {
+        /*
+        diagData.push({
+            diff: (distanceTarget - watching.state.eventDistance) - spawnDistance,
+            distanceTarget: distanceTarget,
+            eventDistance: watching.state.eventDistance,
+            manifestIdx: manifestIdx,
+            roadId: watching.state.roadId
+        });
+        */
         if (!manifestIdx.actualStart) {
             manifestIdx.actualStart = distanceTarget;
             manifestIdx.startDelta = manifestIdx.i > 0 ? distanceTarget - manifestIdx.start : 0;
             console.log(`manifestIdx: ${manifestIdx.i} delta: ${manifestIdx.startDelta} all: `, customRouteData.manifestDistances)
+            //console.log("diagData", diagData);
             const diagOutput = `i: ${manifestIdx.i} &Delta;: ${parseInt(manifestIdx.startDelta)}`;
             diagDiv.innerHTML = diagOutput;
         }
         possiblyLost = false;
         currIntersectionDiv.classList.remove('warning');
         currIntersectionDiv.innerHTML = "";
-    };
+    };    
     let i = 0;
     for (let int of allCustomRouteIntersections) {        
         if (int.idx < manifestIdx.i) {
