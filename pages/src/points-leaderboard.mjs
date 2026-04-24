@@ -1289,7 +1289,12 @@ function updateSegmentHint(watching) {
                 const nextSegment = segmentStartLines.find(x => x.markLine > currentPosition);
                 const nextFinishLine = segmentFinishLines.find(x => x.markLine > currentPosition);
                 if (showNextSegmentHint && currentEventConfig && nextSegment && !waitingInPen) {
-                    const nextSegmentConfig = currentEventConfig.segments.find(x => x.segmentId === nextSegment.id && x.repeat === nextSegment.repeat);
+                    let nextSegmentConfig;
+                    if (nextFinishLine.markLine > nextSegment.markLine) {
+                        nextSegmentConfig = currentEventConfig.segments.find(x => x.segmentId === nextSegment.id && x.repeat === nextSegment.repeat);
+                    } else {
+                        nextSegmentConfig = currentEventConfig.segments.find(x => x.segmentId === nextFinishLine.id && x.repeat === nextFinishLine.repeat);
+                    }
                     if (nextSegmentConfig) {
                         let distanceToNextSegment; 
                         if (nextFinishLine.markLine > nextSegment.markLine) {
