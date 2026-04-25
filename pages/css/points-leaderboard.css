@@ -36,6 +36,7 @@ div .segmentData {
   font-variant: small-caps tabular-nums;
   font-size: calc(var(--font-scale) * 0.8em);
   padding: 2px;
+  margin: 2px;
 }
 div .segmentData .data {
   width: 100%
@@ -474,7 +475,28 @@ tr.teamScoreDetails {
   font-variant: small-caps tabular-nums;
   padding-left: 2px;
   padding-right: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 3px;
 }
 #summaryTable td {
   text-align: left;
+}
+#segmentHintTable {
+  width: 100%;
+  text-align: left !important;
+  font-size: calc(var(--font-scale) * 1em);
+  font-variant: small-caps tabular-nums;
+  table-layout: fixed;
+}
+#segmentHintTable .nextSegmentName {
+  width: 60%;
+  text-align: left !important;
+  overflow: hidden;
+}
+#segmentHintTable .nextSegmentInfo {
+  width: 20%;
+  text-align: left !important;
+  overflow: hidden;
 }

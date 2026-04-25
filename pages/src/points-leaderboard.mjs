@@ -1302,10 +1302,14 @@ function updateSegmentHint(watching) {
                         } else {
                             distanceToNextSegment = nextFinishLine.markLine - currentPosition;
                         }
-                        const distanceToNextSegmentDisplay = distanceToNextSegment >= 1000 ? `${(distanceToNextSegment / 1000).toFixed(2)}km` : `${parseInt(distanceToNextSegment)}m`
-                        nextSegmentDiv.innerHTML = `<div>${nextSegmentConfig.name} [${nextSegmentConfig.repeat}]:</div>
-                            <div>  ${nextSegmentConfig.enabled ? nextSegmentConfig.scoreFormat : "&#x274C;"}</div>
-                            <div>${distanceToNextSegmentDisplay}</div>
+                        const distanceToNextSegmentDisplay = distanceToNextSegment >= 1000 ? `${(distanceToNextSegment / 1000).toFixed(2)}km` : `${parseInt(distanceToNextSegment)}m`                        
+                        nextSegmentDiv.innerHTML = `<table id="segmentHintTable">
+                            <tr>
+                                <td class="nextSegmentName">${nextSegmentConfig.name} [${nextSegmentConfig.repeat}]:</td>
+                                <td class="nextSegmentInfo">${nextSegmentConfig.enabled ? nextSegmentConfig.scoreFormat : "&#x274C;"}</td>
+                                <td class="nextSegmentInfo">${distanceToNextSegmentDisplay}</td>
+                            </tr>
+                            </table>
                         `
                         nextSegmentDiv.classList.remove("hidden")
                     } else {
@@ -1318,6 +1322,7 @@ function updateSegmentHint(watching) {
         }
     }
 }
+
 let _getLeaderboardBusy;
 async function getLeaderboard() {
     if (_getLeaderboardBusy) {
