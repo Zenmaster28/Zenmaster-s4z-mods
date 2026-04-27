@@ -28,6 +28,7 @@ table td.info {
 div .segmentData {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
   align-items: baseline;
   justify-content: left;
   white-space: nowrap;
@@ -470,6 +471,7 @@ tr.teamScoreDetails {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  flex: 0 0 auto;
   gap: 10px;
   font-size: calc(var(--font-scale) * 0.6em);
   font-variant: small-caps tabular-nums;

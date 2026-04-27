@@ -35,6 +35,14 @@ let allPointsTableVisible = true;
 let rotateTableInterval = settings.rotateInterval * 1000 || 10000;
 let showPreEventSummary = settings.showPreEventSummary ?? true;
 let showNextSegmentHint = settings.showNextSegmentHint ?? true;
+let nextSegmentInfo = {
+    name: null,
+    scoreFormat: null,
+    distance: null
+};
+const nextSegmentNameCell = document.getElementById("nextSegmentName");
+const nextSegmentConfigCell = document.getElementById("nextSegmentConfig");
+const nextSegmentDistanceCell = document.getElementById("nextSegmentDistance");
 const pointsResultsDiv = document.getElementById("pointsResults");
 const lastSegmentPointsResultsDiv = document.getElementById("lastSegmentPointsResults");
 if (pointsResultsDiv) {
@@ -1303,14 +1311,20 @@ function updateSegmentHint(watching) {
                             distanceToNextSegment = nextFinishLine.markLine - currentPosition;
                         }
                         const distanceToNextSegmentDisplay = distanceToNextSegment >= 1000 ? `${(distanceToNextSegment / 1000).toFixed(2)}km` : `${parseInt(distanceToNextSegment)}m`                        
-                        nextSegmentDiv.innerHTML = `<table id="segmentHintTable">
-                            <tr>
-                                <td class="nextSegmentName">${nextSegmentConfig.name} [${nextSegmentConfig.repeat}]:</td>
-                                <td class="nextSegmentInfo">${nextSegmentConfig.enabled ? nextSegmentConfig.scoreFormat : "&#x274C;"}</td>
-                                <td class="nextSegmentInfo">${distanceToNextSegmentDisplay}</td>
-                            </tr>
-                            </table>
-                        `
+                        if (nextSegmentInfo.distance != distanceToNextSegmentDisplay) {
+                            nextSegmentInfo.distance = distanceToNextSegmentDisplay;
+                            nextSegmentDistanceCell.innerHTML = nextSegmentInfo.distance;
+                        }
+                        const tmpNextSegmentName = `${nextSegmentConfig.name} [${nextSegmentConfig.repeat}]`
+                        if (nextSegmentInfo.name != tmpNextSegmentName) {
+                            nextSegmentInfo.name = tmpNextSegmentName;
+                            nextSegmentNameCell.innerHTML = nextSegmentInfo.name;
+                        }
+                        const tmpNextSegmentConfig = nextSegmentConfig.enabled ? nextSegmentConfig.scoreFormat : "&#x274C;"
+                        if (nextSegmentInfo.scoreFormat != tmpNextSegmentConfig) {
+                            nextSegmentInfo.scoreFormat = tmpNextSegmentConfig;
+                            nextSegmentConfigCell.innerHTML = nextSegmentInfo.scoreFormat;
+                        }
                         nextSegmentDiv.classList.remove("hidden")
                     } else {
                         nextSegmentDiv.classList.add("hidden")
