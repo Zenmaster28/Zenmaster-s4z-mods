@@ -440,6 +440,7 @@ tr.teamScoreDetails {
   white-space: unset !important; 
   padding-left: 10px !important;
   padding-right: 10px !important;
+  flex: unset !important;
 }
 .summarySegment {
   display: flex;
