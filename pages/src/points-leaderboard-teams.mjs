@@ -299,7 +299,7 @@ eventsSelect.addEventListener('change', async function() {
         if (eventInfo) {
             sgStartTime = eventInfo.ts;
             console.log(eventInfo)
-            if (eventInfo.allTagsObject.dirtracingseries) {
+            if (eventInfo.allTagsObject.dirtracingseries || eventInfo.name.includes('DIRT Racing Series')) {
                 document.getElementById("drsDisplay").style.display = "flex";
             } else {
                 document.getElementById("drsDisplay").style.display = "none";
