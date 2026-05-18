@@ -46,7 +46,7 @@ const nextSegmentDistanceCell = document.getElementById("nextSegmentDistance");
 const pointsResultsDiv = document.getElementById("pointsResults");
 const lastSegmentPointsResultsDiv = document.getElementById("lastSegmentPointsResults");
 if (pointsResultsDiv) {
-    console.log("Adding resize and scroll listeners")
+    //console.log("Adding resize and scroll listeners")
     pointsResultsDiv.addEventListener('scroll', showTeamMateRows);
     lastSegmentPointsResultsDiv.addEventListener('scroll', showTeamMateRows);
     window.addEventListener('resize', showTeamMateRows);
@@ -58,7 +58,7 @@ const pointsTitleDiv = document.getElementById("pointsTitle");
 const nextSegmentDiv = document.getElementById("nextSegment");
 function rotateVisibleTable(options) {
     
-    if (settings.rotateTotalLast) {
+    if (settings.rotateTotalLast && !waitingInPen) {
         showTeamMateRows();
         lastRotationTS = Date.now();
         //console.log("Rotating table at ", new Date())
@@ -489,7 +489,8 @@ async function getRaceResults(watching) {
     } else {
         eventSubgroupId = watching.state.eventSubgroupId;
     }
-    let res = await common.rpc.getEventSubgroupResults(eventSubgroupId);
+    //console.log("Getting results for", eventSubgroupId)
+    let res = await common.rpc.getEventSubgroupResults(`${eventSubgroupId}`);
     raceResults = [...res];
     /*
     res.forEach(result => {
@@ -508,6 +509,7 @@ async function processResults(watching, dbResults, currentEventConfig, overrideC
     let eventSubgroupId;
     let segmentData;
     if (overrideConfig) {
+        console.log("processResults overrideConfig", overrideConfig)
         eventSubgroupId == overrideConfig.eventSubgroupId;
         segmentData = overrideConfig.segments;
     } else if (!watching.state.eventSubgroupId && lastKnownSG.eventSubgroupId > 0) {
@@ -575,7 +577,7 @@ async function scoreResults(eventResults, currentEventConfig, lastSegment=false)
     let segmentRepeat;
     let uniqueSegmentIds;
     let perEventResults = [];
-    //console.log("Event config", currentEventConfig)
+    console.log("Event config", currentEventConfig)
     //console.log(eventResults)
     if (!lastSegment) {
         ftsScoringResults.length = 0;
@@ -610,6 +612,9 @@ async function scoreResults(eventResults, currentEventConfig, lastSegment=false)
         }
         if (currentEventConfig) {
             segmentRepeat = segRes ? currentEventConfig.segments.find(x => x.segmentId == segRes.segmentId && x.repeat == segRes.repeat) : []
+            if (!segmentRepeat) {
+                debugger
+            }
             const overrideConfig = settings.configOverride ? JSON.parse(settings.configOverride) : null;
             if (overrideConfig?.eventSubgroupId == currentEventConfig.eventSubgroupId) {
                 customScoring = true;
@@ -1411,17 +1416,37 @@ async function _getLeaderboard(watching) {
 
             }
             */
-            const overrideConfig = settings.configOverride ? JSON.parse(settings.configOverride) : null;
+            let overrideConfig = settings.configOverride ? JSON.parse(settings.configOverride) : null;
             
             let eventSubgroupId;
-            if (overrideConfig) {
+            if (overrideConfig && (Date.now() - overrideConfig.ts < (1000 * 60 * 60 * 2))) {
+                console.log("Found a custom config that is less than two hours old", overrideConfig)                
                 eventSubgroupId = parseInt(overrideConfig.eventSubgroupId);
             } else if (!watching.state.eventSubgroupId && lastKnownSG.eventSubgroupId > 0) {
                 eventSubgroupId = lastKnownSG.eventSubgroupId;
+                if (overrideConfig && (Date.now() - overrideConfig.ts > (1000 * 60 * 60 * 2))) {
+                    console.warn("Clearing overrideConfig > 2 hours");
+                    common.settingsStore.set("configOverride")
+                    document.getElementById("customTitle").style.display = "none";
+                    overrideConfig = null;
+                }
             } else {
                 eventSubgroupId = watching.state.eventSubgroupId;
+                if (overrideConfig && (Date.now() - overrideConfig.ts > (1000 * 60 * 60 * 2))) {
+                    console.warn("Clearing overrideConfig > 2 hours");
+                    common.settingsStore.set("configOverride")
+                    document.getElementById("customTitle").style.display = "none";
+                    overrideConfig = null;
+                }
             }
             currentEventConfig = await zen.getEventConfig(dbSegmentConfig, eventSubgroupId);
+            if (!currentEventConfig && overrideConfig) {
+                console.warn("Found a configOverride with no matching event configuration - clearing override")
+                refresh = Date.now() - refreshRate;
+                common.settingsStore.set("configOverride")
+                document.getElementById("customTitle").style.display = "none";
+                return;
+            }
             if (!currentEventConfig || (!currentEventConfig.ftsScoreFormat && !currentEventConfig.falScoreFormat && !currentEventConfig.finScoreFormat)) {
                 pointsResultsDiv.innerHTML = "Warning! You are in an event but no scoring has been configured!";
                 pointsResultsDiv.classList.add("warning");
@@ -1560,8 +1585,16 @@ export async function main() {
             setBackground();
         }
         if (changed.has('configOverride')) {
-            const newConfig = JSON.parse(common.settingsStore.get('configOverride'));
-            console.log("Event override changed ", newConfig)
+            try {
+                const newConfig = JSON.parse(common.settingsStore.get('configOverride'));
+                console.log("Event override changed ", newConfig)
+                refresh = (Date.now() - refreshRate) + 1000;
+            } catch {
+                console.warn("Invalid overrideConfig")
+                document.getElementById("customTitle").style.display = "none";
+                document.getElementById("customTitle").innerText = "";
+                refresh = Date.now() - refreshRate;
+            }
         }
         if (changed.has('eventConfigChanged')) {
             refresh = (Date.now() - refreshRate) + 1000; //update the scores quickly after a config change

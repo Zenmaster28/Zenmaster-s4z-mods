@@ -17,6 +17,7 @@ let lastKnownSegmentData;
 let currentEventConfig;
 let watchingTeam;
 let refresh = Date.now() - 2000000;
+let sgConfig;
 const doc = document.documentElement;
 doc.style.setProperty('--font-scale', (common.settingsStore.get('fontScale') * 0.5) || 0.5);  
 doc.querySelector('#titlebar').classList.add('always-visible');
@@ -105,7 +106,7 @@ function showSegments(allEventConfigs) {
     const penSelect = document.getElementById("selectPen");
     const segmentDataDiv = document.getElementById("segmentData");
     const eventSubgroupId = parseInt(penSelect.value);        
-    const sgConfig = allEventConfigs.find(x => x.eventSubgroupId == eventSubgroupId);
+    sgConfig = allEventConfigs.find(x => x.eventSubgroupId == eventSubgroupId);
     if (sgConfig) {
         document.getElementById("customTitle").style.display = "block";
         console.log(sgConfig)
@@ -161,6 +162,8 @@ function saveConfig() {
             segData.push(segConfig);
         }
         eventSgConfig.segments = segData;
+        eventSgConfig.ts = sgConfig.ts;
+        eventSgConfig.eventId = sgConfig.eventId;
         console.log("eventSgConfig", eventSgConfig);
         const jsonSgConfig = JSON.stringify(eventSgConfig);
         common.settingsStore.set("configOverride", jsonSgConfig);
