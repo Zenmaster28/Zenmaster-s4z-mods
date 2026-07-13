@@ -113,10 +113,26 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
             segments.sort((a,b) => {
                 return a.roadStart - b.roadStart;
             })
+            const thisManifest = routeFullData.manifest[rsIdx];
+            const lastManifest = routeFullData.manifest[rsIdx - 1] || null;
+            const sameRoad = thisManifest.roadId === lastManifest.roadId;
             for (let segment of segments) {
                 
                 //if (segment.roadId == 9) {debugger}
-                if (segment.id != routeSegments[routeSegments.length - 1].id ||
+                if ((sameRoad && !thisManifest.reverse && thisManifest.start < lastManifest.end) ||
+                    (sameRoad && thisManifest.reverse && thisManifest.end < lastManifest.start)
+                ) {
+                    if (!includeLoops && (segment.name.toLowerCase().includes("loop") || (segment.archId == null) || segment.roadStart == segment.roadFinish)) {
+                        //don't include loops if not specified - unless showing all arches
+                        if (showAllArches) {
+                            segment.finishArchOnly = true;
+                            segment.type = "custom";
+                            routeSegments.push(segment);    
+                        }
+                    } else {
+                        routeSegments.push(segment);
+                    }
+                } else if (segment.id != routeSegments[routeSegments.length - 1].id ||
                     (rsIdx - 1 != routeSegments[routeSegments.length - 1].roadSegmentIndex) ||
                     ((routeSegments[routeSegments.length - 1].matchedStart && routeSegments[routeSegments.length - 1].matchedEnd) &&
                     (segment.matchedStart && segment.matchedEnd))
