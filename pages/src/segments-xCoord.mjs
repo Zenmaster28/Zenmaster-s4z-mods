@@ -113,9 +113,19 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
             segments.sort((a,b) => {
                 return a.roadStart - b.roadStart;
             })
-            const thisManifest = routeFullData.manifest[rsIdx];
-            const lastManifest = routeFullData.manifest[rsIdx - 1] || null;
-            const sameRoad = thisManifest.roadId === lastManifest.roadId;
+            let manifestIdx = rsIdx;
+            if (roadSegment.lap > 1) {
+                let lapDiff = roadSegment.lap - 1;
+                const maxManifest = routeFullData.manifest.length - notLeadin;
+                //debugger
+                for (let i = lapDiff; i >= 1; i--) {
+                    manifestIdx = rsIdx - maxManifest;
+                }
+            }
+            //console.log("rsIdx", rsIdx, "manifestIdx", manifestIdx)
+            const thisManifest = routeFullData.manifest[manifestIdx];
+            const lastManifest = routeFullData.manifest[manifestIdx - 1] || null;
+            const sameRoad = thisManifest?.roadId === lastManifest?.roadId;
             for (let segment of segments) {
                 
                 //if (segment.roadId == 9) {debugger}
