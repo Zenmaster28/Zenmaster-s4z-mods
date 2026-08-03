@@ -23,9 +23,9 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
 
     } else {
         includeLoops = false;
-    }    
-    //debugger    
+    }
     routeFullData = await getModifiedRoute(routeId, disablePenRouting, customRouteData); 
+    
     worldSegments = await common.rpc.getSegments(courseId);
     zwiftSegmentsRequireStartEnd = await fetch("data/segRequireStartEnd.json").then((response) => response.json());
     if (showAllArches) {
@@ -40,7 +40,8 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
     const roadSegments = Array.from(routeFullData.roadSegments);
     const notLeadin = routeFullData.manifest.findIndex(x => !x.leadin);
     const notLeadinRoadSegments = routeFullData.roadSegments.findIndex(x => !x.leadin);
-    const lapStartIdx = notLeadin === -1 ? 0 : routeFullData.curvePath.nodes.findIndex(x => x.index === notLeadin);            
+    const lapStartIdx = notLeadin === -1 ? 0 : routeFullData.curvePath.nodes.findIndex(x => x.index === notLeadin);  
+    const lapEndIdx = routeFullData.curvePath.nodes.length;          
     if (lapStartIdx) {        
         routeLeadinDistance = distances[lapStartIdx];
     } else {
@@ -54,6 +55,7 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
     }
     for (let lap = 1; lap < laps; lap++) {  
         //debugger      
+        console.log("Processing lap", lap, "of ", laps)
         if (routeFullData.lapFiller.curvePath?.nodes?.length > 0) {
             routeFullData.curvePath.extend(routeFullData.lapFiller.curvePath)
             for (let i = 0; i < routeFullData.lapFiller.distances.length; i++) {
@@ -70,7 +72,10 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
         }
         const lapFillerCurvePathLength = routeFullData.lapFiller.curvePath?.nodes?.length || 0;
         //routeFullData.curvePath.extend(routeFullData.curvePath.slice(lapStartIdx, routeFullData.curvePath.nodes.length - routeFullData.lapFiller.curvePath?.nodes?.length));
-        routeFullData.curvePath.extend(routeFullData.curvePath.slice(lapStartIdx, routeFullData.curvePath.nodes.length - lapFillerCurvePathLength));
+        //console.log("curvePath before", routeFullData.curvePath.nodes.length)
+        //routeFullData.curvePath.extend(routeFullData.curvePath.slice(lapStartIdx, routeFullData.curvePath.nodes.length - lapFillerCurvePathLength));
+        routeFullData.curvePath.extend(routeFullData.curvePath.slice(lapStartIdx, lapEndIdx));
+        //console.log("curvePath after", routeFullData.curvePath.nodes.length)
         //debugger
         //console.log("Lap ", lap, "curvePath", routeFullData.curvePath)
         for (let i = lapStartIdx; i < routeFullData.distances.length; i++) {
@@ -107,7 +112,7 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
     {
         let segments = findSegmentsOnRoadSection(roadSegment, curvePathIndex, rsIdx, showAllArches);
         //debugger
-        //console.log(rsIdx, roadSegment.reverse, roadSegment.roadId, segments)
+        //console.log("segments", segments)
         if (segments.length > 0 && routeSegments.length > 0) {
             //debugger
             segments.sort((a,b) => {
@@ -126,11 +131,12 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
             const thisManifest = routeFullData.manifest[manifestIdx];
             const lastManifest = routeFullData.manifest[manifestIdx - 1] || null;
             const sameRoad = thisManifest?.roadId === lastManifest?.roadId;
+            
             for (let segment of segments) {
                 
                 //if (segment.roadId == 9) {debugger}
-                if ((sameRoad && !thisManifest.reverse && thisManifest.start < lastManifest.end) ||
-                    (sameRoad && thisManifest.reverse && thisManifest.end < lastManifest.start)
+                if ((sameRoad && !thisManifest?.reverse && thisManifest?.start < lastManifest?.end) ||
+                    (sameRoad && thisManifest?.reverse && thisManifest?.end < lastManifest?.start)
                 ) {
                     if (!includeLoops && (segment.name.toLowerCase().includes("loop") || (segment.archId == null) || segment.roadStart == segment.roadFinish)) {
                         //don't include loops if not specified - unless showing all arches
@@ -145,7 +151,7 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
                 } else if (segment.id != routeSegments[routeSegments.length - 1].id ||
                     (rsIdx - 1 != routeSegments[routeSegments.length - 1].roadSegmentIndex) ||
                     ((routeSegments[routeSegments.length - 1].matchedStart && routeSegments[routeSegments.length - 1].matchedEnd) &&
-                    (segment.matchedStart && segment.matchedEnd))
+                    (segment.matchedStart && segment.matchedEnd)) //|| segment.id === "1055881124" //Monmartre KOM.  Not happy with doing it this way
                     ) {
                     // make sure we didn't match this same segment on the last roadSegment as it would be a duplicate (probably Fuego Flats)
                     if (!includeLoops && (segment.name.toLowerCase().includes("loop") || (segment.archId == null) || segment.roadStart == segment.roadFinish)) {
@@ -159,7 +165,7 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
                         routeSegments.push(segment);
                     }
                 } else {                    
-                    //console.log("Skipping duplicate segment match " + segment.name + " on roadSegmentIndex " + rsIdx)
+                    console.log("Skipping duplicate segment match " + segment.name + " on roadSegmentIndex " + rsIdx)
                     //debugger
                 } 
             }          
@@ -619,6 +625,7 @@ export async function getSegmentsOnRoute(courseId, routeId, eventSubgroupId) {
 
     const lapDistance = distances.at(-1) - distances[lapStartIdx];
     for (let lap = 1; lap < laps; lap++) {
+        console.log("Extending curvePath for lap", lap, "of ", laps)
         routeFullData.curvePath.extend(routeFullData.curvePath.slice(lapStartIdx));
         for (let i = lapStartIdx; i < routeFullData.distances.length; i++) {
             distances.push(distances.at(-1) + (routeFullData.distances[i] - (routeFullData.distances[i - 1] || 0)));
@@ -1242,7 +1249,7 @@ export async function getModifiedRoute(id, disablePenRouting, customRouteData) {
                 return -1
             } else {
                 //console.log("Found route", route.name, "in json")
-                const courseId = worldList.find(x => x.worldId == route.worldId);
+                const courseId = worldList.find(x => x.worldId == route.worldId).courseId;
                 route.courseId = courseId;
             }
             //debugger
@@ -1377,7 +1384,7 @@ export async function getModifiedRoute(id, disablePenRouting, customRouteData) {
                     }
                     //debugger
                 }
-                if (route.courseId != 13 && !disablePenRouting) { // stupid fake neon banners in Makuri...
+                if (route.courseId.courseId != 13 && !disablePenRouting) { // stupid fake neon banners in Makuri...
                     const lastManifestEntry = route.manifest.at(-1);
                     await isBannerNearby(lastManifestEntry, route.courseId, "last");
                     const leadin = route.manifest.filter(x => x.leadin)
@@ -1389,7 +1396,7 @@ export async function getModifiedRoute(id, disablePenRouting, customRouteData) {
                             lastLeadin.reverse ? route.manifest[idxLastLeadin + 1].end = lastLeadin.start : route.manifest[idxLastLeadin + 1].start = lastLeadin.end // align the leadin and route start
                         }
                     }
-                } 
+                }                 
                 route.curvePath = new curves.CurvePath();
                 route.roadSegments = [];
                 route.lapFiller = {}; 
@@ -2285,7 +2292,7 @@ export async function validateManifest(route) {
     let courseId = route.courseId
     //let originalManifest = JSON.parse(JSON.stringify(routeManifest))
     let allGaps = [];
-    const worldList = await common.getWorldList();   
+    const worldList = await common.getWorldList();
     const worldId = (worldList.find(x => x.courseId == courseId)).worldId;
     const intersections = await fetch(`data/worlds/${worldId}/roadIntersections.json`).then(response => response.json());
     const allRoads = await common.getRoads(courseId)
@@ -2687,6 +2694,7 @@ async function isBannerNearby(lastManifestEntry, courseId, type) {
         // ignore the leadin for InnsbruckConti
     //    return;
     //}
+    //debugger
     const worldSegments = await common.rpc.getSegments(courseId)
     //const roadSegments = worldSegments.filter(x => x.roadId == lastManifestEntry.roadId && (x.reverse == lastManifestEntry.reverse || (x.reverse == false && lastManifestEntry.reverse == null)));
     const roadSegments = worldSegments.filter(x => x.roadId == lastManifestEntry.roadId);
@@ -3513,6 +3521,37 @@ export async function deleteTeam(dbTeams, id) {
             reject(event.target.error);
         };
     })
+}
+
+export async function renameTeam(dbTeams, id, newName) {
+    return new Promise((resolve, reject) => {
+        const storeName = "teams";
+        const transaction = dbTeams.transaction(storeName, "readwrite");
+        const store = transaction.objectStore(storeName);
+        const assignment = {
+            team: newName,
+            id: id,
+            badge: ""
+        }
+        
+        let request = store.put(assignment);        
+        request.onsuccess = function () {            
+        
+        };
+        request.onerror = function (event) {
+            console.error("Failed to rename team:", event.target.error);
+        };
+        
+        transaction.oncomplete = function () {
+            //console.log("All segment results processed.");
+            resolve();
+        };
+
+        transaction.onerror = function (event) {
+            console.error("Transaction error:", event.target.error);
+            reject(event.target.error);
+        };
+    });
 }
 
 export async function assignAthlete(dbTeams, id, athleteId) {
@@ -7182,6 +7221,54 @@ export function getRoadPoints(road) {
     }
     return points;
 }
+export function getRoadPointsHiRes(road) {
+    const roadDistance = parseInt(road.distances.at(-1)) * 2;
+    const epsilon = 1 / (roadDistance);
+    const points = [];
+    let gapCount = 0;
+    let postGapCount = 0;
+    for (let rp = 0; rp <= 1; rp += epsilon) {
+        const point = road.curvePath.pointAtRoadPercent(rp);
+        if (rp > 0) {
+            const lastRp = points.at(-1).rp;
+            const gap = road.curvePath.distanceBetweenRoadPercents(lastRp, rp, 4e-2);
+            if (gap > 50) {
+                //console.warn("rp gap > 110cm", rp, gap)
+                gapCount++;
+                const fillerRp = parseInt(gap / 100) + 1;
+                const epsilon = (rp - lastRp) / (fillerRp + 1);
+                for (let i = 1; i <= fillerRp; i++) {
+                    const fillerRp = lastRp + (epsilon * i);
+                    const point = road.curvePath.pointAtRoadPercent(fillerRp);
+                    points.push({
+                        rp: fillerRp,
+                        point: point
+                    })
+                }
+            }
+        }
+        points.push({
+            rp: rp,
+            point: point
+        })
+    }
+    let maxGap = -Infinity;
+    for (let i = 1; i < points.length; i++) {
+        const lastRp = points[i - 1].rp;
+        const thisRp = points[i].rp;
+        const gap = road.curvePath.distanceBetweenRoadPercents(lastRp, thisRp, 4e-2);
+        points[i].gap = gap;
+        if (gap > 50) {
+            //console.warn("post filler gap > 50 cm", thisRp, gap);
+            postGapCount++;
+        }
+        if (gap > maxGap) {
+            maxGap = gap;
+        }
+    };    
+    //console.log("road:", road.id, "gapCount", gapCount, "postGapCount", postGapCount, "maxGap", maxGap)
+    return points;
+}
 export async function generateRoadData(courseId) { 
     const worldList = await common.getWorldList();   
     const worldId = (worldList.find(x => x.courseId == courseId)).worldId;
@@ -7192,7 +7279,7 @@ export async function generateRoadData(courseId) {
     const singleIntersectionRoads = intersections.filter(road => road.intersections?.length <= 2 && road.intersections?.every(int => int.forward?.length <= 1 && int.reverse?.length <= 1))
     const epsilon = 1e-6;
     for (let road of allCyclingRoads) {
-        road.points = getRoadPoints(road);
+        road.points = getRoadPointsHiRes(road);
         road.entryPoints = [];
         road.safeTargets = {
             reverse: {
@@ -7222,6 +7309,7 @@ export async function generateRoadData(courseId) {
                                 let minDistance = Infinity;
                                 let nearestPoint;
                                 let entryTime;
+                                let entryGap;
                                 for (let point of nextRoad.points) {
                                     const exitPoint = road.curvePath.pointAtRoadPercent(option.option.exitTime);
                                     const distance = curves.vecDist(exitPoint, point.point);
@@ -7229,11 +7317,14 @@ export async function generateRoadData(courseId) {
                                         minDistance = distance;
                                         nearestPoint = point.point;
                                         entryTime = point.rp;
+                                        entryGap = distance;
                                     }
                                 }
                                 option.option.entryTime = entryTime;
+                                option.option.entryGap = entryGap;
                                 nextRoad.entryPoints.push({
                                     entryTime: entryTime,
+                                    entryGap: entryGap,
                                     reverse: !option.option.forward
                                 });
                                 option.option.cycling = true;
@@ -7253,6 +7344,7 @@ export async function generateRoadData(courseId) {
                                 let minDistance = Infinity;
                                 let nearestPoint;
                                 let entryTime;
+                                let entryGap;
                                 for (let point of nextRoad.points) {
                                     const exitPoint = road.curvePath.pointAtRoadPercent(option.option.exitTime);
                                     const distance = curves.vecDist(exitPoint, point.point);
@@ -7260,11 +7352,14 @@ export async function generateRoadData(courseId) {
                                         minDistance = distance;
                                         nearestPoint = point.point;
                                         entryTime = point.rp;
+                                        entryGap = distance;
                                     }
                                 }
                                 option.option.entryTime = entryTime;
+                                option.option.entryGap = entryGap;
                                 nextRoad.entryPoints.push({
                                     entryTime: entryTime,
+                                    entryGap: entryGap,
                                     reverse: !option.option.forward
                                 });
                                 option.option.cycling = true;
@@ -7307,7 +7402,10 @@ export async function generateRoadData(courseId) {
         if (courseId == 8 && (road.id == 249 || road.id == 250)) {//incorrectly marked roads as paddocks in NY
             thisRoadIntersections.roadIsPaddock = false;
         }
-        road.roadIsPaddock = thisRoadIntersections.roadIsPaddock || false;
+        if (!thisRoadIntersections) {
+            console.log("No road intersections?", road)
+        }
+        road.roadIsPaddock = thisRoadIntersections?.roadIsPaddock || false;
         
         
     };
@@ -7433,3 +7531,117 @@ export const scoreFormatHTML = `
     <input type="button" id="buttonImportExport" style="visibility:hidden" class="zenButton" value="&#x21B9;" title="Import/Export">
     <hr>
 `
+
+function roadPercentAtPointV2(targetPoint, targetRoad, maxIterations = 8) {
+    if (!targetRoad.curvePath.nodes.length) {
+        return null;
+    }
+    const [minRp, maxRp] = targetRoad.curvePath.rangeAsRoadPercent();
+    if (minRp === null || maxRp === null) {
+        return null;
+    }
+    
+    // Phase 1: Coarse grid search to identify best segment
+    const gridSize = Math.max(32, Math.ceil(targetRoad.curvePath.nodes.length * 4));
+    let bestRp = minRp;
+    let bestDist = Infinity;
+    const gridStep = (maxRp - minRp) / gridSize;
+    
+    for (let i = 0; i <= gridSize; i++) {
+        const rp = minRp + i * gridStep;
+        const point = targetRoad.curvePath.pointAtRoadPercent(rp);
+        const dist = curves.vecDist(point, targetPoint);
+        if (dist < bestDist) {
+            bestDist = dist;
+            bestRp = rp;
+        }
+    }
+    
+    // Phase 2: Binary search refinement around best candidate
+    let searchStart = Math.max(minRp, bestRp - gridStep);
+    let searchEnd = Math.min(maxRp, bestRp + gridStep);
+    let left = searchStart;
+    let right = searchEnd;
+    
+    for (let iter = 0; iter < maxIterations; iter++) {
+        const mid1 = left + (right - left) / 3;
+        const mid2 = right - (right - left) / 3;
+        
+        const point1 = targetRoad.curvePath.pointAtRoadPercent(mid1);
+        const point2 = targetRoad.curvePath.pointAtRoadPercent(mid2);
+        
+        const dist1 = curves.vecDist(point1, targetPoint);
+        const dist2 = curves.vecDist(point2, targetPoint);
+        
+        if (dist1 < dist2) {
+            right = mid2;
+        } else {
+            left = mid1;
+        }
+        
+        // Early exit if close enough
+        if (Math.abs(right - left) < 1e-8) {
+            break;
+        }
+    }
+    
+    // Return the midpoint of final bracket
+    const finalRp = (left + right) / 2;
+    return finalRp;
+}
+export function getPointsAtDistanceIntervals(road, intervalMeters) {
+    const intervalCm = intervalMeters * 100;
+    const points = [];
+    let accumulatedDist = 0;
+    let prevStep;
+    let prevIndex;
+    let prevStepValue;
+    
+    road.curvePath.trace(x => {
+        const stepDist = prevStep ? curves.vecDist(prevStep, x.stepNode) : 0;
+        accumulatedDist += stepDist;
+        
+        // Collect points at each interval threshold
+        while (points.length * intervalCm <= accumulatedDist) {
+            const targetDist = points.length * intervalCm;
+            
+            let point, roadPercent;
+            
+            if (prevStep) {
+                // Interpolate between previous step and current step
+                const ratio = stepDist ? (accumulatedDist - targetDist) / stepDist : 0;
+                point = curves.lerp(ratio, x.stepNode, prevStep);
+                
+                // Calculate road percent at this interpolated position
+                const interpolatedStep = prevStepValue + ratio * (1 - prevStepValue);
+                roadPercent = curves.roadOffsetToPercent(
+                    prevIndex + interpolatedStep,
+                    road.curvePath.roadLength
+                );
+            } else {
+                // First point: just use the current step
+                point = x.stepNode;
+                roadPercent = curves.roadOffsetToPercent(
+                    x.index + x.step,
+                    road.curvePath.roadLength
+                );
+            }
+            
+            const roadTime = curves.roadPercentToTime(roadPercent);
+            points.push({point, roadPercent, roadTime});
+        }
+        
+        prevStep = x.stepNode;
+        prevIndex = x.index;
+        prevStepValue = x.step;
+    }, this.epsilon);
+    console.log(points)
+    for (let i = 1; i < points.length; i++) {
+        const distFromLastPoint = curves.vecDist(points[i - 1].point, points[i].point);
+        if (distFromLastPoint < 990 || distFromLastPoint > 1010) {
+            console.warn("point too far", distFromLastPoint, points[i])
+        }
+        points[i].distFromLastPoint = distFromLastPoint
+    }
+    return points;
+}
