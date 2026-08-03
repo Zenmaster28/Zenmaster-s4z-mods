@@ -1,74 +1,463 @@
 [
   {
-    "id": 0
-  },
-  {
-    "id": 1
-  },
-  {
-    "id": 2
-  },
-  {
-    "id": 3
-  },
-  {
-    "id": 4
-  },
-  {
-    "id": 5
-  },
-  {
-    "id": 6
-  },
-  {
-    "id": 7
-  },
-  {
-    "id": 8
-  },
-  {
-    "id": 9
-  },
-  {
-    "id": 10
-  },
-  {
-    "id": 11
-  },
-  {
-    "id": 12
-  },
-  {
-    "id": 13
-  },
-  {
-    "id": 14
-  },
-  {
-    "id": 15
-  },
-  {
-    "id": 16
-  },
-  {
-    "id": 17
-  },
-  {
-    "id": 18
-  },
-  {
-    "id": 19
+    "id": 0,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0435432435,
+        "m_roadTime2": 0.0484807342,
+        "m_markerId": 1,
+        "forward": [
+          {
+            "option": {
+              "road": 88,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Montmartre.tga",
+              "forward": true,
+              "exitTime": 0.04848073423201349,
+              "b": "0",
+              "turnText": "Montmartre",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 0,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Louvre.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Louvre",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.4481607754,
+        "m_roadTime2": 0.4555173595,
+        "m_markerId": 2,
+        "forward": [],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Montmartre.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Montmartre",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 89,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Louvre.tga",
+              "forward": true,
+              "exitTime": 0.4481607754,
+              "b": "0",
+              "turnText": "Louvre",
+              "d": false
+            }
+          }
+        ],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0737725017,
+        "m_roadTime2": 0.105892306,
+        "m_markerId": 4,
+        "forward": [],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_ArcDeTriomphe.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Arc De Triomphe",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 89,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_ArcDeTriomphe.tga",
+              "forward": false,
+              "exitTime": 0.0737725017,
+              "b": "0",
+              "turnText": "Arc De Triomphe Alt",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 87,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Montmartre.tga",
+              "forward": true,
+              "exitTime": 0.07377250172981142,
+              "b": "0",
+              "turnText": "Montmartre",
+              "d": false
+            }
+          }
+        ],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.4158548394,
+        "m_roadTime2": 0.4230350282,
+        "m_markerId": 5,
+        "forward": [
+          {
+            "option": {
+              "road": 87,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Louvre.tga",
+              "forward": false,
+              "exitTime": 0.4230350282,
+              "b": "0",
+              "turnText": "Louvre",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 0,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_ArcDeTriomphe.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Arc De Triomphe",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 83,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Montmartre.tga",
+              "forward": true,
+              "exitTime": 0.4158548394049699,
+              "b": "0",
+              "turnText": "Montmartre",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 0,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Louvre.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Louvre",
+              "d": false
+            }
+          }
+        ],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.6641452461,
+        "m_roadTime2": 0.6750201757,
+        "m_markerId": 3,
+        "forward": [
+          {
+            "option": {
+              "road": 86,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_ArcDeTriomphe.tga",
+              "forward": false,
+              "exitTime": 0.6750201756665319,
+              "b": "0",
+              "turnText": "Arc De Triomphe",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 0,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Montmartre.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Montmartre",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.8254593723,
+        "m_roadTime2": 0.8358913952,
+        "m_markerId": 6,
+        "forward": [],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_ArcDeTriomphe.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Arc De Triomphe",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 106,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Montmartre.tga",
+              "forward": true,
+              "exitTime": 0.8254593723032713,
+              "b": "0",
+              "turnText": "Montmartre",
+              "d": false
+            }
+          }
+        ],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.7769422935,
+        "m_roadTime2": 0.7997740972,
+        "m_markerId": 7,
+        "forward": [
+          {
+            "option": {
+              "road": 73,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Montmartre.tga",
+              "forward": true,
+              "exitTime": 0.7997740971920848,
+              "b": "0",
+              "turnText": "Montmartre",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 86,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Louvre.tga",
+              "forward": true,
+              "exitTime": 0.7997740972,
+              "b": "0",
+              "turnText": "Louvre",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 0,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Louvre.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Louvre Alt",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3679987815,
+        "m_roadTime2": 0.3963040052,
+        "m_markerId": 9,
+        "m_bIgnoreRoadWidth": "1",
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_ArcDeTriomphe.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Arc De Triomphe",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 82,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Montmartre.tga",
+              "forward": false,
+              "exitTime": 0.39630400520376874,
+              "b": "0",
+              "turnText": "Montmartre",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.6814612915,
+        "m_roadTime2": 0.7014985257,
+        "m_markerId": 0,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_ArcDeTriomphe.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Arc De Triomphe",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 136,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Montmartre.tga",
+              "forward": false,
+              "exitTime": 0.7014985257494573,
+              "b": "0",
+              "turnText": "Montmartre",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.6987002806,
+        "m_roadTime2": 0.7164396279,
+        "m_markerId": 8,
+        "forward": [],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Louvre.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Louvre Alt",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 106,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Louvre.tga",
+              "forward": false,
+              "exitTime": 0.6987002806255305,
+              "b": "0",
+              "turnText": "Louvre",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 73,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_ArcDeTriomphe.tga",
+              "forward": false,
+              "exitTime": 0.6987002806255305,
+              "b": "0",
+              "turnText": "Arc De Triomphe",
+              "d": false
+            }
+          }
+        ],
+        "m_roadId": 0,
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.731226043,
+        "m_roadTime2": 0.74820497,
+        "m_markerId": 10,
+        "forward": [],
+        "reverse": [
+          {
+            "option": {
+              "road": 40,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Montmartre.tga",
+              "forward": true,
+              "exitTime": 0.7312260430454671,
+              "b": "0",
+              "turnText": "Montmartre",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Louvre.tga",
+              "forward": false,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Louvre",
+              "d": false
+            }
+          }
+        ],
+        "m_roadId": 0,
+        "b": 0
+      }
+    ]
   },
   {
     "id": 20
   },
   {
-    "id": 21
-  },
-  {
     "id": 22,
     "roadIsPaddock": true,
-    "paddockExitRoadTime": 0.2734,
+    "paddockExitRoadTime": 0.2734000086784363,
     "intersections": [
       {
         "type": "ENTITY_TYPE_INTERSECTIONMARKER",
@@ -96,24 +485,6 @@
     ]
   },
   {
-    "id": 23
-  },
-  {
-    "id": 24
-  },
-  {
-    "id": 25
-  },
-  {
-    "id": 26
-  },
-  {
-    "id": 27
-  },
-  {
-    "id": 28
-  },
-  {
     "id": 29
   },
   {
@@ -126,61 +497,16 @@
     "id": 32
   },
   {
-    "id": 33
-  },
-  {
-    "id": 34
-  },
-  {
-    "id": 35
-  },
-  {
-    "id": 36
-  },
-  {
-    "id": 37
-  },
-  {
     "id": 38
   },
   {
     "id": 39
   },
   {
-    "id": 40
-  },
-  {
-    "id": 41
-  },
-  {
     "id": 42
   },
   {
     "id": 43
-  },
-  {
-    "id": 44
-  },
-  {
-    "id": 45
-  },
-  {
-    "id": 46
-  },
-  {
-    "id": 47
-  },
-  {
-    "id": 48
-  },
-  {
-    "id": 49
-  },
-  {
-    "id": 50
-  },
-  {
-    "id": 51
   },
   {
     "id": 52
@@ -196,15 +522,6 @@
   },
   {
     "id": 56
-  },
-  {
-    "id": 57
-  },
-  {
-    "id": 58
-  },
-  {
-    "id": 59
   },
   {
     "id": 60,
@@ -325,7 +642,7 @@
   {
     "id": 64,
     "roadIsPaddock": true,
-    "paddockExitRoadTime": 0.4215,
+    "paddockExitRoadTime": 0.42149999737739563,
     "intersections": [
       {
         "type": "ENTITY_TYPE_INTERSECTIONMARKER",
@@ -386,5 +703,1669 @@
         "b": 0
       }
     ]
+  },
+  {
+    "id": 132,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0306190481,
+        "m_roadTime2": 0.0846918458,
+        "m_roadId": 132,
+        "m_markerId": 1320000,
+        "forward": [],
+        "reverse": [
+          {
+            "option": {
+              "road": 137,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.0306190481,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 40,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.01,
+        "m_roadTime2": 0.9651666659,
+        "m_roadId": 40,
+        "m_markerId": 400000,
+        "forward": [
+          {
+            "option": {
+              "road": 136,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.9651666659265794,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.01,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 65,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.7682187787,
+        "m_roadTime2": 0.9845437493,
+        "m_roadId": 65,
+        "m_markerId": 650000,
+        "forward": [
+          {
+            "option": {
+              "road": 133,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.9845437493125,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 66,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0710500021,
+        "m_roadTime2": 0.1542925236,
+        "m_roadId": 66,
+        "m_markerId": 660000,
+        "forward": [],
+        "reverse": [
+          {
+            "option": {
+              "road": 75,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.07105000211745509,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 67,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.9200849862,
+        "m_roadTime2": 0.9444211572,
+        "m_roadId": 67,
+        "m_markerId": 670000,
+        "forward": [
+          {
+            "option": {
+              "road": 67,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Montmartre.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Montmartre",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 84,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_ArcDeTriomphe.tga",
+              "forward": true,
+              "exitTime": 0.9444211571787234,
+              "b": "0",
+              "turnText": "Arc De Triomphe",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 68,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.8685585721,
+        "m_roadTime2": 0.9740268721,
+        "m_roadId": 68,
+        "m_markerId": 680000,
+        "forward": [
+          {
+            "option": {
+              "road": 76,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9740268721230769,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 69,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0475625015,
+        "m_roadTime2": 0.0959855808,
+        "m_roadId": 69,
+        "m_markerId": 690000,
+        "forward": [],
+        "reverse": [
+          {
+            "option": {
+              "road": 78,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.04756250146875001,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 70,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.2504951451,
+        "m_roadTime2": 0.379581422,
+        "m_roadId": 70,
+        "m_markerId": 700000,
+        "forward": [
+          {
+            "option": {
+              "road": 70,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_ArcDeTriomphe.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Arc De Triomphe",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 74,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Montmartre.tga",
+              "forward": true,
+              "exitTime": 0.3795814219570506,
+              "b": "0",
+              "turnText": "Montmartre",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.8305368738,
+        "m_roadTime2": 0.9130515011,
+        "m_roadId": 70,
+        "m_markerId": 700001,
+        "forward": [
+          {
+            "option": {
+              "road": 70,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Montmartre.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Montmartre",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 81,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Louvre.tga",
+              "forward": true,
+              "exitTime": 0.9130515010882352,
+              "b": "0",
+              "turnText": "Louvre",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.6011270587,
+        "m_roadTime2": 0.6904385202,
+        "m_roadId": 70,
+        "m_markerId": 700002,
+        "forward": [
+          {
+            "option": {
+              "road": 70,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Louvre.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Louvre",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 135,
+              "alt": 265,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_ArcDeTriomphe.tga",
+              "forward": false,
+              "exitTime": 0.6904385201985903,
+              "b": "0",
+              "turnText": "Arc De Triomphe",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 72,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.4946903183,
+        "m_roadTime2": 0.6988089038,
+        "m_roadId": 72,
+        "m_markerId": 720000,
+        "forward": [
+          {
+            "option": {
+              "road": 72,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Louvre.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Louvre",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 77,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Montmartre.tga",
+              "forward": true,
+              "exitTime": 0.6988089037888585,
+              "b": "0",
+              "turnText": "Montmartre",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.8532555511,
+        "m_roadTime2": 0.9587138877,
+        "m_roadId": 72,
+        "m_markerId": 720001,
+        "forward": [
+          {
+            "option": {
+              "road": 72,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Montmartre.tga",
+              "forward": true,
+              "exitTime": 1000000.0,
+              "b": "0",
+              "turnText": "Montmartre",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 78,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Louvre.tga",
+              "forward": false,
+              "exitTime": 0.9587138876677272,
+              "b": "0",
+              "turnText": "Louvre",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 73,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.062225,
+        "m_roadTime2": 0.946375,
+        "m_roadId": 73,
+        "m_markerId": 730000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_ArcDeTriomphe.tga",
+              "forward": true,
+              "exitTime": 0.9463750000000035,
+              "b": "0",
+              "turnText": "Arc De Triomphe",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 136,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Montmartre.tga",
+              "forward": false,
+              "exitTime": 0.946375,
+              "b": "0",
+              "turnText": "Montmartre",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.062225,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 74,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.01,
+        "m_roadTime2": 0.99,
+        "m_roadId": 74,
+        "m_markerId": 740000,
+        "forward": [
+          {
+            "option": {
+              "road": 68,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.99,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 70,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.01,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 75,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.023825,
+        "m_roadTime2": 0.5676833333,
+        "m_roadId": 75,
+        "m_markerId": 750000,
+        "forward": [
+          {
+            "option": {
+              "road": 70,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.7079009254971389,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 66,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.023825000000000002,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 76,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.01,
+        "m_roadTime2": 0.7696333265,
+        "m_roadId": 76,
+        "m_markerId": 760000,
+        "forward": [
+          {
+            "option": {
+              "road": 67,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.7696333264679195,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 68,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.01,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 77,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.01,
+        "m_roadTime2": 0.99,
+        "m_roadId": 77,
+        "m_markerId": 770000,
+        "forward": [
+          {
+            "option": {
+              "road": 65,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.99,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 72,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.01,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 78,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0042857143,
+        "m_roadTime2": 0.1354142918,
+        "m_roadId": 78,
+        "m_markerId": 780000,
+        "forward": [],
+        "reverse": [
+          {
+            "option": {
+              "road": 85,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.004285714285714286,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      },
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.5651246408,
+        "m_roadTime2": 0.8034611184,
+        "m_roadId": 78,
+        "m_markerId": 780001,
+        "forward": [],
+        "reverse": [
+          {
+            "option": {
+              "road": 72,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.5651246408404724,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 79,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.5628557865,
+        "m_roadTime2": 0.8402445852,
+        "m_roadId": 79,
+        "m_markerId": 790000,
+        "forward": [
+          {
+            "option": {
+              "road": 80,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.8402445852,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 80,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.03995,
+        "m_roadTime2": 0.882725,
+        "m_roadId": 80,
+        "m_markerId": 800000,
+        "forward": [
+          {
+            "option": {
+              "road": 72,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.8827250000000209,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 79,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.03994999999999999,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 81,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.3741500056,
+        "m_roadTime2": 0.9906656645,
+        "m_roadId": 81,
+        "m_markerId": 810000,
+        "forward": [
+          {
+            "option": {
+              "road": 69,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.9906656644615599,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 70,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.37415000558333333,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 82,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0234999993,
+        "m_roadTime2": 0.962,
+        "m_roadId": 82,
+        "m_markerId": 820000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.962,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 79,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.0234999993,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 83,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.33735,
+        "m_roadTime2": 0.960025,
+        "m_roadId": 83,
+        "m_markerId": 830000,
+        "forward": [
+          {
+            "option": {
+              "road": 79,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9600250000000129,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.3373499999999917,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 84,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.01,
+        "m_roadTime2": 0.99,
+        "m_roadId": 84,
+        "m_markerId": 840000,
+        "forward": [
+          {
+            "option": {
+              "road": 66,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.99,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 67,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.01,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 85,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.2003333393,
+        "m_roadTime2": 0.4111180475,
+        "m_roadId": 85,
+        "m_markerId": 850000,
+        "m_bIgnoreRoadWidth": "1",
+        "forward": [],
+        "reverse": [
+          {
+            "option": {
+              "road": 107,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Louvre.tga",
+              "forward": true,
+              "exitTime": 0.20033333930373182,
+              "b": "0",
+              "turnText": "Louvre",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 108,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_ArcDeTriomphe.tga",
+              "forward": true,
+              "exitTime": 0.20033333930373182,
+              "b": "0",
+              "turnText": "Arc De Triomphe",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 86,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.068175,
+        "m_roadTime2": 0.92305,
+        "m_roadId": 86,
+        "m_markerId": 860000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.923050000000007,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.068175,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 87,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.101375,
+        "m_roadTime2": 0.9956000002,
+        "m_roadId": 87,
+        "m_markerId": 870000,
+        "forward": [
+          {
+            "option": {
+              "road": 83,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Montmartre.tga",
+              "forward": true,
+              "exitTime": 0.9956000002,
+              "b": "0",
+              "turnText": "Montmartre",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 0,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Louvre.tga",
+              "forward": false,
+              "exitTime": 0.9956000002,
+              "b": "0",
+              "turnText": "Louvre",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.10137499999999999,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 88,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0234000007,
+        "m_roadTime2": 0.9300666649,
+        "m_roadId": 88,
+        "m_markerId": 880000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.9300666648805415,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.023400000697374336,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 89,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.043666668,
+        "m_roadTime2": 0.99,
+        "m_roadId": 89,
+        "m_markerId": 890000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.99,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.04366666796803475,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 106,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0962000029,
+        "m_roadTime2": 0.8981666636,
+        "m_roadId": 106,
+        "m_markerId": 1060000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 263,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Louvre.tga",
+              "forward": true,
+              "exitTime": 0.898166663631809,
+              "b": "0",
+              "turnText": "Louvre",
+              "d": false
+            }
+          },
+          {
+            "option": {
+              "road": 136,
+              "alt": 262,
+              "turnFilePath": "UI/WhiteOrangeTheme/HUD/Route_Navigation/Route_Select_Montmartre.tga",
+              "forward": false,
+              "exitTime": 0.8981666636,
+              "b": "0",
+              "turnText": "Montmartre",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.09620000286698342,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 107,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.024675,
+        "m_roadTime2": 0.9925,
+        "m_roadId": 107,
+        "m_markerId": 1070000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.9924999999999999,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 85,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.024675000000000006,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 108,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0384000011,
+        "m_roadTime2": 0.5596666535,
+        "m_roadId": 108,
+        "m_markerId": 1080000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.6299393479259835,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 85,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.038400001144409175,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 133,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0075,
+        "m_roadTime2": 0.9925,
+        "m_roadId": 133,
+        "m_markerId": 1330000,
+        "forward": [
+          {
+            "option": {
+              "road": 65,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.9924999999999999,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 70,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.007500000000000001,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 134,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.01,
+        "m_roadTime2": 0.99,
+        "m_roadId": 134,
+        "m_markerId": 1340000,
+        "forward": [
+          {
+            "option": {
+              "road": 70,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.99,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 157,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.01,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 135,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0333666677,
+        "m_roadTime2": 0.9618333325,
+        "m_roadId": 135,
+        "m_markerId": 1350000,
+        "forward": [
+          {
+            "option": {
+              "road": 70,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.9618333325,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 132,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.033366667661070826,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 136,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0274000008,
+        "m_roadTime2": 0.9366666651,
+        "m_roadId": 136,
+        "m_markerId": 1360000,
+        "m_bIgnoreRoadWidth": "1",
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": false,
+              "exitTime": 0.9366666650772858,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 157,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.02740000081658362,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 137,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.0554666683,
+        "m_roadTime2": 0.7599822242,
+        "m_roadId": 137,
+        "m_markerId": 1370000,
+        "forward": [
+          {
+            "option": {
+              "road": 0,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.7599822242122909,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [
+          {
+            "option": {
+              "road": 132,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.05546666831970216,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 157,
+    "intersections": [
+      {
+        "type": "ENTITY_TYPE_INTERSECTIONMARKER",
+        "m_roadTime1": 0.915492172,
+        "m_roadTime2": 0.9655763829,
+        "m_roadId": 157,
+        "m_markerId": 1570000,
+        "forward": [
+          {
+            "option": {
+              "road": 134,
+              "alt": 265,
+              "turnFilePath": "",
+              "forward": true,
+              "exitTime": 0.9655763828736842,
+              "b": "0",
+              "turnText": "",
+              "d": false
+            }
+          }
+        ],
+        "reverse": [],
+        "b": 0
+      }
+    ]
+  },
+  {
+    "id": 3
+  },
+  {
+    "id": 24
+  },
+  {
+    "id": 91
+  },
+  {
+    "id": 94
+  },
+  {
+    "id": 104
+  },
+  {
+    "id": 138
+  },
+  {
+    "id": 139
+  },
+  {
+    "id": 142
+  },
+  {
+    "id": 143
+  },
+  {
+    "id": 145
+  },
+  {
+    "id": 146
+  },
+  {
+    "id": 147
+  },
+  {
+    "id": 149
+  },
+  {
+    "id": 150
+  },
+  {
+    "id": 151
+  },
+  {
+    "id": 152
+  },
+  {
+    "id": 153
+  },
+  {
+    "id": 154
+  },
+  {
+    "id": 155
+  },
+  {
+    "id": 158
+  },
+  {
+    "id": 159
+  },
+  {
+    "id": 163
+  },
+  {
+    "id": 164
+  },
+  {
+    "id": 95
+  },
+  {
+    "id": 96
+  },
+  {
+    "id": 97
+  },
+  {
+    "id": 98
+  },
+  {
+    "id": 99
+  },
+  {
+    "id": 100
+  },
+  {
+    "id": 101
+  },
+  {
+    "id": 102
+  },
+  {
+    "id": 103
+  },
+  {
+    "id": 105
+  },
+  {
+    "id": 109
+  },
+  {
+    "id": 110
+  },
+  {
+    "id": 111
+  },
+  {
+    "id": 112
+  },
+  {
+    "id": 113
+  },
+  {
+    "id": 114
+  },
+  {
+    "id": 115
+  },
+  {
+    "id": 116
+  },
+  {
+    "id": 117
+  },
+  {
+    "id": 118
+  },
+  {
+    "id": 119
+  },
+  {
+    "id": 120
+  },
+  {
+    "id": 121
+  },
+  {
+    "id": 122
+  },
+  {
+    "id": 123
+  },
+  {
+    "id": 124
+  },
+  {
+    "id": 125
+  },
+  {
+    "id": 126
+  },
+  {
+    "id": 127
+  },
+  {
+    "id": 128
+  },
+  {
+    "id": 129
+  },
+  {
+    "id": 130
+  },
+  {
+    "id": 131
+  },
+  {
+    "id": 156
   }
 ]
