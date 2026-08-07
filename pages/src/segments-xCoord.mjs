@@ -2721,7 +2721,7 @@ async function isBannerNearby(lastManifestEntry, courseId, type) {
                 // Yorkshire has issues with being close to the 0/1 line but I don't think I care because it's pretty good already
             }
         } else {
-            nearbySegment = roadSegments.filter(x => x.roadFinish + 0.1 > lastManifestEntry.end && x.roadFinish - 0.1 < lastManifestEntry.end)
+            nearbySegment = roadSegments.filter(x => x.roadFinish + 0.05 > lastManifestEntry.end && x.roadFinish - 0.05 < lastManifestEntry.end)
             let closestSegment;
             if (nearbySegment.length > 0) {
                 closestSegment = nearbySegment.reduce((closest, segment) => {
