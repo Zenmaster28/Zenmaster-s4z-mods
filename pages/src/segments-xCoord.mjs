@@ -3662,8 +3662,8 @@ export async function getTeamAssignments(teamsDb) {
 export const scoreFormats = [
     {
         name: "ZRL",
-        fts: "10..1",
-        ftsStep: 2,
+        fts: "15,12,10,8,6..1",
+        ftsStep: 1,
         ftsBonus: "",
         fal: "x..1",
         falStep: 1,
