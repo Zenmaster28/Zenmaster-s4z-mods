@@ -10,6 +10,14 @@ const doc = document.documentElement;
 const L = sauce.locale;
 const imperial = !!common.storage.get('/imperialUnits');
 L.setImperial(imperial);
+const warningDiv = document.getElementById("warningDiv");
+warningDiv?.addEventListener("click", () => {
+    console.log("warningDiv clicked")
+});
+warningDiv?.querySelector('.close-btn').addEventListener("click", function (e) {
+    e.stopPropagation();
+    warningDiv.classList.add("hidden");
+})
 
 common.settingsStore.setDefault({
     // v0.13.0...

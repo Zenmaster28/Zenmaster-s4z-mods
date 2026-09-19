@@ -1485,6 +1485,11 @@ export class SauceElevationProfile {
         if (!watching && (this.courseId == null || (!this.road && !this.route))) {
             return;
         } else if (watching) {
+            /*
+            if (watching.eventSubgroupId > 0) {
+                watching.eventSubgroupId = 99999999999999999999 // simulate unknown event
+            }
+            */
             if (watching.courseId !== this.courseId || this.courseRoads == 0) {
                 await this.setCourse(watching.courseId);
                 this.courseRoads = await common.rpc.getRoads(watching.courseId);
@@ -1530,9 +1535,15 @@ export class SauceElevationProfile {
                             let sg;
                             if (watching.eventSubgroupId) {
                                 sg = await common.rpc.getEventSubgroup(watching.eventSubgroupId);
-                                console.log(sg) 
-                                this.eventPowerups = zen.getEventPowerups(sg);
-                                this.eventInfo = await common.rpc.getEvent(sg.eventId);
+                                if (sg) {
+                                    console.log(sg) 
+                                    this.eventPowerups = zen.getEventPowerups(sg);
+                                    this.eventInfo = await common.rpc.getEvent(sg.eventId);
+                                    warningDiv.classList.add("hidden");
+                                } else {
+                                    console.warn("Unable to read event details!");
+                                    warningDiv.classList.remove("hidden");
+                                }
                             } 
                             
                             // Note sg.routeId is sometimes out of sync with state.routeId; avoid thrash
@@ -1605,7 +1616,9 @@ export class SauceElevationProfile {
                     }                    
                     this.routeOffset = this.deltas.reduce((a, b) => a + b, 0) / this.deltas.length;
                     console.log("Distance delta is: " + this.routeOffset)
-                    await this.setRoute(sg.routeId, {laps: sg.laps, eventSubgroupId: sg.id, distance: this.customDistance});
+                    if (sg) {
+                        await this.setRoute(sg.routeId, {laps: sg.laps, eventSubgroupId: sg.id, distance: this.customDistance});
+                    }
                 }
             }
             
@@ -2302,23 +2315,23 @@ export class SauceElevationProfile {
                                     if (nextSegment != -1)
                                     {                                        
                                         let puImgs = "";
-                                        if (this._eventSubgroupId && this.showNextPowerup && nextSegment.type != "custom") {
-                                            if (this.eventPowerups.type == "powerup_percent") {                                                
+                                        if (this._eventSubgroupId && this.showNextPowerup && this.eventPowerups && nextSegment.type != "custom") {
+                                            if (this.eventPowerups?.type == "powerup_percent") {                                                
                                                 puImgs += "&nbsp;"
                                                 for (let key in this.eventPowerups.powerups) {
                                                     puImgs += `<img src="./images/${key}.png" class="puImg">`
                                                 }
-                                            } else if (this.eventPowerups.type == "arch_powerup") {
+                                            } else if (this.eventPowerups?.type == "arch_powerup") {
                                                 let nextArchId = nextSegment.archId || 0;
                                                 puImgs += "&nbsp;"  
-                                                if (this.eventPowerups.powerups[nextArchId]) {
-                                                    puImgs += `<img src="./images/${this.eventPowerups.powerups[nextArchId]}.png" class="puImg">`
+                                                if (this.eventPowerups?.powerups[nextArchId]) {
+                                                    puImgs += `<img src="./images/${this.eventPowerups?.powerups[nextArchId]}.png" class="puImg">`
                                                 } else {
                                                     puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
                                                 }
-                                            } else if (this.eventPowerups.type == "nopowerups") {
+                                            } else if (this.eventPowerups?.type == "nopowerups") {
                                                 puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
-                                            } else if (this.eventPowerups.type == "standard") {
+                                            } else if (this.eventPowerups?.type == "standard") {
                                                 puImgs += '&nbsp;<img src="./images/aero.png" class="puImg"><img src="./images/feather.png" class="puImg"><img src="./images/draft.png" class="puImg">'
                                             } 
                                         }
