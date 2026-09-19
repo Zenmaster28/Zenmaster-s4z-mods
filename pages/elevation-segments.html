@@ -40,13 +40,15 @@
                 </div>
             </header>
         </div>
-        <div id="warningDiv" class="hidden" title="Unable to read event details to get lap/distance details.  Showing default route data of one lap.">
-            <img src="./images/warning.png">
-            <button class="close-btn" aria-label="Close">X</button>
-        </div>
+        
         <div id="content">
-            <div id="nextSegmentDiv" class="myField"></div>
-            
+            <div id="topLeftInfo">
+                <div id="warningDiv" class="hidden" title="Unable to read event details to get lap/distance details.  Showing default route data of one lap.  Click the X to hide this warning.">
+                    <img src="./images/warning.png">
+                    <button class="close-btn" aria-label="Close">X</button>
+                </div>
+                <div id="nextSegmentDiv" class="myField"></div>
+            </div>
             <div title="Click a field to change it.  Left/Right keys also work when focused."
                  class="fields"></div>         
                 
