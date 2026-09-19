@@ -194,3 +194,41 @@ th:last-child, td:last-child {
   top: 55px;
   right: 12px;
 }
+#warningDiv {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  width: 50px;
+  height: 50px;
+}
+#warningDiv img {
+  display: block;
+  width: 50px;
+  height: 50px;
+}
+.close-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+
+    width: 16px;
+    height: 16px;
+    padding: 0;
+
+    display: none;
+
+    border: none;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.8);
+    color: black;
+    font-size: 12px;
+    line-height: 16px;
+    cursor: pointer;
+}
+
+#warningDiv:hover .close-btn {
+    display: block;
+}
+.hidden {
+  display: none;
+}
