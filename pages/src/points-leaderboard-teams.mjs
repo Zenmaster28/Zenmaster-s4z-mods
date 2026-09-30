@@ -156,10 +156,10 @@ async function findDuplicateAssignments(pen) {
     for (const [zwift_id, teams] of riderMap.entries()) {
         if (teams.size > 1) {
             const athlete = await common.rpc.getAthlete(zwift_id);
-            console.log("duplicate athlete", athlete)
+            console.log("duplicate athlete", zwift_id, athlete)
             result.push({
             zwift_id,
-            name: athlete.sanitizedFullname ?? zwift_id,
+            name: athlete?.sanitizedFullname ?? zwift_id,
             teams: [...teams]
             });
         }
