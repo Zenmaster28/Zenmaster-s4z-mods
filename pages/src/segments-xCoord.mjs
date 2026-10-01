@@ -6116,6 +6116,27 @@ export function getManifestIntersections(manifest, courseId, courseRoads) {
                         option: nextManifestOption.option
                     }
                     intersectionList.push(manifestEntry)
+                } else {
+                    // there was no option to stay on this road, check if we are forced to exit here
+                    const mustExit = m.reverse ? 
+                        manifestIntersections[j].reverse.find(opt => opt.option.road === manifest[i + 1]?.roadId) :
+                        manifestIntersections[j].forward.find(opt => opt.option.road === manifest[i + 1]?.roadId);
+                    if (mustExit) {
+                        console.log("Encountered an intersection with a mandatory exit", mustExit)
+                        const manifestEntry = {
+                            idx: i,
+                            roadExit: true,
+                            m_markerId: manifestIntersections[j].m_markerId,
+                            m_roadId: manifestIntersections[j].m_roadId,
+                            m_roadTime1: manifestIntersections[j].m_roadTime1,
+                            m_roadTime2: manifestIntersections[j].m_roadTime2,
+                            reverse: m.reverse,
+                            option: mustExit.option
+                        }
+                        intersectionList.push(manifestEntry);
+                        //debugger
+
+                    }
                 };
             };
             const dir = m.reverse ? "reverse" : "forward";
