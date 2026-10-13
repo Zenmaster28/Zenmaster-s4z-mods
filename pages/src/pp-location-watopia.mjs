@@ -56,35 +56,56 @@ common.settingsStore.setDefault({
     Yumi: true,
     Jacques: true,
     Genie: true,
-    Constance: true
+    Constance: true,
+    Sophia: true,
+    Cruz: true,
+    Mochi: true,
+    Dani: true,
+    Betty: true
 });
 
 const settings = common.settingsStore.get();
 
 const ppIds = [
     {
-        id: 5147285,
-        name: "Coco"   
-    },
-    {
-        id: 5147260,
-        name: "Bernie"
-    },
-    {
-        id: 5147298,
-        name: "Constance"
-    },
-    {
-        id: 5147276,
-        name: "Maria"
+        id: 8089488,
+        name: "Sophia"   
     },
     {
         id: 5147250,
         name: "Taylor"
     },
     {
+        id: 8552055,
+        name: "Cruz"
+    },
+    {
+        id: 8552087,
+        name: "Mochi"
+    },
+    {
         id: 5147267,
         name: "Miguel"
+    },
+    {
+        id: 8552104,
+        name: "Dani"
+    },
+    {
+        id: 5147260,
+        name: "Bernie"
+    },
+    {
+        id: 5147276,
+        name: "Maria"
+    },
+    {
+        id: 8552115,
+        name: "Betty"
+    },
+    {
+        id: 5147285,
+        name: "Coco"
     },
     {
         id: 5162620,
@@ -97,6 +118,10 @@ const ppIds = [
     {
         id: 5147294,
         name: "Genie"
+    },
+    {
+        id: 5147298,
+        name: "Constance"
     }
 ];
 let ppIndex = 0;

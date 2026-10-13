@@ -126,20 +126,6 @@
             }
         },
         {
-            "file": "pages/pp-location-makuri.html",
-            "id": "Makuri-pp-locations",
-            "name": "Non Watopia Pace Partners",
-            "description": "Show the route location of the Pace Partners in worlds other than Watopia",
-            "overlay": true,
-            "frame": false,
-            "default_bounds": {
-                "width": 300,
-                "height": 225,
-                "x": -300,
-                "y": 100
-            }
-        },
-        {
             "file": "pages/pp-location-watopia.html",
             "id": "Watopia-pp-locations",
             "name": "Watopia Pace Partners",
@@ -150,6 +136,20 @@
                 "width": 300,
                 "height": 225,
                 "x": -300,
+                "y": 100
+            }
+        },
+        {
+            "file": "pages/pp-location-all.html",
+            "id": "All-pp-locations",
+            "name": "Pace Partner Locations",
+            "description": "Show the route location of all of the Pace Partners",
+            "overlay": true,
+            "frame": false,
+            "default_bounds": {
+                "width": 700,
+                "height": 725,
+                "x": 300,
                 "y": 100
             }
         },
