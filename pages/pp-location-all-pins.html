@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html class="settings-page" tabindex="0" data-settings-key="pp-location-settings-v2">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+        <!--
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';"/>
+        -->
+        <title>Pins - Settings</title>
+        <!--
+        <script src="/pages/src/preloads.js"></script>
+        -->
+        <link id="favicon" rel="shortcut icon" href="/pages/images/favicon.png"/>
+        <link rel="stylesheet" href="/pages/css/common.css"/>
+        <link rel="stylesheet" href="./css/elevation-segments.css"/>        
+        
+        <script type="module">
+            import {pins, showPinList} from './src/segments-xCoord.mjs';
+            import {settingsMain} from './src/elevation.mjs';
+            settingsMain();             
+            showPinList();               
+            const pinColorInput = document.getElementsByName("pinColor")
+            for (let pInput of pinColorInput) {
+                pInput.addEventListener("input", function() {
+                    showPinList()
+                });                
+            };
+            
+        </script>
+    </head>
+    <body>
+        <div id="titlebar">
+            <header>
+                <div class="logo"><img src="/pages/images/icon128.png"/></div>
+                <div class="title">Pins - Settings</div>
+                <div class="filler"></div>
+                <div class="buttons">
+                    <div title="Close this window" class="button close electron-only"><ms>close</ms></div>
+                </div>
+            </header>
+        </div>        
+        <div id="settings">
+            <form class="section">
+                
+                <label title="The size of the rider pins">
+                    <key data-added="2023-12-03">Pin size:</key>
+                    <input type="range" name="pinSize" min="0.1" max="2" step="0.1"/>
+                    <input type="number" name="pinSize" min="0.1" max="2" step="0.1" style="--size: 5"/>
+                </label>
+                <label>
+                    <key>Background opacity:</key>
+                    <input type="range" name="emphasisOpacity" min="0.1" max="1" step="0.1" data-depends-on="showEmphasisRiders"/>
+                    <input type="number" name="emphasisOpacity" min="0.1" max="1" step="0.1" style="--size: 5" data-depends-on="showEmphasisRiders"/>
+                </label> 
+                <hr>
+                <label style="visibility: hidden; height: 0px">
+                    <key>Pin:</key>
+                    <input type="text" name="pinName" id="pinName">
+                </label>
+            <div class="pinList">
+            Choose your pin style<br>
+            </div>
+            <div class="pinList" id="pinList">                
+            </div> 
+            <hr>           
+            <label>
+                <key title="Enter custom pin data in the form image:// or path://">Custom pin:</key>
+                <input type="checkbox" name="useCustomPin">
+                <input type="text" name="customPin" size="30">
+            </label>
+            <hr>
+            <a href="https://www.buymeacoffee.com/zenmaster28" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 108px !important;" ></a>
+            </form>
+        </div>
+    </body>
+</html>
