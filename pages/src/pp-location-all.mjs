@@ -430,15 +430,19 @@ async function initialize() {
     }
     */
 }
-function renderPPlocation(athleteId, elProfile, ppName) {
+//function renderPPlocation(athleteId, elProfile, ppName) {
+function renderPPlocation(pp) {
     let state = [];
-    let ppState = common.rpc.getPlayerState(athleteId);   
+    let ppState = common.rpc.getPlayerState(pp.athleteId); 
+    let elProfile = pp.elProfile; 
+    //debugger
+    const ppWkg = `${pp.wkg.toFixed(1)} w/kg`
     ppState.then(result => {
         state.push(result);    
-        elProfile.watchingId = athleteId;  
+        elProfile.watchingId = pp.athleteId;  
         elProfile.renderAthleteStates(state);
         let routeInfo = elProfile.routeInfo.routeFullData 
-        let routeTitle = `${ppName} (${state[0].pacerBotGroupSize}) on ${routeInfo.name}`
+        let routeTitle = `${pp.fullName} ${ppWkg} (${state[0].pacerBotGroupSize}) on ${routeInfo.name}`
         //debugger
         const routeTitleData = {
             title: {
@@ -525,11 +529,13 @@ export async function main() {
         };
         elProfilePP.chart.setOption(routeTitle)
         pp.elProfile = elProfilePP;
-        renderPPlocation(pp.athleteId, elProfilePP, pp.fullName)
+        //renderPPlocation(pp.athleteId, elProfilePP, pp.fullName)
+        renderPPlocation(pp);
     }
     let timer = setInterval(function() {
         console.log("Updating: " + activePPs[ppIndex].fullName);
-        renderPPlocation(activePPs[ppIndex].athleteId, activePPs[ppIndex].elProfile, activePPs[ppIndex].fullName);    
+        //renderPPlocation(activePPs[ppIndex].athleteId, activePPs[ppIndex].elProfile, activePPs[ppIndex].fullName);    
+        renderPPlocation(activePPs[ppIndex]);
         if (ppIndex < activePPs.length - 1) {        
             ppIndex++;            
         } else {
