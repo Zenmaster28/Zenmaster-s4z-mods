@@ -362,8 +362,9 @@ eventsSelect.addEventListener('change', async function() {
                 buttonDeleteFormat.style.visibility = "";
                 buttonImportExport.style.visibility = "";                
                 formatName.style.visibility = "";
-                const routeData = await zen.processRoute(currentSg.courseId, currentSg.routeId, currentSg.laps, currentSg.distanceInMeters, false, false, false)
-                let segmentData = routeData.markLines                            
+                const routeData = await zen.processRoute(currentSg.courseId, currentSg.routeId, currentSg.laps, currentSg.distanceInMeters, false, true, false)
+                let segmentData = routeData.markLines  
+                //debugger                          
                 segmentData = segmentData.filter(x => x.type != "custom" && !x.name.includes("Finish"));
                 segmentData.sort((a,b) => {
                     if (a.markLine > b.markLine) {
@@ -372,6 +373,7 @@ eventsSelect.addEventListener('change', async function() {
                         return -1
                     }
                 });
+                //debugger
                 const segmentsTable = await zen.buildPointsTable(segmentData, currentEventConfig)                    
                 segmentsTableDiv.innerHTML = "";
                 segmentsSaveDiv.innerHTML = "";

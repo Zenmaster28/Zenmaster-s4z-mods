@@ -180,6 +180,7 @@ async function getKnownRacersV2(watching, currentEventConfig) {
     const prevSegmentResults = await zen.getSegmentResults(dbSegments, eventSubgroupId, {live: true})
     const eventJoined = await common.rpc.getEventSubgroupEntrants(eventSubgroupId, {joined: true})
     const uniqueSegmentIds = getUniqueValues(segmentData, "segmentId")
+    
     //debugger
     if (prevSegmentResults.length > 0) {
         //debugger
@@ -455,13 +456,14 @@ async function getAllSegmentResults(watching, currentEventConfig) {
         eventStartTime = lastKnownSG.eventSubgroupStart
     }
     const uniqueSegmentIds = getUniqueValues(segmentData, "segmentId")
+    console.log("uniqueSegmentIds", uniqueSegmentIds)
     let resultsToStore = [];
     for (let segId of uniqueSegmentIds) {
         const t = Date.now();
         const resultsFull = await common.rpc.getSegmentResults(segId);    
         console.log(`Segment ${segId} results retrieved in ${Date.now() - t}ms`)
         let eventRes = resultsFull.filter(x => x.ts > eventStartTime);      
-        //console.log("Found segment results from full leaderboard", eventRes)     
+        console.log("Found segment results from full leaderboard", eventRes)     
         if (eventRes.length > 0)  // don't bother getting the full leaderboard if no live results for the event yet
         {            
             const filteredEventRes = eventRes.filter(event => eventRacers.includes(event.athleteId)); 
