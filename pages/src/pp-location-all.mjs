@@ -461,7 +461,7 @@ function renderPPlocation(pp) {
 
 export async function main() {
     common.initInteractionListeners();   
-    
+    const elProfiles = document.getElementById("content")
     try {
         activePPs = await common.rpc.getOnlinePacerBots();
         activePPs.sort((a,b) => a.wkg - b.wkg)
@@ -471,6 +471,7 @@ export async function main() {
         }
     } catch (err) {
         console.warn("getOnlinePacerBots() requires Sauce v2.4.0-alpha4 or later")
+        elProfiles.innerHTML = `This window requires Sauce v2.4.0-alpha4 or later. &#x1F61E;`
     }
     console.log("activePPs", activePPs)
     /*
@@ -500,7 +501,7 @@ export async function main() {
     });
     */
     const worldList = await common.getWorldList();   
-    const elProfiles = document.getElementById("content")
+    
     for (let pp of activePPs) {
         const newElDiv = `<div id=${pp.fullName} class="pp-location"></div>`
         elProfiles.innerHTML += newElDiv;
