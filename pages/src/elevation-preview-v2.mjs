@@ -33,7 +33,8 @@ common.settingsStore.setDefault({
     // v1.1+
     disableChat: false,
     showMap: true,
-    showAllArches: false
+    showAllArches: true,
+    showLoopSegments: false
 });
 
 const settings = common.settingsStore.get();
