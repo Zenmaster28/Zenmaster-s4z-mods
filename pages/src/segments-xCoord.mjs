@@ -112,7 +112,20 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
     {
         let segments = findSegmentsOnRoadSection(roadSegment, curvePathIndex, rsIdx, showAllArches);
         //debugger
-        //console.log("segments", segments)
+        /*
+        if (segments.length > 0) {
+            //console.log("segments", segments)
+            let sauceSegments = [];
+            if (routeFullData.manifest[rsIdx]?.segmentIds) {
+                for (let segment of routeFullData.manifest[rsIdx].segmentIds) {
+                    sauceSegments.push(await common.rpc.getSegment(segment))
+                }
+                //console.log("sauceSegments", sauceSegments)
+                //debugger
+            }
+            
+        }
+        */
         if (segments.length > 0 && routeSegments.length > 0) {
             //debugger
             segments.sort((a,b) => {
@@ -131,14 +144,28 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
             const thisManifest = routeFullData.manifest[manifestIdx];
             const lastManifest = routeFullData.manifest[manifestIdx - 1] || null;
             const sameRoad = thisManifest?.roadId === lastManifest?.roadId;
+            const epsilon = 0.00001;
             
             for (let segment of segments) {
                 
                 //if (segment.roadId == 9) {debugger}
+                //debugger
                 if ((sameRoad && !thisManifest?.reverse && thisManifest?.start < lastManifest?.end) ||
-                    (sameRoad && thisManifest?.reverse && thisManifest?.end < lastManifest?.start)
+                    (sameRoad && thisManifest?.reverse && thisManifest?.end > lastManifest?.start)
                 ) {
-                    if (!includeLoops && (segment.name.toLowerCase().includes("loop") || (segment.archId == null) || segment.roadStart == segment.roadFinish)) {
+                    if (segment.loop && segment.repeat > 1) {
+                        if (!segment.reverse && thisManifest.start === 0 && (segment.roadFinish >= (lastManifest.start - epsilon) && segment.roadFinish <= (lastManifest.end + epsilon))) {
+                            console.log("possible completed loop segment", segment)
+                            segment.loopCompleted = true;
+                            segment.repeat = segment.repeat - 1;
+                            routeSegments.push(segment);
+                        } else if (segment.reverse && thisManifest.end === 1 && (segment.roadFinish >= (lastManifest.start - epsilon) && segment.roadFinish <= (lastManifest.end + epsilon))) {
+                            console.log("possible completed loop segment", segment)
+                            segment.loopCompleted = true;
+                            segment.repeat = segment.repeat - 1;
+                            routeSegments.push(segment);
+                        }
+                    } else if (!includeLoops && (segment.name.toLowerCase().includes("loop") || (segment.archId == null) || segment.roadStart == segment.roadFinish)) {
                         //don't include loops if not specified - unless showing all arches
                         if (showAllArches) {
                             segment.finishArchOnly = true;
@@ -183,13 +210,16 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
                 } else {
                     routeSegments.push(segment)
                 }
+                
             }
+            
         }
         curvePathIndex += roadSegment.nodes.length;
         rsIdx++;
     }    
     for (let segment of routeSegments)
     {
+        //debugger
         let markLines = getSegmentMarkline(segment);
         //console.log(markLines)
         if (markLines)
@@ -234,11 +264,31 @@ export async function processRoute(courseId, routeId, laps, distance, includeLoo
         minNodeCounter += nodeCounter;
     }
     routeInfo.routeFullData.lapNodes = lapNodes;
+    const penExitDistance = await measurePenExit(routeInfo);
+    routeInfo.routeFullData.meta.penExitDistance = penExitDistance;
     console.log(routeInfo)
     //debugger
     return routeInfo;
 }
 
+async function measurePenExit(routeInfo) {
+    const penExitManifest = routeInfo.routeFullData.manifest.filter(x => x.penExit);
+    let penExitDistance = 0;
+    if (penExitManifest.length > 0) {
+        for (let exitRoad of penExitManifest) {
+            const exitRoadData = await common.getRoad(routeInfo.routeFullData.courseId, exitRoad.roadId);
+            if (exitRoadData) {
+                const roadDistance = exitRoadData.curvePath.distanceBetweenRoadPercents(exitRoad.start, exitRoad.end, 4e-2) / 100;
+                penExitDistance += roadDistance;
+            } else {
+                console.warn("exitRoad not found??");
+                debugger
+            };
+            
+        }
+    }
+    return penExitDistance;
+}
 function findSegmentsOnRoadSection(thisRoad, cpIndex, rsIdx, showAllArches) {
     
     typeof thisRoad.reverse === 'undefined' ? thisRoad.reverse = false : "";
@@ -307,6 +357,24 @@ function findSegmentsOnRoadSection(thisRoad, cpIndex, rsIdx, showAllArches) {
                     newSegment.repeat = 1;
                 }
                 newSegment.roadSegmentIndex = rsIdx;
+                if (newSegment.loop && newSegment.repeat > 1) {
+                    const thisManifest = routeFullData.manifest[rsIdx];
+                    const lastManifest = routeFullData.manifest[rsIdx - 1] || null;
+                    const lastRoad = routeFullData.roadSegments[rsIdx - 1] || null;
+                    const sameRoad = thisManifest?.roadId === lastManifest?.roadId;
+                    const epsilon = 0.00001;
+                    if (sameRoad &&!newSegment.reverse && thisManifest?.start === 0 && (segment.roadFinish >= (lastManifest?.start - epsilon) && segment.roadFinish <= (lastManifest?.end + epsilon))) {
+                        const lastSegmentPass = routeSegments.filter(x => x.id === newSegment.id).at(-1);
+                        newSegment.boundsOriginal = newSegment.bounds;
+                        newSegment.bounds = lastSegmentPass.boundsOriginal || lastSegmentPass.bounds;
+                        //debugger
+                    } else if (sameRoad &&newSegment.reverse && thisManifest?.end === 1 && (segment.roadFinish >= (lastManifest?.start - epsilon) && segment.roadFinish <= (lastManifest?.end + epsilon))) {
+                        const lastSegmentPass = routeSegments.filter(x => x.id === newSegment.id).at(-1);
+                        newSegment.boundsOriginal = newSegment.bounds;
+                        newSegment.bounds = lastSegmentPass.boundsOriginal || lastSegmentPass.bounds;
+                        //debugger
+                    }
+                }
                 if (originIndex != -1 && (
                         routeSegments.length == 0 || 
                         (newSegment.bounds.roadSegment - 1 != routeSegments[routeSegments.length - 1].bounds.roadSegment ||
@@ -425,6 +493,7 @@ function getSegmentMarkline(segment) {
     let indexOffset = (distances[boundsLineIndex + 1] - distances[boundsLineIndex]) * percentOffset;
     let markLineIndex = distances[boundsLineIndex] + indexOffset                
     //allMarkLines.push({name: segment.name, markLine: markLineIndex, id: segment.id})  // segment start lines
+    
     const markLineStart = segment.finishArchOnly ? null : {
         name: segment.name, 
         markLine: markLineIndex, 
@@ -1239,6 +1308,9 @@ export async function getModifiedRoute(id, disablePenRouting, customRouteData) {
         route = customRouteData
     } else {
         route = await common.rpc.getRoute(id); 
+        const routePath = await common.computeRoutePath(route);
+        route.sections = routePath.sections;
+        route.meta = routePath.meta;
     }        
         if (!route) {
             //console.log("Route not found in Sauce, checking json")
@@ -1259,7 +1331,7 @@ export async function getModifiedRoute(id, disablePenRouting, customRouteData) {
         let penExitRoute = [];  
         if (!disablePenRouting) {
             penExitRoute = await getPenExitRoute(route)        
-            //console.log("Pen exit path", penExitRoute)
+            console.log("Pen exit path", penExitRoute)
         }
 
         if (penExitRoute.length > 0) {
@@ -1290,7 +1362,8 @@ export async function getModifiedRoute(id, disablePenRouting, customRouteData) {
                         leadin: true,
                         roadId: manifest[i].roadId,
                         start: manifest[i].paddockExitRoadTime ? manifest[i].paddockExitRoadTime : manifest[i].start,
-                        reverse: manifest[i].reverse
+                        reverse: manifest[i].reverse,
+                        penExit: true
                     })
                 }   
                 //debugger             
@@ -1703,6 +1776,7 @@ export async function buildPointsTable(segmentData, currentEventConfig) {
     table.id = "segmentsTable"
     let existingConfig = currentEventConfig ? true : false;    
     // Loop through each segment to create rows
+    //debugger
     segmentData.forEach(segment => {
         //debugger
         let existingSegment;
@@ -2163,7 +2237,8 @@ export const formatTime2 = (milliseconds, timePrecision = 3) => {
 
 
 export function getEventPowerups(sg) {
-    let powerUps = {};
+    let eventPowerUps = [];
+    
     const puList = {
         0: 'feather',
         1: 'draft',
@@ -2177,35 +2252,53 @@ export function getEventPowerups(sg) {
     }
     const customPowerups = sg?.allTags.filter(tag => tag.includes('powerup'))    
     if (customPowerups?.length > 0) {
-        customPowerups.sort(); // if there are arch powerups, we want this first in the array as they take precedence over powerup_percent
-        let customPU = customPowerups[0].split("=")
-        powerUps.type = customPU[0]
-        const puResult = {};
-        if (powerUps.type == "powerup_percent") { // powerups are randomly selected at each arch according to percentages returned
-            const puParts = customPU[1].split(',')
-            const puPairs = puParts.map(part => part.replace(/[^0-9]/g, '')).filter(part => part !== ''); // strip out anything that isn't a number
-            for (let i = 0; i < puPairs.length; i += 2) {
-                const puKey = puList[puPairs[i]]
-                const puValue = parseInt(puPairs[i + 1])
-                puResult[puKey] = puValue
+        for (let powerupType of customPowerups) {
+            let powerUps = {};
+            //customPowerups.sort(); // if there are arch powerups, we want this first in the array as they take precedence over powerup_percent
+            //debugger
+            let customPU = powerupType.split("=")
+            powerUps.type = customPU[0]
+            const puResult = {};
+            if (powerUps.type == "powerup_percent") { // powerups are randomly selected at each arch according to percentages returned
+                const puParts = customPU[1].split(',')
+                const puPairs = puParts.map(part => part.replace(/[^0-9]/g, '')).filter(part => part !== ''); // strip out anything that isn't a number
+                for (let i = 0; i < puPairs.length; i += 2) {
+                    const puKey = puList[puPairs[i]]
+                    const puValue = parseInt(puPairs[i + 1])
+                    puResult[puKey] = puValue
+                }
+            } else if (powerUps.type == "arch_powerup") { // powerups are designated at returned arches
+                const puPairs = customPU[1].replace(/"/g, '').split(",")
+                for (let i = 0; i < puPairs.length; i += 2) {
+                    const puKey = puPairs[i];
+                    const puValue = puList[puPairs[i + 1]]
+                    puResult[puKey] = puValue
+                }
             }
-        } else if (powerUps.type == "arch_powerup") { // powerups are designated at returned arches
-            const puPairs = customPU[1].replace(/"/g, '').split(",")
-            for (let i = 0; i < puPairs.length; i += 2) {
-                const puKey = puPairs[i];
-                const puValue = puList[puPairs[i + 1]]
-                puResult[puKey] = puValue
-            }
+            powerUps.powerups = puResult  
+            eventPowerUps.push(powerUps)      
         }
-        powerUps.powerups = puResult        
     } else if (sg?.rulesId & 1 == 1 || sg?.eventType == "TIME_TRIAL" || sg?.eventType == "TEAM_TIME_TRIAL") { // bitwise rule 1 match or iTT / TTT
-        powerUps.type = "nopowerups"    
+        powerUps = {
+            type: "nopowerups"
+        }
+        eventPowerUps.push(powerUps)
+        //powerUps.type = "nopowerups"    
     } else if (sg?.eventType == "GROUP_WORKOUT") {
-        powerUps.type = "other"
+        powerUps = {
+            type: "other"
+        }
+        eventPowerUps.push(powerUps)
+        //powerUps.type = "other"
     } else {
-        powerUps.type = "standard"        
+        powerUps = {
+            type: "standard"
+        }
+        eventPowerUps.push(powerUps)
+        //powerUps.type = "standard"        
     }
-    return powerUps;
+    return eventPowerUps
+    //return powerUps;
 }
 
 export function calculateDistance(point1, point2) {
@@ -6082,8 +6175,18 @@ export function getManifestIntersections(manifest, courseId, courseRoads) {
             return m.reverse
                 ? b.m_roadTime2 - a.m_roadTime2
                 : a.m_roadTime2 - b.m_roadTime2;
-        });
-        if (manifestIntersections.length > 1) {            
+        });        
+        if (manifestIntersections.length > 1) { 
+            const exceptionIntersections = [
+                {
+                    courseId: 6,
+                    m_markerId: 210001
+                },
+                {
+                    courseId: 6,
+                    m_markerId: 1280001
+                }
+            ]           
             for (let j = 0; j < manifestIntersections.length - 1; j++) {                
                 const dir = m.reverse ? "reverse" : "forward";
                 let cyclingRoadOptions = 0;
@@ -6101,9 +6204,17 @@ export function getManifestIntersections(manifest, courseId, courseRoads) {
                 manifestIntersections[j].reverse.find(opt => !opt.option.forward && opt.option.road == m.roadId) :
                 manifestIntersections[j].forward.find(opt => opt.option.forward && opt.option.road == m.roadId);
                 let exception = false;
+                /*
                 if (courseId === 6 && manifestIntersections[j].m_markerId === 210001) {
                     exception = true;
                 }
+                */
+                const exceptionTest = exceptionIntersections.find(x => x.courseId === courseId && x.m_markerId === manifestIntersections[j].m_markerId);
+                if (exceptionTest) {
+                    exception = true;
+                    console.log("Found an exception intersection", exceptionTest)
+                        
+                }                
                 if (nextManifestOption) {
                     const manifestEntry = {
                         idx: i,

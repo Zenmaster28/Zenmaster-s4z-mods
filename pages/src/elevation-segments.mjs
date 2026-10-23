@@ -1539,6 +1539,7 @@ export class SauceElevationProfile {
                                 if (sg) {
                                     console.log(sg) 
                                     this.eventPowerups = zen.getEventPowerups(sg);
+                                    console.log("eventPowerups", this.eventPowerups)
                                     this.eventInfo = await common.rpc.getEvent(sg.eventId);
                                     warningDiv.classList.add("hidden");
                                 } else {
@@ -2316,25 +2317,50 @@ export class SauceElevationProfile {
                                     if (nextSegment != -1)
                                     {                                        
                                         let puImgs = "";
-                                        if (this._eventSubgroupId && this.showNextPowerup && this.eventPowerups && nextSegment.type != "custom") {
-                                            if (this.eventPowerups?.type == "powerup_percent") {                                                
-                                                puImgs += "&nbsp;"
-                                                for (let key in this.eventPowerups.powerups) {
-                                                    puImgs += `<img src="./images/${key}.png" class="puImg">`
-                                                }
-                                            } else if (this.eventPowerups?.type == "arch_powerup") {
+                                        if (this._eventSubgroupId && this.showNextPowerup && this.eventPowerups.length > 0 && nextSegment.type != "custom") {
+                                            if (this.eventPowerups.length === 1) {
+                                                if (this.eventPowerups?.type == "powerup_percent") {                                                
+                                                    puImgs += "&nbsp;"
+                                                    for (let key in this.eventPowerups.powerups) {
+                                                        puImgs += `<img src="./images/${key}.png" class="puImg">`
+                                                    }
+                                                } else if (this.eventPowerups?.type == "arch_powerup") {
+                                                    let nextArchId = nextSegment.archId || 0;
+                                                    puImgs += "&nbsp;"  
+                                                    if (this.eventPowerups?.powerups[nextArchId]) {
+                                                        puImgs += `<img src="./images/${this.eventPowerups?.powerups[nextArchId]}.png" class="puImg">`
+                                                    } else {
+                                                        puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
+                                                    }
+                                                } else if (this.eventPowerups?.type == "nopowerups") {
+                                                    puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
+                                                } else if (this.eventPowerups?.type == "standard") {
+                                                    puImgs += '&nbsp;<img src="./images/aero.png" class="puImg"><img src="./images/feather.png" class="puImg"><img src="./images/draft.png" class="puImg">'
+                                                } 
+                                            } else {
+                                                let foundPuInfo = false;
+                                                const archConfig = this.eventPowerups.find(x => x.type === "arch_powerup");
                                                 let nextArchId = nextSegment.archId || 0;
                                                 puImgs += "&nbsp;"  
-                                                if (this.eventPowerups?.powerups[nextArchId]) {
-                                                    puImgs += `<img src="./images/${this.eventPowerups?.powerups[nextArchId]}.png" class="puImg">`
-                                                } else {
+                                                if (archConfig.powerups[nextArchId]) {
+                                                    puImgs += `<img src="./images/${archConfig.powerups[nextArchId]}.png" class="puImg">`
+                                                    foundPuInfo = true;
+                                                } /* else {
                                                     puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
-                                                }
-                                            } else if (this.eventPowerups?.type == "nopowerups") {
-                                                puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
-                                            } else if (this.eventPowerups?.type == "standard") {
-                                                puImgs += '&nbsp;<img src="./images/aero.png" class="puImg"><img src="./images/feather.png" class="puImg"><img src="./images/draft.png" class="puImg">'
-                                            } 
+                                                }*/
+                                                if (!foundPuInfo) {
+                                                    const powerupPercent = this.eventPowerups.find(x => x.type === "powerup_percent");
+                                                    puImgs += "&nbsp;"
+                                                    for (let key in powerupPercent.powerups) {
+                                                        puImgs += `<img src="./images/${key}.png" class="puImg">`
+                                                        foundPuInfo = true;
+                                                    }
+                                                    if (!foundPuInfo) {
+                                                        puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
+                                                    }
+                                                } 
+
+                                            }
                                         }
 
                                         const distToNextSegment = nextSegment.markLine - xCoord;
