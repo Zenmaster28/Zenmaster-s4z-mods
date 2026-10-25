@@ -2317,11 +2317,11 @@ export class SauceElevationProfile {
                                     if (nextSegment != -1)
                                     {                                        
                                         let puImgs = "";
-                                        if (this._eventSubgroupId && this.showNextPowerup && this.eventPowerups.length > 0 && nextSegment.type != "custom") {
-                                            if (this.eventPowerups.length === 1) {
+                                        if (this._eventSubgroupId && this.showNextPowerup && this.eventPowerups?.length > 0 && nextSegment.type != "custom") {
+                                            if (this.eventPowerups?.length === 1) {
                                                 if (this.eventPowerups?.type == "powerup_percent") {                                                
                                                     puImgs += "&nbsp;"
-                                                    for (let key in this.eventPowerups.powerups) {
+                                                    for (let key in this.eventPowerups?.powerups) {
                                                         puImgs += `<img src="./images/${key}.png" class="puImg">`
                                                     }
                                                 } else if (this.eventPowerups?.type == "arch_powerup") {
@@ -2339,7 +2339,7 @@ export class SauceElevationProfile {
                                                 } 
                                             } else {
                                                 let foundPuInfo = false;
-                                                const archConfig = this.eventPowerups.find(x => x.type === "arch_powerup");
+                                                const archConfig = this.eventPowerups?.find(x => x.type === "arch_powerup");
                                                 let nextArchId = nextSegment.archId || 0;
                                                 puImgs += "&nbsp;"  
                                                 if (archConfig.powerups[nextArchId]) {
@@ -2349,7 +2349,7 @@ export class SauceElevationProfile {
                                                     puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
                                                 }*/
                                                 if (!foundPuInfo) {
-                                                    const powerupPercent = this.eventPowerups.find(x => x.type === "powerup_percent");
+                                                    const powerupPercent = this.eventPowerups?.find(x => x.type === "powerup_percent");
                                                     puImgs += "&nbsp;"
                                                     for (let key in powerupPercent.powerups) {
                                                         puImgs += `<img src="./images/${key}.png" class="puImg">`
