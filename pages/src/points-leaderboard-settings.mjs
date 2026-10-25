@@ -367,7 +367,7 @@ eventsSelect.addEventListener('change', async function() {
                 //debugger                          
                 segmentData = segmentData.filter(x => x.type != "custom" && !x.name.includes("Finish"));
                 segmentData.sort((a,b) => {
-                    if (a.markLine > b.markLine) {
+                    if (a.markLine + a.segLength > b.markLine + b.segLength) {
                         return 1
                     } else {
                         return -1
