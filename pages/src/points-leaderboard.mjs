@@ -1378,7 +1378,8 @@ function updateSegmentHint(watching) {
                             nextSegmentInfo.distance = distanceToNextSegmentDisplay;
                             nextSegmentDistanceCell.innerHTML = nextSegmentInfo.distance;
                         }
-                        const tmpNextSegmentName = `${nextSegmentConfig.name} ${nextSegmentFinish ? " Finish " : ""}[${nextSegmentConfig.repeat}] ${puImgs}`
+                        //const tmpNextSegmentName = `${nextSegmentConfig.name} ${nextSegmentFinish ? " Finish " : ""}[${nextSegmentConfig.repeat}] ${puImgs}`
+                        const tmpNextSegmentName = `${nextSegmentConfig.name} ${nextSegmentFinish ? " Finish " : ""}[${nextSegmentConfig.repeat}]`
                         if (nextSegmentInfo.name != tmpNextSegmentName) {
                             nextSegmentInfo.name = tmpNextSegmentName;
                             nextSegmentNameCell.innerHTML = nextSegmentInfo.name;
