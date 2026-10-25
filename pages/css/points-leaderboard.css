@@ -497,12 +497,19 @@ tr.teamScoreDetails {
   table-layout: fixed;
 }
 #segmentHintTable .nextSegmentName {
-  width: 60%;
+  width: 100%;
   text-align: left !important;
   overflow: hidden;
+  display: flex;
+  flex-direction: row;
 }
 #segmentHintTable .nextSegmentInfo {
   width: 20%;
   text-align: left !important;
   overflow: hidden;
+}
+#segmentHintTable img {
+  max-height: 1em;
+  width: auto;
+  margin-top: 0.1em;
 }

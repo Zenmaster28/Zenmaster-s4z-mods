@@ -2279,19 +2279,19 @@ export function getEventPowerups(sg) {
             eventPowerUps.push(powerUps)      
         }
     } else if (sg?.rulesId & 1 == 1 || sg?.eventType == "TIME_TRIAL" || sg?.eventType == "TEAM_TIME_TRIAL") { // bitwise rule 1 match or iTT / TTT
-        powerUps = {
+        let powerUps = {
             type: "nopowerups"
         }
         eventPowerUps.push(powerUps)
         //powerUps.type = "nopowerups"    
     } else if (sg?.eventType == "GROUP_WORKOUT") {
-        powerUps = {
+        let powerUps = {
             type: "other"
         }
         eventPowerUps.push(powerUps)
         //powerUps.type = "other"
     } else {
-        powerUps = {
+        let powerUps = {
             type: "standard"
         }
         eventPowerUps.push(powerUps)

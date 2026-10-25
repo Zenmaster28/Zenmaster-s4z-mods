@@ -40,6 +40,7 @@ let nextSegmentInfo = {
     scoreFormat: null,
     distance: null
 };
+let eventPowerups = [];
 const nextSegmentNameCell = document.getElementById("nextSegmentName");
 const nextSegmentConfigCell = document.getElementById("nextSegmentConfig");
 const nextSegmentDistanceCell = document.getElementById("nextSegmentDistance");
@@ -447,6 +448,8 @@ async function getAllSegmentResults(watching, currentEventConfig) {
     let sg = await common.rpc.getEventSubgroup(eventSubgroupId)    
     let eventStartTime;
     if (sg) { 
+        eventPowerups = zen.getEventPowerups(sg);
+        console.log("eventPowerups", eventPowerups)
         eventStartTime = sg.eventSubgroupStart;
         lastKnownSG.eventSubgroupStart = eventStartTime
         if (watching.state.eventSubgroupId) {
@@ -454,6 +457,7 @@ async function getAllSegmentResults(watching, currentEventConfig) {
         }
     } else {
         eventStartTime = lastKnownSG.eventSubgroupStart
+        eventPowerups = [];
     }
     const uniqueSegmentIds = getUniqueValues(segmentData, "segmentId")
     console.log("uniqueSegmentIds", uniqueSegmentIds)
@@ -1303,26 +1307,78 @@ function updateSegmentHint(watching) {
                 const currentPosition = watching.segmentData.currentPosition;
                 const nextSegment = segmentStartLines.find(x => x.markLine > currentPosition);
                 const nextFinishLine = segmentFinishLines.find(x => x.markLine > currentPosition);
-                if (showNextSegmentHint && currentEventConfig && nextSegment && !waitingInPen) {
+                //debugger
+                if (showNextSegmentHint && currentEventConfig && (nextSegment || nextFinishLine) && !waitingInPen) {
                     let nextSegmentConfig;
-                    if (nextFinishLine.markLine > nextSegment.markLine) {
-                        nextSegmentConfig = currentEventConfig.segments.find(x => x.segmentId === nextSegment.id && x.repeat === nextSegment.repeat);
+                    if (nextFinishLine?.markLine > nextSegment?.markLine) {
+                        nextSegmentConfig = currentEventConfig.segments.find(x => x.segmentId === nextSegment?.id && x.repeat === nextSegment?.repeat);
                     } else {
-                        nextSegmentConfig = currentEventConfig.segments.find(x => x.segmentId === nextFinishLine.id && x.repeat === nextFinishLine.repeat);
+                        nextSegmentConfig = currentEventConfig.segments.find(x => x.segmentId === nextFinishLine?.id && x.repeat === nextFinishLine?.repeat);
                     }
                     if (nextSegmentConfig) {
+                        let puImgs = "";  
+                        let nextSegmentFinish = false;
                         let distanceToNextSegment; 
-                        if (nextFinishLine.markLine > nextSegment.markLine) {
-                            distanceToNextSegment = nextSegment.markLine - currentPosition;
+                        if (nextFinishLine?.markLine > nextSegment?.markLine && nextSegment.id === nextFinishLine.id) {
+                            distanceToNextSegment = nextSegment?.markLine - currentPosition;
                         } else {
-                            distanceToNextSegment = nextFinishLine.markLine - currentPosition;
+                            distanceToNextSegment = nextFinishLine?.markLine - currentPosition;
+                            nextSegmentFinish = true;
                         }
+                        //debugger                      
+                        if (eventPowerups?.length === 1) {
+                            if (eventPowerups[0].type == "powerup_percent") {                                                
+                                puImgs += "&nbsp;"
+                                for (let key in eventPowerups[0].powerups) {
+                                    puImgs += `<img src="./images/${key}.png" class="puImg">`
+                                }
+                            } else if (eventPowerups[0].type == "arch_powerup") {
+                                let nextArchId = nextSegmentFinish ? nextFinishLine.archId : nextSegment.archId || 0;
+                                puImgs += "&nbsp;"  
+                                if (eventPowerups[0].powerups[nextArchId]) {
+                                    puImgs += `<img src="./images/${eventPowerups[0].powerups[nextArchId]}.png" class="puImg">`
+                                } else {
+                                    puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
+                                }
+                            } else if (eventPowerups[0].type == "nopowerups") {
+                                puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
+                            } else if (eventPowerups[0].type == "standard") {
+                                puImgs += '&nbsp;<img src="./images/aero.png" class="puImg"><img src="./images/feather.png" class="puImg"><img src="./images/draft.png" class="puImg">'
+                            } 
+                        } else {
+                            let foundPuInfo = false;
+                            const archConfig = eventPowerups?.find(x => x.type === "arch_powerup");
+                            
+                            let nextArchId = nextSegmentFinish ? nextFinishLine.archId || 0 : nextSegment.archId || 0;
+                            puImgs += "&nbsp;"  
+                            if (archConfig?.powerups[nextArchId]) {
+                                //debugger
+                                puImgs += `<img src="./images/${archConfig.powerups[nextArchId]}.png" class="puImg">`
+                                foundPuInfo = true;
+                            } /* else {
+                                puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
+                            }*/
+                           //debugger
+                            if (!foundPuInfo) {
+                                const powerupPercent = eventPowerups?.find(x => x.type === "powerup_percent");
+                                puImgs += "&nbsp;"
+                                for (let key in powerupPercent?.powerups) {
+                                    puImgs += `<img src="./images/${key}.png" class="puImg">`
+                                    foundPuInfo = true;
+                                }
+                                if (!foundPuInfo) {
+                                    puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
+                                }
+                            } 
+
+                        }
+                        
                         const distanceToNextSegmentDisplay = distanceToNextSegment >= 1000 ? `${(distanceToNextSegment / 1000).toFixed(2)}km` : `${parseInt(distanceToNextSegment)}m`                        
                         if (nextSegmentInfo.distance != distanceToNextSegmentDisplay) {
                             nextSegmentInfo.distance = distanceToNextSegmentDisplay;
                             nextSegmentDistanceCell.innerHTML = nextSegmentInfo.distance;
                         }
-                        const tmpNextSegmentName = `${nextSegmentConfig.name} [${nextSegmentConfig.repeat}]`
+                        const tmpNextSegmentName = `${nextSegmentConfig.name} ${nextSegmentFinish ? " Finish " : ""}[${nextSegmentConfig.repeat}] ${puImgs}`
                         if (nextSegmentInfo.name != tmpNextSegmentName) {
                             nextSegmentInfo.name = tmpNextSegmentName;
                             nextSegmentNameCell.innerHTML = nextSegmentInfo.name;

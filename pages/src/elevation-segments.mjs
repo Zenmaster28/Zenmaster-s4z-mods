@@ -2319,22 +2319,22 @@ export class SauceElevationProfile {
                                         let puImgs = "";
                                         if (this._eventSubgroupId && this.showNextPowerup && this.eventPowerups?.length > 0 && nextSegment.type != "custom") {
                                             if (this.eventPowerups?.length === 1) {
-                                                if (this.eventPowerups?.type == "powerup_percent") {                                                
+                                                if (this.eventPowerups[0].type == "powerup_percent") {                                                
                                                     puImgs += "&nbsp;"
-                                                    for (let key in this.eventPowerups?.powerups) {
+                                                    for (let key in this.eventPowerups[0].powerups) {
                                                         puImgs += `<img src="./images/${key}.png" class="puImg">`
                                                     }
-                                                } else if (this.eventPowerups?.type == "arch_powerup") {
+                                                } else if (this.eventPowerups[0].type == "arch_powerup") {
                                                     let nextArchId = nextSegment.archId || 0;
                                                     puImgs += "&nbsp;"  
-                                                    if (this.eventPowerups?.powerups[nextArchId]) {
-                                                        puImgs += `<img src="./images/${this.eventPowerups?.powerups[nextArchId]}.png" class="puImg">`
+                                                    if (this.eventPowerups[0].powerups[nextArchId]) {
+                                                        puImgs += `<img src="./images/${this.eventPowerups[0].powerups[nextArchId]}.png" class="puImg">`
                                                     } else {
                                                         puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
                                                     }
-                                                } else if (this.eventPowerups?.type == "nopowerups") {
+                                                } else if (this.eventPowerups[0].type == "nopowerups") {
                                                     puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
-                                                } else if (this.eventPowerups?.type == "standard") {
+                                                } else if (this.eventPowerups[0].type == "standard") {
                                                     puImgs += '&nbsp;<img src="./images/aero.png" class="puImg"><img src="./images/feather.png" class="puImg"><img src="./images/draft.png" class="puImg">'
                                                 } 
                                             } else {
@@ -2342,7 +2342,7 @@ export class SauceElevationProfile {
                                                 const archConfig = this.eventPowerups?.find(x => x.type === "arch_powerup");
                                                 let nextArchId = nextSegment.archId || 0;
                                                 puImgs += "&nbsp;"  
-                                                if (archConfig.powerups[nextArchId]) {
+                                                if (archConfig?.powerups[nextArchId]) {
                                                     puImgs += `<img src="./images/${archConfig.powerups[nextArchId]}.png" class="puImg">`
                                                     foundPuInfo = true;
                                                 } /* else {
