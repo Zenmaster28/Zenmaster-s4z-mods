@@ -108,7 +108,10 @@ common.settingsStore.setDefault({
     emphasisRiders: "",
     showDistanceGap: true,
     showTimeGap: true,
-    emphasisOpacity: 0.5
+    emphasisOpacity: 0.5,
+    show1x: true,
+    show2x: true,
+    show3x: true
 });
 
 const settings = common.settingsStore.get();
@@ -304,6 +307,12 @@ function createElevationProfile({worldList}, divId) {
     const showEmphasisRiders = settings.showEmphasisRiders;
     typeof(settings.emphasisOpacity) == "undefined" ? common.settingsStore.set("emphasisOpacity", 0.5) : null;
     const emphasisOpacity = settings.emphasisOpacity;
+    typeof(settings.show1x) === "undefined" ? common.settingsStore.set("show1x", true) : null
+    const show1x = settings.show1x
+    typeof(settings.show1x) === "undefined" ? common.settingsStore.set("show2x", true) : null
+    const show2x = settings.show2x
+    typeof(settings.show1x) === "undefined" ? common.settingsStore.set("show3x", true) : null
+    const show3x = settings.show3x
     const options = {
         el,
         worldList,
@@ -463,7 +472,12 @@ export async function main() {
     common.initInteractionListeners();   
     const elProfiles = document.getElementById("content")
     try {
-        activePPs = await common.rpc.getOnlinePacerBots();
+        const allPPs = await common.rpc.getOnlinePacerBots();
+        activePPs = allPPs.filter(x => 
+            (settings.show1x && x.wkg < 2.0) ||
+            (settings.show2x && x.wkg >= 2.0 && x.wkg < 3.0) ||
+            (settings.show3x && x.wkg >= 3.0)
+        );
         activePPs.sort((a,b) => a.wkg - b.wkg)
         for (let pp of activePPs) {
             const fullName = `${pp.firstName.replaceAll(' ', '')}.${pp.lastName.replaceAll(' ', '')}`;
@@ -474,32 +488,7 @@ export async function main() {
         elProfiles.innerHTML = `This window requires Sauce v2.4.0-alpha4 or later. &#x1F61E;`
     }
     console.log("activePPs", activePPs)
-    /*
-    const fieldsEl = document.querySelector('#content .fields');
-    const fieldRenderer = new common.Renderer(fieldsEl, {fps: 1});
-    const mapping = [];
-    const defaults = {
-        f1: 'grade',
-        f2: 'altitude',
-    };
-    const numFields = common.settingsStore.get('fields');
-    for (let i = 0; i < (isNaN(numFields) ? 1 : numFields); i++) {
-        const id = `f${i + 1}`;
-        fieldsEl.insertAdjacentHTML('afterbegin', `
-            <div class="field" data-field="${id}">
-                <div class="key"></div><div class="value"></div><abbr class="unit"></abbr>
-            </div>
-        `);
-        mapping.push({id, default: defaults[id] || 'time-elapsed'});
-    }
-    fieldRenderer.addRotatingFields({
-        mapping,
-        fields: fields.fields.filter(({id}) => {
-            const type = id.split('-')[0];
-            return ['ev', 'game-laps', 'progress', 'rt', 'el', 'grade', 'altitude', 'zl'].includes(type);
-        })
-    });
-    */
+    
     const worldList = await common.getWorldList();   
     
     for (let pp of activePPs) {
