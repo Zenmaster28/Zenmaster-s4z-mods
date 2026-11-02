@@ -34,6 +34,17 @@
         <div id="settings">
             <form class="section">
                 W/kg ranges to show
+                <label>
+                    <key>Min:</key>
+                    <input name="minRange" type="range" min="0" max="5.9" step="0.1">
+                    <input name="minRange" type="number" min="0" max="5.9" step="0.1">
+                </label>
+                <label>
+                    <key>Max:</key>
+                    <input name="maxRange" type="range" min="1" max="6" step="0.1">
+                    <input name="maxRange" type="number" min="1" max="6" step="0.1">
+                </label>                
+                <!--
                 <label>                    
                     <key>&nbsp;&nbsp;- 0-2 W/kg:</key>
                     <input type="checkbox" name="show1x">
@@ -46,6 +57,7 @@
                     <key>&nbsp;&nbsp;- 3+ W/kg:</key>
                     <input type="checkbox" name="show3x">
                 </label>
+            -->
                 <label title="Indicate what the max elevation is with a horizontal line on the chart">
                     <key data-added="2023-11-01">Show max elevation:</key>
                     <input type="checkbox" name="showElevationMaxLine" checked/>

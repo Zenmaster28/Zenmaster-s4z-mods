@@ -1,17 +1,23 @@
 import * as sauce from '/shared/sauce/index.mjs';
 import * as common from '/pages/src/common.mjs';
 import * as elevation from './elevation-segments.mjs';
-
+import * as map from '/pages/src/map.mjs';
 
 
 let activePPs = [];
 let ppIndex = 0;
 let debounceTimer;
+let timer;
 const doc = document.documentElement;
 const content = document.getElementById("content");
+const elProfiles = document.getElementById("content")
+const mapDiv = document.getElementById("mapDiv");
+const mapRouteView = document.getElementById("mapRouteView");
 const L = sauce.locale;
 const imperial = !!common.storage.get('/imperialUnits');
 L.setImperial(imperial);
+const worldList = await common.getWorldList();
+const routeList = await common.rpc.getRoutes();
 /*
 const warningDiv = document.getElementById("warningDiv");
 warningDiv?.addEventListener("click", () => {
@@ -109,9 +115,8 @@ common.settingsStore.setDefault({
     showDistanceGap: true,
     showTimeGap: true,
     emphasisOpacity: 0.5,
-    show1x: true,
-    show2x: true,
-    show3x: true
+    minRange: 0,
+    maxRange: 6
 });
 
 const settings = common.settingsStore.get();
@@ -143,42 +148,93 @@ function setBackground() {
         doc.style.removeProperty('--background-color');
     }
 }
-/*
 function qualityScale(raw) {
     raw = raw || 1;
     const min = 0.2;
     return Math.min(2, (raw / 100) * (1 - min) + min);
 }
 
+
 function getSetting(key, def) {
     const v = settings[key];
     return v === undefined ? def : v;
 }
 
-function editSegments() { 
-           
-    let segmentData = elProfile.routeInfo.markLines ? elProfile.routeInfo.markLines.filter(x => !x.name.includes("Finish") || x.type == "custom") : [];
-    //let segmentData = elProfile.routeSegments.filter(x => !x.name.includes("Finish"))
-    //debugger
-    //console.log(segmentData)
-    segmentData.sort((a, b) => {
-        return a.markLine - b.markLine;
-    });     
-    let outData = [];
-    for (let seg of segmentData) {
-        let newSeg = {
-            "Name": seg.name,
-            "id": seg.id,
-            "Repeat": seg.repeat,
-            "displayName": seg.displayName ?? null
+function createZwiftMap() {
+    const opacity = 1 - 1 / (100 / (settings.transparency || 0));
+    const autoCenter = getSetting('autoCenter', true);
+    const zm = new map.SauceZwiftMap({
+        el: document.querySelector('.map'),
+        worldList,
+        zoom: settings.zoom,
+        autoHeading: autoCenter && getSetting('autoHeading', true),
+        autoCenter,
+        style: settings.mapStyle,
+        opacity,
+        tiltShift: settings.tiltShift && ((settings.tiltShiftAmount || 0) / 100),
+        sparkle: settings.sparkle,
+        quality: qualityScale(settings.quality || 80),
+        verticalOffset: settings.verticalOffset / 100,
+        fpsLimit: settings.fpsLimit || 30,
+        zoomPriorityTilt: getSetting('zoomPriorityTilt', true),
+        preferRoute: settings.routeProfile !== false,
+        zoomCenter: settings.zoomCenter || false,
+        overrideDistance: settings.overrideDistance || 0,
+        overrideLaps: settings.overrideLaps || 0
+    });
+    const autoCenterBtn = document.querySelector('.map-controls .button.toggle-auto-center');
+    const autoHeadingBtn = document.querySelector('.map-controls .button.toggle-auto-heading');
+
+    function autoCenterHandler(en) {
+        if (en) {
+            zm.setDragOffset([0, 0]);
         }
-        outData.push(newSeg)
-    }    
-    let jsonSegments = JSON.stringify(outData)
-    let jsonEncoded = encodeURIComponent(jsonSegments)
-    let editWindow = window.open("elevation-edit-segments.html?data=" + jsonEncoded, "_blank");    
+        zm.setAutoCenter(en);
+        zm.setAutoHeading(!en ? false : !!settings.autoHeading);
+        autoCenterBtn.classList.toggle('primary', !!en);
+        autoCenterBtn.classList.remove('outline');
+        autoHeadingBtn.classList.toggle('disabled', !en);
+        settings.autoCenter = en;
+        common.settingsStore.set(null, settings);
+    }
+
+    function autoHeadingHandler(en) {
+        zm.setAutoHeading(en);
+        if (en) {
+            zm.setHeadingOffset(0);
+        }
+        autoHeadingBtn.classList.remove('outline');
+        autoHeadingBtn.classList.toggle('primary', !!en);
+        settings.autoHeading = en;
+        common.settingsStore.set(null, settings);
+    }
+    /*
+    autoCenterBtn.classList.toggle('primary', settings.autoCenter !== false);
+    autoCenterBtn.addEventListener('click', () =>
+        autoCenterHandler(!autoCenterBtn.classList.contains('primary')));
+    autoHeadingBtn.classList.toggle('disabled', settings.autoCenter === false);
+    autoHeadingBtn.classList.toggle('primary', settings.autoHeading !== false);
+    autoHeadingBtn.addEventListener('click', () =>
+        autoHeadingHandler(!autoHeadingBtn.classList.contains('primary')));
+    
+    zm.addEventListener('drag', ev => {
+        if (ev.drag) {
+            const dragging = !!(ev.drag && (ev.drag[0] || ev.drag[1]));
+            if (dragging && settings.autoCenter !== false) {
+                autoCenterBtn.classList.remove('primary');
+                autoCenterBtn.classList.add('outline');
+            }
+        } else if (ev.heading) {
+            if (autoHeadingBtn.classList.contains('primary')) {
+                autoHeadingBtn.classList.remove('primary');
+                autoHeadingBtn.classList.add('outline');
+            }
+        }
+    });
+    */
+    return zm;
 }
-*/
+
 function createElevationProfile({worldList}, divId) {
     //const el = document.querySelector('.elevation-profile');
     const el = document.getElementById(divId);
@@ -307,12 +363,10 @@ function createElevationProfile({worldList}, divId) {
     const showEmphasisRiders = settings.showEmphasisRiders;
     typeof(settings.emphasisOpacity) == "undefined" ? common.settingsStore.set("emphasisOpacity", 0.5) : null;
     const emphasisOpacity = settings.emphasisOpacity;
-    typeof(settings.show1x) === "undefined" ? common.settingsStore.set("show1x", true) : null
-    const show1x = settings.show1x
-    typeof(settings.show1x) === "undefined" ? common.settingsStore.set("show2x", true) : null
-    const show2x = settings.show2x
-    typeof(settings.show1x) === "undefined" ? common.settingsStore.set("show3x", true) : null
-    const show3x = settings.show3x
+    typeof(settings.minRange) === "undefined" ? common.settingsStore.set("minRange", 0) : null;
+    const minRange = settings.minRange;
+    typeof(settings.maxRange) === "undefined" ? common.settingsStore.set("maxRange", 6) : null;
+    const maxRange = settings.maxRange;
     const options = {
         el,
         worldList,
@@ -397,7 +451,10 @@ function setWatching(id) {
         elProfile.setWatching(id);
     }
 }
-
+function changeFontScale() {
+    const doc = document.documentElement;
+    doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  
+}
 
 async function initialize() {
     const ad = await common.rpc.getAthleteData('self');
@@ -467,17 +524,136 @@ function renderPPlocation(pp) {
     });    
 }
 
+async function changePPView() {
+    const selectedView = document.querySelector('input[name="ppView"]:checked');       
+    let viewMode = "route";
+    if (selectedView?.value === "map") {
+        viewMode = "map";
+    }
+    if (viewMode === "route") {
+        console.log("Route view selected")
+        document.getElementById("mapDiv")?.classList.add("hidden");
+        zwiftMap?._ents.forEach(x => x.togglePin());
+        zwiftMap?._ents.clear();
+        mapDiv.innerHTML = "";
+        //debugger
+        document.querySelectorAll(".pp-location").forEach(el => el.remove());
+        for (let pp of activePPs) {
+            const newElDiv = `<div id=${pp.fullName} class="pp-location"></div>`
+            elProfiles.innerHTML += newElDiv;
+            //debugger
+        }
+        for (let pp of activePPs) {
+            //debugger
+            const elProfilePP = settings.profileOverlay && createElevationProfile({worldList}, pp.fullName);
+            
+            await elProfilePP.setCourse(pp.courseId);
+            let newRouteId = pp.routeId;
+            if (pp.routeId <= 0) {
+                newRouteId = pp.routeId >>> 0;
+            }
+            let routeInfo = await common.getRoute(newRouteId);
+            await elProfilePP.setRoute(newRouteId);
+            const routeTitle = {
+                title: {
+                    show: true,
+                    top: '10%',
+                    text: routeInfo.name,                
+                    textStyle: {                    
+                        fontSize: elProfilePP.em(0.3 * elProfilePP.fontScale),
+                    },
+                },
+            };
+            elProfilePP.chart.setOption(routeTitle)
+            pp.elProfile = elProfilePP;
+            //renderPPlocation(pp.athleteId, elProfilePP, pp.fullName)
+            renderPPlocation(pp);
+        }
+        clearInterval(timer);
+        timer = setInterval(function() {
+            console.log("Updating: " + activePPs[ppIndex].fullName);
+            //renderPPlocation(activePPs[ppIndex].athleteId, activePPs[ppIndex].elProfile, activePPs[ppIndex].fullName);    
+            renderPPlocation(activePPs[ppIndex]);
+            if (ppIndex < activePPs.length - 1) {        
+                ppIndex++;            
+            } else {
+                ppIndex = 0;
+            }  
+        }, 4000); 
+    } else {
+        console.log("Map view selected")        
+        clearInterval(timer);
+        document.querySelectorAll(".pp-location").forEach(el => el.remove());
+        let courseId = 6;
+        zwiftMap = createZwiftMap();        
+        
+        await zwiftMap.setCourse(courseId);
+        zwiftMap.setZoom(0.2);        
+        document.getElementById("mapDiv")?.classList.remove("hidden");
+        await updatePPmap();
+        timer = setInterval(async function() {            
+            await updatePPmap();
+        }, 3000);
+        //debugger
+    }
+    
+};
+async function updatePPmap() {
+    //console.log("Updating locations")
+    const allPPs = await common.rpc.getOnlinePacerBots();
+    /*
+    activePPs = allPPs.filter(x => 
+        (settings.show1x && x.wkg < 2.0) ||
+        (settings.show2x && x.wkg >= 2.0 && x.wkg < 3.0) ||
+        (settings.show3x && x.wkg >= 3.0)
+    );
+    */
+   activePPs = allPPs.filter(x => x.wkg.toFixed(1) >= settings.minRange && x.wkg.toFixed(1) <= settings.maxRange);
 
+    for (let pp of activePPs) {
+        const fullName = `${pp.firstName.replaceAll(' ', '')}.${pp.lastName.replaceAll(' ', '')}`;
+        pp.fullName = fullName;
+        const ppRoute = routeList.find(x => x.id === pp.routeId);
+        pp.routeName = ppRoute?.name || "Unknown route";
+        
+    }
+    zwiftMap._ents.forEach(x => x.togglePin());
+    zwiftMap._ents.clear();
+    document.querySelectorAll(".ppMarker").forEach(pp => pp.remove());
+    for (let pp of activePPs) {
+        let point;
+        if (zwiftMap.rotateCoordinates) {
+            //point = [pp.y * -1, pp.x]
+            point = [pp.x, pp.y]
+        } else {
+            point = [pp.x, pp.y]
+        };
+        //debugger
+        let ppPoint = zwiftMap.addPoint(point, "ppMarker");
+        const ppHTML = `<div class="ppData">${pp.fullName} ${pp.wkg.toFixed(1)} W/kg<br>Group size: ${pp.pacerBotGroupSize}<br>${pp.routeName}</div>`
+        ppPoint.setPinHTML(ppHTML);
+        ppPoint.togglePin()
+        
+    }
+}
 export async function main() {
-    common.initInteractionListeners();   
-    const elProfiles = document.getElementById("content")
+    changeFontScale();
+    common.initInteractionListeners();       
+    mapRouteView.addEventListener("change", async function () {
+        await changePPView()
+    });
+    
     try {
         const allPPs = await common.rpc.getOnlinePacerBots();
+        /*
         activePPs = allPPs.filter(x => 
             (settings.show1x && x.wkg < 2.0) ||
             (settings.show2x && x.wkg >= 2.0 && x.wkg < 3.0) ||
             (settings.show3x && x.wkg >= 3.0)
         );
+        */
+       //debugger
+        activePPs = allPPs.filter(x => x.wkg >= settings.minRange && x.wkg <= settings.maxRange);
         activePPs.sort((a,b) => a.wkg - b.wkg)
         for (let pp of activePPs) {
             const fullName = `${pp.firstName.replaceAll(' ', '')}.${pp.lastName.replaceAll(' ', '')}`;
@@ -488,51 +664,7 @@ export async function main() {
         elProfiles.innerHTML = `This window requires Sauce v2.4.0-alpha4 or later. &#x1F61E;`
     }
     console.log("activePPs", activePPs)
-    
-    const worldList = await common.getWorldList();   
-    
-    for (let pp of activePPs) {
-        const newElDiv = `<div id=${pp.fullName} class="pp-location"></div>`
-        elProfiles.innerHTML += newElDiv;
-        //debugger
-    }
-    for (let pp of activePPs) {
-        //debugger
-        const elProfilePP = settings.profileOverlay && createElevationProfile({worldList}, pp.fullName);
-        
-        await elProfilePP.setCourse(pp.courseId);
-        let newRouteId = pp.routeId;
-        if (pp.routeId <= 0) {
-            newRouteId = pp.routeId >>> 0;
-        }
-        let routeInfo = await common.getRoute(newRouteId);
-        await elProfilePP.setRoute(newRouteId);
-        const routeTitle = {
-            title: {
-                show: true,
-                top: '10%',
-                text: routeInfo.name,                
-                textStyle: {                    
-                    fontSize: elProfilePP.em(0.3 * elProfilePP.fontScale),
-                },
-            },
-        };
-        elProfilePP.chart.setOption(routeTitle)
-        pp.elProfile = elProfilePP;
-        //renderPPlocation(pp.athleteId, elProfilePP, pp.fullName)
-        renderPPlocation(pp);
-    }
-    let timer = setInterval(function() {
-        console.log("Updating: " + activePPs[ppIndex].fullName);
-        //renderPPlocation(activePPs[ppIndex].athleteId, activePPs[ppIndex].elProfile, activePPs[ppIndex].fullName);    
-        renderPPlocation(activePPs[ppIndex]);
-        if (ppIndex < activePPs.length - 1) {        
-            ppIndex++;            
-        } else {
-            ppIndex = 0;
-        }  
-    }, 4000); 
-
+    await changePPView();
     
     
     

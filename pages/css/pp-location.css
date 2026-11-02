@@ -29,3 +29,47 @@ div .routeList {
 div .fields {
   visibility: hidden;
 }
+#titlebar header .ppView {
+  flex: 0 1 auto;
+  display: flex;
+  align-items: center;
+  font-size: 0.8em;
+  white-space: nowrap;
+  padding: 0 0.3em;
+    padding-left: 0.3em;
+  overflow: hidden;
+}
+#titlebar header .view {
+  flex: 0 1 auto;
+  display: flex;
+  align-items: left;
+  font-size: 0.8em;
+  white-space: nowrap;
+  padding: 0 0.3em;
+  overflow: hidden;
+}
+@media (max-width: 768px) and (orientation: portrait) {
+  #titlebar header .title {
+    display: none;
+  }
+  #titlebar header .view {
+    flex-direction: column;
+  }
+}
+
+.sauce-map-container > .sauce-map > div.entities .entity.point {
+  --fill: blue;
+}
+.sauce-map-container > .sauce-map > div.entities .entity.ppMarker {
+  width: 1em;
+  height: 1em;
+  clip-path: circle(40%);  
+  z-index: 5;
+}
+.sauce-map-container .pins .pin-content {
+  font-size: calc(var(--font-scale) * 1em);
+}
+.sauce-map-container .pins .pin-content-wrap::after {
+  /*transition: unset;*/
+  content: unset;
+}
