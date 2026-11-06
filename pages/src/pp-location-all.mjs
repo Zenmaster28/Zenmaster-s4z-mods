@@ -8,16 +8,28 @@ let activePPs = [];
 let ppIndex = 0;
 let debounceTimer;
 let timer;
+let mapTimer;
+let routeTimer;
+let courseId = 6;
+let courseSelect;
+let allPPs;
+let ppCourses;
+let viewMode = "route";
+let routeHighlights = [];
+let currentRouteHighlight;
 const doc = document.documentElement;
 const content = document.getElementById("content");
-const elProfiles = document.getElementById("content")
-const mapDiv = document.getElementById("mapDiv");
+const elProfiles = document.getElementById("elProfiles")
+let mapDiv = document.getElementById("mapDiv");
 const mapRouteView = document.getElementById("mapRouteView");
+const mapCourses = document.getElementById("mapCourses");
 const L = sauce.locale;
 const imperial = !!common.storage.get('/imperialUnits');
 L.setImperial(imperial);
 const worldList = await common.getWorldList();
 const routeList = await common.rpc.getRoutes();
+common.settingsStore.set("profileHeight", 100)
+
 /*
 const warningDiv = document.getElementById("warningDiv");
 warningDiv?.addEventListener("click", () => {
@@ -240,7 +252,7 @@ function createElevationProfile({worldList}, divId) {
     const el = document.getElementById(divId);
     //debugger
     if (settings.profileHeight) {
-        //el.style.setProperty('--profile-height', settings.profileHeight / 100);
+        el.style.setProperty('--profile-height', settings.profileHeight / 100);
     }
     if (settings.editedSegments && settings.editedSegments.length > 0) {
         common.settingsStore.set("editedSegments", null)
@@ -454,47 +466,21 @@ function setWatching(id) {
 function changeFontScale() {
     const doc = document.documentElement;
     doc.style.setProperty('--font-scale', common.settingsStore.get('fontScale') || 1);  
+    //doc.style.setProperty('--profile-height', 1);
 }
 
 async function initialize() {
-    const ad = await common.rpc.getAthleteData('self');
-    //const ad = await common.rpc.getAthleteData('watching');
-    console.log("Initializing...", ad)
-    inGame = !!ad;
-    /*
-    if (!inGame) {
-        console.info("User not active, starting demo mode...");
-        elProfile.setCourse(6);
-        if (elProfile) {
-            elProfile.setCourse(6);
-        }
-        return;
-    }
+    zwiftMap = createZwiftMap();
+    allPPs = await common.rpc.getOnlinePacerBots();
+    allPPs.sort((a,b) => a.wkg - b.wkg);
+    ppCourses = Map.groupBy(allPPs, x => x.courseId);
+    await updateCourses(ppCourses);
+    courseSelect = document.getElementById("courseSelect");
+    courseId = parseInt(courseSelect.value);
+    await setupMapView();    
+    await setupRouteView();    
+    changePPView();
     
-    //zwiftMap.setAthlete(ad.athleteId);
-    if (elProfile) {
-        elProfile.setAthlete(ad.athleteId);
-    }
-    if (!ad.watching) {
-        const watching = await common.rpc.getAthleteData('watching');
-        if (watching) {
-            setWatching(watching.athleteId);
-        }
-    } else {
-        setWatching(ad.athleteId);
-    }
-    if (ad.state) {
-        //elProfile.incPause();
-        try {
-            //await zwiftMap.renderAthleteStates([ad.state]);
-        } finally {
-            //elProfile.decPause();
-        }
-        if (elProfile) {                       
-            await elProfile.renderAthleteStates([ad.state]);
-        }
-    }
-    */
 }
 //function renderPPlocation(athleteId, elProfile, ppName) {
 function renderPPlocation(pp) {
@@ -523,54 +509,97 @@ function renderPPlocation(pp) {
         elProfile.chart.setOption(routeTitleData)
     });    
 }
-
-async function changePPView() {
+async function setupRouteView() {
     const selectedView = document.querySelector('input[name="ppView"]:checked');       
-    let viewMode = "route";
+    
     if (selectedView?.value === "map") {
         viewMode = "map";
     }
+    activePPs = allPPs.filter(x => x.wkg.toFixed(1) >= settings.minRange && x.wkg.toFixed(1) <= settings.maxRange);
+    for (let pp of allPPs) {
+        const fullName = `${pp.firstName.replaceAll(' ', '')}.${pp.lastName.replaceAll(' ', '')}`;
+        pp.fullName = fullName;
+        const ppRoute = routeList.find(x => x.id === pp.routeId);
+        pp.routeName = ppRoute?.name || "Unknown route";
+        
+    }
+    document.querySelectorAll(".pp-location").forEach(el => el.remove());
+    for (let pp of allPPs) {
+        //debugger
+        const newElDiv = `<div id=${pp.fullName} class="pp-location ${viewMode === "map" || 
+            (pp.wkg.toFixed(1) < settings.minRange || pp.wkg.toFixed(1) > settings.maxRange) ? 'hidden' : ''}" data-wkg="${pp.wkg}"></div>`
+        elProfiles.innerHTML += newElDiv;
+        //debugger
+    }
+    for (let pp of allPPs) {
+        //debugger
+        const elProfilePP = settings.profileOverlay && createElevationProfile({worldList}, pp.fullName);
+        
+        await elProfilePP.setCourse(pp.courseId);
+        let newRouteId = pp.routeId;
+        if (pp.routeId <= 0) {
+            newRouteId = pp.routeId >>> 0;
+        }
+        //let routeInfo = await common.getRoute(newRouteId);
+        let routeInfo = routeList.find(x => x.id === newRouteId);
+        await elProfilePP.setRoute(newRouteId);
+        const routeTitle = {
+            title: {
+                show: true,
+                top: '10%',
+                text: routeInfo.name,                
+                textStyle: {                    
+                    fontSize: elProfilePP.em(0.3 * elProfilePP.fontScale),
+                },
+            },
+        };
+        elProfilePP.chart.setOption(routeTitle)
+        pp.elProfile = elProfilePP;
+        //renderPPlocation(pp.athleteId, elProfilePP, pp.fullName)
+        renderPPlocation(pp);
+    }
+
+}
+async function setupMapView() {
+    //debugger
+    const selectedView = document.querySelector('input[name="ppView"]:checked');       
+    
+    if (selectedView?.value === "map") {
+        viewMode = "map";
+    } else {
+        viewMode = "route";
+    }
+    await zwiftMap.setZoom(0.2);
+    await zwiftMap.setCourse(courseId);
+    if (viewMode === "map") {
+        document.getElementById("mapDiv")?.classList.remove("hidden");
+    } else {
+        document.getElementById("mapDiv")?.classList.add("hidden");
+    }
+}
+
+async function changePPView() {
+    const initialView = viewMode;
+    const selectedView = document.querySelector('input[name="ppView"]:checked');       
+    
+    viewMode = selectedView?.value === "map" ? "map" : "route";
     if (viewMode === "route") {
         console.log("Route view selected")
         document.getElementById("mapDiv")?.classList.add("hidden");
-        zwiftMap?._ents.forEach(x => x.togglePin());
-        zwiftMap?._ents.clear();
-        mapDiv.innerHTML = "";
-        //debugger
-        document.querySelectorAll(".pp-location").forEach(el => el.remove());
-        for (let pp of activePPs) {
-            const newElDiv = `<div id=${pp.fullName} class="pp-location"></div>`
-            elProfiles.innerHTML += newElDiv;
-            //debugger
-        }
-        for (let pp of activePPs) {
-            //debugger
-            const elProfilePP = settings.profileOverlay && createElevationProfile({worldList}, pp.fullName);
-            
-            await elProfilePP.setCourse(pp.courseId);
-            let newRouteId = pp.routeId;
-            if (pp.routeId <= 0) {
-                newRouteId = pp.routeId >>> 0;
+        
+        document.querySelectorAll(".pp-location").forEach(el => {
+            if (el.dataset.wkg >= settings.minRange && el.dataset.wkg <= settings.maxRange) {
+                el.classList.remove("hidden")
             }
-            let routeInfo = await common.getRoute(newRouteId);
-            await elProfilePP.setRoute(newRouteId);
-            const routeTitle = {
-                title: {
-                    show: true,
-                    top: '10%',
-                    text: routeInfo.name,                
-                    textStyle: {                    
-                        fontSize: elProfilePP.em(0.3 * elProfilePP.fontScale),
-                    },
-                },
-            };
-            elProfilePP.chart.setOption(routeTitle)
-            pp.elProfile = elProfilePP;
-            //renderPPlocation(pp.athleteId, elProfilePP, pp.fullName)
-            renderPPlocation(pp);
+        });
+        clearInterval(routeTimer);
+        clearInterval(mapTimer);
+        if (initialView != "route") {
+            for (let pp of activePPs) {
+                renderPPlocation(pp);
+            }
         }
-        clearInterval(timer);
-        timer = setInterval(function() {
+        routeTimer = setInterval(function() {
             console.log("Updating: " + activePPs[ppIndex].fullName);
             //renderPPlocation(activePPs[ppIndex].athleteId, activePPs[ppIndex].elProfile, activePPs[ppIndex].fullName);    
             renderPPlocation(activePPs[ppIndex]);
@@ -582,35 +611,60 @@ async function changePPView() {
         }, 4000); 
     } else {
         console.log("Map view selected")        
-        clearInterval(timer);
-        document.querySelectorAll(".pp-location").forEach(el => el.remove());
-        let courseId = 6;
-        zwiftMap = createZwiftMap();        
-        
+        clearInterval(routeTimer);
+        clearInterval(mapTimer);
+        document.querySelectorAll(".pp-location").forEach(el => el.classList.add("hidden"));
         await zwiftMap.setCourse(courseId);
         zwiftMap.setZoom(0.2);        
         document.getElementById("mapDiv")?.classList.remove("hidden");
         await updatePPmap();
-        timer = setInterval(async function() {            
+        
+        
+        mapTimer = setInterval(async function() {            
             await updatePPmap();
         }, 3000);
         //debugger
     }
     
 };
-async function updatePPmap() {
-    //console.log("Updating locations")
-    const allPPs = await common.rpc.getOnlinePacerBots();
-    /*
-    activePPs = allPPs.filter(x => 
-        (settings.show1x && x.wkg < 2.0) ||
-        (settings.show2x && x.wkg >= 2.0 && x.wkg < 3.0) ||
-        (settings.show3x && x.wkg >= 3.0)
-    );
-    */
-   activePPs = allPPs.filter(x => x.wkg.toFixed(1) >= settings.minRange && x.wkg.toFixed(1) <= settings.maxRange);
+async function updateCourses(ppCourses) {
+    
+    //debugger
+    let courseSelectOutput = `<select id="courseSelect">`
+    ppCourses.forEach(course =>  {
+        const thisCourse = worldList.find(x => x.courseId === course[0].courseId)
+        courseSelectOutput += `<option value="${thisCourse.courseId}">${thisCourse.name}</option>`
+    });
 
-    for (let pp of activePPs) {
+    courseSelectOutput += `</select>`
+    mapCourses.innerHTML = courseSelectOutput
+    courseSelect = document.getElementById("courseSelect");
+    courseSelect.addEventListener("change", async () => {
+        courseId = parseInt(courseSelect.value);
+        await updatePPmap();
+    });
+}
+async function updatePPmap() {
+    console.log("Updating locations")
+    
+    const mapPPs = await common.rpc.getOnlinePacerBots();
+    const ppCourses = Map.groupBy(mapPPs, x => x.courseId);
+    //debugger
+    if (!ppCourses.get(courseId)) {
+        updateCourses(ppCourses);
+        courseSelect = document.getElementById("courseSelect");
+        courseId = parseInt(courseSelect.value);
+        await changePPView();
+    }
+    
+    const coursePPs = ppCourses.get(courseId)
+    //debugger
+   
+   //activePPs = allPPs.filter(x => x.wkg.toFixed(1) >= settings.minRange && x.wkg.toFixed(1) <= settings.maxRange);
+   
+    const activeMapPPs = coursePPs.filter(x => x.wkg.toFixed(1) >= settings.minRange && x.wkg.toFixed(1) <= settings.maxRange);
+    //activePPs = allPPs.filter(x => x.wkg.toFixed(1) >= settings.minRange && x.wkg.toFixed(1) <= settings.maxRange);
+    for (let pp of activeMapPPs) {
         const fullName = `${pp.firstName.replaceAll(' ', '')}.${pp.lastName.replaceAll(' ', '')}`;
         pp.fullName = fullName;
         const ppRoute = routeList.find(x => x.id === pp.routeId);
@@ -620,7 +674,7 @@ async function updatePPmap() {
     zwiftMap._ents.forEach(x => x.togglePin());
     zwiftMap._ents.clear();
     document.querySelectorAll(".ppMarker").forEach(pp => pp.remove());
-    for (let pp of activePPs) {
+    for (let pp of activeMapPPs) {
         let point;
         if (zwiftMap.rotateCoordinates) {
             //point = [pp.y * -1, pp.x]
@@ -630,21 +684,42 @@ async function updatePPmap() {
         };
         //debugger
         let ppPoint = zwiftMap.addPoint(point, "ppMarker");
-        const ppHTML = `<div class="ppData">${pp.fullName} ${pp.wkg.toFixed(1)} W/kg<br>Group size: ${pp.pacerBotGroupSize}<br>${pp.routeName}</div>`
+        const ppHTML = `<div class="ppData" data-routeId="${pp.routeId}">${pp.fullName} ${pp.wkg.toFixed(1)} W/kg<br>${pp.routeName}<br>Group size: ${pp.pacerBotGroupSize}</div>`
         ppPoint.setPinHTML(ppHTML);
         ppPoint.togglePin()
         
     }
+    document.querySelectorAll(".pin-content").forEach(pin => pin.addEventListener("mouseenter", (e) => {
+            const ppData = [...e.target.children].find(pin => pin.classList.contains("ppData"))
+            const thisRouteId = ppData.dataset.routeid;
+            const ppEl = allPPs.find(x => x.elProfile?.routeId == thisRouteId);
+            const path = ppEl.elProfile.curvePath;
+            if (currentRouteHighlight != thisRouteId) {
+                routeHighlights.push(
+                    zwiftMap.addHighlightPath(path, `route-1-${thisRouteId}`, {width: 5, color: '#0004'}),
+                    zwiftMap.addHighlightPath(path, `route-2-${thisRouteId}`, {width: 1.2, color: 'black'}),
+                    zwiftMap.addHighlightPath(path, `route-3-${thisRouteId}`, {width: 0.5, color: 'gold'})
+                );
+                currentRouteHighlight = thisRouteId;
+            }
+        })
+    );
+    document.querySelectorAll(".pin-content").forEach(pin => pin.addEventListener("mouseleave", (e) => {
+        while (routeHighlights.length) {
+            routeHighlights.pop().elements.forEach(x => x.remove());
+        }
+    }));
 }
 export async function main() {
     changeFontScale();
+
     common.initInteractionListeners();       
     mapRouteView.addEventListener("change", async function () {
         await changePPView()
     });
     
     try {
-        const allPPs = await common.rpc.getOnlinePacerBots();
+        allPPs = await common.rpc.getOnlinePacerBots();
         /*
         activePPs = allPPs.filter(x => 
             (settings.show1x && x.wkg < 2.0) ||
@@ -664,7 +739,9 @@ export async function main() {
         elProfiles.innerHTML = `This window requires Sauce v2.4.0-alpha4 or later. &#x1F61E;`
     }
     console.log("activePPs", activePPs)
-    await changePPView();
+    
+    initialize();
+    //await changePPView();
     
     
     
@@ -675,7 +752,9 @@ export async function main() {
             "gradientOpacity",
             "fontScale",
             "lineSize",
-            "yAxisMin"
+            "yAxisMin",
+            "minRange",
+            "maxRange"
         ]
         
         let reloadRequired = true;

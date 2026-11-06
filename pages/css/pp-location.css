@@ -5,8 +5,11 @@
   position: relative;  
   display: block;
 }
-#content > .pp-location {
-  --profile-height: 0.25;
+#elProfiles {
+  height: 25%;
+}
+#elProfiles > .pp-location {
+  --profile-height: 1.0;
   font-size: clamp(16px, var(--profile-height) * 42vh, 65px);
   left: 0;
   bottom: 0;
@@ -20,7 +23,7 @@
   border-bottom-color: rgb(136, 84, 84);
   border-bottom-style: solid;
 }
-#content > .pp-location svg > g {
+#elProfiles > .pp-location svg > g {
   pointer-events: all;
 }
 div .routeList {
