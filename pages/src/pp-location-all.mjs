@@ -490,10 +490,14 @@ function renderPPlocation(pp) {
     //debugger
     const ppWkg = `${pp.wkg.toFixed(1)} w/kg`
     ppState.then(result => {
+        if (!result) {
+            console.warn("Missing rpc state", pp.athleteId)
+            return
+        }
         state.push(result);    
         elProfile.watchingId = pp.athleteId;  
         elProfile.renderAthleteStates(state);
-        let routeInfo = elProfile.routeInfo.routeFullData 
+        let routeInfo = elProfile.routeInfo.routeFullData         
         let routeTitle = `${pp.fullName} ${ppWkg} (${state[0].pacerBotGroupSize}) on ${routeInfo.name}`
         //debugger
         const routeTitleData = {
@@ -577,19 +581,22 @@ async function setupMapView() {
         document.getElementById("mapDiv")?.classList.add("hidden");
     }
 }
-
+//TODO: make sure timers are being reset everywhere (they aren't...)
 async function changePPView() {
     const initialView = viewMode;
-    const selectedView = document.querySelector('input[name="ppView"]:checked');       
+    const selectedView = document.querySelector('input[name="ppView"]:checked');
+    document.getElementById("mapCourses");
     
     viewMode = selectedView?.value === "map" ? "map" : "route";
     if (viewMode === "route") {
         console.log("Route view selected")
         document.getElementById("mapDiv")?.classList.add("hidden");
-        
+        document.getElementById("mapCourses")?.classList.add("hidden");
         document.querySelectorAll(".pp-location").forEach(el => {
             if (el.dataset.wkg >= settings.minRange && el.dataset.wkg <= settings.maxRange) {
-                el.classList.remove("hidden")
+                el.classList.remove("hidden");
+            } else {
+                el.classList.add("hidden");
             }
         });
         clearInterval(routeTimer);
@@ -617,6 +624,7 @@ async function changePPView() {
         await zwiftMap.setCourse(courseId);
         zwiftMap.setZoom(0.2);        
         document.getElementById("mapDiv")?.classList.remove("hidden");
+        document.getElementById("mapCourses")?.classList.remove("hidden");
         await updatePPmap();
         
         
@@ -643,6 +651,7 @@ async function updateCourses(ppCourses) {
         courseId = parseInt(courseSelect.value);
         await updatePPmap();
     });
+    document.getElementById("mapCourses")?.classList.add("hidden");
 }
 async function updatePPmap() {
     console.log("Updating locations")
@@ -745,8 +754,15 @@ export async function main() {
     
     
     
-    common.settingsStore.addEventListener('changed', ev => {
+    common.settingsStore.addEventListener('changed', async ev => {
         const changed = ev.data.changed; 
+        if (changed.has("minRange") || changed.has("maxRange")) {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                changePPView();
+            }, 1000);            
+            return
+        }
         const debounceSettings = [
             "minSegmentLength",
             "gradientOpacity",

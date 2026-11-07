@@ -76,3 +76,6 @@ div .fields {
   /*transition: unset;*/
   content: unset;
 }
+#titlebar header select {
+  font-size: 1em;
+}
