@@ -4,7 +4,7 @@
     "description": "Arend's Mod Collection for S4Z",
     "author": "Arend teRaa",
     "website_url": "https://github.com/Zenmaster28/Zenmaster-s4z-mods",
-    "version": "1.9.7",
+    "version": "1.9.8",
     "content_js": [
         "pages/src/data-fields.js"
     ],
@@ -25,6 +25,20 @@
                 "height": 450,
                 "x": -300,
                 "y": 100
+            }
+        },        
+        {
+            "file": "pages/zenCa.html",
+            "id": "zen-ca",
+            "name": "Companion App (for use on mobile)",
+            "description": "Companion App-like window for use on a mobile device while game connection is enabled",
+            "overlay": true,
+            "frame": false,
+            "default_bounds": {
+                "width": 400,
+                "height": 500,
+                "x": 300,
+                "y": 200
             }
         },        
         {
@@ -154,6 +168,20 @@
             }
         },
         {
+            "file": "pages/points-leaderboard.html",
+            "id": "points-leaderboard",
+            "name": "Points leaderboard",
+            "description": "Show FTS, FAL and FIN point totals for a race.",
+            "overlay": true,
+            "frame": false,
+            "default_bounds": {
+                "width": 300,
+                "height": 500,
+                "x": -300,
+                "y": 100
+            }
+        },
+        {
             "file": "pages/route-preview-v2.html",
             "id": "Route-Profile-preview-v2",
             "name": "Preview any Route Profile",
@@ -210,20 +238,6 @@
             }
         },        
         {
-            "file": "pages/points-leaderboard.html",
-            "id": "points-leaderboard",
-            "name": "Points leaderboard",
-            "description": "Show FTS, FAL and FIN point totals for a race.",
-            "overlay": true,
-            "frame": false,
-            "default_bounds": {
-                "width": 300,
-                "height": 500,
-                "x": -300,
-                "y": 100
-            }
-        },        
-        {
             "file": "pages/segment-tracker.html",
             "id": "segment-tracker",
             "name": "Virtual goal pacer",
@@ -236,6 +250,6 @@
                 "x": 300,
                 "y": 200
             }
-        }  
+        }
     ]
 }
