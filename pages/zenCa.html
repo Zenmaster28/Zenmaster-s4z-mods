@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html tabindex="0" class="" data-settings-key="zen-companion-v1">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval';"/>
+
+        <title>Zen Companion App</title>
+
+        <script src="/pages/src/preloads.js"></script>
+
+        <link rel="manifest" href="geo-manifest.json"/>
+        <link id="favicon" rel="shortcut icon" href="/images/favicon.png"/>
+        <link rel="stylesheet" href="/pages/css/common.css"/>
+        <link rel="stylesheet" href="/pages/css/geo.css"/>
+        <link rel="stylesheet" href="./css/zenCa.css"/>             
+
+        <script type="module">
+            import {main} from '/pages/src/geo.mjs';
+            main();
+            import * as zenCa from './src/zenCa.mjs'
+            zenCa.caMain();
+            zenCa.settingsMain();
+        </script>
+    </head>
+    <body class="transparent-bg">
+        <div id="titlebar" class="always-visible hidden">
+            <header>
+                <div class="logo"><img src="/images/icon128.png"/></div>
+                <div class="title">Zen Companion</div>
+                <div class="course"><select required name="course"></select></div>
+                <div class="route"><select required name="route"></select></div>
+                <div class="filler"></div>
+                <div class="buttons">
+                    <a class="button explore-mode" title="Toggle Explorer/Live mode" style="display:none"><ms>map</ms></a>
+                    <a class="button open-settings" href="zenCa-settings.html?width=450&height=630&child-window"
+                       title="Open settings window" target="zenCa-settings"><ms>settings</ms></a>
+                    <div title="Minimize" class="button minimize electron-only"><ms>minimize</ms></div>
+                    <div title="Close this window" class="button close electron-only"><ms>close</ms></div>
+                </div>
+            </header>
+        </div>
+        
+        <div id="allContent">
+            
+            <div id="leftActionButtons" class="verticalActions"></div>
+            <div id="centerContent">
+            
+                <div id="tabs">
+                    <div id="tabMap" class="tab active">Map</div>
+                    <div id="tabChat" class="tab">Chat<div id="chatCounter">0</div></div>
+                    <div id="tabActions" class="tab">Actions</div>
+                    <div id="tabTeleports" class="tab">Teleport</div>
+                </div>
+                <div id="content">
+                    <div class="fields"></div>
+                    <div class="elevation-profile hidden"></div>
+                    <div class="map-controls">
+                        <a class="button std icon icon-only primary" href="zenCa-settings.html?width=450&height=630&child-window"
+                            title="Open settings window" target="zenCa-settings"><ms>settings</ms></a>
+                        <div class="button std icon icon-only toggle-auto-heading"
+                            title="Toggle heading rotation"><ms>explore</ms></div>
+                        <div class="button std icon icon-only toggle-auto-center"
+                            title="Toggle automatic centering"><ms>my_location</ms></div>
+                        <div class="button std icon icon-only toggle-tilt primary"
+                            title="Toggle tilt options"><ms>cycle</ms></div>
+                    </div>
+                    <div class="powerUpDisplay"></div>
+                    <div class="map"></div>
+                </div>
+                <div id="caChatDiv" class="hidden">
+                    <div id="chatMessages">
+                    </div>
+                    <div id="chatText">
+                        <form id="chatForm">
+                            <input type="text" id="newMessageText"><button id="sendMessageButton" type="submit">Send</button>
+                        </form>
+                    </div>
+                </div>
+                <div id="caActions" class="hidden">
+                    
+                </div>
+                <div id="caTeleports" class="hidden">
+                    <div id="caTeleportsOption">
+                        <input type="radio" name="radioTeleports" value="friends">Friends
+                        <input type="radio" name="radioTeleports" value="pacers" checked>Pacers
+                    </div>
+                    <div id="caTeleportsData"></div>
+
+                </div>
+                <div id="data" class="data hidden">
+                    <div id="data-row1" class="data-row">
+                        <div id="power" class="data-item"></div>
+                        <div id="draft" class="data-item"></div>
+                        <div id="cadence" class="data-item"></div>
+                    </div>
+                    <div id="data-row2" class="data-row">
+                        <div id="speed" class="data-item-large"></div>            
+                        <div id="distance" class="data-item-large"></div>
+                    </div>
+                    <div id="data-row3" class="data-row">
+                        <div id="time" class="data-item-large"></div>
+                        <div id="currentTime" class="data-item-large"></div>
+                    </div>
+                </div>
+                <div id="dataFieldsContainer">
+                    <div id="dataFields">
+
+                    </div>
+                </div>
+                <div id="caButtons">
+                    
+                </div>
+            </div>
+            <div id="rightActionButtons" class="verticalActions"></div>
+            
+        </div>
+        
+        <div id="hintbar">
+            <div class="hint"></div>
+        </div>
+    </body>
+</html>

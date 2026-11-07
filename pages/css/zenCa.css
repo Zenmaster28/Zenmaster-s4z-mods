@@ -1,0 +1,275 @@
+#content {
+    flex: 1 1 auto;
+    position: relative;
+}
+#content > .map-controls {
+    position: absolute;
+    top: 3%;
+    right: 0;
+    left: unset;
+}
+#content > .map {
+    flex: unset;
+    height: 95%;
+}
+#allContent {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+#centerContent {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+}
+.verticalActions {
+    display: flex;
+    flex-direction: column;
+    width: 10%;
+    max-width: 100px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    margin-right: 5px;
+}
+.sauce-map-container {
+    top: 2%;
+}
+.hidden {
+    display: none !important;
+}
+#caChatDiv {
+    display:  flex;
+    flex-direction: column;
+    position: relative;
+    height: 65vh;
+    padding-top: 3px;
+}
+#caChatDiv .caChat {
+    display: flex;
+    flex-direction: row;
+    padding: 2px;
+    margin: 2px;
+    background-image: linear-gradient(135deg, hsl(var(--theme-primary-hue), var(--theme-primary-sat), var(--theme-primary-light), 85%), hsl(var(--theme-primary-hue), var(--theme-primary-sat), calc(var(--theme-primary-light) + -10% * var(--theme-primary-shade-dir)), 80%));
+    color: hsl(var(--theme-primary-hue), var(--theme-primary-sat), calc(var(--theme-primary-light) + 100% * var(--theme-primary-shade-dir)), 100%);
+    font-size: calc(var(--font-scale-chat) * 1em);
+}
+#caChatDiv .chatMessage {    
+    width: 100%;
+}
+
+#caChatDiv .chatAge {
+    position: absolute;
+    right: 0;    
+}
+
+#caChatDiv .headerRow {
+    display: flex;
+    flex-direction: row;
+    font-size: calc(var(--font-scale) * 0.8em);
+    position: relative;
+}
+#caChatDiv .avatar {
+    height: 50px;
+}
+/*
+#chatText {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+*/
+.chatName {
+    padding-left: 2px;
+}
+.chatText {
+    padding-left: 10px;
+}
+#chatForm {
+    display: flex;
+    flex-direction: row;
+}
+#chatMessages {
+    overflow-y: auto;
+    max-height: 85%;
+    min-height: 85%;
+}
+#chatMessages .badge {
+    font-size: calc(var(--font-scale) * 0.6em);
+}
+#chatCounter {
+    position: absolute;
+    right: 2px;
+    top: 0;
+    font-size: calc(var(--font-scale) * 0.7em);
+}
+#newMessageText {
+    width: 80%;
+}
+#sendMessageButton {
+    width: 20%;
+    height: 27px;
+}
+#caButtons {
+    display: flex;
+    flex: 0 0 10%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+.button.caButton {
+    aspect-ratio: 1 / 1;
+    font-size: 1.4rem;
+    position: relative;
+    padding: 0px;
+    height: 100%;
+    width: unset;
+}
+.button.caButtonVertical {
+    aspect-ratio: 1 / 1;
+    font-size: 2rem;
+    position: relative;
+    padding: 0px;
+    width: 100%;
+    height: unset;
+}
+.button.disabled {
+    opacity: 0.4;
+    filter: grayscale(100%);
+    cursor: not-allowed;
+}
+.data {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    font-size: 1.5rem;
+    font-variant: tabular-nums;
+}
+.data-row {
+    display: flex;
+    flex-direction: row;
+}
+.data-item {
+    width: 33%;
+}
+.data-item-large {
+    width: 50%;    
+    font-size: 1.5rem;;
+}
+
+.powerUpImg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.powerUpDisplay {
+    position: absolute;
+    left: 5%;
+    top: 6%;
+    z-index: 5;
+}
+.field-powerup {
+    font-size: 4rem;
+}
+.caButton .field-powerup {
+    font-size: 1.7rem;
+}
+.caButton .inactive {
+    background-color: rgba(100, 99, 99, 0.27);
+}
+#tabs {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    flex: 0 0 5%;
+}
+.tab {
+    padding: 2px 20px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-bottom: none;
+    margin-bottom: -2px;
+    border-bottom: 1px solid #ddd;
+    margin-left: -1px;
+    min-width: 20%;
+    text-align: center;
+    position: relative;
+}
+.tab.active {
+    border: 1px solid #ddd;
+    border-bottom: transparent;
+    font-weight: bold;
+}
+.tab.disabled {
+    opacity: 0.4;
+    filter: grayscale(100%);
+    cursor: not-allowed;
+}
+.pacerCard {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    border-bottom: 1px solid;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.buttonCard:hover {
+    cursor: pointer;
+}
+.leftCard {
+    width: 50%;
+}
+.pacerDesc {    
+    overflow: hidden;
+    min-width: 0;
+    text-overflow: ellipsis;
+}
+.rightCard {
+    width: 17%;
+}
+.buttonCard {
+    width: 25%;
+    display: flex;
+    flex-direction: row;
+}
+#caTeleports, #caActions{
+    overflow: auto;
+    height: 65vh;    
+}
+#caActions .actionsTitle:not(.actionCard) {
+    font-weight: bold;
+}
+#caActions .actionsTitle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+}
+#caActions .actionCard {
+    padding-left: 10px;   
+    font-weight: initial; 
+    overflow-y: hidden;
+}
+#caActions .actionCard:not(.actionDisabled) {
+    cursor: pointer;
+}
+#caTeleportsOption {
+    padding: 10px;
+    text-align: center;
+}
+#buttons {
+    padding: 0.5em 0.8em;
+}
+.actionButtons {
+    display: flex;
+    flex-direction: column;
+    font-variant: tabular-nums;
+    padding: 0.5em;
+}
+#dataFields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+}
+#dataFieldsContainer {
+    flex: 0 0 auto;
+    font-size: calc(var(--font-scale) * 1em);
+}
