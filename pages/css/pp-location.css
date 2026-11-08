@@ -78,4 +78,11 @@ div .fields {
 }
 #titlebar header select {
   font-size: 1em;
+  background: transparent;
+}
+#titlebar header select:hover {
+    background: #111;
+}
+#ppRanges {
+  margin: 0 0 0 1em;
 }

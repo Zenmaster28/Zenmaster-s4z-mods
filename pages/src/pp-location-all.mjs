@@ -23,6 +23,7 @@ const elProfiles = document.getElementById("elProfiles")
 let mapDiv = document.getElementById("mapDiv");
 const mapRouteView = document.getElementById("mapRouteView");
 const mapCourses = document.getElementById("mapCourses");
+const ppRanges = document.getElementById("ppRanges");
 const L = sauce.locale;
 const imperial = !!common.storage.get('/imperialUnits');
 L.setImperial(imperial);
@@ -489,6 +490,7 @@ function renderPPlocation(pp) {
     let elProfile = pp.elProfile; 
     //debugger
     const ppWkg = `${pp.wkg.toFixed(1)} w/kg`
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
     ppState.then(result => {
         if (!result) {
             console.warn("Missing rpc state", pp.athleteId)
@@ -497,9 +499,14 @@ function renderPPlocation(pp) {
         state.push(result);    
         elProfile.watchingId = pp.athleteId;  
         elProfile.renderAthleteStates(state);
-        let routeInfo = elProfile.routeInfo.routeFullData         
-        let routeTitle = `${pp.fullName} ${ppWkg} (${state[0].pacerBotGroupSize}) on ${routeInfo.name}`
-        //debugger
+        let routeInfo = elProfile.routeInfo.routeFullData
+        const routeWorld = worldList.find(x => x.courseId === routeInfo.courseId);
+        let routeTitle;
+        if (isMobile) {
+            routeTitle = `${pp.fullName} ${ppWkg} (${state[0].pacerBotGroupSize}) on ${routeInfo?.name}`
+        } else {
+            routeTitle = `${pp.fullName} ${ppWkg} (${state[0].pacerBotGroupSize}) on ${routeInfo?.name} in ${routeWorld?.name}`
+        }
         const routeTitleData = {
             title: {
                 show: true,
@@ -585,7 +592,8 @@ async function setupMapView() {
 async function changePPView() {
     const initialView = viewMode;
     const selectedView = document.querySelector('input[name="ppView"]:checked');
-    document.getElementById("mapCourses");
+    //document.getElementById("mapCourses");
+    ppRanges.innerHTML = `W/kg range: ${settings.minRange} - ${settings.maxRange}`
     
     viewMode = selectedView?.value === "map" ? "map" : "route";
     if (viewMode === "route") {
