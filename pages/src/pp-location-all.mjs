@@ -17,6 +17,7 @@ let ppCourses;
 let viewMode = "route";
 let routeHighlights = [];
 let currentRouteHighlight;
+let minSauce = true;
 const doc = document.documentElement;
 const content = document.getElementById("content");
 const elProfiles = document.getElementById("elProfiles")
@@ -29,18 +30,7 @@ const imperial = !!common.storage.get('/imperialUnits');
 L.setImperial(imperial);
 const worldList = await common.getWorldList();
 const routeList = await common.rpc.getRoutes();
-common.settingsStore.set("profileHeight", 100)
 
-/*
-const warningDiv = document.getElementById("warningDiv");
-warningDiv?.addEventListener("click", () => {
-    console.log("warningDiv clicked")
-});
-warningDiv?.querySelector('.close-btn').addEventListener("click", function (e) {
-    e.stopPropagation();
-    warningDiv.classList.add("hidden");
-})
-*/
 common.settingsStore.setDefault({
     // v0.13.0...
     profileOverlay: true,
@@ -76,16 +66,16 @@ common.settingsStore.setDefault({
     pinColorMarked: "#9cb7ec",
     pinColorFollowing: "#ff0080",
     colorPinsByCat: false,
-    showSegmentFinish: false,
-    minSegmentLength: 500,
+    showSegmentFinish: true,
+    minSegmentLength: 100,
     showNextSegment: false,
     showNextSegmentFinish: false,
     showMyPin: true,
     setAthleteSegmentData: true,
-    showCompletedLaps: true,
+    showCompletedLaps: false,
     overrideDistance: 0,
     overrideLaps: 0,
-    yAxisMin: 200,
+    yAxisMin: 100,
     singleLapView: false,
     profileZoom: false,
     zoomNextSegment: false,
@@ -107,7 +97,7 @@ common.settingsStore.setDefault({
     gradientOpacity: 0.7,
     pinName: "Default",
     useCustomPin: false,
-    showAllArches: false,
+    showAllArches: true,
     showGroups: false,
     showLineAhead: false,
     distanceAhead: 1000,
@@ -131,6 +121,8 @@ common.settingsStore.setDefault({
     minRange: 0,
     maxRange: 6
 });
+common.settingsStore.set("profileHeight", 100);
+common.settingsStore.set("profileOverlay", true);
 
 const settings = common.settingsStore.get();
 doc.style.setProperty('--dataTransparency', common.settingsStore.get('dataTransparency'));
@@ -470,7 +462,7 @@ function changeFontScale() {
     //doc.style.setProperty('--profile-height', 1);
 }
 
-async function initialize() {
+async function initialize() {    
     zwiftMap = createZwiftMap();
     allPPs = await common.rpc.getOnlinePacerBots();
     allPPs.sort((a,b) => a.wkg - b.wkg);
@@ -580,6 +572,8 @@ async function setupMapView() {
     } else {
         viewMode = "route";
     }
+    //debugger
+    zwiftMap.verticalOffset = 0;
     await zwiftMap.setZoom(0.2);
     await zwiftMap.setCourse(courseId);
     if (viewMode === "map") {
@@ -594,6 +588,7 @@ async function changePPView() {
     const selectedView = document.querySelector('input[name="ppView"]:checked');
     //document.getElementById("mapCourses");
     ppRanges.innerHTML = `W/kg range: ${settings.minRange} - ${settings.maxRange}`
+    ppRanges.title = `Displaying Pace Partner ranges between ${settings.minRange} and ${settings.maxRange} W/kg.  Go into the settings to adjust.`
     
     viewMode = selectedView?.value === "map" ? "map" : "route";
     if (viewMode === "route") {
@@ -730,11 +725,13 @@ async function updatePPmap() {
 export async function main() {
     changeFontScale();
 
-    common.initInteractionListeners();       
-    mapRouteView.addEventListener("change", async function () {
-        await changePPView()
-    });
-    
+    common.initInteractionListeners();           
+    if (!common.settingsStore.get("minRange")) {
+        common.settingsStore.set("minRange", 0)
+    }
+    if (!common.settingsStore.get("maxRange")) {
+        common.settingsStore.set("maxRange", 6)
+    }
     try {
         allPPs = await common.rpc.getOnlinePacerBots();
         /*
@@ -752,15 +749,21 @@ export async function main() {
             pp.fullName = fullName;
         }
     } catch (err) {
+        minSauce = false;
         console.warn("getOnlinePacerBots() requires Sauce v2.4.0-alpha4 or later")
         elProfiles.innerHTML = `This window requires Sauce v2.4.0-alpha4 or later. &#x1F61E;`
     }
-    console.log("activePPs", activePPs)
-    
+    if (!minSauce) {
+        return;
+    }    
+    console.log("activePPs", activePPs)    
     initialize();
+    
     //await changePPView();
     
-    
+    mapRouteView.addEventListener("change", async function () {
+        await changePPView()
+    });
     
     common.settingsStore.addEventListener('changed', async ev => {
         const changed = ev.data.changed; 
