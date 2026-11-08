@@ -28,20 +28,6 @@
             }
         },        
         {
-            "file": "pages/zenCa.html",
-            "id": "zen-ca",
-            "name": "Companion App (for use on mobile)",
-            "description": "Companion App-like window for use on a mobile device while game connection is enabled",
-            "overlay": true,
-            "frame": false,
-            "default_bounds": {
-                "width": 400,
-                "height": 500,
-                "x": 300,
-                "y": 200
-            }
-        },        
-        {
             "file": "pages/custom-route-creator.html",
             "id": "custom-route-creator",
             "name": "Custom Route Builder",
@@ -242,6 +228,20 @@
             "id": "segment-tracker",
             "name": "Virtual goal pacer",
             "description": "Compare your progress on a route/segment/climb against a previous time (yours or someone else's).  Requires downloading a previous effort from Strava using the Sauce for Strava browser extension.",
+            "overlay": true,
+            "frame": false,
+            "default_bounds": {
+                "width": 400,
+                "height": 500,
+                "x": 300,
+                "y": 200
+            }
+        },        
+        {
+            "file": "pages/zenCa.html",
+            "id": "zen-ca",
+            "name": "ZenCA Mobile",
+            "description": "Companion App-like window for use on a mobile device while game connection is enabled",
             "overlay": true,
             "frame": false,
             "default_bounds": {
