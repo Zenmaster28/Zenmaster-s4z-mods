@@ -7,7 +7,7 @@ import * as map from '/pages/src/map.mjs';
 let activePPs = [];
 let ppIndex = 0;
 let debounceTimer;
-let timer;
+let routeUpdateTimer;
 let mapTimer;
 let routeTimer;
 let courseId = 6;
@@ -530,7 +530,7 @@ async function setupRouteView() {
     for (let pp of allPPs) {
         //debugger
         const newElDiv = `<div id=${pp.fullName} class="pp-location ${viewMode === "map" || 
-            (pp.wkg.toFixed(1) < settings.minRange || pp.wkg.toFixed(1) > settings.maxRange) ? 'hidden' : ''}" data-wkg="${pp.wkg}"></div>`
+            (pp.wkg.toFixed(1) < settings.minRange || pp.wkg.toFixed(1) > settings.maxRange) ? 'hidden' : ''}" data-wkg="${Math.trunc(pp.wkg * 10) / 10}" data-ppId="${pp.athleteId}"></div>`
         elProfiles.innerHTML += newElDiv;
         //debugger
     }
@@ -602,14 +602,47 @@ async function changePPView() {
                 el.classList.add("hidden");
             }
         });
+        clearInterval(routeUpdateTimer);
         clearInterval(routeTimer);
         clearInterval(mapTimer);
         if (initialView != "route") {
             for (let pp of activePPs) {
                 renderPPlocation(pp);
             }
-        }
+        };
+        routeUpdateTimer = setInterval(async function() {
+            const currentPPs = await common.rpc.getOnlinePacerBots();
+            const ppElList = document.querySelectorAll(".pp-location");
+            for (let ppEl of ppElList) {
+                const elId = parseInt(ppEl.dataset.ppid);
+                const ppData = currentPPs.find(x => x.athleteId === elId);
+                ppEl.dataset.wkg = Math.trunc(ppData.wkg * 10) / 10;
+                if (ppEl.dataset.wkg >= settings.minRange && ppEl.dataset.wkg <= settings.maxRange) {
+                    ppEl.classList.remove("hidden");
+                } else {
+                    ppEl.classList.add("hidden");
+                }
+            };
+            for (let pp of allPPs) {
+                const thisPP = currentPPs.find(x => x.athleteId === pp.athleteId);
+                pp.wkg = thisPP.wkg;
+            }
+            activePPs = allPPs.filter(x => x.wkg >= settings.minRange && x.wkg <= settings.maxRange);
+            activePPs.sort((a,b) => a.wkg - b.wkg)
+            for (let pp of activePPs) {
+                const fullName = `${pp.firstName.replaceAll(' ', '')}.${pp.lastName.replaceAll(' ', '')}`;
+                pp.fullName = fullName;
+            };
+            const elList = Array.from(elProfiles.querySelectorAll(":scope > div"));
+            elList.sort((a,b) => {
+                return parseFloat(a.dataset.wkg) - parseFloat(b.dataset.wkg);
+            });
+            elList.forEach(el => elProfiles.appendChild(el));
+        }, 10000);
         routeTimer = setInterval(function() {
+            if (!activePPs[ppIndex]) {
+                ppIndex = 0;
+            }
             console.log("Updating: " + activePPs[ppIndex].fullName);
             //renderPPlocation(activePPs[ppIndex].athleteId, activePPs[ppIndex].elProfile, activePPs[ppIndex].fullName);    
             renderPPlocation(activePPs[ppIndex]);
@@ -620,7 +653,8 @@ async function changePPView() {
             }  
         }, 4000); 
     } else {
-        console.log("Map view selected")        
+        console.log("Map view selected")      
+        clearInterval(routeUpdateTimer);
         clearInterval(routeTimer);
         clearInterval(mapTimer);
         document.querySelectorAll(".pp-location").forEach(el => el.classList.add("hidden"));
@@ -720,6 +754,7 @@ async function updatePPmap() {
         while (routeHighlights.length) {
             routeHighlights.pop().elements.forEach(x => x.remove());
         }
+        currentRouteHighlight = null;
     }));
 }
 export async function main() {
