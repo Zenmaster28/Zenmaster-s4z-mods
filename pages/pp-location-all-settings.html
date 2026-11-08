@@ -18,6 +18,29 @@
         <script type="module">
             import {settingsMain} from './src/elevation.mjs';
             settingsMain();
+            const minInputs = document.querySelectorAll('[name="minRange"]');
+            const maxInputs = document.querySelectorAll('[name="maxRange"]');
+
+            function updateRange(e) {
+                const isMin = e.target.name === "minRange";
+                const value = parseFloat(e.target.value);
+
+                if (isMin) {
+                    const max = parseFloat(maxInputs[0].value);
+                    const newValue = Number(Math.min(value, max - 0.1).toFixed(1));
+
+                    minInputs.forEach(input => input.value = newValue);
+                } else {
+                    const min = parseFloat(minInputs[0].value);
+                    const newValue = Number(Math.max(value, min + 0.1).toFixed(1));
+
+                    maxInputs.forEach(input => input.value = newValue);
+                }
+            }
+
+            [...minInputs, ...maxInputs].forEach(input => {
+                input.addEventListener("input", updateRange);
+            });
         </script>
     </head>
     <body>
@@ -36,13 +59,13 @@
                 W/kg ranges to show
                 <label>
                     <key>Min:</key>
-                    <input name="minRange" type="range" min="0" max="5.9" step="0.1">
-                    <input name="minRange" type="number" min="0" max="5.9" step="0.1">
+                    <input name="minRange" type="range" min="0" max="6" step="0.1">
+                    <input name="minRange" type="number" min="0" max="6" step="0.1">
                 </label>
                 <label>
                     <key>Max:</key>
-                    <input name="maxRange" type="range" min="1" max="6" step="0.1">
-                    <input name="maxRange" type="number" min="1" max="6" step="0.1">
+                    <input name="maxRange" type="range" min="0" max="6" step="0.1">
+                    <input name="maxRange" type="number" min="0" max="6" step="0.1">
                 </label>                
                 <!--
                 <label>                    
