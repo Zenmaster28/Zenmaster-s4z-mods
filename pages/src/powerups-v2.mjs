@@ -24,49 +24,49 @@ let settings = common.settingsStore.get();
 let powerupData = [
     {
         "name": "LIGHTNESS",
-        "image": "feather.png",
+        "image": "LIGHTNESS.svg",
         "count": 0,
         "include": typeof(settings.includeFeather) == "undefined" ? true : settings.includeFeather
     },
     {
         "name": "POWERUP_CNT",
-        "image": "coffee.png",
+        "image": "COFFEE_STOP.svg",
         "count": 0,
         "include": typeof(settings.includeCoffee) == "undefined" ? true : settings.includeCoffee
     },
     {
         "name": "COFFEE_STOP",
-        "image": "coffee.png",
+        "image": "COFFE_STOP.svg",
         "count": 0,
         "include": typeof(settings.includeCoffee) == "undefined" ? true : settings.includeCoffee
     },
     {
         "name": "AERO",
-        "image": "aero.png",
+        "image": "AERO.svg",
         "count": 0,
         "include": typeof(settings.includeAero) == "undefined" ? true : settings.includeAero
     },
     {
         "name": "DRAFTBOOST",
-        "image": "draft.png",
+        "image": "DRAFTBOOST.svg",
         "count": 0,
         "include": typeof(settings.includeDraft) == "undefined" ? true : settings.includeDraft
     },
     {
         "name": "UNDRAFTABLE",
-        "image": "burrito.png",
+        "image": "UNDRAFTABLE.svg",
         "count": 0,
         "include": typeof(settings.includeBurrito) == "undefined" ? true : settings.includeBurrito
     },
     {
         "name": "STEAMROLLER",
-        "image": "steamroller.png",
+        "image": "STEAMROLLER.svg",
         "count": 0,
         "include": typeof(settings.includeSteamroller) == "undefined" ? true : settings.includeSteamroller
     },
     {
         "name": "ANVIL",
-        "image": "anvil.png",
+        "image": "ANVIL.svg",
         "count": 0,
         "include": typeof(settings.includeAnvil) == "undefined" ? true : settings.includeAnvil
     }
@@ -169,7 +169,7 @@ export async function main() {
                         let tbodyRow = powerupTable.insertRow();
                         let cell = tbodyRow.insertCell();
                         let img = document.createElement("img");
-                        img.src = "./images/" + powerup.image;
+                        img.src = "/pages/images/powerups/" + powerup.image;
                         cell.appendChild(img);
                         cell = tbodyRow.insertCell();
                         if (grouping[0].watching == true && grouping[0].self == true)
