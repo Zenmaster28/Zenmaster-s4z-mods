@@ -2322,20 +2322,20 @@ export class SauceElevationProfile {
                                                 if (this.eventPowerups[0].type == "powerup_percent") {                                                
                                                     puImgs += "&nbsp;"
                                                     for (let key in this.eventPowerups[0].powerups) {
-                                                        puImgs += `<img src="./images/${key}.png" class="puImg">`
+                                                        puImgs += `<img src="/pages/images/powerups/${key}.svg" class="puImg">`
                                                     }
                                                 } else if (this.eventPowerups[0].type == "arch_powerup") {
                                                     let nextArchId = nextSegment.archId || 0;
                                                     puImgs += "&nbsp;"  
                                                     if (this.eventPowerups[0].powerups[nextArchId]) {
-                                                        puImgs += `<img src="./images/${this.eventPowerups[0].powerups[nextArchId]}.png" class="puImg">`
+                                                        puImgs += `<img src="/pages/images/powerups/${this.eventPowerups[0].powerups[nextArchId]}.svg" class="puImg">`
                                                     } else {
-                                                        puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
+                                                        puImgs += '&nbsp<img src="/pages/images/powerups/BONUS_XP_LIGHT.svg" class="puImg">'
                                                     }
                                                 } else if (this.eventPowerups[0].type == "nopowerups") {
-                                                    puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
+                                                    puImgs += '&nbsp<img src="/pages/images/powerups/BONUS_XP_LIGHT.svg" class="puImg">'
                                                 } else if (this.eventPowerups[0].type == "standard") {
-                                                    puImgs += '&nbsp;<img src="./images/aero.png" class="puImg"><img src="./images/feather.png" class="puImg"><img src="./images/draft.png" class="puImg">'
+                                                    puImgs += '&nbsp;<img src="/pages/images/powerups/AERO.svg" class="puImg"><img src="/pages/images/powerups/LIGHTNESS.svg" class="puImg"><img src="/pages/images/powerups/DRAFTBOOST.svg" class="puImg">'
                                                 } 
                                             } else {
                                                 let foundPuInfo = false;
@@ -2343,7 +2343,7 @@ export class SauceElevationProfile {
                                                 let nextArchId = nextSegment.archId || 0;
                                                 puImgs += "&nbsp;"  
                                                 if (archConfig?.powerups[nextArchId]) {
-                                                    puImgs += `<img src="./images/${archConfig.powerups[nextArchId]}.png" class="puImg">`
+                                                    puImgs += `<img src="/pages/images/powerups/${archConfig.powerups[nextArchId]}.svg" class="puImg">`
                                                     foundPuInfo = true;
                                                 } /* else {
                                                     puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
@@ -2352,11 +2352,11 @@ export class SauceElevationProfile {
                                                     const powerupPercent = this.eventPowerups?.find(x => x.type === "powerup_percent");
                                                     puImgs += "&nbsp;"
                                                     for (let key in powerupPercent.powerups) {
-                                                        puImgs += `<img src="./images/${key}.png" class="puImg">`
+                                                        puImgs += `<img src="/pages/images/powerups/${key}.svg" class="puImg">`
                                                         foundPuInfo = true;
                                                     }
                                                     if (!foundPuInfo) {
-                                                        puImgs += '&nbsp<img src="./images/smallXP.png" class="puImg">'
+                                                        puImgs += '&nbsp<img src="/pages/images/powerups/BONUS_XP_LIGHT.svg" class="puImg">'
                                                     }
                                                 } 
 
@@ -2442,6 +2442,7 @@ export class SauceElevationProfile {
                                         }
                                         
                                     }
+                                    //debugger
                                     const athleteSegmentData = {
                                         segmentData: {
                                             currentPosition: xCoord,
@@ -2598,6 +2599,7 @@ export class SauceElevationProfile {
                                     }
                                     const result = 1.5 + proportion
                                     symbolSize = symbolSize * result;
+                                    //console.log("symbolSize", symbolSize, "proportion", proportion)
                                 } else {
                                     symbolSize = isWatching ? symbolSize * 1.5 : symbolSize; // if not in a group, make watching pin 1.5x larger for emphasis
                                 }

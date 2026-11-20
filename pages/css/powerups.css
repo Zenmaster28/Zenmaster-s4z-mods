@@ -2,6 +2,12 @@ img {
     width: 100%;
     height: auto;
     max-width: 100%;
+    vertical-align: middle;
+    outline: 2px solid white;
+    outline-offset: 2px;
+    border-radius: 50%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
 }
 
 .td1 {    
