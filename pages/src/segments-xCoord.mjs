@@ -2240,15 +2240,15 @@ export function getEventPowerups(sg) {
     let eventPowerUps = [];
     
     const puList = {
-        0: 'feather',
-        1: 'draft',
-        2: 'smallXP',
-        3: 'largeXP',
-        4: 'burrito',
-        5: 'aero',
-        6: 'ghost',
-        7: 'steamroller',
-        8: 'anvil'
+        0: 'LIGHTNESS',
+        1: 'DRAFTBOOST',
+        2: 'BONUS_XP_LIGHT',
+        3: 'BONUS_XP',
+        4: 'UNDRAFTABLE',
+        5: 'AERO',
+        6: 'NINJA',
+        7: 'STEAMROLLER',
+        8: 'ANVIL'
     }
     const customPowerups = sg?.allTags.filter(tag => tag.includes('powerup'))    
     if (customPowerups?.length > 0) {
